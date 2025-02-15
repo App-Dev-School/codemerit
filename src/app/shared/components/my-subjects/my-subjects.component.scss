@@ -1,0 +1,48 @@
+.progress-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+}
+
+.subjectHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.subjectImage {
+  height: 32px;
+  width: auto;
+}
+
+.text {
+  max-height: 26px;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+}
+::ng-deep .mat-mdc-card-title{
+  font-size: 18px !important;
+}
+::ng-deep .mat-mdc-standard-chip {
+  height: 20px !important;
+  padding: 0px !important;
+}
+
+::ng-deep .mat-chip .mat-chip-text {
+  padding: 0 !important;
+}
+
+::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__text-label {
+  font-size: 11px !important;
+}
+
+::ng-deep .mat-chip .mat-chip-trailing-icon {
+  font-size: 11px;
+}

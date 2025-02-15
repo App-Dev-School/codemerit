@@ -1,0 +1,260 @@
+{
+  "routes": [
+    {
+      "path": "/app/welcome",
+      "title": "Welcome",
+      "iconType": "material-icons-outlined",
+      "icon": "slideshow",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "All"
+      ],
+      "submenu": []
+    },
+    {
+      "path": "",
+      "title": "Dashboard",
+      "iconType": "material-icons-outlined",
+      "icon": "space_dashboard",
+      "class": "menu-toggle",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "Admin"
+      ],
+      "submenu": [
+        {
+          "path": "/admin/dashboard/main",
+          "title": "Main",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/admin/dashboard/analysis",
+          "title": "Analytics",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        }
+      ]
+    },
+    {
+      "path": "/dashboard/select-subject",
+      "title": "My Dashboard",
+      "iconType": "material-icons-outlined",
+      "icon": "space_dashboard",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "User"
+      ],
+      "submenu": []
+    },
+    {
+      "path": "",
+      "title": "Topic Explorer",
+      "iconType": "material-icons-outlined",
+      "icon": "dvr",
+      "class": "menu-toggle",
+      "groupTitle": false,
+      "badge": "Dev",
+      "badgeClass": "badge bg-blue sidebar-badge float-end",
+      "role": [
+        "User", "Admin"
+      ],
+      "submenu": [
+        {
+          "path": "/learn/topics/explore/rxjs",
+          "title": "Explore Topic",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/learn/topics/rxjs-concatMap",
+          "title": "Single Topic Resource",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        }
+      ]
+    },
+    {
+      "path": "",
+      "title": "Formkit UI",
+      "iconType": "material-icons-outlined",
+      "icon": "dvr",
+      "class": "menu-toggle",
+      "groupTitle": false,
+      "badge": "Dev",
+      "badgeClass": "badge bg-blue sidebar-badge float-end",
+      "role": [
+        "Admin"
+      ],
+      "submenu": [
+        {
+          "path": "/forms/formkit",
+          "title": "App Forms",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/forms/wizard",
+          "title": "Form Wizards",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        }
+      ]
+    },
+    {
+      "path": "",
+      "title": "Authentication",
+      "iconType": "material-icons-outlined",
+      "icon": "supervised_user_circle",
+      "class": "menu-toggle",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "Admin"
+      ],
+      "submenu": [
+        {
+          "path": "/authentication/signin",
+          "title": "Sign In",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/authentication/signup",
+          "title": "Sign Up",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/authentication/forgot-password",
+          "title": "Forgot Password",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/authentication/locked",
+          "title": "Locked",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/authentication/page404",
+          "title": "404 - Not Found",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/authentication/page500",
+          "title": "500 - Server Error",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        }
+      ]
+    }
+  ]
+}

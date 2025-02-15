@@ -1,0 +1,24 @@
+@if(!meritList){
+  <div class="text-center">
+    <img src="assets/images/icons/experience.png" class="user-img1" />
+  </div>
+  }
+  @if(meritList){
+    <ul class="list-unstyled list-unstyled-border list-unstyled-noborder">
+      @for (merit of meritList; track merit) {
+        <li class="merit-list">
+          <img alt="image" class="msr-3 rounded-circle" width="40" [src]="merit.imageUrl">
+          <div class="">
+            <div class="media-title font-14 font-b-500">{{ merit.name }}</div>
+            <!-- <div class="text-job text-muted mb-0 font-12">{{ merit.designation }}</div> -->
+             <p class="text-job text-muted mb-0 font-12">Merit Points : {{ merit.points }}</p>
+          </div>
+          <div class="ms-auto">
+            <!-- <div class="media-title font-15 font-b-500">#{{ merit.rank }}</div> -->
+            <span [ngClass]="'bg-orange'" class="label">{{merit.rank}}</span>
+            <!-- <span class="badge bg-orange">{{merit.points}}</span> -->
+          </div>
+        </li>
+      }
+    </ul>
+    }

@@ -1,0 +1,14 @@
+{
+    "firstName": "Mario",
+    "lastName": "Zencher",
+    "designation": "Software Engineer",
+    "city": "Bangalore",
+    "country": "India",
+    "email": "mariozencher@gmail.com",
+    "image": "assets/images/users/user_big.jpg",
+    "level": "Senior",
+    "points": "3180",
+    "subscriptions" : [
+        
+    ]
+}

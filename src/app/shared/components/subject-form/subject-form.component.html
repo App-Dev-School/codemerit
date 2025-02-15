@@ -1,0 +1,56 @@
+<div class="card">
+  <div class="header">
+    <h2>Add New Subject</h2>
+  </div>
+  <div class="body">
+    <div class="example-container">
+      <form class="register-form m-4" [formGroup]="subjectForm" (ngSubmit)="onSubjectFormSubmit()">
+        <div class="row">
+          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Subject Name</mat-label>
+              <input matInput formControlName="title" required placeholder="Name of the subject">
+              @if (subjectForm.get('title')?.hasError('minLength')) {
+              <mat-error>
+                Subject name is too short
+              </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Select Label</mat-label>
+              <mat-select formControlName="label">
+                <mat-option value="Beginner">Beginner</mat-option>
+                <mat-option value="Intermediate">Intermediate</mat-option>
+                <mat-option value="Advanced">Advanced</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" required
+                placeholder="Short description of subject"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <mat-checkbox class="example-margin" formControlName="is_published">Make this subject available
+            </mat-checkbox>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <button mat-flat-button class="btn-space" color="primary" [disabled]="!subjectForm.valid">Submit</button>
+            <button mat-raised-button color="warn" (click)="subjectForm.reset()">Cancel</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

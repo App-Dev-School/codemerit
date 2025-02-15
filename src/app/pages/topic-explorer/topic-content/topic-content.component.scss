@@ -1,0 +1,52 @@
+/* Default full-screen style for small screens and mobile */
+.full-screen-modal {
+  --width: 100vw !important; /* Full width */
+  --height: 100vh !important; /* Full height */
+  --margin: 0 !important; /* Remove margin */
+  --padding: 0 !important; /* Remove padding */
+  --border-radius: 0 !important; /* Remove border-radius */
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: center;
+  // align-items: center;
+}
+
+/* Custom styles for full-screen modal on desktop */
+@media (min-width: 768px) {
+  .full-screen-modal {
+    --width: 100vw !important; /* 100% of the viewport width */
+    --height: 100vh !important; /* 100% of the viewport height */
+    --padding: 0 !important;
+    --border-radius: 0 !important;
+    /* Additional adjustments if needed */
+  }
+}
+  
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    height: 100%;
+    padding: 20px;
+    text-align: center;
+  }
+
+  //check above
+  .modal-body {
+    text-align: center;
+    padding: 20px;
+    height: 80vh;  /* Give some space for the FAB */
+  }
+  
+/* Style to position the buttons at the bottom */
+.bottom-buttons {
+  position: fixed;
+  bottom: 20px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

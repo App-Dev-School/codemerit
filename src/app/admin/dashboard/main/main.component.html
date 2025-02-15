@@ -1,0 +1,47 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <!-- breadcrumb -->
+      <app-breadcrumb [title]="'Dashboad'" [items]="[]" [active_item]="'Dashboad'"></app-breadcrumb>
+    </div>
+    <div class="row clearfix">
+      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+        <mat-card>
+          <mat-card-header class="header-style">
+            <mat-card-title>{{subject}} Lessons</mat-card-title>
+            <a mat-button color="primary" href="#" (click)="$event.preventDefault();">View All</a>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-scrollbar style="height: 410px" visibility="hover">
+              <app-subscription-table-widget></app-subscription-table-widget>
+            </ng-scrollbar>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+        <mat-card>
+          <mat-card-header class="header-style">
+            <mat-card-title>New Users</mat-card-title>
+            <a mat-button color="primary" href="#" (click)="$event.preventDefault();">View All</a>
+          </mat-card-header>
+          <mat-card-content>
+            
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-4 m-t-16">
+        <mat-card>
+          <mat-card-content>
+            <app-activity-count-card [questionAttempted]="24" [lessonsCompleted]="6" [challengesSolved]="0" [badgesEarned]="1">
+            </app-activity-count-card>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,292 @@
+[
+    {
+        "title": "Introduction to Angular",
+        "subject": "Angular",
+        "description": "Basic introduction to the Angular Framework, its history, and core concepts.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 1,
+        "numQuestions": 5,
+        "coverage": 100
+    },
+    {
+        "title": "Setting Up the Development Environment",
+        "subject": "Angular",
+        "description": "Installation of Angular CLI, Node.js, and creating the first Angular project.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 3,
+        "numQuestions": 15,
+        "coverage": 100
+    },
+    {
+        "title": "Angular Components",
+        "subject": "Angular",
+        "description": "Understanding Angular components, templates, and how to create and manage them.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 1,
+        "numQuestions": 10,
+        "coverage": 60
+    },
+    {
+        "title": "Data Binding in Angular",
+        "subject": "Angular",
+        "description": "Introduction to data binding in Angular, including one-way and two-way data binding.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 2,
+        "numQuestions": 10,
+        "coverage": 0
+    },
+    {
+        "title": "Directives in Angular",
+        "subject": "Angular",
+        "description": "Learn about built-in directives like *ngIf, *ngFor, and custom directives.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 6,
+        "numQuestions": 20,
+        "coverage": 0
+    },
+    {
+        "title": "Services and Dependency Injection",
+        "subject": "Angular",
+        "description": "How services work in Angular and how dependency injection helps with reusability.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 2,
+        "numQuestions": 10,
+        "coverage": 0
+    },
+    {
+        "title": "Routing in Angular",
+        "subject": "Angular",
+        "description": "Implementing navigation with Angular's router, defining routes, and creating route guards.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 3,
+        "numQuestions": 20,
+        "coverage": 0
+    },
+    {
+        "title": "Forms in Angular",
+        "subject": "Angular",
+        "description": "Working with template-driven and reactive forms in Angular.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 2,
+        "numQuestions": 10,
+        "coverage": 0
+    },
+    {
+        "title": "HTTP Client Module",
+        "subject": "Angular",
+        "description": "Using the HttpClient module to make API calls and handle responses in Angular.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 2,
+        "numQuestions": 10,
+        "coverage": 0
+    },
+    {
+        "title": "Pipes in Angular",
+        "subject": "Angular",
+        "description": "Introduction to built-in pipes and creating custom pipes for transforming data.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 2,
+        "numQuestions": 10,
+        "coverage": 0
+    },
+    {
+        "title": "Angular Lifecycle Hooks",
+        "subject": "Angular",
+        "description": "Understanding Angular component lifecycle hooks like ngOnInit, ngOnChanges, etc.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 2,
+        "numQuestions": 12,
+        "coverage": 0
+    },
+    {
+        "title": "RxJS Deep Dive",
+        "subject": "Angular",
+        "slug": "rxjs",
+        "description": "Using RxJS, Observables for handling asynchronous operations in Angular, RxJS Operators, Subjects, Types of Subjects",
+        "goal": "",
+        "parent": "",
+        "numLessons": 6,
+        "numQuestions": 30,
+        "coverage": 0
+    },
+    {
+        "title": "Angular Modules",
+        "subject": "Angular",
+        "description": "Working with Angular modules to structure and organize an Angular application.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 1,
+        "numQuestions": 10,
+        "coverage": 0
+    },
+    {
+        "title": "Angular Testing",
+        "subject": "Angular",
+        "description": "Unit testing Angular applications with Jasmine and Karma, and using Angular testing utilities.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 4,
+        "numQuestions": 20,
+        "coverage": 0
+    },
+    {
+        "title": "Angular Best Practices and Performance Optimization",
+        "subject": "Angular",
+        "description": "Optimizing Angular applications for performance and following best practices in coding.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 3,
+        "numQuestions": 20,
+        "coverage": 0
+    },
+    {
+        "title": "Deploying Angular Applications",
+        "description": "Steps to deploy Angular applications to different environments like production, staging, and cloud services.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 2,
+        "numQuestions": 10,
+        "coverage": 0
+    },
+    {
+        "title": "Introduction to React", 
+        "subject": "React",
+        "description": "Overview of React, its history, and why it is popular in modern web development.", 
+        "numLessons": 5,
+        "numQuestions": 10,
+        "coverage": 5
+    },
+    {
+        "title": "JSX Syntax", 
+        "subject": "React",
+        "description": "Understanding JSX, its syntax, and how it integrates HTML and JavaScript.", 
+        "numLessons": 4,
+        "numQuestions": 8,
+        "coverage": 4
+    },
+    {
+        "title": "Components and Props", 
+        "subject": "React",
+        "description": "Learn about React components, how to create functional components, and pass data with props.", 
+        "numLessons": 6,
+        "numQuestions": 12,
+        "coverage": 6
+    },
+    {
+        "title": "State and Lifecycle", 
+        "subject": "React",
+        "description": "Introduction to React state, managing state in components, and lifecycle methods.", 
+        "numLessons": 7,
+        "numQuestions": 14,
+        "coverage": 7
+    },
+    {
+        "title": "Event Handling in React", 
+        "subject": "React",
+        "description": "Handling user input events like clicks, form submissions, and other UI interactions.", 
+        "numLessons": 5,
+        "numQuestions": 10,
+        "coverage": 5
+    },
+    {
+        "title": "Handling Forms in React", 
+        "subject": "React",
+        "description": "Learn how to manage form data, controlled components, and form validation in React.", 
+        "numLessons": 6,
+        "numQuestions": 12,
+        "coverage": 6
+    },
+    {
+        "title": "React Router", 
+        "subject": "React",
+        "description": "Learn about React Router for handling navigation and routing in single-page applications.", 
+        "numLessons": 4,
+        "numQuestions": 8,
+        "coverage": 4
+    },
+    {
+        "title": "State Management with Context API", 
+        "subject": "React",
+        "description": "Understand the Context API to share state across multiple components without prop drilling.", 
+        "numLessons": 5,
+        "numQuestions": 10,
+        "coverage": 5
+    },
+    {
+        "title": "Hooks: useState, useEffect, useContext", 
+        "subject": "React",
+        "description": "Introduction to React hooks like useState, useEffect, and useContext for functional components.", 
+        "numLessons": 7,
+        "numQuestions": 14,
+        "coverage": 7
+    },
+    {
+        "title": "React Performance Optimization", 
+        "subject": "React",
+        "description": "Learn about optimizing React applications for performance using techniques like memoization, lazy loading, etc.", 
+        "numLessons": 0,
+        "numQuestions": 0,
+        "coverage": 0
+    },
+    {
+        "title": "React Testing", 
+        "subject": "React",
+        "description": "Learn how to test React components using tools like Jest and React Testing Library.", 
+        "numLessons": 0,
+        "numQuestions": 0,
+        "coverage": 0
+    },
+    {
+        "title": "Styling in React", 
+        "description": "Learn how to style React components using CSS, inline styles, styled-components, and CSS Modules.", 
+        "numLessons": 0,
+        "numQuestions": 0,
+        "coverage": 0
+    },
+    {
+        "title": "Building and Deploying React Applications", 
+        "description": "Understand how to build, deploy, and optimize a React application for production.", 
+        "numLessons": 0,
+        "numQuestions": 0,
+        "coverage": 0
+    },
+    {
+        "title": "Advanced React Patterns", 
+        "description": "Explore advanced patterns such as higher-order components, render props, and custom hooks for scalable applications.", 
+        "numLessons": 0,
+        "numQuestions": 0,
+        "coverage": 0
+    },
+    {
+        "title": "Introduction to Redux", 
+        "description": "Learn the basics of Redux, state management, and how it integrates with React applications.", 
+        "numLessons": 0,
+        "numQuestions": 0,
+        "coverage": 0
+    },
+    {
+        "title": "Advanced Redux", 
+        "description": "Dive deeper into Redux with middleware, asynchronous actions, and advanced patterns.", 
+        "numLessons": 0,
+        "numQuestions": 0,
+        "coverage": 0
+    },
+    {
+        "title": "React and TypeScript", 
+        "description": "Learn how to use TypeScript with React to build type-safe applications.", 
+        "numLessons": 0,
+        "numQuestions": 0,
+        "coverage": 0
+    }
+]

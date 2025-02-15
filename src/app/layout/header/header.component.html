@@ -1,0 +1,93 @@
+<nav #navbar class="navbar active">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a href="#" onClick="return false;" class="navbar-toggle collapsed"
+        (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-expanded="false"></a>
+      <a href="#" onClick="return false;" class="bars" (click)="mobileMenuSidebarOpen($event,'overlay-open')"></a>
+      <a class="navbar-brand" routerLink={{homePage}}>
+        <!-- @if (isNavbarCollapsed) {
+          <img src="./../../../assets/images/codemerit.png" alt="codemerit" />
+        }@else {
+        <img src="./../../../assets/images/logo.png" alt="codemerit" />
+        } -->
+
+        <img src="./../../../assets/images/logo.png" alt="codemerit" />
+        <!-- <span class="logo-name">codemerit </span> -->
+      </a>
+    </div>
+    <div class="collapse navbar-collapse" [ngClass]="isNavbarCollapsed ? '' : 'show'">
+      <ul class="float-start collapse-menu-icon">
+        <li>
+          <button mat-icon-button (click)="callSidemenuCollapse()" class="sidemenu-collapse nav-notification-icons"> <i
+              class="material-icons-outlined icon-color">
+              menu
+            </i></button>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <!-- Full Screen Button -->
+        <li class="fullscreen">
+          <button mat-icon-button class="nav-notification-icons" (click)="callFullscreen()"> <i
+              class="material-icons-outlined icon-color">
+              fullscreen
+            </i></button>
+        </li>
+        <!-- #END# Full Screen Button -->
+        <!-- #START# Notifications-->
+        <li>
+          <button mat-icon-button [matMenuTriggerFor]="notificationMenu" class="nav-notification-icons"> <i
+              class="material-icons-outlined icon-color">
+              notifications_active
+            </i></button>
+          <mat-menu #notificationMenu="matMenu" class="nfc-menu">
+            <div class="nfc-header">
+              <h5 class="mb-0">Notitications</h5>
+              <a class="nfc-mark-as-read">Mark all as read</a>
+            </div>
+            <div class="nfc-dropdown">
+              <ng-scrollbar style="height: 350px" visibility="hover">
+                <div class="noti-list header-menu">
+                  <div class="menu">
+                    <div>
+                      @for (notification of notifications; track notification) {
+                      <button mat-menu-item onClick="return false;" [ngClass]="[notification.status]">
+                        <span class="table-img msg-user ">
+                          <i class="material-icons-outlined nfc-type-icon"
+                            [ngClass]="[notification.color]">{{notification.icon}}</i>
+                        </span>
+                        <span class="menu-info">
+                          <span class="menu-title">{{notification.message}}</span>
+                          <span class="menu-desc mt-2">
+                            <i class="material-icons">access_time</i> {{notification.time}}
+                          </span>
+                        </span>
+                        <span class="nfc-close">
+                          <app-feather-icons [icon]="'x'" [class]="'user-menu-icons'"></app-feather-icons>
+                        </span>
+                      </button>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </ng-scrollbar>
+            </div>
+            <div class="nfc-footer">
+              <a class="nfc-read-all">Read
+                All Notifications</a>
+            </div>
+          </mat-menu>
+        </li>
+        <!-- #END# Notifications-->
+        <li class="nav-item user_profile">
+          <button mat-button [routerLink]="'app/profile'">
+            <div class="chip1 dropdown-toggle1">
+              <span>{{userName}}</span>
+              <img src="{{userImg}}" class="user_img" width="32" height="32" alt="User">
+            </div>
+          </button>
+        </li>
+        <!-- #END# Tasks -->
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,7 @@
+{
+  "name": "codemerit",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,42 @@
+<div class="row">
+  @for (group of subjectTopics|async; track group) {
+  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
+    <mat-card class="example-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-subtitle>{{ group.title }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="font-121 m-t-0">{{ group.description }}</p>
+        <!-- <div class="patient-group-list">
+          <div class="ms-auto">
+            <div class="media-title text-muted mb-0 font-12">{{ group.numLessons }} Lessons</div>
+            <div class="media-title text-muted mb-0 font-12">{{ group.numQuestions }} Questions</div>
+          </div>
+        </div> -->
+
+        <!-- Coverage Progress -->
+        @if(group.coverage > 0){
+        <div class="mb-2">
+          <span class="progress-label">{{group.coverage >= 100 ? 'Completed' : 'Coverage'}}</span>
+          <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{ group.coverage
+            }}%</span>
+        </div>
+        <div class="progress skill-progress m-b-20 w-100">
+          <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="group.coverage + '%'"
+            role="progressbar" [attr.aria-valuenow]="group.coverage" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        }
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button class="icon-button" (click)="openTopicContent(group.slug)"><mat-icon>code</mat-icon> Take
+          Test</button>
+        <button mat-button class="icon-button" matTooltip="{{group.coverage <= 0 ? '' : (group.coverage>= 100
+          ? 'Revise' : 'Learn')}}" (click)="launchTopicExplorer(group.slug)">
+          <mat-icon>{{group.coverage <= 0 ? 'lock_outline' : (group.coverage>= 100
+            ? 'history' : 'play_arrow')}}</mat-icon> {{group.coverage <= 0 ? 'Start Now' : (group.coverage>= 100
+            ? 'Revise' : 'Learn')}}</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+  }
+</div>

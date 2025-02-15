@@ -1,0 +1,223 @@
+[
+    {
+        "title": "Angular",
+        "isSubscribed": true,
+        "learn_percentage": 20,
+        "practice_percentage": 12,
+        "description": "Framework for Frontend App Development",
+        "image": "assets/images/tech/angular.png",
+        "class": "progress-bar-success",
+        "labelClass": "label-success",
+        "indicators": [
+            {
+                "label": "Knowledge",
+                "percentage": 6
+            },
+            {
+                "label": "Achievements",
+                "percentage": 47
+            },
+            {
+                "label": "Expertise",
+                "percentage": 0
+            },
+            {
+                "label": "Advanced Knowledge",
+                "percentage": 0
+            }
+        ],
+        "popularTopics": [
+            {
+                "title": "Module Federation",
+                "votes": 3
+            },
+            {
+                "title": "Zoneless",
+                "votes": 32
+            },
+            {
+                "title": "Signals",
+                "votes": 18
+            },
+            {
+                "title": "Resource API",
+                "votes": 11
+            }
+        ],
+        "meritList": [
+            {
+                "name": "Kavya Reddy",
+                "imageUrl": "assets/images/users/user.jpg",
+                "rank": 1,
+                "points": 626,
+                "designation": "Frontend Engineer"
+            },
+            {
+                "name": "Robin Raina",
+                "imageUrl": "assets/images/users/user.jpg",
+                "rank": 2,
+                "points": 534,
+                "designation": "Software Engineer"
+            },
+            {
+                "name": "Shailesh Bhatt",
+                "imageUrl": "assets/images/users/user.jpg",
+                "rank": 3,
+                "points": 411,
+                "designation": "B.Tech Student"
+            }
+        ]
+    },
+    {
+        "title": "RxJS",
+        "isSubscribed": false,
+        "learn_percentage": 0,
+        "practice_percentage": 0,
+        "description": "Reactive Extensions of JavaScript",
+        "image": "assets/images/tech/rxjs.png",
+        "class": "progress-bar-warning",
+        "labelClass": "label-warning",
+        "popularTopics": [
+            { 
+                "title": "Subjects and Multicasting", 
+                "votes": 0 
+            },
+            { 
+                "title": "Schedulers and Concurrency", 
+                "votes": 0 
+            },
+            { 
+                "title": "Cold vs Hot Observables", 
+                "votes": 0 
+            },
+            { 
+                "title": "Error Handling in RxJS", 
+                "votes": 0 
+            },
+            { 
+                "title": "Creation Operators", 
+                "votes": 0 
+            },
+            { 
+                "title": "Higher Order Observables", 
+                "votes": 0 
+            },
+            { 
+                "title": "ReplaySubject",
+                "votes": 0 
+            },
+            { 
+                "title": "AsyncSubject", 
+                "votes": 0 
+            }
+        ]        
+    },
+    {
+        "title": "React",
+        "isSubscribed": false,
+        "learn_percentage": 0,
+        "practice_percentage": 0,
+        "description": "Library for Building User Interfaces",
+        "image": "assets/images/tech/react.png",
+        "class": "progress-bar-info",
+        "labelClass": "label-info"
+    },
+    {
+        "title": "Node.js",
+        "isSubscribed": false,
+        "learn_percentage": 50,
+        "practice_percentage": 45,
+        "description": "JavaScript Runtime Environment",
+        "image": "assets/images/tech/node.png",
+        "class": "progress-bar-primary",
+        "labelClass": "label-primary"
+    },
+    {
+        "title": "HTML",
+        "isSubscribed": false,
+        "learn_percentage": 60,
+        "practice_percentage": 55,
+        "description": "The Markup Language for Web",
+        "image": "assets/images/tech/html.png",
+        "class": "progress-bar-danger",
+        "labelClass": "label-danger"
+    },
+    {
+        "title": "CSS",
+        "isSubscribed": false,
+        "learn_percentage": 0,
+        "practice_percentage": 0,
+        "description": "The Style Language for Web",
+        "image": "assets/images/tech/css.png",
+        "class": "progress-bar-success",
+        "labelClass": "label-success"
+    },
+    {
+        "title": "JavaScript",
+        "isSubscribed": false,
+        "learn_percentage": 0,
+        "practice_percentage": 0,
+        "description": "Language for the Web",
+        "image": "assets/images/tech/javascript.png",
+        "class": "progress-bar-success",
+        "labelClass": "label-success"
+    },
+    {
+        "title": "TypeScript",
+        "isSubscribed": false,
+        "learn_percentage": 70,
+        "practice_percentage": 65,
+        "description": "Disciplined JavaScript for Large Apps",
+        "image": "assets/images/tech/ts.png",
+        "class": "progress-bar-success",
+        "labelClass": "label-success"
+    },
+    {
+        "title": "Ionic",
+        "isSubscribed": false,
+        "learn_percentage": 0,
+        "practice_percentage": 0,
+        "description": "Cross Platform App Framework",
+        "image": "assets/images/tech/ionic.png",
+        "class": "progress-bar-info",
+        "labelClass": "label-info",
+        "popularTopics": [
+            {
+                "title": "Ionic Storage",
+                "votes": 3
+            },
+            {
+                "title": "Ionic Components",
+                "votes": 32
+            },
+            {
+                "title": "Cordova",
+                "votes": 18
+            },
+            {
+                "title": "Capacitor",
+                "votes": 11
+            }
+        ]
+    },
+    {
+        "title": "Capacitor",
+        "isSubscribed": false,
+        "learn_percentage": 0,
+        "practice_percentage": 0,
+        "description": "JavaScript Runtime for Native Mobile Apps",
+        "image": "assets/images/tech/capacitor.png",
+        "class": "progress-bar-info",
+        "labelClass": "label-info"
+    },
+    {
+        "title": "Cypress",
+        "isSubscribed": false,
+        "learn_percentage": 0,
+        "practice_percentage": 0,
+        "description": "Modern Web Automation Testing Framework",
+        "image": "assets/images/tech/cypress.png",
+        "class": "progress-bar-info",
+        "labelClass": "label-info"
+    }
+]

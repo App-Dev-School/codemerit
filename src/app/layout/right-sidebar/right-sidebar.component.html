@@ -1,0 +1,22 @@
+<div class="settingSidebar" [ngClass]="isOpenSidebar ? 'showSettingPanel' : ''">
+  <a href="javascript:void(0)" class="settingPanelToggle" (click)="toggleRightSidebar()">
+    <app-feather-icons [icon]="'settings'" [class]="'setting-sidebar-icon'"></app-feather-icons>
+  </a>
+  <ng-scrollbar [style.height]="maxHeight + 'px'" visibility="hover">
+    <div class="settingSidebar-body ps-container ps-theme-default">
+      <div class="fade show active" style="background: greenyellow;">
+        <div class="setting-panel-header">Create a Quiz
+        </div>
+        <div class="rightSetting">
+          <!--- Create Form Here -->
+          
+        </div>
+      </div>
+    </div>
+  </ng-scrollbar>
+  <div class="mt-5 bottomstick">
+    <button mat-flat-button color="primary" class="auth-form-btn1" [disabled]="false" type="submit">
+      Generate Quiz
+    </button>
+  </div>
+</div>

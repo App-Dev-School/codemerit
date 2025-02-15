@@ -1,0 +1,14 @@
+.icon-button {
+    display: flex;
+    align-items: center;
+}
+
+.icon-button mat-icon {
+    margin-right: 4px!important;
+    height: auto !important;
+    //height: 28px!important;
+}
+
+::ng-deep .icon-button .mat-mdc-button>.mat-icon {
+    height: auto !important;
+}

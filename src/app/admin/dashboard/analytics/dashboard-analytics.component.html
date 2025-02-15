@@ -1,0 +1,73 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <!-- breadcrumb -->
+      <app-breadcrumb [title]="'My Dashboad'"></app-breadcrumb>
+    </div>
+    
+    <app-my-subjects></app-my-subjects>
+    <div class="row clearfix">
+      <!-- <app-info-box></app-info-box> -->
+
+      <app-code-snippet [code]="'test cde here'" [language]="'typescript'"></app-code-snippet>
+
+      <!-- Bar chart with line -->
+      @for(subject of subjects;track subject.id){
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+          <app-subject-card-widget [title]="subject.title" [topicsCount]="subject.topicsCount" [questionsCount]="subject.questionsCount" [lessonCount]="subject.lessonCount"
+          [progressPercentage]="subject.progressPercentage" progressColor="subject.progressColor">
+        </app-subject-card-widget>
+        </div>
+       }
+
+      <!-- <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+        <app-subject-card-widget [title]="'Signals API'" [topicsCount]="105" [questionsCount]="825" [monthCount]="lessonCount"
+        [progressPercentage]="74" progressColor="orange">
+      </app-subject-card-widget>
+
+      <app-subject-card-widget [title]="'TypeScript'" [topicsCount]="1247" [questionsCount]="22568"
+        [monthCount]="lessonCount" [progressPercentage]="70" progressColor="Olive">
+      </app-subject-card-widget>
+      </div> -->
+      <!-- line chart -->
+
+    </div>
+    <div class="row clearfix">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+        <app-chart-subscribers [title]="title" [subtitle]="subtitle"></app-chart-subscribers>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+        <app-chart-card3 [title]="title3" [subtitle]="subtitle3"></app-chart-card3>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+
+      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+        <mat-card>
+          <mat-card-header class="header-style">
+            <mat-card-title>Achievements</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-scrollbar style="height: 400px" visibility="hover">
+              <app-recent-comments [achievements]="achievements"></app-recent-comments>
+            </ng-scrollbar>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+        <mat-card>
+          <mat-card-header class="header-style">
+            <mat-card-title>Recent Activities</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-scrollbar style="height: 400px" visibility="hover">
+              <app-recent-activity [activities]="activities"></app-recent-activity>
+            </ng-scrollbar>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>

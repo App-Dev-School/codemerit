@@ -1,0 +1,29 @@
+<div class="plain-card">
+    <div class="card-inner">
+        <p class="tx-primary m-b-10 font-b-500">{{ title }}</p>
+        <div class="row">
+            <div class="col-4">
+                <label class="font-b-500 font-16">Topics</label>
+                <p>{{ topicsCount }}</p>
+            </div>
+            <div class="col-4">
+                <label class="font-b-500 font-16">Questions</label>
+                <p>{{ questionsCount }}</p>
+            </div>
+            <div class="col-4">
+                <label class="font-b-500 font-16">Lessons</label>
+                <p>{{ lessonCount }}</p>
+            </div>
+        </div>
+        <div class="progress shadow-style">
+            <div class="progress-bar" [style.width]="progressPercentage + '%'" [style.backgroundColor]="progressColor"
+                role="progressbar" [attr.aria-valuenow]="progressPercentage" aria-valuemin="0" aria-valuemax="100">
+                {{ progressPercentage }}%
+            </div>
+            <hr>
+
+            <div class="progress-bar width-per-75" role="progressbar" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100" style="height: 40px;">75%</div>
+        </div>
+    </div>
+</div>
