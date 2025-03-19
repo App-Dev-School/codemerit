@@ -32,6 +32,8 @@
               }
             ],
             "styles": [
+              "node_modules/survey-core/defaultV2.css",
+              "node_modules/survey-creator-core/survey-creator-core.min.css",
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/assets/scss/theme/all-themes.scss",
               "node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.min.css",

@@ -1,0 +1,38 @@
+{
+    "title": "Internship Application",
+    "description": "Fill up the form below to apply for Full Stack JavaScript Developer ",
+    "logoPosition": "right",
+    "pages": [
+      {
+        "name": "page1",
+        "elements": [
+          {
+            "type": "rating",
+            "name": "question1",
+            "title": "How would you rate yourself in HTML basics?"
+          },
+          {
+            "type": "rating",
+            "name": "question2",
+            "title": "How would you rate yourself in CSS basics?"
+          },
+          {
+            "type": "rating",
+            "name": "question3",
+            "title": "How would you rate yourself in JavaScript basics?"
+          }
+        ]
+      }
+    ],
+    "triggers": [
+      {
+        "type": "runexpression",
+        "expression": "{question1} = 1",
+        "setToName": "question1"
+      }
+    ],
+    "goNextPageAutomatic": true,
+    "allowCompleteSurveyAutomatic": false,
+    "questionsOnPageMode": "questionPerPage",
+    "widthMode": "responsive"
+  }

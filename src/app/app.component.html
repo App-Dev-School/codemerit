@@ -1,12 +1,18 @@
-<!-- Ng Working-->
+<!-- Ng Working
 <app-page-loader></app-page-loader>
-<router-outlet></router-outlet>
+<router-outlet></router-outlet> -->
+
+<!-- Ionic Working-->
+<ion-app>
+  <app-page-loader></app-page-loader>
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+</ion-app>
 
 <!-- <div *ngIf="isVisible" [@slideInOut]>
   <router-outlet></router-outlet>
 </div> -->
 
-<!--Animated Angular
+<!--Animated Angularno
 @if(isVisible){
   <div [@slideInOut]>
     <router-outlet></router-outlet>

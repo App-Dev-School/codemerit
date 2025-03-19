@@ -7,7 +7,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { TopicExplorerComponent } from 'src/app/pages/topic-explorer/topic-explorer/topic-explorer.component';
 @Component({
@@ -31,22 +31,24 @@ import { TopicExplorerComponent } from 'src/app/pages/topic-explorer/topic-explo
 export class TopicsListComponent {
   @Input() subjectTopics: Observable<any[]>;
 
-  constructor(public router: Router, public modalController: ModalController) {
+  constructor(public router: Router, private navCtrl: NavController) {
 
   }
 
   //unused
   async openTopicContent(slug:string) {
-    const modal = await this.modalController.create({
-      component: TopicExplorerComponent,
-      cssClass: 'full-screen-modal',
-      backdropDismiss: false,
-      componentProps: {
-        title: 'Full Screen Modal',
-        content: slug
-      }
-    });
-    return await modal.present();
+    // const modal = await this.modalController.create({
+    //   component: TopicExplorerComponent,
+    //   cssClass: 'full-screen-modal',
+    //   backdropDismiss: false,
+    //   componentProps: {
+    //     title: 'Full Screen Modal',
+    //     content: slug
+    //   }
+    // });
+    // return await modal.present();
+    //this.router.navigate(["quiz/start/javascript"]);
+    this.navCtrl.navigateRoot(['./quiz/start/javascript']);
   }
 
   async launchTopicExplorer(slug:string) {

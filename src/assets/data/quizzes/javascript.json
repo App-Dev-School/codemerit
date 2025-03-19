@@ -1,0 +1,73 @@
+{
+  "title": "JavaScript Test for Absolute Beginners",
+  "showProgressBar": "bottom",
+  "showTimer": true,
+  "timeLimitPerPage": 20,
+  "timeLimit": 100,
+  "firstPageIsStarted": true,
+  "startSurveyText": "Start Quiz",
+  "interactive": false,
+  "pages": [
+    {
+      "elements": [{
+        "type": "html",
+        "html": "You are about to start a quiz on JavaScript . <br>You will have 10 seconds for every question and 100 seconds to end the quiz.<br>Clck <b>Start Quiz</b> to begin."
+      }]
+    },
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "js1",
+          "title": "DOM in Browser stands for?",
+          "choices": [
+            "Data Object Modelling",
+            "Data Organisation & Management",
+            "Document Object Model",
+            "Document Object Management"
+          ],
+          "correctAnswer": "Document Object Model"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "js2",
+          "title": "Which of the following is not used to declare variables?",
+          "choicesOrder": "random",
+          "choices": [
+            "declare",
+            "var",
+            "let",
+            "const"
+          ],
+          "correctAnswer": "declare"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "magnacarta",
+          "title": "What is Hoisting?",
+          "choicesOrder": "random",
+          "choices": [
+            "Default Behaviour of JavaScript",
+            "Feature added in ES6"
+          ],
+          "correctAnswer": "Default Behaviour of JavaScript"
+        }
+      ]
+    }
+  ],
+  "completedHtmlOnCondition": [{
+    "expression": "{correctAnswers} == 0",
+    "html": "<h4>Unfortunately, none of your answers are correct. Go and get started with javascript.</h4>"
+  }, {
+    "expression": "{correctAnswers} == {questionCount}",
+    "html": "<h4>Congratulations! You answered all the questions correctly!</h4>"
+  }]
+}

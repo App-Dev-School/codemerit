@@ -116,6 +116,49 @@
     },
     {
       "path": "",
+      "title": "Take Quiz",
+      "iconType": "material-icons-outlined",
+      "icon": "extension",
+      "class": "menu-toggle",
+      "groupTitle": false,
+      "badge": "Mock",
+      "badgeClass": "badge bg-blue sidebar-badge float-end",
+      "role": [
+        "User", "Admin"
+      ],
+      "submenu": [
+        {
+          "path": "/quiz/take/javascript",
+          "title": "Javascript Quiz",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/quiz/take/css",
+          "title": "CSS Quiz",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        }
+      ]
+    },
+    {
+      "path": "",
       "title": "Formkit UI",
       "iconType": "material-icons-outlined",
       "icon": "dvr",

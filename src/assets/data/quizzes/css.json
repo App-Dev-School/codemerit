@@ -1,0 +1,146 @@
+{
+    "title": "Basic Web Developer Test",
+    "description": "Take 2 minutes to answer these 5 simple objective questions that tests your web development skills.",
+    "logoPosition": "right",
+    "pages": [
+      {
+        "name": "page1",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question1",
+            "title": "Which of these is not a HTTP method?",
+            "correctAnswer": "Item 4",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "GET"
+              },
+              {
+                "value": "Item 2",
+                "text": "PUT"
+              },
+              {
+                "value": "Item 3",
+                "text": "POST"
+              },
+              {
+                "value": "Item 4",
+                "text": "CALL"
+              }
+            ]
+          },
+          {
+            "type": "radiogroup",
+            "name": "question2",
+            "title": "Rest APIs usually return data in _____ format.",
+            "correctAnswer": "Item 2",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Text"
+              },
+              {
+                "value": "Item 2",
+                "text": "JSON"
+              },
+              {
+                "value": "Item 3",
+                "text": "executable"
+              },
+              {
+                "value": "Item 4",
+                "text": "XML"
+              }
+            ]
+          },
+          {
+            "type": "radiogroup",
+            "name": "question3",
+            "title": "Where can you check the javascript logs in Browser Dev Tool?",
+            "correctAnswer": "Item 1",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Console"
+              },
+              {
+                "value": "Item 2",
+                "text": "Network"
+              },
+              {
+                "value": "Item 3",
+                "text": "Elements"
+              },
+              {
+                "value": "Item 4",
+                "text": "Logcat"
+              },
+              {
+                "value": "Item 5",
+                "text": "Sources"
+              }
+            ]
+          },
+          {
+            "type": "radiogroup",
+            "name": "question4",
+            "title": "Which tab do you use to debug a JavaScript application in Browser Dev Tool?",
+            "correctAnswer": "Item 1",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Sources"
+              },
+              {
+                "value": "Item 2",
+                "text": "Console"
+              },
+              {
+                "value": "Item 3",
+                "text": "Elements"
+              },
+              {
+                "value": "Item 4",
+                "text": "Network"
+              },
+              {
+                "value": "Item 5",
+                "text": "Application"
+              }
+            ],
+            "choicesOrder": "random"
+          },
+          {
+            "type": "radiogroup",
+            "name": "question5",
+            "title": "Which of these have shortest life span on client side?",
+            "correctAnswer": "Item 3",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Local Storage"
+              },
+              {
+                "value": "Item 2",
+                "text": "SQLite"
+              },
+              {
+                "value": "Item 3",
+                "text": "Session Storage"
+              },
+              {
+                "value": "Item 4",
+                "text": "Indexed DB"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

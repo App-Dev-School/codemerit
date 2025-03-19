@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Event, NavigationEnd, NavigationStart, Router, RouterModule } from '@angular/router';
 import { PageLoaderComponent } from './layout/page-loader/page-loader.component';
-import { IonFab, IonFabButton, IonicModule, IonIcon, ModalController } from '@ionic/angular';
+import { IonFab, IonFabButton, IonicModule, ModalController } from '@ionic/angular';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',

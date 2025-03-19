@@ -10,6 +10,25 @@
  */
 
 /* Core CSS required for Ionic components to work properly */
+
+:root {
+  --primary: #80d8ff;
+  --secondary: #88e68b;
+  --bg-color: #833cf6;
+  --bg-color-secondary: #461597;
+  --profile-bg: #ffd471;
+  --bg-white: #fff;
+  --transparent: rgba(0, 0, 0, 0);
+  --text-dark: #3c3c3d;
+  --text-light: #c8c8cf;
+  --text-light2: #acafaf;
+  --text-white: #fff;
+  --text-black: #000;
+  --border-line-color: #eaeaf1;
+  --input-bg: #fcfcfc;
+  --item-bg: #eff7fb;
+}
+
 @import "@ionic/angular/css/core.css";
 
 /* Basic CSS for apps built with Ionic */
