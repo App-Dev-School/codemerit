@@ -1,0 +1,49 @@
+{
+    "title": "Angular 16 to 19 Awareness Test",
+    "description": "Angular has evolved many times in terms of developer experience",
+    "subject": "Angular",
+    "subject_icon": "assets/images/tech/angular.png",
+    "topics": "Angular 16, Angular 17, Angular 18, Angular 19",
+    "class": "progress-bar-success",
+    "questions": [
+        {
+            "id": 1,
+            "title": "What is Zone.js?",
+            "choices": [
+                "A JavaScript Library",
+                "Module Bundler",
+                "Compiler Tool",
+                "Angular Builder"
+            ],
+            "correctAnswer": "A JavaScript Library",
+            "hint": "Zone.js is a library that is used by Angular to detect changes in components.",
+            "hasAnswered": false
+        },
+        {
+            "id": 2,
+            "title": "Which is not a feature introduced in Angular 17?",
+            "choices": [
+                "Enhanced Server Side Rendering",
+                "Declrative Control Flow",
+                "Deferrable Views",
+                "Ivy Rendering Engine"
+            ],
+            "correctAnswer": "Ivy Rendering Engine",
+            "hint": "Ivy Rendering Engine was added to Angular 9.",
+            "hasAnswered": false
+        },
+        {
+            "id": 3,
+            "title": "What is OnPush?",
+            "choices": [
+                "A Directive",
+                "A Change Detection Strategy",
+                "Inbuilt Service",
+                "Angular Navigation Strategy"
+            ],
+            "correctAnswer": "A Change Detection Strategy",
+            "hint": "Zone.js is a library that is used by Angular to detect changes in components.",
+            "hasAnswered": false
+        }
+    ]
+}

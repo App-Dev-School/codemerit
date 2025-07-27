@@ -1,323 +1,113 @@
-    
+@if(quiz && quiz.title){
+<ion-header>
     <ion-toolbar>
         <ion-buttons mode="md" slot="start">
-            <ion-back-button text="" mode="md" icon=""></ion-back-button>
+            <img [src]="quiz.subject_icon" class="subjectIcon">&nbsp;
+            <ion-text class="quizTitle">{{quiz.title}}</ion-text>
         </ion-buttons>
         <ion-title>
             <div class="title_inner d-flex">
-                <strong>02 of 10</strong>
-                <span class="end">
-                  <img src="assets/images/tech/angular.png">&nbsp;
-                  <cd-timer [countdown]="true" [startTime]="240" format="ms"></cd-timer>
-              </span>
+                <strong>{{currentQuestionId}} of 10</strong>
             </div>
         </ion-title>
+
+        <ion-buttons slot="end">
+            <span class="end">
+                <img src="assets/images/icons/ic_watch.png">&nbsp;
+                <cd-timer [countdown]="true" [startTime]="240" format="ms"></cd-timer>
+            </span>
+        </ion-buttons>
     </ion-toolbar>
+</ion-header>
+}
 
-            <!-- Show Categories if no quiz selected -->
-             @if (segment==1) {
-            <div class="item-row">
-            <ion-row>
-                <ion-col size="4" class="animate__animated animate__zoomIn">
-                    <div class="item" (click)="openQuizCategory()" style="background: #88e68b;  color:#88e68b;">
-                        <h3>Sports</h3>
-                        <div class="img_box">
-                            <img src="assets/images/tech/angular.png">
-                        </div>
-                    </div>
-                </ion-col>
-                <ion-col size="4" class="animate__animated animate__zoomIn">
-                    <div class="item" (click)="openQuizCategory()" style="background: #ffce85; color:#ffce85;">
-                        <h3>Space</h3>
-                        <div class="img_box">
-                            <img src="assets/images/tech/angular.png">
-                        </div>
-                    </div>
-                </ion-col>
-                <ion-col size="4" class="animate__animated animate__zoomIn">
-                    <div class="item" (click)="openQuizCategory()" style="background: #88e68b;  color:#88e68b;">
-                        <h3>Sports</h3>
-                        <div class="img_box">
-                            <img src="assets/images/tech/ts.png">
-                        </div>
-                    </div>
-                </ion-col>
-        
-                <ion-col size="4" class="animate__animated animate__zoomIn">
-                    <div class="item" (click)="openQuizCategory()" style="background: #feb3f2;  color:#feb3f2;">
-                        <h3>Maths</h3>
-                        <div class="img_box">
-                            <img src="assets/images/tech/rxjs.png">
-                        </div>
-                    </div>
-                </ion-col>
-        
-                <ion-col size="4" class="animate__animated animate__zoomIn">
-                    <div class="item" (click)="openQuizCategory()" style="background: #aae5ff;  color:#aae5ff;">
-                        <h3>History</h3>
-                        <div class="img_box">
-                            <img src="assets/images/tech/html.png">
-                        </div>
-                    </div>
-                </ion-col>
-        
-                <ion-col size="4" class="animate__animated animate__zoomIn">
-                    <div class="item" (click)="openQuizCategory()" style="background: #feb3f2;  color:#feb3f2;">
-                        <h3>Maths</h3>
-                        <div class="img_box">
-                            <img src="assets/images/tech/css.png">
-                        </div>
-                    </div>
-                </ion-col>
-        
-            </ion-row>
-        </div>
-             }
-             <!-- End of Quiz Categories -->
-        
-            <div class="content-bg"> </div>
-        
-            <div class="sliderBox">
-                <!-- Start Sample Question -->
-                <ion-card>
-                    <h3>General knowledge</h3>
-                    <p>
-                        Roald Amundsen Was the first man to reach the South Pole, but where was he from?
-                    </p>
-                    <div class="form">
-                        <ion-list lines="none">
-                            <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer1 ? 'wrongAnswer' : '' " (click)="wrong_answer1()">
-                                <div class="item_inner">
-                                    <div class="input_box d-flex">
-                                        <h3>France</h3>
-                                        <div class="icon_box end">
-                                            <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                            <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                        </div>
-                                    </div>
-                                </div>
-                            </ion-item>
-                            <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="rightAnswer1 ? 'rightAnswer' : '' " (click)="right_answer1()">
-                                <div class="item_inner">
-                                    <div class="input_box d-flex">
-                                        <h3>Norway</h3>
-                                        <div class="icon_box end">
-                                            <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                            <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                        </div>
-                                    </div>
-                                </div>
-                            </ion-item>
-                            <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer2 ? 'wrongAnswer' : '' " (click)="wrong_answer2()">
-                                <div class="item_inner">
-                                    <div class="input_box d-flex">
-                                        <h3>Netherland</h3>
-                                        <div class="icon_box end">
-                                            <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                            <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                        </div>
-                                    </div>
-                                </div>
-                            </ion-item>
-                            <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer3 ? 'wrongAnswer' : '' " (click)="wrong_answer3()">
-                                <div class="item_inner">
-                                    <div class="input_box d-flex">
-                                        <h3>Itali</h3>
-                                        <div class="icon_box end">
-                                            <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                            <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                        </div>
-                                    </div>
-                                </div>
-                            </ion-item>
-                        </ion-list>
-                    </div>
-                </ion-card>
-                <!-- End Sample Question -->
-                <!-- <ion-slides pager="true" [options]="slideOptions" #slideWithNav (ionSlideDidChange)="SlideDidChange(sliderOne,slideWithNav)">
-                    <ion-slide>
-                        <ion-card>
-                            <h3>General knowledge</h3>
-                            <p>
-                                Roald Amundsen Was the first man to reach the South Pole, but where was he from?
-                            </p>
-                            <div class="form">
-                                <ion-list lines="none">
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer1 ? 'wrongAnswer' : '' " (click)="wrong_answer1()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>France</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="rightAnswer1 ? 'rightAnswer' : '' " (click)="right_answer1()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Norway</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer2 ? 'wrongAnswer' : '' " (click)="wrong_answer2()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Netherland</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer3 ? 'wrongAnswer' : '' " (click)="wrong_answer3()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Itali</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                </ion-list>
-                            </div>
-                        </ion-card>
-                    </ion-slide>
-        
-                    <ion-slide>
-                        <ion-card>
-                            <h3>General knowledge</h3>
-                            <p>
-                                Who among the following does not have the record of playing the most world cups?
-                            </p>
-                            <div class="form">
-                                <ion-list lines="none">
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer4 ? 'wrongAnswer' : '' " (click)="wrong_answer4()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Antonio Carbajal</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer5 ? 'wrongAnswer' : '' " (click)="wrong_answer5()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Latonio Carbajal</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="rightAnswer2 ? 'rightAnswer' : '' " (click)="right_answer2()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Franz Beckenbauer</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-        
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer6 ? 'wrongAnswer' : '' " (click)="wrong_answer6()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Rafal Marquez</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                </ion-list>
-                            </div>
-                        </ion-card>
-                    </ion-slide>
-        
-                    <ion-slide>
-                        <ion-card>
-                            <h3>General knowledge</h3>
-                            <p>
-                                Which county did Ravi Shastri play for?
-                            </p>
-                            <div class="form">
-                                <ion-list lines="none">
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer7 ? 'wrongAnswer' : '' " (click)="wrong_answer7()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Lancashire</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer8 ? 'wrongAnswer' : '' " (click)="wrong_answer8()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Gloucestershire</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="wrongAnswer9 ? 'wrongAnswer' : '' " (click)="wrong_answer9()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Leicestershire</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-        
-                                    <ion-item lines="none" class="animate__animated animate__fadeInUp" [ngClass]="rightAnswer3 ? 'rightAnswer' : '' " (click)="right_answer3()">
-                                        <div class="item_inner">
-                                            <div class="input_box d-flex">
-                                                <h3>Glamorgan</h3>
-                                                <div class="icon_box end">
-                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
-                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ion-item>
-                                </ion-list>
-                            </div>
-                        </ion-card>
-                    </ion-slide>
-                </ion-slides> -->
-            </div>
-        
-            <ion-button mode="md" fill="solid" shape="block" class="btn nextButton btn-secondary animate__animated animate__fadeInUp" (click)="slideNext(sliderOne,slideWithNav)">
-                {{'next'}}
-            </ion-button>
-            <ion-button mode="md" fill="solid" shape="block" class="btn finishButton btn-secondary animate__animated animate__fadeInUp" (click)="quizSummery()">
-                {{'finish'}}
-            </ion-button>
+@if (questions && questions.length > 0) {
+<ion-content>
 
-            <hr>
-            <ion-button mode="md" fill="solid" shape="block" class="btn finishButton btn-secondary animate__animated animate__fadeInUp" (click)="goToDashbpard()">
-                MAIN ACTIVITY
-            </ion-button>
+    <div class="content-bg"> </div>
+
+    <div class="sliderBox">
+        <swiper-container #swiperEx initial-slide="0" (slidechange)="swiperSlideChanged($event)">
+            @for (question of questions; track question.id) {
+            <swiper-slide>
+                <div class="ion-slides">
+                    <div class="ion-slide">
+                        <h3>{{question.title}}</h3>
+                        <!-- Start Sample Question -->
+                        <ion-card>
+                            <h3>{{question.title}}</h3>
+                            <!-- <p>
+                                {{quiz.topics}}
+                            </p> -->
+                            <div class="form">
+                                <ion-list lines="none">
+                                    
+                                    <!-- @for (choice of question.choices; track choice) {
+                                    <ion-item lines="none" class="animate__animated animate__fadeInUp"
+                                        [ngClass]="(choice == question.correctAnswer) ? 'rightAnswer' : 'wrongAnswer' " (click)="wrong_answer1()">
+                                        <div class="item_inner">
+                                            <div class="input_box d-flex">
+                                                <h3>{{choice}}</h3>
+                                                <div class="icon_box end">
+                                                    <img src="assets/images/icons/ic_correct.png" class="right_icon">
+                                                    <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ion-item>
+                                    } -->
+
+                                    @for (choice of question.choices; track choice) {
+                                        <ion-item lines="none" class="animate__animated animate__fadeInUp selected"
+                                        [ngClass]="{
+                                            'rightAnswer': selectedChoice === choice && choice === question.correctAnswer,
+                                            'wrongAnswer': selectedChoice === choice && choice !== question.correctAnswer,
+                                            'selected': selectedChoice === choice
+                                          }" [disabled]="question.hasAnswered" (click)="optionSelected(choice, question)">
+                                            <div class="item_inner">
+                                                <div class="input_box d-flex">
+                                                    <h3>{{choice}}</h3>
+                                                    <div class="icon_box end">
+                                     @if (selectedChoice === choice && choice === question.correctAnswer) {
+                                        <img src="assets/images/icons/ic_correct.png" class="right_icon">
+                                     }
+                                     @if (selectedChoice === choice && choice !== question.correctAnswer) {
+                                        <img src="assets/images/icons/ic_wrong.png" class="wrong_icon">
+                                     }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ion-item>
+                                        }
+
+                                </ion-list>
+                            </div>
+                        </ion-card>
+                    </div>
+                    <!-- End Sample Question -->
+                </div>
+            </swiper-slide>
+            }
+        </swiper-container>
+    </div>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-row class="ion-text-center">
+            <ion-col size="6">
+                <!-- <ion-button expand="block" class="custom-button">Button 1</ion-button> -->
+                <ion-button mode="md" size="large" [disabled]="currentQuestionId >= 0" fill="solid" shape="block"
+                    class="button prevButton btn-secondary" (click)="onSlidePrev()">
+                    {{'PREVIOUS'}}
+                </ion-button>
+            </ion-col>
+            <ion-col size="6">
+                <ion-button mode="md" size="large" fill="solid" shape="block" class="button nextButton btn-secondary"
+                    (click)="onSlideNext()">
+                    {{ currentQuestionId == questions.length -1 ? 'Complete' : 'NEXT'}}
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-toolbar>
+</ion-footer>
+}

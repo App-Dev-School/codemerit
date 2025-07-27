@@ -7,12 +7,13 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { ModalController, NavController } from '@ionic/angular';
+import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { TopicExplorerComponent } from 'src/app/pages/topic-explorer/topic-explorer/topic-explorer.component';
 @Component({
   selector: 'app-topics-list',
   imports: [
+    IonicModule,
     NgClass,
     AsyncPipe,
     MatCard,
@@ -47,11 +48,13 @@ export class TopicsListComponent {
     //   }
     // });
     // return await modal.present();
-    //this.router.navigate(["quiz/start/javascript"]);
-    this.navCtrl.navigateRoot(['./quiz/start/javascript']);
+    this.router.navigate(["quiz/start/javascript"]);
+    //this.navCtrl.navigateRoot(['./quiz/start/javascript']);
   }
 
   async launchTopicExplorer(slug:string) {
-    this.router.navigate(["topics/explore/rxjs"]);
+    this.router.navigate(["learn/topic/angular17"]);
+    //this.navCtrl.navigateForward(['./learn/topic/angular17']);
+    //this.navCtrl.navigateRoot(['./learn/topic/angular17']);
   }
 }

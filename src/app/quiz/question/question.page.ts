@@ -1,52 +1,66 @@
 import { NgClass } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { NavController } from '@ionic/angular'; 
 import { CdTimerModule } from 'angular-cd-timer';
 import { CountdownModule } from 'ngx-countdown';
-//import { IonHeader } from '@ionic/angular/standalone';
-import Swiper from 'swiper';
-// import Swiper styles
-//import 'swiper/css';
+import { register } from 'swiper/element/bundle';
+import { Swiper } from 'swiper';
+import { SwiperOptions } from 'swiper/types';
+import { HttpClient } from '@angular/common/http';
+import { Question } from '@core/models/question';
+import { Quiz } from '@core/models/quiz';
 
 @Component({
   selector: 'app-question',
   templateUrl: './question.page.html',
-  styleUrls: ['./question.page.scss'],
+  styleUrls: ['./question.page.scss', './swiper.scss'],
   standalone: true,
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA],
   imports: [
-    //RouterModule,
+    RouterModule,
     IonicModule,
-    //IonSlides,
     NgClass,
     CdTimerModule, 
     CountdownModule,
     ]
 })
-export class QuestionPage implements OnInit {
-  segment = 0;
+export class QuestionPage implements OnInit, AfterViewInit {
+  currentQuestionId = 0;
 
   sliderOne: any;
   viewType!: string;
   counter = 0;
-  wrongAnswer1!: boolean;
-  wrongAnswer2!: boolean;
-  wrongAnswer3!: boolean;
-  wrongAnswer4!: boolean;
-  wrongAnswer5!: boolean;
-  wrongAnswer6!: boolean;
-  wrongAnswer7!: boolean;
-  wrongAnswer8!: boolean;
-  wrongAnswer9!: boolean; 
+  // wrongAnswer1!: boolean;
+  // wrongAnswer2!: boolean;
+  // wrongAnswer3!: boolean;
+  // wrongAnswer4!: boolean;
+  // wrongAnswer5!: boolean;
+  // wrongAnswer6!: boolean;
+  // wrongAnswer7!: boolean;
+  // wrongAnswer8!: boolean;
+  // wrongAnswer9!: boolean; 
 
-  rightAnswer1!: boolean;
-  rightAnswer2!: boolean;
-  rightAnswer3!: boolean;
+  // rightAnswer1!: boolean;
+  // rightAnswer2!: boolean;
+  // rightAnswer3!: boolean;
+  selectedChoice: string;
+  qcode :any;
+  quiz: Quiz;
+  questions :Question[];
 
   //@ViewChild('slideWithNav', { static: false }) slideWithNav!: IonSlides;
-  slideWithNav:any;
-  constructor(private navCtrl: NavController, private router: Router) { 
+   swiperParams: SwiperOptions = {
+    slidesPerView: 2,
+    spaceBetween: 50,
+    navigation: true
+  };
+
+  swiper?: Swiper;
+  @ViewChild("swiperEx") swiperEx ?: ElementRef<{ swiper: Swiper }>
+  //slideWithNav:any;
+  constructor(private http: HttpClient, private navCtrl: NavController, private router: Router, private route: ActivatedRoute) { 
     this.sliderOne =
     {
       isBeginningSlide: true,
@@ -56,9 +70,11 @@ export class QuestionPage implements OnInit {
   }
 
   ngOnInit() {
- 
+    this.takeRouteParams();
+    register();
   }
-  slideOptions = { 
+
+  slideOptions = {
     effect:'cards',
     grabCursor:'true', 
     slidesPerView: '1.2', 
@@ -79,16 +95,16 @@ export class QuestionPage implements OnInit {
   };
 
   //Move to Next slide
-  slideNext(object: any, slideView: { slideNext: (arg0: number) => Promise<any>; }) {
-    slideView.slideNext(500).then(() => {
-      this.checkIfNavDisabled(object, slideView,);
-    });
+  slideNext(object: any) {
+    // slideView.slideNext(500).then(() => {
+    //   this.checkIfNavDisabled(object, slideView,);
+    // });
   }
  
   //Method called when slide is changed by drag or navigation
   SlideDidChange(object: any, slideView: any) {
     this.checkIfNavDisabled(object, slideView);
-    console.log(object, slideView)
+    console.log("CodeMeritIonQuiz SlideDidChange", object, slideView)
   }
 
   //Call methods to check if slide is first or last to enable disbale navigation  
@@ -114,65 +130,25 @@ export class QuestionPage implements OnInit {
   }
 
   reset() {
-    this.wrongAnswer1 = false;
-    this.wrongAnswer2 = false;
-    this.wrongAnswer3 = false;
-    this.wrongAnswer4 = false;
-    this.wrongAnswer5 = false;
-    this.wrongAnswer6 = false;
-    this.wrongAnswer7 = false;
-    this.wrongAnswer8 = false;
-    this.wrongAnswer9 = false;
+    // this.wrongAnswer1 = false;
+    // this.wrongAnswer2 = false;
+    // this.wrongAnswer3 = false;
+    // this.wrongAnswer4 = false;
+    // this.wrongAnswer5 = false;
+    // this.wrongAnswer6 = false;
+    // this.wrongAnswer7 = false;
+    // this.wrongAnswer8 = false;
+    // this.wrongAnswer9 = false;
   }
 
-  wrong_answer1() {
+  optionSelected(option: string, question: Question) {
     // this.reset();
-    this.wrongAnswer1 = !this.wrongAnswer1; 
-  }
-  wrong_answer2() {
-    this.reset();
-    this.wrongAnswer2 = !this.wrongAnswer2;
-  }
-  wrong_answer3() {
-    this.reset();
-    this.wrongAnswer3 = !this.wrongAnswer3;
-  }
-  wrong_answer4() {
-    this.reset();
-    this.wrongAnswer4 = !this.wrongAnswer4;
-  }
-  wrong_answer5() {
-    this.reset();
-    this.wrongAnswer5 = !this.wrongAnswer5;
-  }
-  wrong_answer6() {
-    this.reset();
-    this.wrongAnswer6 = !this.wrongAnswer6;
-  }
-  wrong_answer7() {
-    this.reset();
-    this.wrongAnswer7 = !this.wrongAnswer7;
-  }
-  wrong_answer8() {
-    this.reset();
-    this.wrongAnswer8 = !this.wrongAnswer8;
-  }
-  wrong_answer9() {
-    this.reset();
-    this.wrongAnswer9 = !this.wrongAnswer9;
-  }
-
-  right_answer1() {
-    this.reset();
-    this.rightAnswer1 = !this.rightAnswer1;
-  }
-  right_answer2() {
-    this.reset();
-    this.rightAnswer2 = !this.rightAnswer2;
-  }
-  right_answer3() {
-    this.reset();
-    this.rightAnswer3 = !this.rightAnswer3;
+    //this.wrongAnswer1 = !this.wrongAnswer1;
+    if(!question.hasAnswered){
+      this.selectedChoice = option;
+      question.hasAnswered = true;
+      //change the reference
+    }
   }
 
   quizSummery() {  
@@ -184,12 +160,82 @@ export class QuestionPage implements OnInit {
   }
 
   openQuizCategory() {
-    this.navCtrl.navigateForward(['./contests'], { queryParams: { segment: 1 } });
+    this.navCtrl.navigateForward(['./contests'], { queryParams: { currentQuestionId: 1 } });
   }
 
   goToDashbpard(){
     //this.router.navigate(['/dashboard']);
-    this.navCtrl.navigateRoot(['./dashboard']);
+    //No Ionics NavCtrl
+    //this.navCtrl.navigateRoot(['./dashboard']);
+    this.router.navigate(['/dashboard']);
   }
 
+
+  //
+  onSlideChange() {
+    console.log(this.swiper.activeIndex);
+  }
+
+  swiperSlideChanged(e: any) {
+    console.log('swiperSlideChanged 1 changed: ', e);
+    console.log('swiperSlideChanged 2: ', this.swiper.activeIndex);
+  }
+
+  
+  onSlidePrev()
+  {
+    this.swiperEx?.nativeElement.swiper.slidePrev(1000)
+  }
+  onSlideNext()
+  {
+    if(this.currentQuestionId >= this.questions.length -1){
+      this.router.navigate(['/dashboard/learn/angular']);
+      }else{
+      this.swiperEx?.nativeElement.swiper.slideNext(1000);
+      this.currentQuestionId = this.swiperEx?.nativeElement.swiper.activeIndex;
+      }
+    console.log("CodeMeritIonQuiz fetchQuiz", this.quiz, this.questions)
+  }
+
+  swiperReady() {
+    console.log('swiperReady: ');
+    //this.swiper = this.swiperEx?.nativeElement.swiper;
+    this.swiper = new Swiper('#swiperEx', this.swiperParams);
+    console.log('swiperReady: ', this.swiper);
+  }
+
+  ngAfterViewInit(): void {
+    this.swiperReady();
+  }
+
+
+  /* */
+  takeRouteParams(){
+    /********** CHECK ROUTE PARAM REQUESTS ***********/
+    this.route.paramMap.subscribe(params => {
+      if(params.get("qcode")){
+      this.qcode = params.get("qcode");
+      console.log("this.qcode => "+this.qcode);
+      // if(this.user_name != this.authData.user_name){
+      //   this.selfView = false;
+      //  }
+      this.fetchQuiz();
+     }
+    });
+    /********* CHECK ROUTE PARAM REQUESTS ***********/
+  }
+
+  fetchQuiz(){
+    //const quizName = this.qcode;
+    const quizName = 'quiz-angular';
+    let quizResponse = this.http.get("./assets/data/quizzes/"+quizName+".json");
+    quizResponse.subscribe((quiz:Quiz) => {
+    if(quiz){
+      this.quiz = quiz;
+      this.questions = this.quiz.questions;
+    }
+    console.log("CodeMeritIonQuiz fetchQuiz", this.quiz, this.questions)
+    });
+  }
+  
 }

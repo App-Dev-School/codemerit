@@ -7,7 +7,7 @@ ion-header ion-toolbar {
             position: relative;
             min-height: 70px;
             strong {
-                position: absolute;
+                //position: absolute;
                 top: 0;
                 left: 0;
                 right: 0;
@@ -79,36 +79,27 @@ ion-content {
 
 .sliderBox {
     position: relative;
-    // &::after {
-    //     content: '';
-    //     position: absolute;
-    //     top: 0;
-    //     left: 0;
-    //     width: 100%;
-    //     height: 100%;
-    //     z-index: 999;
-    // }
 }
 
-ion-slides {
+.ion-slides {
     padding-top: 60px;
     padding-bottom: 30px;
     position: relative;
     width: 100%;
     z-index: 99;
-    ion-slide {
+    .ion-slide {
         display: block;
         overflow: hidden;
         overflow-y: auto;
         text-align: initial;
-        background: var(--bg-white);
+        //background: var(--bg-white);
         border-radius: 20px;
         padding: 20px 20px;
         transform: scale(0.9);
         transition: all 0.5s;
         opacity: .7;
         ion-card {
-            background: var(--bg-white) !important;
+            //background: var(--bg-white) !important;
             border-radius: 0;
             box-shadow: none;
             width: 100%;
@@ -117,10 +108,10 @@ ion-slides {
             margin: 0;
             h3 {
                 margin: 0;
-                color: var(--text-light);
-                font-weight: 400;
-                font-size: .95rem;
-                padding-bottom: 7px;
+                color: var(--text-dark);
+                font-weight: 600;
+                font-size: 1.8rem;
+                margin-bottom: 10px;
             }
             p {
                 margin: 0;
@@ -141,6 +132,7 @@ ion-slides {
                         --min-height: unset !important;
                         min-height: unset !important;
                         margin-bottom: 20px;
+                        --ion-item-background: #ddd;
                         .item_inner {
                             .input_box {
                                 background: none;
@@ -148,16 +140,19 @@ ion-slides {
                                 border-radius: 18px;
                                 min-height: 60px;
                                 h3 {
-                                    padding: 0;
-                                    color: var(--text-dark);
-                                    font-weight: 600;
-                                    font-size: 0.95rem;
+                                    padding: 1px;
+                                    //color: var(--text-dark);
+                                    color: #3c3c3d;
+                                    font-weight: 500;
+                                    font-size: 1.2rem;
+                                    margin-top: 8px;
                                 }
                                 .icon_box {
                                     display: block;
-                                    min-width: 20px;
-                                    min-height: 20px;
+                                    min-width: 28px;
+                                    min-height: 28px;
                                     position: relative;
+                                    margin-left:16px;
                                     img {
                                         position: absolute;
                                         top: 0;
@@ -197,8 +192,8 @@ ion-slides {
                                     .icon_box {
                                         img {
                                             &.wrong_icon {
-                                                width: 20px;
-                                                height: 20px;
+                                                width: 28px;
+                                                height: 28px;
                                             }
                                         }
                                     }
@@ -217,8 +212,8 @@ ion-slides {
                                     .icon_box {
                                         img {
                                             &.right_icon {
-                                                width: 20px;
-                                                height: 20px;
+                                                width: 28px;
+                                                height: 28px;
                                             }
                                         }
                                     }
@@ -226,6 +221,18 @@ ion-slides {
                             }
                         }
                     }
+                    .selected {
+                        --ion-item-background: #344356;
+                        .item_inner .input_box {
+                            h3{
+                                color: white;
+                            }
+                        }
+                    }
+                    ion-item[disabled] {
+                        pointer-events: none;
+                        opacity: 0.9;
+                      }
                 }
             }
         }
@@ -235,6 +242,10 @@ ion-slides {
         }
     }
 }
+
+.whiteText {
+    color: white;
+  }
 
 ion-content {
     .button.btn {
@@ -256,4 +267,25 @@ ion-content {
             }
         }
     }
+}
+
+ion-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.centered-item {
+    text-align: center;
+    align-items: center;
+}
+
+.subjectIcon {
+    display: block;
+    width: 48px;
+    margin: auto;
+}
+.quizTitle{
+    font-size: 1.1rem;
+    font-weight: 600;
 }

@@ -57,10 +57,17 @@ export const APP_ROUTE: Route[] = [
     },
     {
         path: "quiz",
-        //component: MainLayoutComponent,
+        component: MainLayoutComponent,
         //component: AuthLayoutComponent,
         loadChildren: () =>
             import('./quiz/quiz.routes').then((m) => m.QUIZ_ROUTE),
+    },
+    {
+        path: "learn",
+        //component: MainLayoutComponent,
+        //component: AuthLayoutComponent,
+        loadChildren: () =>
+            import('./learn/lesson.routes').then((m) => m.LESSON_ROUTE),
     },
     { path: '**', component: Page404Component },
 ];

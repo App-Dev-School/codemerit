@@ -1,0 +1,33 @@
+{
+    "title": "Angular 17 and its Features",
+    "sections": [
+        {
+            "id": 1,
+            "title": "What is new in Angular 17?",
+            "body": "Angular 17, released in November 2023, introduced several significant features aimed at enhancing developer productivity and application performance.",
+            "isComplete": false,
+            "marks": 3
+        },
+        {
+            "id": 2,
+            "title": "Angular 17 Features Overview",
+            "body": "<ul><li>New Declarative Control Flow</li><li>New Declarative Control Flow</li><li>New Declarative Control Flow</li></ul>",
+            "isComplete": false,
+            "marks": 3
+        },
+        {
+            "id": 3,
+            "title": "New Declarative Control Flow",
+            "body": "<p>Angular 17 simplifies template syntax by introducing declarative control flow constructs, making code more readable and maintainable. </p><pre>some code here</pre><p>In this example, @for replaces the traditional *ngFor directive, iterating over the products() function. The track keyword enhances performance by tracking items using their unique id. The @empty block provides a fallback when the list is empty.</p>​",
+            "isComplete": false,
+            "marks": 3
+        },
+        {
+            "id": 4,
+            "title": "Enhanced Server Side Rendering",
+            "body": "Angular 17 provides a more efficient, scalable, and developer-friendly way to build SEO-friendly, high-performance web applications.",
+            "isComplete": false,
+            "marks": 3
+        }
+    ]
+}

@@ -120,6 +120,7 @@ export class DashboardComponent implements OnInit {
   }
 
   goToSubjects(){
-    this.router.navigate(['/dashboard', this.subject])
+    console.log("MyDash goToSubjects", this.subject);
+    this.router.navigate(['/dashboard', this.subject]);
   }
 }

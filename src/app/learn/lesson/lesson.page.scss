@@ -1,0 +1,162 @@
+ion-header ion-toolbar {
+    // min-height: 80px !important;
+    --background: var(--bg-color-secondary);
+    ion-title {
+        padding: 0 !important;
+        .title_inner {
+            position: relative;
+            min-height: 70px;
+            strong {
+                //position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+                font-weight: 500;
+                width: 100%;
+                max-width: calc(100% - 80px);
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                font-size: .9rem;
+            }
+            span {
+                display: flex;
+                background: var(--bg-color);
+                border-radius: 50px;
+                align-items: center;
+                color: var(--text-white);
+                height: 32px;
+                font-size: 0.92rem;
+                font-weight: 600;
+                padding: 0 10px;
+                min-width: 85px;
+                img {
+                    display: block;
+                    width: 18px;
+                    margin: auto;
+                }
+                cd-timer {
+                    padding: 0 3px;
+                    font-weight: 500;
+                    font-size: 0.9rem;
+                }
+            }
+        }
+    }
+}
+
+ion-content {
+    --background: var(--bg-color-secondary);
+    .content-bg {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        &::before {
+            content: "";
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 150px);
+            background: var(--bg-color);
+        }
+        &::after {
+            content: "";
+            position: absolute;
+            top: -176px;
+            left: -25%;
+            right: -25%;
+            width: calc(100% + 52%);
+            height: 375px;
+            background: var(--bg-color-secondary);
+            border-radius: 0% 0 52% 52%;
+            margin: 0 auto;
+        }
+    }
+}
+
+.sliderBox {
+    position: relative;
+}
+
+.ion-slides {
+    padding-top: 60px;
+    padding-bottom: 30px;
+    position: relative;
+    width: 100%;
+    z-index: 99;
+    .ion-slide {
+        display: block;
+        overflow: hidden;
+        overflow-y: auto;
+        text-align: initial;
+        background: var(--bg-white);
+        border-radius: 20px;
+        padding: 20px 20px;
+        transform: scale(0.9);
+        transition: all 0.5s;
+        opacity: .7;
+        ion-card {
+            background: var(--bg-white) !important;
+            border-radius: 0;
+            box-shadow: none;
+            width: 100%;
+            position: relative;
+            z-index: 99;
+            margin: 0;
+            color: var(--text-dark);
+            --color: var(--text-dark);
+            h3 {
+                margin: 0;
+                font-weight: 600;
+                font-size: 1.5rem;
+                --color: var(--text-dark);
+                margin-bottom: 10px;
+            }
+            .section_content, .section_content p {
+                margin: 0;
+                color: var(--text-dark);
+                font-size: 1.3rem;
+                --color: var(--text-dark);
+                font-weight: 500;
+                line-height: 28px;
+            }
+        }
+        &.swiper-slide-active {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+}
+
+ion-content {
+    .button.button {
+        width: fit-content;
+        margin: 0 auto;
+        min-width: 170px;
+        display: block;
+    }
+    &.disabled {
+        .button.button {
+            &.nextButton {
+                display: block;
+            }
+            &.prevButton {
+                display: none;
+            }
+        }
+    }
+}
+
+ion-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.centered-item {
+    text-align: center;
+    align-items: center;
+}

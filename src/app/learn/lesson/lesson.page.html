@@ -1,0 +1,72 @@
+@if(lesson && lesson.title){
+    <ion-header>
+        <ion-toolbar>
+            <ion-buttons mode="md" slot="start">
+                <ion-back-button text="{{lesson.title}}" mode="md" icon="">{{lesson.title}}</ion-back-button>
+            </ion-buttons>
+            <ion-title>
+                <div class="title_inner d-flex">
+                    <strong>{{lesson.title}} {{lesson.sections.length}}</strong>
+                </div>
+            </ion-title>
+            <ion-buttons slot="end">
+                <ion-icon name="add-circle-outline" slot="end" (click)="openMenu()"></ion-icon>
+                <ion-icon color="add-circle-outline" name="chevron-forward"></ion-icon>
+              </ion-buttons>
+        </ion-toolbar>
+    </ion-header>
+    
+    <ion-content>
+                    <div class="sliderBox">
+                        <swiper-container #swiperEx initial-slide = "0" (slidechange)="swiperSlideChanged($event)">
+                            @for (section of lesson.sections; track section.id) {
+                                <swiper-slide>
+                                    <div class="ion-slides">
+                                        <div class="ion-slide">
+                        <!-- Start Sample Question -->
+                        <ion-card>
+                        <h3>{{section.title}}</h3>
+                        <div class="section_content" [innerHTML]="section.body">
+                        </div>
+                        <!-- <div class="section_content">
+                            {{section.body }}
+                        </div> -->
+                        </ion-card>
+                        </div>
+                        <!-- End Sample Question -->
+                                     </div>
+                                </swiper-slide>
+                            }
+                            </swiper-container>
+                            <ion-icon name="add-circle-outline" color="secondary" size="large"></ion-icon>
+                            <ion-icon name="md-add" color="secondary" size="large"></ion-icon>
+
+                            <ion-item lines="none" class="ion-text-center centered-item">
+                                <ion-label class="ion-text-center" color="secondary">{{ currentSection + 1 }} of {{ lesson.sections.length }}</ion-label>
+                            </ion-item>
+
+                            <ion-item lines="none" class="centered-item">
+                                <ion-label>{{ currentSection + 1 }} of {{ lesson.sections.length }}</ion-label>
+                            </ion-item>
+
+                    </div>
+
+    </ion-content>
+    <ion-footer>
+        <ion-toolbar>
+          <ion-row class="ion-text-center">
+            <ion-col size="6">
+              <!-- <ion-button expand="block" class="custom-button">Button 1</ion-button> -->
+              <ion-button mode="md" size="large" [disabled]="currentSection == 0" fill="solid" shape="block" class="button prevButton btn-secondary" (click)="onSlidePrev()">
+                {{'PREVIOUS'}}
+            </ion-button>
+            </ion-col>
+            <ion-col size="6">
+                <ion-button mode="md" size="large" fill="solid" shape="block" class="button nextButton btn-secondary" (click)="onSlideNext()">
+                    {{ currentSection == lesson.sections.length -1 ? 'Complete' : 'NEXT'}}
+                </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-toolbar>
+      </ion-footer>
+}
