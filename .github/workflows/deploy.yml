@@ -31,7 +31,8 @@ jobs:
           target-server: appdevops.in
           remote-user: ${{ secrets.SSH_USERNAME }}
           private-ssh-key: ${{ secrets.SSH_PRIVATE }}
-          destination-path:  ${{ secrets.FTP_REMOTE_DIR }}
+          source-path: ${{ secrets.FTP_REMOTE_DIR }}
+          destination-path: www/
 
       # - name: Upload to Hostinger via FTP
       #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
