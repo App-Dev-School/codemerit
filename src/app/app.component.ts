@@ -33,6 +33,7 @@ export class AppComponent implements OnInit{
 
   //Added for animation in router outlet
   ngOnInit() {
+    //This is additional code
     //Enable component transition globally
     // this._router.events.subscribe(event => {
     //   if (event instanceof NavigationStart) {
