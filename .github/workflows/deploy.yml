@@ -31,7 +31,7 @@ jobs:
           target-server: appdevops.in
           remote-user: ${{ secrets.SSH_USERNAME }}
           private-ssh-key: ${{ secrets.SSH_PRIVATE }}
-          source-path: ${{ secrets.FTP_REMOTE_DIR }}
+          source-path: htdocs/appdevops.in/
           destination-path: www/
 
       # - name: Upload to Hostinger via FTP
