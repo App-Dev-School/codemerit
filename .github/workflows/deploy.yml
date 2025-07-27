@@ -27,9 +27,10 @@ jobs:
 
       - name: 📂 Sync Files
         uses: SamKirkland/web-deploy@v1
-        run: echo "Logging FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}"
-        run: echo "Logging SSH_USERNAME: ${{ secrets.SSH_USERNAME }}"
-        run: echo "Logging SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}"
+        run: echo 'Logging FTP_REMOTE_DIR: "${{ secrets.FTP_REMOTE_DIR }}"'
+        # run: echo "Logging FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}"
+        # run: echo "Logging SSH_USERNAME: ${{ secrets.SSH_USERNAME }}"
+        # run: echo "Logging SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}"
         with:
           target-server: appdevops.in
           remote-user: ${{ secrets.SSH_USERNAME }}
