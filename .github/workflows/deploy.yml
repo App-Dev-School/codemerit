@@ -43,6 +43,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SFTP_PRIVATE_KEY }}
           REMOTE_USER: ${{ secrets.FTP_USERNAME }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
-          REMOTE_HOST: ${{ secrets.FTP_HOST }}
+          REMOTE_HOST: ${{ secrets.SERVER_IP }}
+          REMOTE_PORT: 22
           TARGET: ${{ secrets.FTP_REMOTE_DIR }}
           SOURCE: www/
