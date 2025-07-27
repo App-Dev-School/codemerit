@@ -26,10 +26,10 @@ jobs:
         run: npm install
 
       - name: Build Angular app
-        #run: npm run build --prod
-        run: npm run build
+        run: npm run build --prod
+        #run: npm run build
 
-      - name: 📂 Sync Files
+      - name: 📂 Deploy Genrated Files to Hostinger
         uses: SamKirkland/web-deploy@v1
         with:
           target-server: appdevops.in
@@ -38,27 +38,3 @@ jobs:
           source-path: ./www/
           destination-path:  ${{ secrets.FTP_REMOTE_DIR }}
           rsync-options:  --archive --verbose --compress --human-readable --progress --exclude=vendor --exclude=node_modules exclude=.github exclude=.vscode exclude=src
-      # - name: Upload to Hostinger via FTP
-      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      #   with:
-      #     #server: ${{ secrets.FTP_HOST }}
-      #     server: ${{ secrets.FTP_HOST }}
-      #     username: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     private-ssh-key: ${{ secrets.SSH_PRIVATE }}
-      #     local-dir: www/
-      #     server-dir: ${{ secrets.FTP_REMOTE_DIR }}
-      #     log-level: verbose
-      #     timeout: 60000
-
-      # - name: Upload via SFTP
-      #   uses: easingthemes/ssh-deploy@main
-      #   with:
-      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE }}
-      #     REMOTE_USER: ${{ secrets.SSH_USERNAME }}
-      #     REMOTE_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-      #     SERVER_IP: ${{ secrets.SERVER_IP }}
-      #     REMOTE_HOST: ${{ secrets.SERVER_IP }}
-      #     REMOTE_PORT: 22
-      #     TARGET: ${{ secrets.FTP_REMOTE_DIR }}
-      #     SOURCE: www/
