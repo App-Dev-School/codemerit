@@ -25,26 +25,26 @@ jobs:
         #run: npm run build --prod
         run: npm run build
 
-      # - name: Upload to Hostinger via FTP
-      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      #   with:
-      #     server: ${{ secrets.FTP_HOST }}
-      #     username: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     local-dir: www/
-      #     server-dir: ${{ secrets.FTP_REMOTE_DIR }}
-      #     log-level: verbose
-      #     timeout: 60000
-
-
-      - name: Upload via SFTP
-        uses: easingthemes/ssh-deploy@main
+      - name: Upload to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE }}
-          REMOTE_USER: ${{ secrets.SSH_USERNAME }}
-          REMOTE_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
-          REMOTE_HOST: ${{ secrets.SERVER_IP }}
-          REMOTE_PORT: 22
-          TARGET: ${{ secrets.FTP_REMOTE_DIR }}
-          SOURCE: www/
+          #server: ${{ secrets.FTP_HOST }}
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: www/
+          server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+          log-level: verbose
+          timeout: 60000
+
+      # - name: Upload via SFTP
+      #   uses: easingthemes/ssh-deploy@main
+      #   with:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE }}
+      #     REMOTE_USER: ${{ secrets.SSH_USERNAME }}
+      #     REMOTE_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+      #     SERVER_IP: ${{ secrets.SERVER_IP }}
+      #     REMOTE_HOST: ${{ secrets.SERVER_IP }}
+      #     REMOTE_PORT: 22
+      #     TARGET: ${{ secrets.FTP_REMOTE_DIR }}
+      #     SOURCE: www/
