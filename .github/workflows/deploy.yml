@@ -46,9 +46,3 @@ jobs:
           REMOTE_HOST: ${{ secrets.FTP_HOST }}
           TARGET: ${{ secrets.FTP_REMOTE_DIR }}
           SOURCE: www/
-          SCRIPT_BEFORE: |
-          echo "SCRIPT BEFORE SSH-DEPLOY"
-          SCRIPT_AFTER: |
-          echo "SCRIPT AFTER SSH-DEPLOY"
-          ls -al
-          echo $RSYNC_STDOUT
