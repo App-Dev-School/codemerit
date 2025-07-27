@@ -25,13 +25,23 @@ jobs:
         #run: npm run build --prod
         run: npm run build
 
-      - name: Upload to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      # - name: Upload to Hostinger via FTP
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      #   with:
+      #     server: ${{ secrets.FTP_HOST }}
+      #     username: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     local-dir: www/
+      #     server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+      #     log-level: verbose
+      #     timeout: 60000
+
+
+      - name: Upload via SFTP
+        uses: easingthemes/ssh-deploy@v4.1.10
         with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: www/
-          server-dir: ${{ secrets.FTP_REMOTE_DIR }}
-          log-level: verbose
-          timeout: 60000
+          ssh-private-key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          remote-user: ${{ secrets.FTP_USERNAME }}
+          server-ip: ${{ secrets.FTP_HOST }}
+          remote-path: ${{ secrets.FTP_REMOTE_DIR }}
+          local-path: www/
