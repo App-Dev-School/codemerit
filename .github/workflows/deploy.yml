@@ -35,7 +35,7 @@ jobs:
           target-server: appdevops.in
           remote-user: ${{ secrets.SSH_USERNAME }}
           private-ssh-key: ${{ secrets.SSH_PRIVATE }}
-          #source-path: ./
+          source-path: ./www/
           destination-path:  ${{ secrets.FTP_REMOTE_DIR }}
           rsync-options:  --archive --verbose --compress --human-readable --progress --exclude=vendor --exclude=node_modules exclude=.github exclude=.vscode exclude=src
       # - name: Upload to Hostinger via FTP
