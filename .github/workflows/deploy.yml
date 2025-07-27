@@ -40,8 +40,9 @@ jobs:
       - name: Upload via SFTP
         uses: easingthemes/ssh-deploy@main
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SFTP_PRIVATE_KEY }}
-          REMOTE_USER: ${{ secrets.FTP_USERNAME }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE }}
+          REMOTE_USER: ${{ secrets.SSH_USERNAME }}
+          REMOTE_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
           REMOTE_HOST: ${{ secrets.SERVER_IP }}
           REMOTE_PORT: 22
