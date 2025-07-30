@@ -85,7 +85,7 @@ export class AuthService {
         'Content-Type': 'application/json'
       })
     };
-    const url = 'registration';
+    const url = 'auth/register';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData));
     }

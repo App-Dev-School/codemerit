@@ -1,7 +1,7 @@
 <div class="auth-container">
   <div class="row auth-main">
     <div class="col-sm-6 px-0 d-none d-sm-block">
-      <div class="left-img" style="background-image: url(assets/images/pages/bg-02.png);">
+      <div class="left-img" style="background-image: url(assets/images/pages/bg-signup.jpg);">
       </div>
     </div>
     <div class="col-sm-6 auth-form-section">
@@ -13,12 +13,12 @@
             <div class="row">
               <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
                 <mat-form-field class="example-full-width" appearance="outline">
-                  <mat-label>Username</mat-label>
-                  <input matInput formControlName="username" required>
+                  <mat-label>Your Name</mat-label>
+                  <input matInput formControlName="name" required>
                   <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
-                  @if (authForm.get('username')!.hasError('required')) {
+                  @if (authForm.get('name')!.hasError('required')) {
                   <mat-error>
-                    Username is required
+                    Full name is required
                   </mat-error>
                   }
                 </mat-form-field>
@@ -38,6 +38,23 @@
                 </mat-form-field>
               </div>
             </div>
+
+
+
+       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="outline">
+                  <mat-label>Location / City</mat-label>
+                  <input matInput formControlName="city" required>
+                  <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>location_city</mat-icon>
+                  @if (authForm.get('city')!.hasError('required')) {
+                  <mat-error>
+                    Please let us know your city.
+                  </mat-error>
+                  }
+              </mat-form-field>
+              </div>
+
+            <!-- Do not show password set options
             <div class="row">
               <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
                 <mat-form-field class="example-full-width" appearance="outline">
@@ -68,6 +85,22 @@
                 </mat-form-field>
               </div>
             </div>
+            -->
+
+             <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width">
+                    <mat-label>What describes you best?</mat-label>
+                    <input type="text" matInput formControlName="designation" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                      @for (option of filteredOptions | async; track option) {
+                      <mat-option [value]="option">
+                        {{option}}
+                      </mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                  </div>
+
             <div class="flex-sb-m w-full  p-b-20">
               <div>
                 <span>Already Registered? <a routerLink="/authentication/signin">
