@@ -1,0 +1,106 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <!-- breadcrumb -->
+      <app-breadcrumb [title]="'Users'" [items]="['Users']" [active_item]="'Users'"></app-breadcrumb>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+       <button routerLink="/users/create" mat-raised-button type="submit" class="create-btn" >
+              Add New User
+            </button>
+</div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="card">
+          <div class="boxs mail_listing">
+            <div class="inbox-center table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th colspan="1">
+                      <h6>Name</h6>
+                    </th>
+                     <th>
+                      <h6>E-mail</h6>
+                    </th>
+                     <th>
+                      <h6>Location</h6>
+                    </th>
+                     <th>
+                      <h6>Join Date</h6>
+                    </th>
+                     <th class="text-center">
+                      <h6>Verified</h6>
+                    </th>
+                     <th class="text-center">
+                      <h6>Onboarded</h6>
+                    </th>
+                </thead>
+                <tbody>
+                  <tr class="unread">
+                    <td class="hidden-xs">Amaz Mcllavn</td>
+                     <td class="max-texts">
+                      <a routerLink="/users/view">
+                        <span class="badge col-blue shadow-style m-r-10">testmail&#64;gmail.com</span></a>
+                    </td>
+                    
+                     <td>
+                      <span class="badge col-blue shadow-style m-r-10">Bengaluru</span>
+                    </td>
+                    <td> May 13 25</td>
+                    <td class="text-center">
+                      <i class="material-icons text-center">cancel</i>
+                    </td>
+                    <td class="hidden-xs text-center">
+                      <i class="material-icons">star_border</i>
+                    </td>
+                  </tr>
+
+                  <tr class="unread">
+                    <td class="hidden-xs">Kerry Mann</td>
+                    <td class="max-texts">
+                      <a routerLink="/users/view">
+                        <span class="badge col-blue shadow-style m-r-10">testmail&#64;gmail.com</span></a>
+                    </td>
+                    <td>
+                      <span class="badge col-blue shadow-style m-r-10">Bengaluru</span>
+                    </td>
+                      <td> May 13 25</td>
+                     <td class="text-center">
+                      <i class="material-icons text-warning">verified_user</i>
+                    </td>
+                    <td class="hidden-xs text-center">
+                      <i class="material-icons text-warning">star</i>
+                    </td>
+                  </tr>
+
+                 
+                </tbody>
+              </table>
+            </div>
+            <div class="row">
+              <div class="col-sm-7 ">
+                <p class="p-15">Showing 1 - 15 of 100</p>
+              </div>
+              <div class="col-sm-5 text-end">
+                <div class="float-end">
+                  <div class="email-btn-group m-l-15">
+                    <button mat-icon-button aria-label="Example icon-button with a heart icon">
+                      <mat-icon>navigate_before</mat-icon>
+                    </button>
+                    <button mat-icon-button aria-label="Example icon-button with a heart icon">
+                      <mat-icon>navigate_next</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

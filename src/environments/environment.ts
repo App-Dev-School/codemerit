@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-   apiUrl: "http://localhost/BaziChicAPI/",
+   apiUrl: "http://localhost:3000/",
    uploadsUrl: "http://localhost/BaziChicAPI/uploads/",
   stripe: {
      publicKey: 'pk_test_LHMHo4FCtltdVijsCnSjiN8X00Qa33WfAw',

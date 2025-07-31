@@ -31,6 +31,11 @@ export const APP_ROUTE: Route[] = [
                     import('./subscriber/subscriber.routes').then((m) => m.SUBSCRIBER_ROUTE),
             },
             {
+                path: 'users',
+                loadChildren: () =>
+                    import('./users/users.routes').then((m) => m.USERS_ROUTE),
+            },
+            {
                 path: 'forms',
                 loadChildren: () =>
                     import('./forms/forms.routes').then((m) => m.FORMS_ROUTE),
@@ -40,7 +45,7 @@ export const APP_ROUTE: Route[] = [
                 loadChildren: () =>
                     import('./pages/pages.routes').then(
                         (m) => m.PAGES_ROUTE
-                ),
+                    ),
             },
             {
                 path: 'topics',

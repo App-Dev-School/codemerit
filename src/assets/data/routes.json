@@ -71,9 +71,23 @@
       ],
       "submenu": []
     },
+     {
+      "path": "/users/list",
+      "title": "Users",
+      "iconType": "material-icons-outlined",
+      "icon": "people_alt",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "User"
+      ],
+      "submenu": []
+    },
     {
       "path": "",
-      "title": "Topic Explorer",
+      "title": "Dev Components",
       "iconType": "material-icons-outlined",
       "icon": "dvr",
       "class": "menu-toggle",
@@ -116,7 +130,7 @@
     },
     {
       "path": "",
-      "title": "Take Quiz",
+      "title": "SurveyCreator Quiz",
       "iconType": "material-icons-outlined",
       "icon": "extension",
       "class": "menu-toggle",

@@ -3,7 +3,7 @@ name: Deploy Angular App to Hostinger
 on:
   push:
     branches:
-      - main  # Change if your branch is different
+      - main  # Change if you are using different branch
 
 jobs:
   build-and-deploy:
@@ -13,21 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Setup Node.js
-      #run: 'echo "$FTP_REMOTE_DIR" > key'
-      # run: echo "Logging FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}"
-      # run: echo "Logging SSH_USERNAME: ${{ secrets.SSH_USERNAME }}"
-      # run: echo "Logging SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}"
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 18
-
       - name: Install dependencies
         run: npm install
 
       - name: Build Angular app
         run: npm run build --prod
-        #run: npm run build
 
       - name: 📂 Deploy Genrated Files to Hostinger
         uses: SamKirkland/web-deploy@v1
