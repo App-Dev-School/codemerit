@@ -55,7 +55,9 @@ export class DashboardComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private snackService: SnackbarService
-  ) { }
+  ) { 
+    console.log("SignInFlow #5 ", this.authService.currentUser);
+  }
 
   // // You can also control the animation state dynamically
   // toggleSlide() {

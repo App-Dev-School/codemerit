@@ -21,7 +21,7 @@ export class MasterService {
   }
 
   getDocTypes(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.api_key;
+    const api_key = this.authService.currentUserValue?.token;
     const url = 'get/document_types';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with =>  via Token " + api_key);
@@ -30,7 +30,7 @@ export class MasterService {
   }
 
   getSubscriptionPlans(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.api_key;
+    const api_key = this.authService.currentUserValue?.token;
     const url = 'apis/subscription_plans';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with =>  via Token " + api_key);
@@ -39,7 +39,7 @@ export class MasterService {
   }
 
   getStatesFromServer(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.api_key;
+    const api_key = this.authService.currentUserValue?.token;
     const url = 'get/states';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " via Token " + api_key);
@@ -85,7 +85,7 @@ export class MasterService {
   }
 
   getCategories(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.api_key;
+    const api_key = this.authService.currentUserValue?.token;
     const url = 'apis/categories/list';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " via Token " + api_key);
@@ -105,7 +105,7 @@ export class MasterService {
   }
 
   getLastFewNotifications(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.api_key;
+    const api_key = this.authService.currentUserValue?.token;
     const url = 'apis/notifications/latest';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " via Token " + api_key);

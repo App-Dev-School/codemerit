@@ -6,51 +6,53 @@ import { Role } from '@core/models/role';
 import { Router } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
 import { HttpService } from './http.service';
-import { AppUser } from '@core/models/appuser';
 import { environment } from 'src/environments/environment';
+import { User } from '@core/models/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<AppUser>;
-  public currentUser: Observable<AppUser>;
+  private currentUserSubject: BehaviorSubject<User>;
+  public currentUser: Observable<User>;
 
   private users = [
     {
       id: 1,
       userImage: 'assets/images/users/user.jpg',
-      username: 'admin@codemerit.in',
-      email: 'admin@codemerit.in',
+      username: 'admin@codemerit.com',
+      email: 'admin@codemerit.com',
       password: 'user@123',
       firstName: 'Eckhart',
       lastName: 'Tollee',
-      role: Role.Admin,
+      role: Role.Subscriber,
       token: 'admin-token',
-      status: 'Active'
+      status: 'Active',
+      date_created: ''
     },
     {
       id: 2,
       userImage: 'assets/images/users/user.jpg',
-      username: 'user@codemerit.in',
+      username: 'user1@codemerit.com',
       email: 'user@codemerit.in',
       password: 'user@123',
       firstName: 'Vinay',
       lastName: 'Shaswat',
       role: Role.Subscriber,
       token: 'user-token',
-      status: 'Active'
+      status: 'Active',
+      date_created: ''
     }
   ];
 
   constructor(private httpService: HttpService, private router: Router) {
-    this.currentUserSubject = new BehaviorSubject<AppUser>(
+    this.currentUserSubject = new BehaviorSubject<User>(
       JSON.parse(localStorage.getItem('currentUser') || '{}')
     );
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
-  public get currentUserValue(): AppUser {
+  public get currentUserValue(): User {
     return this.currentUserSubject.value;
   }
 
@@ -60,15 +62,15 @@ export class AuthService {
         'Content-Type': 'application/json'
       })
     };
-    const url = 'login_controller';
+    const url = 'auth/login';
     if (AuthConstants.DEV_MODE) {
       console.log("/******  Hitting Login API : " + url + " with Params => " + JSON.stringify(postData));
     }
     return this.httpService.post(url, postData, httpOptions).pipe(map((user: any) => {
       //store user details and jwt token in local storage to keep user logged in between page refreshes
-      if (user.userData) {
-        this.setLocalData(user.userData);
-        //this.currentUserSubject.next(user.userData);
+      if (user.data) {
+        this.setLocalData(user.data);
+        //this.currentUserSubject.next(user.data);
       }
       if (user.myProfile) {
         localStorage.setItem(AuthConstants.CACHE_FULL_PROFILE, JSON.stringify(user.myProfile));
@@ -91,6 +93,20 @@ export class AuthService {
     }
     //return this.http.post<any>(url, postData, httpOptions);
     return this.httpService.postWithParams(url, postData, httpOptions);
+  }
+
+   verifyAccount(api_key: any, postData: any): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': api_key
+      })
+    };
+    const url = environment.apiUrl + 'auth/verify';
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
+    }
+    return this.httpService.post(url, postData, httpOptions);
   }
   
   setLocalData(userData: any) {
@@ -189,7 +205,23 @@ export class AuthService {
   }
 
   getAdminDashData(postData: any): Observable<any> {
-    const api_key = this.currentUserValue.api_key;
+    const api_key = this.currentUserValue.token;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': api_key
+      })
+    };
+    const url = environment.apiUrl + 'apis/summary';
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
+    }
+    return this.httpService.post(url, JSON.stringify(postData), httpOptions);
+  }
+
+  getAllUsers(postData: any): Observable<any> {
+    const api_key = this.currentUserValue.token;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -221,8 +253,10 @@ export class AuthService {
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
+        email: user.email,
         role: user.role,
         token: user.token,
+        date_created: user.date_created,
         status: user.status
       });
     }
@@ -233,8 +267,10 @@ export class AuthService {
     username: string;
     firstName: string;
     lastName: string;
+    email: string;
     role: string;
     token: string;
+    date_created: string;
     status: string;
   }) {
     return of(new HttpResponse({ status: 200, body }));

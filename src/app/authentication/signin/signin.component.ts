@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { AuthService, Role } from '@core';
@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
     styleUrls: ['./signin.component.scss'],
     imports: [
         RouterLink,
+        //RouterModule,
         MatButtonModule,
         FormsModule,
         ReactiveFormsModule,
@@ -40,7 +41,7 @@ export class SigninComponent
 
   ngOnInit() {
     this.authForm = this.formBuilder.group({
-      username: ['user@codemerit.in', Validators.required],
+      username: ['admin@codemerit.com', Validators.required],
       password: ['user@123', Validators.required],
     });
   }
@@ -57,6 +58,54 @@ export class SigninComponent
   // }
 
   onSubmit() {
+    this.submitted = true;
+    this.loading = true;
+    this.error = '';
+    if (this.authForm.invalid) {
+      this.error = 'Username and Password not valid !';
+      return;
+    } else {
+      const payload = {
+        email : this.f['username'].value,
+        password : this.f['password'].value
+      }
+      this.subs.sink = this.authService
+        .login(payload)
+        .subscribe({
+          next: (res) => {
+            console.log("SignInFlow #1 API responded ", res);
+            if (res && !res.error && res.data) {
+              setTimeout(() => {
+                console.log("SignInFlow #2 User dashboard redirection ", res.data.role);
+                const role = this.authService.currentUserValue.role;
+                if (role === Role.All || role === Role.Admin) {
+                  this.router.navigate(['/admin/dashboard/main']);
+                } else {
+                  if (role === Role.Subscriber) {
+                  this.router.navigate(['/dashboard']);
+                } else {
+                  if (role === Role.Manager) {
+                  this.router.navigate(['/dashboard?manage']);
+                } else {
+                }
+                }
+                }
+                this.loading = false;
+              }, 1000);
+            } else {
+              this.error = 'Invalid Login';
+            }
+          },
+          error: (error) => {
+            this.error = error;
+            this.submitted = false;
+            this.loading = false;
+          },
+        });
+    }
+  }
+
+ onSubmitDummy() {
     this.submitted = true;
     this.loading = true;
     this.error = '';
@@ -93,46 +142,8 @@ export class SigninComponent
     }
   }
 
-  onSubmitReal() {
-    this.submitted = true;
-    this.loading = true;
-    this.error = '';
-    if (this.authForm.invalid) {
-      this.error = 'Username and Password not valid !';
-      return;
-    } else {
-      let postData = {
-        email: this.f['username'].value,
-        password: this.f['password'].value 
-      };
-      this.subs.sink = this.authService
-        .login(postData)
-        .subscribe({
-          next: (res) => {
-            if (res) {
-              setTimeout(() => {
-                const role = this.authService.currentUserValue.role;
-                console.log("AppFlow Login Response role", role);
-                
-                if (role === Role.All || role === Role.Admin) {
-                  this.router.navigate(['/admin/dashboard/main']);
-                } else if (role === Role.Subscriber) {
-                  this.router.navigate(['/dashboard']);
-                } else {
-                  this.router.navigate(['/authentication/signin']);
-                }
-                this.loading = false;
-              }, 1000);
-            } else {
-              this.error = 'Invalid Login';
-            }
-          },
-          error: (error) => {
-            this.error = error;
-            this.submitted = false;
-            this.loading = false;
-          },
-        });
-    }
+  connectWithGoogle(){
+    console.log("connectWithGoogle => "+this.authService.currentUser);
   }
+
 }

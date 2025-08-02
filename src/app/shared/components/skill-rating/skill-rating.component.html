@@ -1,0 +1,13 @@
+<div class="stars">
+  @for (i of [1,2,3,4,5]; track i) {
+    <span
+      class="star"
+      [class.filled]="i < (hovered() || rating)"
+      (click)="setRating(i + 1)"
+      (mouseenter)="hover(i + 1)"
+      (mouseleave)="leave()"
+    >
+      ★
+    </span>
+  }
+</div>

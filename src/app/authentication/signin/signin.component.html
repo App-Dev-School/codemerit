@@ -1,7 +1,7 @@
 <div class="auth-container">
   <div class="row auth-main">
     <div class="col-sm-6 px-0 d-none d-sm-block">
-      <div class="left-img" style="background-image: url(assets/images/pages/bg-login.jpg);">
+      <div class="left-img" style="background-image: url(assets/images/pages/bg-login.png);">
       </div>
     </div>
     <div class="col-sm-6 auth-form-section">
@@ -69,8 +69,8 @@
           </form>
           <h6 class="social-login-title">OR</h6>
           <div style="text-align:center">
-            <button mat-flat-button color="danger" [class.auth-spinner]="loading" [disabled]="loading"
-              class="auth-form-btn" type="submit"><i class="fab fa-google"></i> Connect with Google</button>
+            <button (click)="connectWithGoogle()" mat-flat-button color="danger" [class.auth-spinner]="loading" [disabled]="loading"
+              class="auth-form-btn"><i class="fab fa-google"></i> Connect with Google</button>
           </div>
         </div>
       </div>

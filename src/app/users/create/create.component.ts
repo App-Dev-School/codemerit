@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,6 +16,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { AuthConstants } from '@config/AuthConstants';
 import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { AsyncPipe, NgStyle } from '@angular/common';
+import { ReviewWidgetComponent } from '@shared/components/review-widget/review-widget.component';
+import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rating.component';
 @Component({
   selector: 'app-create-user',
   templateUrl: './create.component.html',
@@ -44,6 +46,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackbar: SnackbarService,
     public authService: AuthService) { }
+     userRating = signal(7);
   authForm!: UntypedFormGroup;
   editor?: Editor;
   html = '';

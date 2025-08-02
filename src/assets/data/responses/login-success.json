@@ -1,0 +1,28 @@
+{
+    "error": false,
+    "result_code": 200,
+    "message": "Succesfully Registered",
+    "data": {
+        "firstName": "Testa",
+        "lastName": "Doe",
+        "email": "user5@codemerit.com",
+        "designation": "Full Stack Engineer",
+        "city": "Abellon",
+        "country": "London",
+        "mobile": null,
+        "password": "745842",
+        "username": "Testa-Doe",
+        "createdBy": null,
+        "updatedBy": null,
+        "image": null,
+        "level": null,
+        "points": null,
+        "token": null,
+        "createdAt": "2025-08-02T18:13:33.759Z",
+        "updatedAt": "2025-08-02T18:13:33.759Z",
+        "deletedAt": null,
+        "id": 7,
+        "role": "User",
+        "accountStatus": "PENDING"
+    }
+}

@@ -50,14 +50,16 @@ export class SignupComponent implements OnInit, OnDestroy {
   ) { }
   ngOnInit() {
     this.authForm = this.formBuilder.group({
-      name: ['Test Doe', Validators.required],
+      firstName: ['Test', [Validators.required, Validators.maxLength(20)]],
+      lastName: ['Doe', [Validators.maxLength(20)]],
       email: [
-        'test@gma.com',
+        'user1@codemerit.com',
         [Validators.required, Validators.email, Validators.minLength(5)],
       ],
       mobile: [''],
       city: ['Bengaluru', Validators.required],
-      designation: ['IT Programmer', Validators.required]
+      country: ['India', Validators.required],
+      designation: ['Full Stack Engineer', Validators.required]
     });
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -87,13 +89,16 @@ export class SignupComponent implements OnInit, OnDestroy {
     } else {
       //this.router.navigate(['/admin/dashboard/main']);
       const fullName = this.authForm.get('name')?.value;
+
       let postData = {
-        firstName: this.authForm.get('name')?.value,
-        lastName: "",
+        firstName: this.authForm.get('firstName')?.value,
+        lastName: this.authForm.get('lastName')?.value,
         email: this.authForm.get('email')?.value,
-        mobile: this.authForm.get('mobile')?.value,
+        mobile: null,
         city: this.authForm.get('city')?.value,
-        designation: this.authForm.get('designation')?.value.name
+        country: this.authForm.get('country')?.value,
+        designation: this.authForm.get('designation')?.value,
+        flow: "Registration"
       };
 
       this.authService.register(postData).subscribe((res) => {
