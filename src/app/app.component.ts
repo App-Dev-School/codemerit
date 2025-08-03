@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Event, NavigationEnd, NavigationStart, Router, RouterModule } from '@angular/router';
 import { PageLoaderComponent } from './layout/page-loader/page-loader.component';
-import { IonicModule, ModalController } from '@ionic/angular';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -9,15 +8,12 @@ import { IonicModule, ModalController } from '@ionic/angular';
   //animations: [slideInOutAnimation],
   imports: [
     RouterModule,
-    IonicModule,
     PageLoaderComponent
-  ],
-  //checkifrequired
-  providers: [ModalController]
+  ]
 })
-export class AppComponent implements OnInit{
+export class AppComponent {
   currentUrl!: string;
-  isVisible = true;
+  //isVisible = true;
   constructor(public _router: Router) {
     this._router.events.subscribe((routerEvent: Event) => {
       if (routerEvent instanceof NavigationStart) {
@@ -32,7 +28,7 @@ export class AppComponent implements OnInit{
   }
 
   //Added for animation in router outlet
-  ngOnInit() {
+  //ngOnInit() {
     //This is additional code
     //Enable component transition globally
     // this._router.events.subscribe(event => {
@@ -45,6 +41,6 @@ export class AppComponent implements OnInit{
     //     }, 300); // Adjust based on your animation duration
     //   }
     // });
-  }
+  //}
 
 }

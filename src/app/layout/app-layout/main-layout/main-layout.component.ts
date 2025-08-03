@@ -8,14 +8,12 @@ import { RightSidebarComponent } from '../../right-sidebar/right-sidebar.compone
 import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { HeaderComponent } from '../../header/header.component';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
-import { IonicModule } from '@ionic/angular';
 
 @Component({
     selector: 'app-main-layout',
     templateUrl: './main-layout.component.html',
     styleUrls: [],
     imports: [
-        IonicModule,
         HeaderComponent,
         SidebarComponent,
         RightSidebarComponent,

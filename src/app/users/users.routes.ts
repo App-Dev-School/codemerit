@@ -12,7 +12,7 @@ export const USERS_ROUTE: Route[] = [
     component: CreateUserComponent,
   },
   {
-    path: "view",
+    path: "view/:userName",
     component: UserComponent,
   },
 ];

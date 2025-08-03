@@ -7,13 +7,11 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { TopicExplorerComponent } from 'src/app/pages/topic-explorer/topic-explorer/topic-explorer.component';
 @Component({
   selector: 'app-topics-list',
   imports: [
-    IonicModule,
     NgClass,
     AsyncPipe,
     MatCard,
@@ -32,7 +30,7 @@ import { TopicExplorerComponent } from 'src/app/pages/topic-explorer/topic-explo
 export class TopicsListComponent {
   @Input() subjectTopics: Observable<any[]>;
 
-  constructor(public router: Router, private navCtrl: NavController) {
+  constructor(public router: Router) {
 
   }
 

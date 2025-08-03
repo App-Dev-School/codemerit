@@ -22,11 +22,6 @@
             </div>
             <div class="right">
               <div class="right-side-btn">
-                <button mat-icon-button [hidden]=!selection.hasValue() (click)="removeSelectedRows()"
-                  class="tbl-header-btn col-red" matTooltip="Delete">
-                  <mat-icon>delete_outline</mat-icon>
-                </button>
-
                 <app-table-show-hide-column [columnDefinitions]="columnDefinitions"></app-table-show-hide-column>
 
                 <button mat-icon-button (click)="addNew()" class="tbl-header-btn col-green" matTooltip="Add">
@@ -119,17 +114,14 @@
                   <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                     <span class="mobile-label">{{ column.label }} :</span>
                     <div>
-                      @switch (row.accountStatus) {
-                      @case ('PENDING') {
-                      <span class="badge badge-solid-purple">{{ row.accountStatus }}</span>
-                      }
-                      @case ('ACTIVE') {
-                      <span class="badge badge-solid-green">{{ row.accountStatus }}</span>
-                      }
-                      @case ('BLOCKED') {
-                      <span class="badge badge-solid-red">{{ row.accountStatus }}</span>
-                      }
-                      }
+                      <span class="badge"
+      [ngClass]="{
+        'badge-solid-purple': row.accountStatus === 'PENDING',
+        'badge-solid-green': row.accountStatus === 'ACTIVE',
+        'badge-solid-red': row.accountStatus === 'BLOCKED'
+      }">
+  {{ row.accountStatus }}
+</span>
                     </div>
                   </mat-cell>
                 </ng-container>
@@ -164,11 +156,11 @@
                 <ng-container matColumnDef="actions">
                   <mat-header-cell class="pr-0" *matHeaderCellDef>Actions</mat-header-cell>
                   <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
-                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="test(row)"
+                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="viewUser(row)"
                       class="tbl-action-btn">
                       <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'"></app-feather-icons>
                     </button>
-                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="test(row)"
+                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="viewUser(row)"
                       class="tbl-action-btn">
                       <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'"></app-feather-icons>
                     </button>
@@ -176,7 +168,7 @@
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
                 <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: getDisplayedColumns();"
-                  (click)="test(row)" [style.cursor]="'pointer'" matRipple>
+                  (click)="viewUser(row)" [style.cursor]="'pointer'" matRipple>
                 </mat-row>
               </table>
               <!-- Loading spinner -->
@@ -196,11 +188,11 @@
                     <mat-icon>add_box</mat-icon>
                     <span>Add Record</span>
                   </button>
-                  <button mat-menu-item (click)="test(item)">
+                  <button mat-menu-item (click)="viewUser(item)">
                     <mat-icon>create</mat-icon>
                     <span>Edit Record</span>
                   </button>
-                  <button mat-menu-item (click)="test(item)">
+                  <button mat-menu-item (click)="viewUser(item)">
                     <mat-icon>delete</mat-icon>
                     <span>Delete Record</span>
                   </button>

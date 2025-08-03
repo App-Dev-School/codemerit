@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IonicModule, ModalController } from '@ionic/angular';
 import { TopicContentComponent } from '../topic-content/topic-content.component';
 import { slideInOutAnimation } from '@shared/animations';
 import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
@@ -8,13 +7,12 @@ import { ConfigService } from '@config';
     selector: 'app-topic-explorer',
     templateUrl: './topic-explorer.component.html',
     styleUrls: ['./topic-explorer.component.scss'],
-    animations: [slideInOutAnimation],
-    imports: [IonicModule]
+    animations: [slideInOutAnimation]
 })
 export class TopicExplorerComponent implements OnInit, OnDestroy {
   showContent = true;
   topicResources: any;
-  constructor(private router: Router, private config: ConfigService, private modalController: ModalController) {
+  constructor(private router: Router, private config: ConfigService) {
     // constructor code
   }
 
@@ -37,16 +35,7 @@ export class TopicExplorerComponent implements OnInit, OnDestroy {
       }
 
   async openTopicContent(slug:string) {
-    const modal = await this.modalController.create({
-      component: TopicContentComponent,
-      cssClass: 'full-screen-modal',
-      backdropDismiss: false,
-      componentProps: {
-        title: 'Full Screen Modal',
-        content: slug
-      }
-    });
-    return await modal.present();
+    
   }
 
 ngOnDestroy(): void {

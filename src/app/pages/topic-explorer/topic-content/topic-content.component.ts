@@ -1,21 +1,20 @@
 import { Component, Input } from '@angular/core';
-import { IonFab, IonFabButton, IonicModule, IonIcon, ModalController } from '@ionic/angular';
 @Component({
     selector: 'app-topic-content',
     templateUrl: './topic-content.component.html',
     styleUrls: ['./topic-content.component.scss'],
-    imports: [IonicModule],
+    imports: [],
 })
 export class TopicContentComponent {
   showButtons = false;
   @Input() title: string;
   @Input() content: string;
-  constructor(private modalController: ModalController) {
+  constructor() {
     // constructor code
   }
 
   closeModal() {
-    this.modalController.dismiss();
+    
   }
 
   onScroll(event: any) {

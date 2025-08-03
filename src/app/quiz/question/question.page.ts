@@ -1,8 +1,6 @@
 import { NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { NavController } from '@ionic/angular'; 
 import { CdTimerModule } from 'angular-cd-timer';
 import { CountdownModule } from 'ngx-countdown';
 import { register } from 'swiper/element/bundle';
@@ -20,7 +18,6 @@ import { Quiz } from '@core/models/quiz';
   schemas: [ CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     RouterModule,
-    IonicModule,
     NgClass,
     CdTimerModule, 
     CountdownModule,
@@ -60,7 +57,7 @@ export class QuestionPage implements OnInit, AfterViewInit {
   swiper?: Swiper;
   @ViewChild("swiperEx") swiperEx ?: ElementRef<{ swiper: Swiper }>
   //slideWithNav:any;
-  constructor(private http: HttpClient, private navCtrl: NavController, private router: Router, private route: ActivatedRoute) { 
+  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { 
     this.sliderOne =
     {
       isBeginningSlide: true,
@@ -152,7 +149,7 @@ export class QuestionPage implements OnInit, AfterViewInit {
   }
 
   quizSummery() {  
-    this.navCtrl.navigateRoot(['./quiz-summery']);
+    //this.navCtrl.navigateRoot(['./quiz-summery']);
   } 
 
   setViewType(vt: string) {
@@ -160,7 +157,7 @@ export class QuestionPage implements OnInit, AfterViewInit {
   }
 
   openQuizCategory() {
-    this.navCtrl.navigateForward(['./contests'], { queryParams: { currentQuestionId: 1 } });
+    //this.navCtrl.navigateForward(['./contests'], { queryParams: { currentQuestionId: 1 } });
   }
 
   goToDashbpard(){

@@ -1,12 +1,16 @@
+import { RatingType } from "./rating-type"
 import { SkillType } from "./skill-type"
 
 export interface SkillRating {
     id: number
-    user_id: number
+    userId: number
     skill_id: string
-    skill_type: SkillType
+    skillType: SkillType
     rating: number
-    rated_by : number
+    //Self Rating: userId same as ratedBy
+    //Quiz : Trivia
+    ratedBy : number
+    ratingType: RatingType
     createdAt : string
     //frontend specific
     skill_icon: string

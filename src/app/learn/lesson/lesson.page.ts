@@ -1,8 +1,6 @@
 import { JsonPipe, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { NavController } from '@ionic/angular'; 
 import { CdTimerModule } from 'angular-cd-timer';
 import { CountdownModule } from 'ngx-countdown';
 import { register } from 'swiper/element/bundle';
@@ -18,7 +16,6 @@ import { SafePipe } from '@shared/pipes/safehtml.pipe';
   standalone: true,
   schemas: [ CUSTOM_ELEMENTS_SCHEMA],
   imports: [
-    IonicModule,
     RouterModule,
     CdTimerModule, 
     CountdownModule,

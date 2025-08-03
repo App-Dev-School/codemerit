@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
-import { MasterService } from '@core/service/master.service';
+import { MatInputModule } from '@angular/material/input';
 import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { MasterService } from '@core/service/master.service';
 import { slideInOutAnimation } from '@shared/animations';
+import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
 
 @Component({
     selector: 'app-select-subject',

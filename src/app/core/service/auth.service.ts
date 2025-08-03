@@ -161,18 +161,20 @@ export class AuthService {
     }
   }
 
-  redirectToSupportCenter() {
-    this.router.navigate(["/bazichic/consultation/enquiry"]);
-  }
-
-  //
-
   getFullProfile(api_key: any, user_name: any): Observable<any> {
-    const url = 'profile/' + user_name;
+    const url = 'apis/users/' + user_name;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + " via Token " + api_key);
     }
     return this.httpService.get(url, api_key);
+  }
+
+    getDummyProfile(userName) {
+    return this.httpService.getLocalMock('assets/data/profile.json').pipe(
+      map((objects: any) => {
+        return objects.filter(obj => obj.username === userName);
+      })
+    );
   }
 
   updateUserAccount(api_key: any, postData: any): Observable<any> {

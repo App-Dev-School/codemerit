@@ -15,7 +15,6 @@ import { provideRouter, RouteReuseStrategy } from '@angular/router';
 import { DirectionService } from '@core';
 import { ErrorInterceptor } from '@core/interceptor/error.interceptor';
 import { JwtInterceptor } from '@core/interceptor/jwt.interceptor';
-import { provideIonicAngular } from '@ionic/angular/standalone';
 import { FeatherModule } from 'angular-feather';
 import { allIcons } from 'angular-feather/icons';
 import { APP_ROUTE } from './app.routes';
@@ -23,7 +22,6 @@ import { APP_ROUTE } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideIonicAngular(),
     provideHttpClient(),
     provideRouter(APP_ROUTE),
     provideAnimations(),

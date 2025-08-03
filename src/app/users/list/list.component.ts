@@ -16,8 +16,6 @@ import {
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Subject } from 'rxjs';
-// import { ViewAppointmentFormComponent } from './dialogs/form-dialog/form-dialog.component';
-// import { ViewAppointmentDeleteComponent } from './dialogs/delete/delete.component';
 import { CommonModule, DatePipe, formatDate, NgClass } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -36,7 +34,7 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, User } from '@core';
 import { rowsAnimation, TableExportUtil } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
@@ -100,8 +98,8 @@ export class ListUserComponent implements OnInit, OnDestroy {
 
   constructor(
     public httpClient: HttpClient,
-    public dialog: MatDialog,
-    public appointmentService: AuthService,
+    public router: Router,
+    public authService: AuthService,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute
   ) { }
@@ -110,7 +108,7 @@ export class ListUserComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       this.eventDetails = params;
     });
-
+    
     //this.loadData(this.eventDetails.start);
     this.loadData();
   }
@@ -132,7 +130,7 @@ export class ListUserComponent implements OnInit, OnDestroy {
 
   loadData(filterDate?: string) {
     //process to get only value
-    this.appointmentService.getAllUsers().subscribe({
+    this.authService.getAllUsers().subscribe({
       next: (data) => {
         const users = data.data;
         console.log("NgListUser loadData", users);
@@ -187,31 +185,15 @@ export class ListUserComponent implements OnInit, OnDestroy {
   }
 
   addNew() {
-    //route to 
-    //this.openDialog('add');
+    this.router.navigate(['/users/create']).then(() => {
+      console.log('Navigation create user completed!');
+    });
   }
 
-  test(row: User) {
-    console.log(row, " ###test");
-      this.showNotification(
-      'snackbar-danger',
-      `${row.firstName} Successfully...!!!`,
-      'bottom',
-      'center'
-    );
-  }
-
-  showNotification(
-    colorName: string,
-    text: string,
-    placementFrom: MatSnackBarVerticalPosition,
-    placementAlign: MatSnackBarHorizontalPosition
-  ) {
-    this.snackBar.open(text, '', {
-      duration: 2000,
-      verticalPosition: placementFrom,
-      horizontalPosition: placementAlign,
-      panelClass: colorName,
+  viewUser(row: User) {
+    console.log(row, " ###viewUser");
+    this.router.navigate(['/users/view', row.username]).then(() => {
+      console.log('Navigation view user completed!');
     });
   }
 
@@ -245,19 +227,6 @@ export class ListUserComponent implements OnInit, OnDestroy {
       : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
-  removeSelectedRows() {
-    const totalSelect = this.selection.selected.length;
-    this.dataSource.data = this.dataSource.data.filter(
-      (item) => !this.selection.selected.includes(item)
-    );
-    this.selection.clear();
-    this.showNotification(
-      'snackbar-danger',
-      `${totalSelect} Record(s) Deleted Successfully...!!!`,
-      'bottom',
-      'center'
-    );
-  }
   onContextMenu(event: MouseEvent, item: User) {
     event.preventDefault();
     this.contextMenuPosition = {
