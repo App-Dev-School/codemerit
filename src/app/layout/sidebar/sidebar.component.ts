@@ -91,7 +91,7 @@ export class SidebarComponent
     }
   }
   ngOnInit() {
-    if (this.authService.currentUserValue) {
+    if (this.authService.currentUserValue && this.authService.currentUserValue.email) {
       const userRole = this.authService.currentUserValue.role;
       this.userFullName =
         this.authService.currentUserValue.firstName +
@@ -118,6 +118,10 @@ export class SidebarComponent
       } else if (userRole === Role.Subscriber) {
         this.userType = Role.Subscriber;
       }
+    }else{
+      //Allow default visitor placeholder
+      this.userFullName = "Guest";
+      this.userImg = "assets/images/users/user.jpg";
     }
 
     // this.sidebarItems = ROUTES.filter((sidebarItem) => sidebarItem);

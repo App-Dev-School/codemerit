@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '@core';
 @Component({
     selector: 'app-pricing',
     templateUrl: './pricing.component.html',
@@ -6,7 +7,12 @@ import { Component } from '@angular/core';
     imports: []
 })
 export class PricingComponent {
-  constructor() {
+  constructor(private auth: AuthService) {
     // constructor code
+  }
+
+  signUp(){
+  //if visitor launch a dialog based login component
+  //else show membership details
   }
 }

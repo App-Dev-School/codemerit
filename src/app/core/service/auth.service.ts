@@ -118,6 +118,7 @@ export class AuthService {
   }
 
   logout(debug="") {
+    console.log("NgApp Log out");
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(this.currentUserValue);

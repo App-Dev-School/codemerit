@@ -3,14 +3,14 @@
         <div class="row align-items-center">
             <div class="col-md-8 mb-0">
                 <p class="font-b-500">
-                    Welcome {{ isVisitor ? 'Guest' : authData.firstName}}
+                    Welcome back!
                 </p>
-                <div class="font-b-500 font-25 col-blue mb-2">{{authData.firstName +' '+ authData.lastName}}</div>
-                <p class="font-b-500 mb-4">cool </p>
+                <div class="font-b-500 font-25 col-blue mb-2">{{ isVisitor ? 'Guest' : authData.firstName}}</div>
+                <p class="font-b-500 mb-4">Lets start by adding your existing skills. This will help us to customize your experience. </p>
                 <div class="row justify-content-center">
                     <div class="col-lg-4 col-sm-4">
                         <div class="p-15 m-20 card-1"><span class="font-b-500">Trivia</span>
-                            <h5 class="mb-0 text-primary">20% </h5>
+                            <h5 class="mb-0 text-primary">0% </h5>
                         </div>
                     </div>
                     <div class="col-lg-4 col-sm-4">
@@ -19,14 +19,16 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-sm-4">
-                        <div class="p-15 m-20 card-3"><span class="font-b-500">Contribution</span>
+                        <div class="p-15 m-20 card-3"><span class="font-b-500">Achievements</span>
                             <h5 class="mb-0 text-success"> NA</h5>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-0">
-                <img src="assets/images/pages/doctors.svg" alt="" class="w-100 image-top">
+                <div class="animSvg" style="width:100%;height:300px;"></div>
+                <!-- <img src="assets/images/pages/onboard.svg" alt="" class="w-100 image-top"> -->
+                 <!-- <img src="assets/images/pages/3.svg" alt="" class="w-100 image-top"> -->
             </div>
         </div>
     </div>

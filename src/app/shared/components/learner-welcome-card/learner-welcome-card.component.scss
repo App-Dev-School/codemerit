@@ -13,3 +13,8 @@
 :host ::ng-deep .image-top {
   margin-top: -3rem !important;
 }
+.animSvg{
+   background-image: url( '/assets/images/pages/3.svg' );
+   background-repeat: no-repeat;
+   background-size: cover;
+}

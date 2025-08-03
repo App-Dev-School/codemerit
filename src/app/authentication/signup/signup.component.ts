@@ -58,8 +58,12 @@ export class SignupComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.authData = this.authService.currentUserValue;
     if(this.authData.token && this.authData.firstName && this.authData.id){
-      this.authService.logout();
-       this.snackbar.display("snackbar-danger", "Logging you out! Please login again.", "bottom", "center");
+      this.authService.logout().subscribe((res) => {
+      this.snackbar.display("snackbar-danger", "Logging you out! Please login again.", "bottom", "center");
+      if (!res.success) {
+        this.router.navigate(['/authentication/signin']);
+      }
+      });
     }
     this.authForm = this.formBuilder.group({
       firstName: ['Test', [Validators.required, Validators.maxLength(20)]],
