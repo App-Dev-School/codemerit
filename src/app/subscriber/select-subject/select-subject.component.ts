@@ -44,9 +44,7 @@ export class SelectSubjectComponent implements OnInit{
   onSubjectChange(subject: string){
     this.subject = subject ? subject : "";
     console.log("SelectSubject @onSubjectChange", subject);
-    //Router Animation
     this.router.navigate(['/dashboard/learn', this.subject]).then(() => {
-      // Animation logic can also go here
       console.log('Navigation completed!');
     });
   }

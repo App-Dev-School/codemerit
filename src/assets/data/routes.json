@@ -37,7 +37,7 @@
           "badge": "",
           "badgeClass": "",
           "role": [
-            ""
+            "Admin"
           ],
           "submenu": []
         },
@@ -51,7 +51,7 @@
           "badge": "",
           "badgeClass": "",
           "role": [
-            ""
+            "Admin"
           ],
           "submenu": []
         }
@@ -62,20 +62,6 @@
       "title": "My Dashboard",
       "iconType": "material-icons-outlined",
       "icon": "space_dashboard",
-      "class": "",
-      "groupTitle": false,
-      "badge": "",
-      "badgeClass": "",
-      "role": [
-        "User"
-      ],
-      "submenu": []
-    },
-     {
-      "path": "/users/list",
-      "title": "Users",
-      "iconType": "material-icons-outlined",
-      "icon": "people_alt",
       "class": "",
       "groupTitle": false,
       "badge": "",
@@ -130,7 +116,7 @@
     },
     {
       "path": "",
-      "title": "SurveyCreator Quiz",
+      "title": "Survey Creator",
       "iconType": "material-icons-outlined",
       "icon": "extension",
       "class": "menu-toggle",
@@ -201,6 +187,118 @@
         {
           "path": "/forms/wizard",
           "title": "Form Wizards",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/topics/explore/rxjs",
+          "title": "Topic 1",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/topics/rxjs",
+          "title": "Topic 2",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/dashboard/select-subject",
+          "title": "Select Subject",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+         {
+          "path": "/dashboard/learn/java",
+          "title": "Learn Java Deeplink",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/app/profile",
+          "title": "App Profile",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/app/faqs",
+          "title": "App FAQs",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/app/subscription",
+          "title": "App Subscription",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/app/invoice",
+          "title": "App invoice",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",

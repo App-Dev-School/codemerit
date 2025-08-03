@@ -11,6 +11,7 @@ import { MasterService } from '@core/service/master.service';
 import { AuthService } from '@core';
 import { Router } from '@angular/router';
 import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
+import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -21,16 +22,17 @@ import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.
     MatChipsModule,
     MatRippleModule,
     MatIconModule,
-    MySubjectsComponent
+    MySubjectsComponent,
+    LearnerWelcomeCardComponent
   ],
-   animations: [
-      trigger('fadeOut', [
-        transition(':leave', [
-          style({ opacity: 1 }), // Set initial opacity
-          animate('1.2s', style({ opacity: 0 })) // Animate to opacity 0 over 0.5 seconds
-        ])
-      ])
-    ]
+  //  animations: [
+  //     trigger('fadeOut', [
+  //       transition(':leave', [
+  //         style({ opacity: 1 }), // Set initial opacity
+  //         animate('1.2s', style({ opacity: 0 })) // Animate to opacity 0 over 0.5 seconds
+  //       ])
+  //     ])
+  //   ]
 })
 export class WelcomeComponent {
   subject = "";

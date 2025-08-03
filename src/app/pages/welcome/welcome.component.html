@@ -5,16 +5,17 @@
       </div>
     </div>
 
-    <!---- Start -->
     <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <app-learner-welcome-card></app-learner-welcome-card>
         <app-my-subjects [minimal]="true" (subjectSelected)="onSubjectChange($event)"></app-my-subjects>
     
-        <!-- <h4>Welcome Username</h4> -->
+        <h4 class="text-center mb-5 mt-5">Welcome Username</h4>
         <owl-carousel-o [options]="customOptions">
 
           @for (engage of engagements; track engage) {
-          <ng-container @fadeOut>
+          <!-- <ng-container @fadeOut> -->
+            <ng-container>
             <ng-template carouselSlide [id]="''+engage.id">
               <!-- <img [src]="engage.src" [alt]="engage.alt" [title]="engage.title"> -->
               <!--- Engage Item based on Type -->
@@ -47,37 +48,6 @@
           </ng-container>
           }
 
-          <!-- Other Static Cards -->
-          <ng-template carouselSlide>
-            <!-- FAQ Card -->
-            <mat-card class="example-card" appearance="outlined">
-              <mat-card-header>
-                <mat-card-title-group>
-                  <mat-card-title>Web Accessibility</mat-card-title>
-                  <mat-card-subtitle>ARIA</mat-card-subtitle>
-                  <img mat-card-sm-image src="assets/images/tech/html.png" style="width:40px!important;height:40px!important;">
-                </mat-card-title-group>
-              </mat-card-header>
-              <mat-card-content>
-                Do you know about Web Accessibility Guidelines?
-                <!-- <div class="preloader pl-size-xs">
-                  <div class="spinner-layer pl-teal">
-                    <div class="circle-clipper left">
-                      <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                      <div class="circle"></div>
-                    </div>
-                  </div>
-                </div> -->
-              </mat-card-content>
-              <mat-card-actions align="end">
-                <button mat-button mat-ripple>Got It</button>
-                <button (click)="removeItem('static1')" mat-button>Learn More</button>
-              </mat-card-actions>
-            </mat-card>
-          </ng-template>
-
           <ng-template carouselSlide>
             <!-- FAQ Card -->
             <mat-card class="example-card" appearance="outlined">
@@ -98,61 +68,9 @@
               </mat-card-actions>
             </mat-card>
           </ng-template>
-
-          <ng-template carouselSlide>
-            <!--Concept Card-->
-            <mat-card class="example-card" appearance="outlined">
-              <mat-card-header>
-                <mat-card-title>SSR</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <p>By default angular creates a CSR (Client side rendered) app. Server Side Rendering is a technique that is used to render web pages that renders html via a server
-                  renderer like express.</p>
-              </mat-card-content>
-              <mat-card-footer class="example-card-footer">
-                <mat-chip-set aria-label="Tags">
-                  <mat-chip>SPAs</mat-chip>
-                  <mat-chip>SEO</mat-chip>
-                </mat-chip-set>
-              </mat-card-footer>
-              <mat-card-actions align="end">
-                <button mat-button (click)="bookmark()">
-                  <mat-icon class="col-green">{{isBookmarked ? 'bookmark' : 'bookmark_border'}}</mat-icon> Mark
-                </button>
-                <button (click)="removeItem('static1')" mat-button><mat-icon class="col-red">close</mat-icon></button>
-              </mat-card-actions>
-            </mat-card>
-          </ng-template>
-
         </owl-carousel-o>
       </div>
     </div>
-   
-    <!---- End -->
-    <!---- Start -->
-    <!---- End -->
-    <!---- Start -->
-    <!---- End -->
-
-    <!---- Start -->
-    @if(showCard){
-      <mat-card class="example-card" appearance="outlined" @fadeOut>
-        <mat-card-header>
-          <mat-card-title-group>
-            <!-- <mat-card-title>Welcome</mat-card-title> -->
-            <mat-card-subtitle>Vishal Kumar</mat-card-subtitle>
-            <img mat-card-sm-image src="assets/images/codemerit.png">
-          </mat-card-title-group>
-        </mat-card-header>
-        <mat-card-content>
-         CodeMerit helps ensure that you are familiar with most of the essential topics by creating a series of engagement. Keep responding to achieve your goals and earn badges!
-        </mat-card-content>
-        <mat-card-actions align="end">
-          <button mat-button (click)="toggleCard()">Got It</button>
-          <button (click)="removeItem('static1')" mat-button>Learn More</button>
-        </mat-card-actions>
-      </mat-card>
-      <!---- End -->
-    }
+  
   </div>
 </section>
