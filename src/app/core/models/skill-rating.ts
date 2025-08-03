@@ -7,7 +7,7 @@ export interface SkillRating {
     skill_type: SkillType
     rating: number
     rated_by : number
-    created_at : string
+    createdAt : string
     //frontend specific
     skill_icon: string
   }

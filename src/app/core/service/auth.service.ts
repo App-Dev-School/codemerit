@@ -28,7 +28,7 @@ export class AuthService {
       role: Role.Subscriber,
       token: 'admin-token',
       status: 'Active',
-      date_created: ''
+      createdAt: ''
     },
     {
       id: 2,
@@ -41,7 +41,7 @@ export class AuthService {
       role: Role.Subscriber,
       token: 'user-token',
       status: 'Active',
-      date_created: ''
+      createdAt: ''
     }
   ];
 
@@ -213,14 +213,30 @@ export class AuthService {
         'Authorization': api_key
       })
     };
-    const url = environment.apiUrl + 'apis/summary';
+    const url = 'apis/summary';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
     }
     return this.httpService.post(url, JSON.stringify(postData), httpOptions);
   }
 
-  getAllUsers(postData: any): Observable<any> {
+  getAllUsers(): Observable<any> {
+    const api_key = this.currentUserValue.token;
+    // const httpOptions = {
+    //   headers: new HttpHeaders({
+    //     'Content-Type': 'application/json',
+    //     'Accept': 'application/json',
+    //     'Authorization': api_key
+    //   })
+    // };
+    const url = 'apis/users';
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " via Token " + api_key);
+    }
+    return this.httpService.get(url, api_key);
+  }
+
+   getFilteredUsers(postData: any): Observable<any> {
     const api_key = this.currentUserValue.token;
     const httpOptions = {
       headers: new HttpHeaders({
@@ -229,7 +245,7 @@ export class AuthService {
         'Authorization': api_key
       })
     };
-    const url = environment.apiUrl + 'apis/summary';
+    const url = 'apis/users';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
     }
@@ -256,7 +272,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
         token: user.token,
-        date_created: user.date_created,
+        createdAt: user.createdAt,
         status: user.status
       });
     }
@@ -270,7 +286,7 @@ export class AuthService {
     email: string;
     role: string;
     token: string;
-    date_created: string;
+    createdAt: string;
     status: string;
   }) {
     return of(new HttpResponse({ status: 200, body }));

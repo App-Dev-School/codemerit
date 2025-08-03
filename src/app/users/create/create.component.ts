@@ -75,23 +75,24 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         'test@gmailed.com',
         [Validators.required, Validators.email, Validators.minLength(5)],
       ],
-      mobile: ['', [Validators.minLength(9)]],
+      mobile: ['8767095566', [Validators.minLength(9)]],
       city: ['Bengaluru', Validators.required],
       country: ['India', Validators.required],
       designation: ['IT Programmer', Validators.required]
     });
-    this.editor = new Editor();
-    this.filteredOptions = this.authForm.valueChanges.pipe(
-      startWith(''),
-      map((name) => (name ? this._filter(name) : this.options.slice()))
-    );
+    // this.editor = new Editor();
+    // this.filteredOptions = this.authForm.valueChanges.pipe(
+    //   startWith(''),
+    //   map((name) => (name ? this._filter(name) : this.options.slice()))
+    // );
     this.watchTwoFieldsChange('firstName', 'lastName');
     this.randomColor = this.getRandomColor();
   }
 
   private _filter(name: string): string[] {
+    console.log("FixIssue _filter@@@ ", typeof name, name);
+      
     const filterValue = name.toLowerCase();
-
     return this.options.filter(
       (option) => option.toLowerCase().indexOf(filterValue) === 0
     );
@@ -109,6 +110,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         email: this.authForm.get('email')?.value,
         mobile: this.authForm.get('mobile')?.value,
         city: this.authForm.get('city')?.value,
+        country: this.authForm.get('country')?.value,
         designation: this.authForm.get('designation')?.value.name
       };
 
@@ -125,7 +127,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
               //   this.authService.navigateAfterLogin();
               // }, 3000)
               // this.timeOutIDs.push(serverDelay);
-              this.router.navigate(['/admin/dashboard/main']);
+              this.router.navigate(['/users/list']);
             }
           } else {
             if (res.message) {

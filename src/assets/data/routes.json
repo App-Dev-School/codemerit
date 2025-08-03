@@ -87,7 +87,7 @@
     },
     {
       "path": "",
-      "title": "Dev Components",
+      "title": "Manage Users",
       "iconType": "material-icons-outlined",
       "icon": "dvr",
       "class": "menu-toggle",
@@ -95,12 +95,12 @@
       "badge": "Dev",
       "badgeClass": "badge bg-blue sidebar-badge float-end",
       "role": [
-        "User", "Admin"
+        "Admin"
       ],
       "submenu": [
         {
-          "path": "/learn/topics/explore/rxjs",
-          "title": "Explore Topic",
+          "path": "/users/list",
+          "title": "List Users",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",
@@ -108,13 +108,13 @@
           "badge": "",
           "badgeClass": "",
           "role": [
-            ""
+            "Admin"
           ],
           "submenu": []
         },
         {
-          "path": "/learn/topics/rxjs-concatMap",
-          "title": "Single Topic Resource",
+          "path": "/users/create",
+          "title": "Add New User",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",
@@ -122,7 +122,7 @@
           "badge": "",
           "badgeClass": "",
           "role": [
-            ""
+            "Admin"
           ],
           "submenu": []
         }

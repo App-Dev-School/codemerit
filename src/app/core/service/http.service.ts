@@ -23,6 +23,7 @@ export class HttpService {
       const httpOptions = {
         headers: new HttpHeaders({
           'Content-Type':  'application/json',
+          'Accept': 'application/json',
           'Authorization': apiKey
         })
         };

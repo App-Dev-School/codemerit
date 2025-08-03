@@ -2,7 +2,7 @@
   <div class="content-block">
     <div class="block-header">
       <!-- breadcrumb -->
-      <app-breadcrumb [title]="'View Appointment'" [items]="['Appointment']" [active_item]="'View'"></app-breadcrumb>
+      <app-breadcrumb [title]="'List Users'" [items]="['List Users']" [active_item]="'View'"></app-breadcrumb>
     </div>
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -11,7 +11,7 @@
             <div class="left">
               <ul class="header-buttons-left ms-0">
                 <li class="tbl-title">
-                  <h2>Appointment</h2>
+                  <h2>List Users </h2>
                 </li>
                 <li class="tbl-search-box">
                   <label for="search-input"><i class="material-icons search-icon">search</i></label>
@@ -45,20 +45,6 @@
           <div class="overflow-auto">
             <div class="responsive_table">
               <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
-                <!-- Checkbox Column -->
-                <ng-container matColumnDef="select">
-                  <mat-header-cell *matHeaderCellDef>
-                    <mat-checkbox (change)="$event ? masterToggle() : null"
-                      [checked]="selection.hasValue() && isAllSelected()" color="primary"
-                      [indeterminate]="selection.hasValue() && !isAllSelected()" [ngClass]="'tbl-checkbox'">
-                    </mat-checkbox>
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-                      [checked]="selection.isSelected(row)" [ngClass]="'tbl-checkbox'" color="primary">
-                    </mat-checkbox>
-                  </mat-cell>
-                </ng-container>
                 @for (column of columnDefinitions; track column) {
                 <!-- Skip rendering if column.label is "select" or "action" -->
                 @if (column.type === 'check' || column.type === 'actionBtn') {
@@ -69,11 +55,12 @@
                   <mat-header-cell *matHeaderCellDef mat-sort-header>
                     <span class="truncate-text">{{ column.label }}</span>
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [matTooltip]="row.name">
+                  <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [matTooltip]="row.name" routerLink="/users/view">
                     <span class="mobile-label">{{ column.label }}:</span>
-                    <img [src]="row.img" class="table-img" alt="image" />
+                    <!-- Place alph-->
+                    <img [src]="'/assets/images/users/user1.jpg'" class="table-img" alt="image" />
                     <span class="truncate-text">
-                      {{ row.name }}
+                      {{ row.firstName +' '+ row.lastName }}
                     </span>
                   </mat-cell>
                 </ng-container>
@@ -86,21 +73,7 @@
                   <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                     <span class="mobile-label">{{ column.label }}:</span>
                     <span class="truncate-text">
-                      {{ row[column.def] | date: 'MM/dd/yyyy' }}
-                    </span>
-                  </mat-cell>
-                </ng-container>
-                } @else {
-                @if (column.type === 'time') {
-                <ng-container [matColumnDef]="column.def">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    <span class="truncate-text">{{ column.label }}</span>
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
-                    <span class="mobile-label">{{ column.label }}:</span><mat-icon
-                      class="tbl-icon material-icons-outlined col-indigo">schedule</mat-icon>
-                    <span class="truncate-text">
-                      {{ row[column.def] }}
+                      {{ row.createdAt | date: 'MM/dd/yyyy' }}
                     </span>
                   </mat-cell>
                 </ng-container>
@@ -120,12 +93,11 @@
                 @if (column.type === 'email') {
                 <ng-container [matColumnDef]="column.def">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    <span class="truncate-text">{{ column.label }}</span>
+                      <span class="truncate-text">{{ column.label }}</span>
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)"
                     [matTooltip]="row[column.def]">
-                    <span class="mobile-label">{{ column.label }}:</span> <mat-icon
-                      class="tbl-icon material-icons-outlined col-red">mail</mat-icon><span class="truncate-text">
+                    <span class="mobile-label">{{ column.label }}:</span><span class="truncate-text">
                       {{ row[column.def] }}</span></mat-cell>
                 </ng-container>
                 } @else {
@@ -136,28 +108,26 @@
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)"
                     [matTooltip]="row[column.def]">
-                    <span class="mobile-label">{{ column.label }}:</span> <mat-icon
-                      class="tbl-icon material-icons-outlined col-blue">place</mat-icon><span class="truncate-text">
-                      {{ row[column.def] }}</span></mat-cell>
+                    <span class="mobile-label">{{ column.label }}:</span><span class="truncate-text">
+                      {{ row.country }}</span></mat-cell>
                 </ng-container>
                 } @else {
-                @if (column.def === 'gender') {
+                @if (column.def === 'verified') {
                 <ng-container [matColumnDef]="column.def">
                   <mat-header-cell *matHeaderCellDef mat-sort-header> <span class="truncate-text">{{ column.label
                       }}</span></mat-header-cell>
                   <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
-                    <span class="mobile-label">{{ column.label }}:</span>
+                    <span class="mobile-label">{{ column.label }} :</span>
                     <div>
-                      @switch (row.gender) {
-                      @case ('male') {
-                      <div>
-                        <span class="badge badge-solid-green">{{ row.gender }}</span>
-                      </div>
+                      @switch (row.accountStatus) {
+                      @case ('PENDING') {
+                      <span class="badge badge-solid-purple">{{ row.accountStatus }}</span>
                       }
-                      @case ('female') {
-                      <div>
-                        <span class="badge badge-solid-purple">{{ row.gender }}</span>
-                      </div>
+                      @case ('ACTIVE') {
+                      <span class="badge badge-solid-green">{{ row.accountStatus }}</span>
+                      }
+                      @case ('BLOCKED') {
+                      <span class="badge badge-solid-red">{{ row.accountStatus }}</span>
                       }
                       }
                     </div>
@@ -173,7 +143,6 @@
                     <span class="truncate-text">{{ row[column.def] }}</span>
                   </mat-cell>
                 </ng-container>
-                }
                 }
                 }
                 }

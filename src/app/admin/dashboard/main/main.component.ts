@@ -4,21 +4,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import {
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexDataLabels,
-  ApexFill,
-  ApexGrid,
-  ApexLegend,
-  ApexPlotOptions,
-  ApexResponsive,
-  ApexStroke,
-  ApexTooltip,
-  ApexXAxis,
-  ApexYAxis,
-  NgApexchartsModule,
-} from 'ng-apexcharts';
+import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+//unused
+import { BaseChartDirective } from 'ng2-charts';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
@@ -26,7 +14,7 @@ import { ActivityCountCardComponent } from '@shared/components/activity-count/ac
 import { SubscriptionTableWidgetComponent } from '@shared/components/subscription-table-widget/subscription-table-widget.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '@core';
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -49,8 +37,8 @@ export type ChartOptions = {
     templateUrl: './main.component.html',
     styleUrls: ['./main.component.scss'],
     imports: [
+        RouterLink,
         BreadcrumbComponent,
-        NgApexchartsModule,
         MatCardModule,
         MatButtonModule,
         MatTableModule,
@@ -58,6 +46,7 @@ export type ChartOptions = {
         NgScrollbar,
         MatMenuModule,
         MatIconModule,
+        BaseChartDirective,
         SubscriptionTableWidgetComponent,
         ActivityCountCardComponent
     ]
@@ -71,6 +60,26 @@ export class MainComponent implements OnInit {
   selectedTimePeriod: string = 'Monthly';
 
   subject= "";
+
+    public doughnutChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+  };
+  public doughnutChartLabels: string[] = ['India', 'USA', 'Itely'];
+  public doughnutChartData: ChartData<'doughnut'> = {
+    labels: this.doughnutChartLabels,
+    datasets: [
+      {
+        data: [350, 450, 100],
+        backgroundColor: ['#60A3F6', '#7C59E7', '#DD6811'],
+      },
+    ],
+  };
+  public doughnutChartType: ChartType = 'doughnut';
+  
   constructor(private route: ActivatedRoute, private authService: AuthService, private snackService: SnackbarService) {
     console.log("MainComponent constructor", this.subject);
   }

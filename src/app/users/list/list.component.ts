@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component,
   ElementRef,
@@ -7,30 +8,27 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { SelectionModel } from '@angular/cdk/collections';
-import { fromEvent, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 // import { ViewAppointmentFormComponent } from './dialogs/form-dialog/form-dialog.component';
 // import { ViewAppointmentDeleteComponent } from './dialogs/delete/delete.component';
+import { CommonModule, DatePipe, formatDate, NgClass } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
   MAT_DATE_LOCALE,
   MatOptionModule,
   MatRippleModule,
 } from '@angular/material/core';
-import { rowsAnimation, TableExportUtil } from '@shared';
-import { formatDate, DatePipe, CommonModule, NgClass } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -38,12 +36,12 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
-import { Direction } from '@angular/cdk/bidi';
 import { ActivatedRoute } from '@angular/router';
-import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
 import { AuthService, User } from '@core';
-import { AppUser } from '@core/models/appuser';
+import { rowsAnimation, TableExportUtil } from '@shared';
+import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
+import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
+import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
 
 @Component({
   selector: 'app-list-users',
@@ -79,35 +77,12 @@ import { AppUser } from '@core/models/appuser';
 })
 export class ListUserComponent implements OnInit, OnDestroy {
   columnDefinitions = [
-    { def: 'select', label: 'Checkbox', type: 'check', visible: true },
     { def: 'name', label: 'Name', type: 'text', visible: true },
-    { def: 'doctor', label: 'Doctor', type: 'text', visible: true },
-    { def: 'gender', label: 'Gender', type: 'text', visible: true },
-    { def: 'date', label: 'Date', type: 'date', visible: true },
-    { def: 'time', label: 'Time', type: 'time', visible: true },
-    { def: 'mobile', label: 'Mobile', type: 'phone', visible: true },
-    { def: 'injury', label: 'Injury', type: 'text', visible: false },
+    { def: 'country', label: 'Country', type: 'address', visible: true },
+    { def: 'designation', label: 'Designation', type: 'text', visible: true },
     { def: 'email', label: 'Email', type: 'email', visible: true },
-    {
-      def: 'appointmentStatus',
-      label: 'Appointment Status',
-      type: 'text',
-      visible: true,
-    },
-    { def: 'visitType', label: 'Visit Type', type: 'text', visible: true },
-    {
-      def: 'paymentStatus',
-      label: 'Payment Status',
-      type: 'text',
-      visible: false,
-    },
-    {
-      def: 'insuranceProvider',
-      label: 'Insurance Provider',
-      type: 'text',
-      visible: false,
-    },
-    { def: 'notes', label: 'Notes', type: 'text', visible: false },
+    { def: 'date', label: 'Join Date', type: 'date', visible: true },
+    { def: 'verified', label: 'Status', type: 'text', visible: true },
     { def: 'actions', label: 'Actions', type: 'actionBtn', visible: true },
   ];
 
@@ -129,14 +104,15 @@ export class ListUserComponent implements OnInit, OnDestroy {
     public appointmentService: AuthService,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       this.eventDetails = params;
     });
-    
-    this.loadData(this.eventDetails.start);
+
+    //this.loadData(this.eventDetails.start);
+    this.loadData();
   }
 
   ngOnDestroy() {
@@ -155,8 +131,12 @@ export class ListUserComponent implements OnInit, OnDestroy {
   }
 
   loadData(filterDate?: string) {
-    this.appointmentService.getAllUsers({}).subscribe({
+    //process to get only value
+    this.appointmentService.getAllUsers().subscribe({
       next: (data) => {
+        const users = data.data;
+        console.log("NgListUser loadData", users);
+        const filteredData = users;
         if (filterDate) {
           // Filter data based on the selected date
           const filteredData = data.filter((appointment) => {
@@ -173,13 +153,17 @@ export class ListUserComponent implements OnInit, OnDestroy {
             return appointmentDate === selectedDate; // Match by date
           });
           this.dataSource.data = filteredData;
+          console.log("NgListUser filteredData", filteredData);
+
         } else {
           // If no filter date, load all data
-          this.dataSource.data = data;
+          this.dataSource.data = users;
+          console.log("NgListUser NO filteredData", data);
         }
 
         this.isLoading = false;
         this.refreshTable();
+
         this.dataSource.filterPredicate = (data: User, filter: string) =>
           Object.values(data).some((value) =>
             value.toString().toLowerCase().includes(filter)
@@ -209,6 +193,12 @@ export class ListUserComponent implements OnInit, OnDestroy {
 
   test(row: User) {
     console.log(row, " ###test");
+      this.showNotification(
+      'snackbar-danger',
+      `${row.firstName} Successfully...!!!`,
+      'bottom',
+      'center'
+    );
   }
 
   showNotification(
@@ -230,7 +220,7 @@ export class ListUserComponent implements OnInit, OnDestroy {
       FirstName: x.firstName,
       LastName: x.lastName,
       Email: x.email,
-      Date: formatDate(new Date(x.date_created), 'yyyy-MM-dd', 'en') || '',
+      Date: formatDate(new Date(x.createdAt), 'yyyy-MM-dd', 'en') || '',
       // Time: x.time,
       // Mobile: x.mobile,
       // Doctor: x.doctor,

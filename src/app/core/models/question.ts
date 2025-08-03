@@ -12,6 +12,6 @@ export interface Question {
     hasAnswered: boolean
     isPublished : boolean
     tag: string
-    created_at : string
+    createdAt : string
     created_by: number
 }

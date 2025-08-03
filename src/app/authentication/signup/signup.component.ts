@@ -9,10 +9,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { map, Observable, startWith } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { AuthService } from '@core/service/auth.service';
 import { AuthConstants } from '@config/AuthConstants';
+import { MasterService } from '@core/service/master.service';
+import { Country } from '@core/models/country.data';
+import { User } from '@core';
 
 @Component({
   selector: 'app-signup',
@@ -29,13 +32,15 @@ import { AuthConstants } from '@config/AuthConstants';
     MatAutocompleteModule,
     RouterLink,
     MatButtonModule,
-    AsyncPipe
+    AsyncPipe, JsonPipe
   ]
 })
 export class SignupComponent implements OnInit, OnDestroy {
+  authData: User;
   authForm!: UntypedFormGroup;
   options: string[] = ['Pursuing B.E/B.Tech', 'IT Fresher', 'IT Programmer (0-2 Yrs)' ,'Experienced IT Professional'];
   filteredOptions?: Observable<string[]>;
+  countries?: Observable<Country[]>;
   submitted = false;
   error = "";
   returnUrl!: string;
@@ -46,9 +51,16 @@ export class SignupComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private snackbar: SnackbarService,
-    public authService: AuthService
-  ) { }
+    public authService: AuthService,
+    private masterService: MasterService
+  ) { 
+  }
   ngOnInit() {
+    this.authData = this.authService.currentUserValue;
+    if(this.authData.token && this.authData.firstName && this.authData.id){
+      this.authService.logout();
+       this.snackbar.display("snackbar-danger", "Logging you out! Please login again.", "bottom", "center");
+    }
     this.authForm = this.formBuilder.group({
       firstName: ['Test', [Validators.required, Validators.maxLength(20)]],
       lastName: ['Doe', [Validators.maxLength(20)]],
@@ -63,6 +75,12 @@ export class SignupComponent implements OnInit, OnDestroy {
     });
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+      console.log("Detching countries ", new Date());
+      this.countries = this.masterService.getCountries();
+      // this.countries = this.authForm.valueChanges.pipe(
+      // startWith(''),
+      // map((name) => (name ? this._filter(name) : this.options.slice())));
+    console.log("NgMaster Fetched countries ", new Date());
     this.filteredOptions = this.authForm.valueChanges.pipe(
       startWith(''),
       map((name) => (name ? this._filter(name) : this.options.slice()))

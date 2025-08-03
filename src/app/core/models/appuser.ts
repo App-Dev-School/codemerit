@@ -16,5 +16,5 @@ export class AppUser {
   token?: string;
   api_key?: string;
   designation: string;
-  date_created: string;
+  createdAt: string;
 }

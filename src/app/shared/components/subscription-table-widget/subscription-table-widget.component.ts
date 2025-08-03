@@ -25,7 +25,7 @@ export interface SubscriptionInfo {
   styleUrl: './subscription-table-widget.component.scss',
 })
 export class SubscriptionTableWidgetComponent {
-  displayedColumns: string[] = ['name', 'status', 'actions'];
+  displayedColumns: string[] = ['name', 'status'];
   datasource: SubscriptionInfo[] = [
     {
       image: 'assets/images/users/user.jpg',

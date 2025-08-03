@@ -1,4 +1,3 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
@@ -6,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { AuthConstants } from 'src/app/config/AuthConstants';
 import { AuthService } from './auth.service';
 import { HttpService } from './http.service';
+import { Country } from '@core/models/country.data';
 
 @Injectable({
   providedIn: 'root'
@@ -159,4 +159,11 @@ export class MasterService {
   getMockUserProfile(): Observable<any> {
     return this.httpService.getLocalMock('assets/data/profile.json');
   }
+
+   getCountries(): Observable<Country[]> {
+    return this.httpService.getLocalMock('assets/data/master/countries.json').pipe(
+      map((data: any) => data as Country[])
+    );
+  }
+  
 }

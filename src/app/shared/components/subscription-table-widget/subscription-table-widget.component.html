@@ -3,7 +3,7 @@
 
         <!-- user Image Column -->
         <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> <span>Lesson</span></mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> <span>Name</span></mat-header-cell>
             <mat-cell *matCellDef="let user">
                 <img [src]="user.image" class="table-img" alt="image" /><span>
                     {{user.name}}</span></mat-cell>
@@ -14,16 +14,6 @@
             <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
             <mat-cell *matCellDef="let user">
                 <div [ngClass]="user.planClass" class="badge">{{user.status}}</div>
-            </mat-cell>
-        </ng-container>
-
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
-            <mat-cell *matCellDef="let user">
-                <button mat-icon-button class="tbl-action-btn">
-                    <app-feather-icons [icon]="'eye'" [class]="'tbl-fav-delete'"></app-feather-icons>
-                </button>
             </mat-cell>
         </ng-container>
 

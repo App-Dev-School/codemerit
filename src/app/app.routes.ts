@@ -32,6 +32,10 @@ export const APP_ROUTE: Route[] = [
             },
             {
                 path: 'users',
+                canActivate: [AuthGuard],
+                data: {
+                    role: Role.Admin,
+                },
                 loadChildren: () =>
                     import('./users/users.routes').then((m) => m.USERS_ROUTE),
             },
@@ -49,6 +53,10 @@ export const APP_ROUTE: Route[] = [
             },
             {
                 path: 'topics',
+                canActivate: [AuthGuard],
+                 data: {
+                    role: Role.Admin,
+                },
                 loadChildren: () =>
                     import('./pages/topic-explorer/topic-explorer.routes').then((m) => m.TOPIC_ROUTE),
             },
