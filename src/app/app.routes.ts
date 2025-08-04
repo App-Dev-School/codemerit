@@ -50,16 +50,7 @@ export const APP_ROUTE: Route[] = [
                     import('./pages/pages.routes').then(
                         (m) => m.PAGES_ROUTE
                     ),
-            },
-            {
-                path: 'topics',
-                canActivate: [AuthGuard],
-                 data: {
-                    role: Role.Admin,
-                },
-                loadChildren: () =>
-                    import('./pages/topic-explorer/topic-explorer.routes').then((m) => m.TOPIC_ROUTE),
-            },
+            }
         ],
     },
     {

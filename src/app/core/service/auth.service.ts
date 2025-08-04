@@ -171,11 +171,12 @@ export class AuthService {
   }
 
     getDummyProfile(userName) {
-    return this.httpService.getLocalMock('assets/data/profile.json').pipe(
-      map((objects: any) => {
-        return objects.filter(obj => obj.username === userName);
-      })
-    );
+      return this.httpService.getLocalMock('assets/data/profile.json');
+    // return this.httpService.getLocalMock('assets/data/profile.json').pipe(
+    //   map((objects: any) => {
+    //     return objects.filter(obj => obj.username === userName);
+    //   })
+    // );
   }
 
   updateUserAccount(api_key: any, postData: any): Observable<any> {

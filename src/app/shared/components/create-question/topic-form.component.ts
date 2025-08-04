@@ -22,7 +22,7 @@ interface TopicGroup {
 
 @Component({
   selector: 'app-topic-form',
-  imports: [NgClass, MatFormFieldModule,
+  imports: [MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatOptionModule,

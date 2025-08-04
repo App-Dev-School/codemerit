@@ -1,0 +1,142 @@
+[
+    {
+        "id": 1,
+        "title": "HTML",
+        "description": "HTML is the core mark-up language used for building web pages.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 2,
+        "title": "CSS",
+        "description": "CSS is used to style and layout web pages with fonts, colors, and spacing.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 3,
+        "title": "JavaScript",
+        "description": "JavaScript is the scripting language of the web, enabling interactivity and logic.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 4,
+        "title": "TypeScript",
+        "description": "TypeScript is a superset of JavaScript that adds strong typing.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 5,
+        "title": "Angular",
+        "description": "Angular is a TypeScript-based framework for building scalable web applications.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 6,
+        "title": "React",
+        "description": "React is a JavaScript library for building user interfaces, developed by Facebook.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 7,
+        "title": "Express.js",
+        "description": "Express.js is a lightweight web application framework for Node.js.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 8,
+        "title": "NestJS",
+        "description": "NestJS is a progressive Node.js framework for building efficient server-side applications.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 9,
+        "title": "Java",
+        "description": "Java is a high-level, class-based programming language used in backend and enterprise apps.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 10,
+        "title": "Spring Boot",
+        "description": "Spring Boot is a Java-based framework used to create stand-alone, production-grade applications.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 11,
+        "title": "DevOps",
+        "description": "DevOps is a set of practices that bridges software development and IT operations.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 12,
+        "title": "Docker",
+        "description": "Docker is a platform for developing, shipping, and running applications in containers.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 13,
+        "title": "Kubernetes",
+        "description": "Kubernetes is a container orchestration system for automating deployment and scaling.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 14,
+        "title": "CI/CD",
+        "description": "CI/CD is a method to frequently deliver apps by introducing automation into development and deployment.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 15,
+        "title": "PostgreSQL",
+        "description": "PostgreSQL is a powerful, open-source relational database system.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 16,
+        "title": "MongoDB",
+        "description": "MongoDB is a NoSQL document database known for high performance and scalability.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 17,
+        "title": "GraphQL",
+        "description": "GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 18,
+        "title": "Next.js",
+        "description": "Next.js is a React framework for building full-stack applications with SSR and API routes.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 19,
+        "title": "Redux",
+        "description": "Redux is a predictable state container for JavaScript apps, often used with React.",
+        "image": "",
+        "isSubscribed": true
+    },
+    {
+        "id": 20,
+        "title": "REST APIs",
+        "description": "REST APIs are a standard way to expose backend services over HTTP using resource-based URIs.",
+        "image": "",
+        "isSubscribed": true
+    }
+]

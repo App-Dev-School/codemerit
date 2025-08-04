@@ -199,7 +199,7 @@
           "submenu": []
         },
         {
-          "path": "/topics/explore/rxjs",
+          "path": "/admin/topics/list",
           "title": "Topic 1",
           "iconType": "",
           "icon": "",
@@ -213,8 +213,8 @@
           "submenu": []
         },
         {
-          "path": "/topics/rxjs",
-          "title": "Topic 2",
+          "path": "/admin/topics/list",
+          "title": "Topic Manager",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",

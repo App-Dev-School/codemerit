@@ -54,6 +54,12 @@ export default class UserComponent implements OnInit{
      }else{
        //this.authService.redirectToErrorPage();
       //this.authService.logout("Invalid link. Please login again.");
+      this.showNotification(
+          "snackbar-danger",
+          "Invalid User ID",
+          "bottom",
+          "center"
+        );
      }
     });
   }
@@ -63,11 +69,14 @@ export default class UserComponent implements OnInit{
     if(this.userName){
       if(navigator.onLine){
         //fullProfiles.json getFullProfile
+        console.log("NgViewUser userName", this.userName);
         this.authService.getDummyProfile(this.userName).subscribe(
-          (data) => {
+          (data : any) => {
+            console.log("NgViewUser Dummy API", data);
             this.loading = false;
             if(!data.error){
-              this.userDetail = data.result;
+              this.userDetail = data.data;
+              console.log("NgViewUser userDetail", this.userDetail);
               if(this.userDetail == null || this.userDetail == undefined){
                 this.noDataView = true;
                 this.authService.redirectToErrorPage();
@@ -75,6 +84,7 @@ export default class UserComponent implements OnInit{
             }else{
               this.noDataView = true;
               this.loading = false;
+              console.log("NgViewUser Dummy API Failure", data);
             }
           },
           (error: HttpErrorResponse) => {

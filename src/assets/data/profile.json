@@ -1,14 +1,34 @@
 {
-    "firstName": "Mario",
-    "lastName": "Zencher",
-    "designation": "Software Engineer",
-    "city": "Bangalore",
-    "country": "India",
-    "email": "mariozencher@gmail.com",
-    "image": "assets/images/users/user_big.jpg",
-    "level": "Senior",
-    "points": "3180",
-    "subscriptions" : [
-        
-    ]
+    "error": false,
+    "result_code": 200,
+    "message": "Succesfully Registered",
+    "data": {
+        "firstName": "Testa",
+        "lastName": "Doe",
+        "email": "user5@codemerit.com",
+        "designation": "Full Stack Engineer",
+        "city": "Abellon",
+        "country": "London",
+        "mobile": null,
+        "username": "Testa-Doe",
+        "createdBy": null,
+        "updatedBy": null,
+        "image": null,
+        "level": null,
+        "points": null,
+        "createdAt": "2025-08-02T18:13:33.759Z",
+        "updatedAt": "2025-08-02T18:13:33.759Z",
+        "deletedAt": null,
+        "id": 7,
+        "role": "User",
+        "accountStatus": "Active",
+        "details": {
+            "linkedinUrl": "",
+            "selfRatingDone": false,
+            "playedQuiz": false,
+            "takenInterview": false,
+            "level1Assessment": false,
+            "level2Assessment": false
+        }
+    }
 }

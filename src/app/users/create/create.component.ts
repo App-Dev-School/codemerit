@@ -85,8 +85,8 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     //   startWith(''),
     //   map((name) => (name ? this._filter(name) : this.options.slice()))
     // );
-    this.watchTwoFieldsChange('firstName', 'lastName');
-    this.randomColor = this.getRandomColor();
+    //this.watchTwoFieldsChange('firstName', 'lastName');
+    //this.randomColor = this.getRandomColor();
   }
 
   private _filter(name: string): string[] {
@@ -102,6 +102,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     this.submitted = true;
     // stop here if form is invalid
     if (this.authForm.invalid) {
+      this.snackbar.display("snackbar-danger", "Please re-check your submission.", "bottom", "center");
       return;
     } else {
       let postData = {
@@ -127,7 +128,9 @@ export class CreateUserComponent implements OnInit, OnDestroy {
               //   this.authService.navigateAfterLogin();
               // }, 3000)
               // this.timeOutIDs.push(serverDelay);
-              this.router.navigate(['/users/list']);
+              this.router.navigate(['/users/list']).then(() =>{
+                this.snackbar.display("snackbar-danger", "User account created successfully.", "bottom", "center");
+              });
             }
           } else {
             if (res.message) {

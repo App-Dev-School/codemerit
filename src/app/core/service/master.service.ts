@@ -6,6 +6,7 @@ import { AuthConstants } from 'src/app/config/AuthConstants';
 import { AuthService } from './auth.service';
 import { HttpService } from './http.service';
 import { Country } from '@core/models/country.data';
+import { Subject } from '@core/models/subject';
 
 @Injectable({
   providedIn: 'root'
@@ -163,6 +164,12 @@ export class MasterService {
    getCountries(): Observable<Country[]> {
     return this.httpService.getLocalMock('assets/data/master/countries.json').pipe(
       map((data: any) => data as Country[])
+    );
+  }
+
+  getMockSubjects(): Observable<Subject[]> {
+    return this.httpService.getLocalMock('assets/data/master/subjects.json').pipe(
+      map((data: any) => data as Subject[])
     );
   }
   

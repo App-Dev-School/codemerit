@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "name": "Introduction to Angular",
+        "subject": "Angular",
+        "slug": "angular-introduction",
+        "description": "Basic introduction to the Angular Framework, its history, and core concepts.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 1,
+        "numQuestions": 5,
+        "numTrivia": 5,
+        "weight": 100,
+        "votes": 100,
+        "popularity": 100
+    },
+{
+        "id": 2,
+        "name": "Standalone Angular",
+        "subject": "Angular",
+        "slug": "angular-standalone",
+        "description": "Basic introduction to the Angular Framework, its history, and core concepts.",
+        "goal": "",
+        "parent": "",
+        "numLessons": 1,
+        "numQuestions": 5,
+        "numTrivia": 5,
+        "weight": 100,
+        "votes": 30,
+        "popularity": 100
+    }
+]
