@@ -98,6 +98,9 @@ export class SidebarComponent
         ' ' +
       this.authService.currentUserValue.lastName;
       this.userImg = this.authService.currentUserValue.userImage;
+      if(!this.userImg){
+        this.userImg = 'assets/images/users/user.jpg';
+      }
 
       // this.sidebarItems = ROUTES.filter(
       //   (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1

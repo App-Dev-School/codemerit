@@ -13,8 +13,7 @@ import { TopicService } from '../../topics.service';
 export interface DialogData {
   id: number;
   name: string;
-  department: string;
-  mobile: string;
+  shortDesc: string;
 }
 
 @Component({
@@ -38,7 +37,7 @@ export class TopicDeleteComponent {
   confirmDelete(): void {
     this.topicService.deleteTopic(this.data.id).subscribe({
       next: (response) => {
-        // console.log('Delete Response:', response);
+        console.log("TopicManager delete response received", response);
         this.dialogRef.close(response); // Close with the response data
         // Handle successful deletion, e.g., refresh the table or show a notification
       },

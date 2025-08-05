@@ -1,0 +1,31 @@
+{
+    "error": false,
+    "result_code": 200,
+    "message": "New topic created successfully.",
+    "data": {
+        "id": 13,
+        "title": "NewTopic",
+        "subjectId": 1,
+        "subjectName": "Computer Science",
+        "label": "Beginner",
+        "shortDesc": "Short Desc Here",
+        "slug": null,
+        "order": 0,
+        "parent": null,
+        "isPublished": true,
+        "description": "Some desc here",
+        "createdBy": null,
+        "updatedBy": null,
+        "image": null,
+        "weight": 1,
+        "goal": null,
+        "createdAt": "2025-08-05T12:36:00.605Z",
+        "updatedAt": "2025-08-05T12:36:00.605Z",
+        "deletedAt": null,
+        "votes": 0,
+        "numLessons": 0,
+        "numQuestions": 0,
+        "numTrivia": 0,
+        "numQuizzes": 0
+    }
+}

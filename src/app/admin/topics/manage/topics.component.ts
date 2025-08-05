@@ -43,7 +43,6 @@ import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-
 import { Direction } from '@angular/cdk/bidi';
 import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
 import { TopicItem } from './topic-item.model';
-
 @Component({
   selector: 'app-manage-topics',
   templateUrl: './topics.component.html',
@@ -78,8 +77,8 @@ import { TopicItem } from './topic-item.model';
 export class TopicsComponent implements OnInit, OnDestroy {
   columnDefinitions = [
     { def: 'select', label: 'Checkbox', type: 'check', visible: true },
-    { def: 'name', label: 'Name', type: 'text', visible: true },
-    { def: 'subject', label: 'Subject', type: 'text', visible: true },
+    { def: 'title', label: 'Name', type: 'text', visible: true },
+    { def: 'subjectName', label: 'Subject', type: 'text', visible: true },
     {
       def: 'label',
       label: 'Level',
@@ -187,14 +186,15 @@ export class TopicsComponent implements OnInit, OnDestroy {
       if (result) {
         console.log("TopicManager close result", result);
         if (action === 'add') {
-          this.dataSource.data = [result, ...this.dataSource.data];
+          if(result.data)
+          this.dataSource.data = [result.data, ...this.dataSource.data];
         } else {
           this.updateRecord(result);
         }
         this.refreshTable();
         this.showNotification(
           action === 'add' ? 'snackbar-success' : 'black',
-          `${action === 'add' ? 'Add' : 'Edit'} Record Successfully...!!!`,
+          `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
           'bottom',
           'center'
         );
@@ -224,7 +224,7 @@ export class TopicsComponent implements OnInit, OnDestroy {
         this.refreshTable();
         this.showNotification(
           'snackbar-danger',
-          'Delete Record Successfully...!!!',
+          row.title+' deleted Successfully.',
           'bottom',
           'center'
         );

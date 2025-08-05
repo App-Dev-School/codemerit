@@ -5,6 +5,7 @@ import {
   MatDialogClose,
 } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
+import { JsonPipe } from '@angular/common';
 import {
   UntypedFormControl,
   Validators,
@@ -52,7 +53,8 @@ interface TopicGroup {
     MatSelectModule,
     MatDatepickerModule,
     MatDialogClose,
-    MatCheckboxModule
+    MatCheckboxModule,
+    JsonPipe
   ]
 })
 export class TopicFormComponent {
@@ -94,17 +96,32 @@ export class TopicFormComponent {
   ) {
     this.action = data.action;
     this.dialogTitle =
-      this.action === 'edit' ? data.topicItem.name : 'New Topic';
+      this.action === 'edit' ? data.topicItem.title : 'Create New Topic';
     this.topicItems = this.action === 'edit' ? data.topicItem : new TopicItem({}); // Create a blank object
     this.topicForm = this.createContactForm();
     if (this.action === 'edit') {
+      console.log('TopicManager ###Update Form in Edit Mode:', data.topicItem);
       //populate topic
-      this.topicForm.get('title')?.setValue(data.topicItem.name);
+      this.topicForm.get('title')?.setValue(data.topicItem.title);
+      this.topicForm.get('title')?.updateValueAndValidity();
       this.topicForm.get('description')?.setValue(data.topicItem.description);
       this.topicForm.get('label')?.setValue(data.topicItem.label);
-      this.topicForm.get('parent')?.setValue(data.topicItem.parent);
-      this.topicForm.get('subject_id')?.setValue(data.topicItem.subjectId);
-
+      this.topicForm.get('label')?.updateValueAndValidity();
+      this.topicForm.get('subjectId')?.setValue(data.topicItem.subjectId);
+      this.topicForm.get('subjectId')?.updateValueAndValidity();
+      this.topicForm.get('order')?.setValue(data.topicItem.order);
+      this.topicForm.get('weight')?.setValue(data.topicItem.weight);
+      this.topicForm.get('popularity')?.setValue(data.topicItem.popularity);
+      this.topicForm.get('isPublished')?.setValue(data.topicItem.isPublished);
+      if (data.topicItem.parent) {
+        //this.topicForm.get('parent')?.setValue(data.topicItem.parent);
+      }
+      // this.topicForm.patchValue({
+      //   title: data.topicItem.title,
+      //   description: data.topicItem.description,
+      //   label: data.topicItem.label,
+      //   subjectId: data.topicItem.subjectId,
+      // });
       // Save initial value for later comparison
       this.initialFormValue = this.topicForm.getRawValue();
     }
@@ -116,13 +133,23 @@ export class TopicFormComponent {
   createContactForm(): UntypedFormGroup {
     return this.fb.group({
       id: [this.topicItems.id],
-      img: [this.topicItems.img],
-      title: ['', [Validators.required, Validators.minLength(3), Validators.pattern('[a-zA-Z]+')]],
-      subject_id: [0, [Validators.required]],
+      image: [''],
+      title: [this.topicItems.title, [Validators.required, Validators.minLength(3), Validators.pattern('[a-zA-Z]+')]],
+      subjectId: ['' + this.topicItems.subjectId, [Validators.required]],
       parent: [''],
-      label: ['', [Validators.required]],
-      order: [0, [Validators.required]],
-      description: [''],
+      label: [this.topicItems.label, [Validators.required]],
+      order: [this.topicItems.order, [
+        Validators.pattern(/^\d{1,2}$/), // Only 1 or 2 digit numbers
+        Validators.max(99)
+      ]],
+      weight: [this.topicItems.weight, [
+        Validators.pattern(/^\d{1,2}$/),
+        Validators.max(99)
+      ]],
+      popularity: [this.topicItems.popularity, [
+        Validators.max(999)
+      ]],
+      description: [this.topicItems.description],
       isPublished: [false]
     });
 
@@ -141,18 +168,26 @@ export class TopicFormComponent {
     if (this.topicForm.valid) {
       const formData = this.topicForm.getRawValue();
       if (this.action === 'edit') {
-        // Update existing topic
-        const payload = {
-          title: 'Yay I am updated'
+        const changedFields: any = {};
+        // Compare each field
+        for (const key in formData) {
+          if (formData.hasOwnProperty(key)) {
+            if (formData[key] !== this.initialFormValue[key]) {
+              changedFields[key] = formData[key];
+            }
+          }
         }
+
+        console.log('TopicManager Changed fields:', changedFields);
         this.topicService
-          .updateTopic(payload)
+          .updateTopic(changedFields, formData.id)
           .subscribe({
             next: (response) => {
-              this.dialogRef.close(response); // Close dialog and return updated doctor data
+              console.log('TopicManager UpdateAPI response:', changedFields);
+              this.dialogRef.close(response); // Close dialog and return
             },
             error: (error) => {
-              console.error('Update Error:', error);
+              console.error('TopicManager ###Update Error:', error);
               // Optionally display an error message to the user
             },
           });
@@ -160,7 +195,7 @@ export class TopicFormComponent {
         // Add new topic
         const payload = {
           title: formData.title,
-          subjectId: formData.subject_id,
+          subjectId: Number.parseInt(formData.subjectId),
           order: formData.order,
           parent: null,
           isPublished: formData.isPublished,
@@ -183,5 +218,16 @@ export class TopicFormComponent {
 
   onNoClick(): void {
     this.dialogRef.close(); // Close dialog without any action
+  }
+
+  restrictInput(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const key = event.key;
+
+    if (['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) return;
+
+    if (!/^\d$/.test(key) || input.value.length >= 2) {
+      event.preventDefault();
+    }
   }
 }

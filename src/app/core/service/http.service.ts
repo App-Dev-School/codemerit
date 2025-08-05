@@ -41,6 +41,18 @@ export class HttpService {
         };
       return this.http.put(url, data, httpOptions);
     }
+
+     delete(serviceName: string, apiKey:string = '') {
+      const url = environment.apiUrl + serviceName;
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type':  'application/json',
+          'Accept': 'application/json',
+          'Authorization': apiKey
+        })
+        };
+      return this.http.delete(url, httpOptions);
+    }
   
       
     getWithoutAuth(serviceName: string) {

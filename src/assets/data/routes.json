@@ -115,6 +115,20 @@
       ]
     },
     {
+      "path": "/admin/topics/list",
+      "title": "Topic Manager",
+      "iconType": "material-icons-outlined",
+      "icon": "space_dashboard",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "Admin"
+      ],
+      "submenu": []
+    },
+    {
       "path": "",
       "title": "Survey Creator",
       "iconType": "material-icons-outlined",

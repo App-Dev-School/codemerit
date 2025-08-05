@@ -126,6 +126,9 @@ export class HeaderComponent
     const userRole = this.authService.currentUserValue.role;
     this.userName = this.authService.currentUserValue.firstName;
     this.userImg = this.authService.currentUserValue.userImage;
+    if(!this.userImg){
+        this.userImg = 'assets/images/users/user.jpg';
+      }
     this.docElement = document.documentElement;
     //Check1
     if (userRole === Role.Admin) {

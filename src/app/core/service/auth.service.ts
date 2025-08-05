@@ -22,7 +22,7 @@ export class AuthService {
       userImage: 'assets/images/users/user.jpg',
       username: 'admin@codemerit.com',
       email: 'admin@codemerit.com',
-      password: 'user@123',
+      password: 'user@1234',
       firstName: 'Eckhart',
       lastName: 'Tollee',
       role: Role.Subscriber,
