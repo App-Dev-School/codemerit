@@ -124,6 +124,13 @@ export class TopicFormComponent {
       // });
       // Save initial value for later comparison
       this.initialFormValue = this.topicForm.getRawValue();
+
+      /**
+       * Form should not be closed on click outside
+       * Form fields validation to be reviewed
+       * Edit Mode Fixes
+       * Display Status and other disabled fields in list topics
+       */
     }
     //Make this a local master data
     this.masterSrv.getMockSubjects().subscribe(data => {
