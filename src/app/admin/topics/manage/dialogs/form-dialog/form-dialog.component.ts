@@ -125,6 +125,7 @@ export class TopicFormComponent {
       // Save initial value for later comparison
       this.initialFormValue = this.topicForm.getRawValue();
     }
+    //Make this a local master data
     this.masterSrv.getMockSubjects().subscribe(data => {
       this.subjects = data;
     });
