@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Event, NavigationEnd, NavigationStart, Router, RouterModule } from '@angular/router';
 import { PageLoaderComponent } from './layout/page-loader/page-loader.component';
+import { MasterService } from '@core/service/master.service';
+import { AuthConstants } from '@config/AuthConstants';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -11,10 +13,10 @@ import { PageLoaderComponent } from './layout/page-loader/page-loader.component'
     PageLoaderComponent
   ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   currentUrl!: string;
   //isVisible = true;
-  constructor(public _router: Router) {
+  constructor(public _router: Router, private master : MasterService) {
     this._router.events.subscribe((routerEvent: Event) => {
       if (routerEvent instanceof NavigationStart) {
         this.currentUrl = routerEvent.url.substring(
@@ -28,7 +30,12 @@ export class AppComponent {
   }
 
   //Added for animation in router outlet
-  //ngOnInit() {
+  ngOnInit() {
+  this.master.getMockSubjects().subscribe(data => {
+      if(data){
+      localStorage.setItem(AuthConstants.SUBJECTS, JSON.stringify(data));
+      }
+    });
     //This is additional code
     //Enable component transition globally
     // this._router.events.subscribe(event => {
@@ -41,6 +48,6 @@ export class AppComponent {
     //     }, 300); // Adjust based on your animation duration
     //   }
     // });
-  //}
+  }
 
 }

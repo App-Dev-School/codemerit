@@ -197,6 +197,32 @@ export class ListUserComponent implements OnInit, OnDestroy {
     });
   }
 
+    editUser(row: User) {
+      this.router.navigate(['/users/edit', row.username]).then(() => {
+      console.log('Navigation edit user completed!');
+    });
+    }
+
+    deleteUser(row: User) {
+        // const dialogRef = this.dialog.open(TopicDeleteComponent, {
+        //   data: row,
+        // });
+        // dialogRef.afterClosed().subscribe((result) => {
+        //   if (result) {
+        //     this.dataSource.data = this.dataSource.data.filter(
+        //       (record) => record.id !== row.id
+        //     );
+        //     this.refreshTable();
+        //     this.showNotification(
+        //       'snackbar-danger',
+        //       row.title+' deleted Successfully.',
+        //       'bottom',
+        //       'center'
+        //     );
+        //   }
+        // });
+      }
+
   exportExcel() {
     const exportData = this.dataSource.filteredData.map((x) => ({
       FirstName: x.firstName,

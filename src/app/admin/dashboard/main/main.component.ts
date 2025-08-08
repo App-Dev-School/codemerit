@@ -5,17 +5,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-//unused
-import { BaseChartDirective } from 'ng2-charts';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
-import { ActivityCountCardComponent } from '@shared/components/activity-count/activity-count-card.component';
 import { SubscriptionTableWidgetComponent } from '@shared/components/subscription-table-widget/subscription-table-widget.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '@core';
+import { ChartCard3Component } from '@shared/components/chart-card3/chart-card3.component';
+import { AuthConstants } from '@config/AuthConstants';
+import { InitialRole } from '@core/models/initial-role.data';
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -46,9 +45,8 @@ export type ChartOptions = {
         NgScrollbar,
         MatMenuModule,
         MatIconModule,
-        BaseChartDirective,
         SubscriptionTableWidgetComponent,
-        ActivityCountCardComponent
+        ChartCard3Component
     ]
 })
 export class MainComponent implements OnInit {
@@ -58,8 +56,11 @@ export class MainComponent implements OnInit {
   public smallChart4Options!: Partial<ChartOptions>;
   public barChartOptions!: Partial<ChartOptions>;
   selectedTimePeriod: string = 'Monthly';
+  public initialRoles : InitialRole[] = AuthConstants.CURRENT_ROLE_OPTIONS;
 
   subject= "";
+  title = 'LMS Stat';
+  subtitle = 'LSMS Resource Overview';
 
     public doughnutChartOptions: ChartConfiguration['options'] = {
     responsive: true,

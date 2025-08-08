@@ -52,7 +52,7 @@ export class MasterService {
           if (AuthConstants.DEV_MODE) {
             console.log("/************ Fetched States from Server and stored locally => " + JSON.stringify(user.data));
           }
-          localStorage.setItem(AuthConstants.STATES, JSON.stringify(user.data));
+          localStorage.setItem(AuthConstants.SUBJECTS, JSON.stringify(user.data));
           //localStorage.setItem(AuthConstants.STATES, user.data);
         }
         return user.data;
@@ -60,27 +60,21 @@ export class MasterService {
     );
   }
 
-  getStates(): Observable<any> {
-    if (AuthConstants.DEV_MODE) {
-      console.log("getStates() called => ");
-    }
-    if (localStorage.getItem(AuthConstants.STATES) === null) {
-      let datum = JSON.parse(localStorage.getItem(AuthConstants.STATES));
+  getSubjectsMaster(): Observable<any> {
+    if (localStorage.getItem(AuthConstants.SUBJECTS) === null) {
+      let datum = JSON.parse(localStorage.getItem(AuthConstants.SUBJECTS));
       if (AuthConstants.DEV_MODE) {
-        console.log("getStates() => Fetched States From LocalStorage => " + JSON.stringify(datum));
+        console.log("getStates() => Fetched sUBJECTS From LocalStorage => " + JSON.stringify(datum));
       }
       if (datum == null || datum == undefined) {
         if (AuthConstants.DEV_MODE) {
           console.log("getStates() => Null Local data. Requesting Server => ");
         }
-        return this.getStatesFromServer();
+        return this.getMockSubjects();
       }
       return of(datum);
     } else {
-      if (AuthConstants.DEV_MODE) {
-        console.log("getStates() => Hiting Server for States Data => ");
-      }
-      return this.getStatesFromServer();
+      return this.getMockSubjects();
     }
     //return this.getStatesFromServer();
   }
@@ -164,6 +158,12 @@ export class MasterService {
    getCountries(): Observable<Country[]> {
     return this.httpService.getLocalMock('assets/data/master/countries.json').pipe(
       map((data: any) => data as Country[])
+    );
+  }
+
+   getCountriesString(): Observable<string[]> {
+    return this.httpService.getLocalMock('assets/data/master/countries.json').pipe(
+      map((data: any) => data.name as string[])
     );
   }
 

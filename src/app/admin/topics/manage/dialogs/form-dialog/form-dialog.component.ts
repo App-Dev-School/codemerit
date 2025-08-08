@@ -136,6 +136,7 @@ export class TopicFormComponent {
     this.masterSrv.getMockSubjects().subscribe(data => {
       this.subjects = data;
     });
+    //this.subjects = localStorage.getItem(AuthConstants.SUBJECTS);
   }
 
   createContactForm(): UntypedFormGroup {

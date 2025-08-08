@@ -69,6 +69,13 @@
                     <span class="truncate-text">
                       {{ row[column.def] }}
                     </span>
+                     <span class="badge" [ngClass]="{
+        'badge-solid-purple': row.status === 'Pending',
+        'badge-solid-green': row.status === 'Active',
+        'badge-solid-red': row.status === 'Inactive'
+      }">
+                        {{ row.status }}
+                      </span>
                   </mat-cell>
                 </ng-container>
                 }

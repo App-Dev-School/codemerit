@@ -25,6 +25,4 @@ export class SnackbarService {
       panelClass: colorName,
     });
   }
-
-
 }

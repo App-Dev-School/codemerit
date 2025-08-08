@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
-import { FeatherIconsComponent } from '../feather-icons/feather-icons.component';
 
 export interface SubscriptionInfo {
   image: string;
@@ -19,7 +18,6 @@ export interface SubscriptionInfo {
     MatButtonModule,
     MatTableModule,
     CommonModule,
-    FeatherIconsComponent,
   ],
   templateUrl: './subscription-table-widget.component.html',
   styleUrl: './subscription-table-widget.component.scss',

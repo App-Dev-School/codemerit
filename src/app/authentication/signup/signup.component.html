@@ -2,7 +2,6 @@
   <div class="row auth-main">
     <div class="col-sm-6 px-0 d-none d-sm-block">
       <div class="left-img" style="background-image: url(assets/images/pages/bg-signup.jpg);">
-        <p>{{ authData| json}}</p>
       </div>
     </div>
     <div class="col-sm-6 auth-form-section">
@@ -16,7 +15,6 @@
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>First Name</mat-label>
                   <input matInput formControlName="firstName" required>
-                  <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
                   @if (authForm.get('firstName')!.hasError('required')) {
                   <mat-error>
                     First name is required
@@ -52,8 +50,8 @@
             </div>
 
             <div class="row">
-       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-              <mat-form-field class="example-full-width" appearance="outline">
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+                <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>City</mat-label>
                   <input matInput formControlName="city" required>
                   <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>location_city</mat-icon>
@@ -62,77 +60,46 @@
                     Please let us know your city.
                   </mat-error>
                   }
-              </mat-form-field>
+                </mat-form-field>
               </div>
 
               <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-              <mat-form-field class="example-full-width" appearance="outline">
+                <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Country</mat-label>
-                  <input matInput formControlName="country" type="text" [matAutocomplete]="auto" required> 
+                  <input matInput formControlName="country" type="text" [matAutocomplete]="autoCountry" required>
                   <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>globe</mat-icon>
-                  <mat-autocomplete #auto="matAutocomplete">
-                      @for (country of countries | async; track country) {
-                      <mat-option [value]="country.name">
-                        {{country.name}}
-                      </mat-option>
-                      }
-                    </mat-autocomplete>
+                  <mat-autocomplete #autoCountry="matAutocomplete" [displayWith]="displayCountry">
+                    @for (country of filteredCountries | async; track country) {
+                    <mat-option [value]="country.name">
+                     {{country.name}}
+                    </mat-option>
+                    }
+                  </mat-autocomplete>
 
                   @if (authForm.get('country')!.hasError('required')) {
                   <mat-error>
                     Please let us know your country.
                   </mat-error>
                   }
-              </mat-form-field>
-              </div>
- </div>
-            <!-- Do not show password set options
-            <div class="row">
-              <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="outline">
-                  <mat-label>Password</mat-label>
-                  <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" required>
-                  <mat-icon class="material-icons-outlined pwd-toggle p-3" matSuffix (click)="hide = !hide">
-                    {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                  @if (authForm.get('password')!.hasError('required')) {
-                  <mat-error>
-                    Password is required
-                  </mat-error>
-                  }
                 </mat-form-field>
               </div>
             </div>
+
             <div class="row">
-              <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="outline">
-                  <mat-label>Confirm Password</mat-label>
-                  <input matInput formControlName="cpassword" [type]="chide ? 'password' : 'text'" required>
-                  <mat-icon class="material-icons-outlined pwd-toggle p-3" matSuffix (click)="chide = !chide">
-                    {{chide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                  @if (authForm.get('cpassword')!.hasError('required')) {
-                  <mat-error>
-                    Confirm Password is required
-                  </mat-error>
-                  }
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                <mat-form-field class="example-full-width">
+                  <mat-label>Select your current role</mat-label>
+                  <input type="text" matInput formControlName="designation" [matAutocomplete]="auto">
+                  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayRole">
+                    @for (option of filteredOptions | async; track option) {
+                    <mat-option [value]="option.label">
+                      {{option.label}}
+                    </mat-option>
+                    }
+                  </mat-autocomplete>
                 </mat-form-field>
               </div>
             </div>
-            -->
-<div class="row">
-             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width">
-                    <mat-label>What describes you best?</mat-label>
-                    <input type="text" matInput formControlName="designation" [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                      @for (option of filteredOptions | async; track option) {
-                      <mat-option [value]="option">
-                        {{option}}
-                      </mat-option>
-                      }
-                    </mat-autocomplete>
-                  </mat-form-field>
-                  </div>
-</div>
 
             <div class="flex-sb-m w-full  p-b-20">
               <div>
