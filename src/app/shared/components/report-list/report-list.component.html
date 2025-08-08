@@ -1,40 +1,37 @@
 <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-         <div class="body">
-            <mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="selected.setValue($event)">
-              @for (tab of roles; track tab; let index = $index) {
-              <mat-tab [label]="tab">
-                <br>
-                <h4>Contents for {{tab}} tab</h4>
-
-                <div class="row">
-                   @for (subject of subjectsByRole[tab]; track subject) {
-      <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-      <mat-card>
-        <mat-card-content>
-          <div class="subjectHeader">
-            <img src="{{subject.image}}" alt="{{subject.title}}" class="subjectImage">
-            <mat-card-title class="text">{{subject.title}}</mat-card-title>
-          </div>
-          <p class="font-12">{{subject.description}}</p>
-         <mat-card-footer class="example-card-footer">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="body">
+      <mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="selected.setValue($event)">
+        @for (tab of roles; track tab; let index = $index) {
+        <mat-tab [label]="tab">
+          <div class="row m-t-20">
+            @for (subject of subjectsByRole[tab]; track subject) {
+            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12" (click)="switchSubject(subject.title)">
+              <mat-card>
+                <mat-card-content>
+                  <div class="subjectHeader">
+                    <img src="{{subject.image ? subject.image : 'assets/images/tech/cypress.png'}}" alt="{{subject.title}}" class="subjectImage">
+                    <mat-card-title class="text">{{subject.title}}</mat-card-title>
+                  </div>
+                  <p class="font-12">{{subject.description}}</p>
+                  <!-- <mat-card-footer class="example-card-footer">
               I am footer
             </mat-card-footer>
             <mat-card-actions align="end">
               <button mat-button mat-ripple>View</button>
               <button (click)="removeTab(1)" mat-button>Start Learning</button>
-            </mat-card-actions>
-        </mat-card-content>
-        <!-- @if(!subject.isSubscribed){
+            </mat-card-actions> -->
+                </mat-card-content>
+                <!-- @if(!subject.isSubscribed){
           Enroll to start learning and assessing your skills.
         } -->
-      </mat-card>
-        </div>
-                   }
-                  </div>
-              </mat-tab>
-              }
-            </mat-tab-group>
+              </mat-card>
+            </div>
+            }
           </div>
-      </div>
+        </mat-tab>
+        }
+      </mat-tab-group>
     </div>
+  </div>
+</div>

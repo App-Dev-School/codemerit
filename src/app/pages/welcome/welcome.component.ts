@@ -26,7 +26,6 @@ import { ReportCardWidgetComponent } from '@shared/components/report-card-widget
     MatChipsModule,
     MatRippleModule,
     MatIconModule,
-    MySubjectsComponent,
     LearnerWelcomeCardComponent,
     ReportCardWidgetComponent,
     ReportListComponent
@@ -42,9 +41,9 @@ import { ReportCardWidgetComponent } from '@shared/components/report-card-widget
 })
 export class WelcomeComponent {
   public subjectRoleMap: SubjectRole[] = [];
-  //subjectsByRole: { [role: string]: SubjectRole[] } = {};
   subject = "";
   subjectData : any;
+  subjectsByRole: { [role: string]: SubjectRole[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
   customOptions: OwlOptions = {
     loop: true,
@@ -107,14 +106,14 @@ export class WelcomeComponent {
     // constructor code
     this.master.fetchSubjectRoleMap().subscribe(data => {
 this.subjectRoleMap = data;
-// this.subjectRoleMap.forEach(subject => {
-//       subject.roles.forEach(role => {
-//         if (!this.subjectsByRole[role]) {
-//           this.subjectsByRole[role] = [];
-//         }
-//         this.subjectsByRole[role].push(subject);
-//       });
-//     });
+this.subjectRoleMap.forEach(subject => {
+      subject.roles.forEach(role => {
+        if (!this.subjectsByRole[role]) {
+          this.subjectsByRole[role] = [];
+        }
+        this.subjectsByRole[role].push(subject);
+      });
+    });
     });
     setInterval(() => {
       this.showCard = true;

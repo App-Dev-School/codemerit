@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService, User } from '@core';
 
 @Component({
     selector: 'app-learner-welcome-card',
-    imports: [],
+    imports: [MatButtonModule],
     templateUrl: './learner-welcome-card.component.html',
     styleUrl: './learner-welcome-card.component.scss'
 })
@@ -22,6 +23,10 @@ isVisitor = true;
     if(this.authData.token && this.authData.firstName && this.authData.id){
         this.isVisitor = false;
     }
+    }
+
+    startSkillRating(){
+
     }
 
 }

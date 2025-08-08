@@ -2,8 +2,8 @@
   {
     "id": 1,
     "title": "HTML",
-    "description": "HTML is the core mark‑up language used for building web pages.",
-    "image": "",
+    "description": "Markup language for creating web pages",
+    "image": "assets/images/tech/html.png",
     "isSubscribed": true,
     "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer", "Programmer Level 1"],
     "level": "Default"
@@ -11,8 +11,8 @@
   {
     "id": 2,
     "title": "CSS",
-    "description": "CSS is used to style and layout web pages with fonts, colors, and spacing.",
-    "image": "",
+    "description": "Styles and layouts for web pages",
+    "image": "assets/images/tech/css.png",
     "isSubscribed": true,
     "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer", "Programmer Level 1"],
     "level": "Default"
@@ -20,8 +20,8 @@
   {
     "id": 3,
     "title": "JavaScript",
-    "description": "JavaScript is the scripting language of the web, enabling interactivity and logic.",
-    "image": "",
+    "description": "Scripting language for web interactivity",
+    "image": "assets/images/tech/javascript.png",
     "isSubscribed": true,
     "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer", "Programmer Level 1", "Trainee Software Engineer"],
     "level": "Default"
@@ -29,8 +29,8 @@
   {
     "id": 4,
     "title": "TypeScript",
-    "description": "TypeScript is a superset of JavaScript that adds strong typing.",
-    "image": "",
+    "description": "Typed superset of JavaScript",
+    "image": "assets/images/tech/ts.png",
     "isSubscribed": true,
     "roles": ["Angular Developer", "Front‑End Developer", "Full Stack Developer", "Trainee Software Engineer"],
     "level": "Intermediate"
@@ -38,8 +38,8 @@
   {
     "id": 5,
     "title": "Angular",
-    "description": "Angular is a TypeScript‑based framework for building scalable web applications.",
-    "image": "",
+    "description": "Framework for scalable web apps",
+    "image": "assets/images/tech/angular.png",
     "isSubscribed": true,
     "roles": ["Angular Developer", "Front‑End Developer", "Full Stack Developer"],
     "level": "Intermediate"
@@ -47,8 +47,8 @@
   {
     "id": 6,
     "title": "React",
-    "description": "React is a JavaScript library for building user interfaces, developed by Facebook.",
-    "image": "",
+    "description": "JavaScript library for UIs",
+    "image": "assets/images/tech/react.png",
     "isSubscribed": true,
     "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer"],
     "level": "Intermediate"
@@ -56,7 +56,7 @@
   {
     "id": 7,
     "title": "Express.js",
-    "description": "Express.js is a lightweight web application framework for Node.js.",
+    "description": "Web framework for Node.js",
     "image": "",
     "isSubscribed": true,
     "roles": ["Back‑End Developer", "Full Stack Developer"],
@@ -65,7 +65,7 @@
   {
     "id": 8,
     "title": "NestJS",
-    "description": "NestJS is a progressive Node.js framework for building efficient server‑side applications.",
+    "description": "Efficient Node.js server framework",
     "image": "",
     "isSubscribed": true,
     "roles": ["Back‑End Developer", "Full Stack Developer", "Trainee Software Engineer"],
@@ -74,7 +74,7 @@
   {
     "id": 9,
     "title": "Java",
-    "description": "Java is a high‑level, class‑based programming language used in backend and enterprise apps.",
+    "description": "Object-oriented programming language",
     "image": "",
     "isSubscribed": true,
     "roles": ["Java SpringBoot Developer", "Back‑End Developer", "Trainee Software Engineer"],
@@ -83,7 +83,7 @@
   {
     "id": 10,
     "title": "Spring Boot",
-    "description": "Spring Boot is a Java‑based framework used to create stand‑alone, production‑grade applications.",
+    "description": "Java framework for backend APIs",
     "image": "",
     "isSubscribed": true,
     "roles": ["Java SpringBoot Developer", "Back‑End Developer"],
@@ -92,7 +92,7 @@
   {
     "id": 11,
     "title": "DevOps",
-    "description": "DevOps is a set of practices that bridges software development and IT operations.",
+    "description": "Dev and ops collaboration practice",
     "image": "",
     "isSubscribed": true,
     "roles": ["DevOps Engineer", "Full Stack Developer", "Trainee Software Engineer"],
@@ -101,7 +101,7 @@
   {
     "id": 12,
     "title": "Docker",
-    "description": "Docker is a platform for developing, shipping, and running applications in containers.",
+    "description": "App containerization platform",
     "image": "",
     "isSubscribed": true,
     "roles": ["DevOps Engineer", "Back‑End Developer", "Full Stack Developer"],
@@ -110,7 +110,7 @@
   {
     "id": 13,
     "title": "Kubernetes",
-    "description": "Kubernetes is a container orchestration system for automating deployment and scaling.",
+    "description": "Container orchestration system",
     "image": "",
     "isSubscribed": true,
     "roles": ["DevOps Engineer"],
@@ -119,7 +119,7 @@
   {
     "id": 14,
     "title": "CI/CD",
-    "description": "CI/CD is a method to frequently deliver apps by introducing automation into development and deployment.",
+    "description": "Automated app integration and delivery",
     "image": "",
     "isSubscribed": true,
     "roles": ["DevOps Engineer", "Full Stack Developer", "Back‑End Developer"],
@@ -128,7 +128,7 @@
   {
     "id": 15,
     "title": "PostgreSQL",
-    "description": "PostgreSQL is a powerful, open‑source relational database system.",
+    "description": "Relational open-source database",
     "image": "",
     "isSubscribed": true,
     "roles": ["Back‑End Developer", "Full Stack Developer", "Data Engineer"],
@@ -137,7 +137,7 @@
   {
     "id": 16,
     "title": "MongoDB",
-    "description": "MongoDB is a NoSQL document database known for high performance and scalability.",
+    "description": "Scalable NoSQL document database",
     "image": "",
     "isSubscribed": true,
     "roles": ["Back‑End Developer", "Full Stack Developer", "Data Engineer"],
@@ -146,7 +146,7 @@
   {
     "id": 17,
     "title": "GraphQL",
-    "description": "GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data.",
+    "description": "Flexible query language for APIs",
     "image": "",
     "isSubscribed": true,
     "roles": ["Full Stack Developer", "Back‑End Developer", "Web Developer"],
@@ -155,7 +155,7 @@
   {
     "id": 18,
     "title": "Next.js",
-    "description": "Next.js is a React framework for building full‑stack applications with SSR and API routes.",
+    "description": "React framework with SSR support",
     "image": "",
     "isSubscribed": true,
     "roles": ["Full Stack Developer", "Web Developer"],
@@ -164,7 +164,7 @@
   {
     "id": 19,
     "title": "Redux",
-    "description": "Redux is a predictable state container for JavaScript apps, often used with React.",
+    "description": "State management for React apps",
     "image": "",
     "isSubscribed": true,
     "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer"],
@@ -173,7 +173,7 @@
   {
     "id": 20,
     "title": "REST APIs",
-    "description": "REST APIs are a standard way to expose backend services over HTTP using resource‑based URIs.",
+    "description": "Standard interface for backend services",
     "image": "",
     "isSubscribed": true,
     "roles": ["Back‑End Developer", "Full Stack Developer"],
@@ -182,7 +182,7 @@
   {
     "id": 21,
     "title": "Python",
-    "description": "Python is a versatile, high‑level language used in web development, scripting, data science, and more.",
+    "description": "High-level, general-purpose language",
     "image": "",
     "isSubscribed": true,
     "roles": ["Python Developer", "AI/ML Engineer", "Back‑End Developer", "Trainee Software Engineer"],
@@ -191,7 +191,7 @@
   {
     "id": 22,
     "title": "AI Fundamentals",
-    "description": "Basics of artificial intelligence including search, planning, and knowledge representation.",
+    "description": "Basics of AI and reasoning",
     "image": "",
     "isSubscribed": true,
     "roles": ["AI/ML Engineer", "Python Developer", "Full Stack Developer (AI‑enabled Apps)"],
@@ -200,7 +200,7 @@
   {
     "id": 23,
     "title": "Machine Learning",
-    "description": "Machine learning concepts such as supervised/unsupervised learning, model evaluation, and pipelines.",
+    "description": "Training models with data",
     "image": "",
     "isSubscribed": true,
     "roles": ["ML Engineer", "AI/ML Engineer", "Python Developer"],
@@ -209,7 +209,7 @@
   {
     "id": 24,
     "title": "Git",
-    "description": "Git is a version control system for tracking changes in source code during development.",
+    "description": "Version control for codebases",
     "image": "",
     "isSubscribed": true,
     "roles": ["All Developer Roles", "Trainee Software Engineer", "Programmer Level 1"],
@@ -218,7 +218,7 @@
   {
     "id": 25,
     "title": "Jira",
-    "description": "Jira is a tool for project tracking, issue management, and agile team collaboration.",
+    "description": "Project and issue management tool",
     "image": "",
     "isSubscribed": true,
     "roles": ["All Developer Roles", "Program Manager", "QA Engineer"],
@@ -227,7 +227,7 @@
   {
     "id": 26,
     "title": "Jenkins",
-    "description": "Jenkins is an automation server used to build, test, and deploy applications continuously.",
+    "description": "CI/CD automation server",
     "image": "",
     "isSubscribed": true,
     "roles": ["DevOps Engineer", "Full Stack Developer"],
@@ -236,7 +236,7 @@
   {
     "id": 27,
     "title": "Software Testing",
-    "description": "Principles of testing including unit, integration, system, and automated testing.",
+    "description": "Testing strategies and types",
     "image": "",
     "isSubscribed": true,
     "roles": ["Software Tester", "QA Engineer", "Full Stack Developer", "Trainee Software Engineer"],
@@ -245,7 +245,7 @@
   {
     "id": 28,
     "title": "Automation Testing (Selenium)",
-    "description": "Automating browser actions for testing web apps using Selenium.",
+    "description": "Browser testing using Selenium",
     "image": "",
     "isSubscribed": true,
     "roles": ["Software Tester", "QA Engineer"],
@@ -254,7 +254,7 @@
   {
     "id": 29,
     "title": "Android Development (Kotlin/Java)",
-    "description": "Building Android applications using Kotlin or Java.",
+    "description": "Android apps using Kotlin or Java",
     "image": "",
     "isSubscribed": true,
     "roles": ["Android Developer", "Programmer Level 1", "Trainee Software Engineer"],
@@ -263,7 +263,7 @@
   {
     "id": 30,
     "title": "iOS Development (Swift)",
-    "description": "Building iOS applications using Swift.",
+    "description": "Build iOS apps using Swift",
     "image": "",
     "isSubscribed": true,
     "roles": ["iOS Developer", "Programmer Level 1", "Trainee Software Engineer"],
@@ -272,10 +272,55 @@
   {
     "id": 31,
     "title": "Cloud Basics (AWS/GCP/Azure)",
-    "description": "Fundamentals of cloud platforms like AWS, GCP, and Azure.",
+    "description": "Intro to cloud platforms",
     "image": "",
     "isSubscribed": true,
     "roles": ["DevOps Engineer", "Cloud Engineer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 32,
+    "title": "RxJS",
+    "description": "Reactive programming with streams",
+    "image": "assets/images/tech/rxjs.png",
+    "isSubscribed": false,
+    "roles": ["Angular Developer", "Front‑End Developer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 33,
+    "title": "Node.js",
+    "description": "JavaScript for server‑side programming",
+    "image": "assets/images/tech/node.png",
+    "isSubscribed": false,
+    "roles": ["Back‑End Developer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 34,
+    "title": "Ionic",
+    "description": "Cross-platform UI framework",
+    "image": "assets/images/tech/ionic.png",
+    "isSubscribed": false,
+    "roles": ["Mobile App Developer", "Front‑End Developer", "Angular Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 35,
+    "title": "Capacitor",
+    "description": "Bridge native with web apps",
+    "image": "assets/images/tech/capacitor.png",
+    "isSubscribed": false,
+    "roles": ["Mobile App Developer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 36,
+    "title": "Cypress",
+    "description": "Web testing automation tool",
+    "image": "assets/images/tech/cypress.png",
+    "isSubscribed": false,
+    "roles": ["QA Engineer", "Software Tester", "Front‑End Developer"],
     "level": "Intermediate"
   }
 ]

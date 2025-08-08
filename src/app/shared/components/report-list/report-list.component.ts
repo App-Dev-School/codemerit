@@ -1,5 +1,4 @@
-import { NgClass } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardModule } from '@angular/material/card';
@@ -25,6 +24,7 @@ export class ReportListComponent implements OnInit {
     tabs = [];
   selected = new UntypedFormControl(0);
   subjectsByRole: { [role: string]: SubjectRole[] } = {};
+  @Output() subjectSelected = new EventEmitter<string>();
 
     ngOnInit(): void {
     this.data.forEach(subject => {
@@ -49,5 +49,9 @@ export class ReportListComponent implements OnInit {
   }
   removeTab(index: number) {
     this.tabs.splice(index, 1);
+  }
+
+  switchSubject(subjectName: string) {
+    this.subjectSelected.emit(subjectName);
   }
 }

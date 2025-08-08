@@ -1,0 +1,20 @@
+.subjectHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.subjectImage {
+  height: 32px;
+  width: auto;
+}
+
+.text {
+  max-height: 26px;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+}
+::ng-deep .mat-mdc-card-title{
+  font-size: 18px !important;
+}
