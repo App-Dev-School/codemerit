@@ -1,0 +1,281 @@
+[
+  {
+    "id": 1,
+    "title": "HTML",
+    "description": "HTML is the core mark‑up language used for building web pages.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer", "Programmer Level 1"],
+    "level": "Default"
+  },
+  {
+    "id": 2,
+    "title": "CSS",
+    "description": "CSS is used to style and layout web pages with fonts, colors, and spacing.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer", "Programmer Level 1"],
+    "level": "Default"
+  },
+  {
+    "id": 3,
+    "title": "JavaScript",
+    "description": "JavaScript is the scripting language of the web, enabling interactivity and logic.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer", "Programmer Level 1", "Trainee Software Engineer"],
+    "level": "Default"
+  },
+  {
+    "id": 4,
+    "title": "TypeScript",
+    "description": "TypeScript is a superset of JavaScript that adds strong typing.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Angular Developer", "Front‑End Developer", "Full Stack Developer", "Trainee Software Engineer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 5,
+    "title": "Angular",
+    "description": "Angular is a TypeScript‑based framework for building scalable web applications.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Angular Developer", "Front‑End Developer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 6,
+    "title": "React",
+    "description": "React is a JavaScript library for building user interfaces, developed by Facebook.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 7,
+    "title": "Express.js",
+    "description": "Express.js is a lightweight web application framework for Node.js.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Back‑End Developer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 8,
+    "title": "NestJS",
+    "description": "NestJS is a progressive Node.js framework for building efficient server‑side applications.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Back‑End Developer", "Full Stack Developer", "Trainee Software Engineer"],
+    "level": "Advanced"
+  },
+  {
+    "id": 9,
+    "title": "Java",
+    "description": "Java is a high‑level, class‑based programming language used in backend and enterprise apps.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Java SpringBoot Developer", "Back‑End Developer", "Trainee Software Engineer"],
+    "level": "Default"
+  },
+  {
+    "id": 10,
+    "title": "Spring Boot",
+    "description": "Spring Boot is a Java‑based framework used to create stand‑alone, production‑grade applications.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Java SpringBoot Developer", "Back‑End Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 11,
+    "title": "DevOps",
+    "description": "DevOps is a set of practices that bridges software development and IT operations.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["DevOps Engineer", "Full Stack Developer", "Trainee Software Engineer"],
+    "level": "Default"
+  },
+  {
+    "id": 12,
+    "title": "Docker",
+    "description": "Docker is a platform for developing, shipping, and running applications in containers.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["DevOps Engineer", "Back‑End Developer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 13,
+    "title": "Kubernetes",
+    "description": "Kubernetes is a container orchestration system for automating deployment and scaling.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["DevOps Engineer"],
+    "level": "Advanced"
+  },
+  {
+    "id": 14,
+    "title": "CI/CD",
+    "description": "CI/CD is a method to frequently deliver apps by introducing automation into development and deployment.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["DevOps Engineer", "Full Stack Developer", "Back‑End Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 15,
+    "title": "PostgreSQL",
+    "description": "PostgreSQL is a powerful, open‑source relational database system.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Back‑End Developer", "Full Stack Developer", "Data Engineer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 16,
+    "title": "MongoDB",
+    "description": "MongoDB is a NoSQL document database known for high performance and scalability.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Back‑End Developer", "Full Stack Developer", "Data Engineer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 17,
+    "title": "GraphQL",
+    "description": "GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Full Stack Developer", "Back‑End Developer", "Web Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 18,
+    "title": "Next.js",
+    "description": "Next.js is a React framework for building full‑stack applications with SSR and API routes.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Full Stack Developer", "Web Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 19,
+    "title": "Redux",
+    "description": "Redux is a predictable state container for JavaScript apps, often used with React.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Web Developer", "Front‑End Developer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 20,
+    "title": "REST APIs",
+    "description": "REST APIs are a standard way to expose backend services over HTTP using resource‑based URIs.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Back‑End Developer", "Full Stack Developer"],
+    "level": "Default"
+  },
+  {
+    "id": 21,
+    "title": "Python",
+    "description": "Python is a versatile, high‑level language used in web development, scripting, data science, and more.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Python Developer", "AI/ML Engineer", "Back‑End Developer", "Trainee Software Engineer"],
+    "level": "Default"
+  },
+  {
+    "id": 22,
+    "title": "AI Fundamentals",
+    "description": "Basics of artificial intelligence including search, planning, and knowledge representation.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["AI/ML Engineer", "Python Developer", "Full Stack Developer (AI‑enabled Apps)"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 23,
+    "title": "Machine Learning",
+    "description": "Machine learning concepts such as supervised/unsupervised learning, model evaluation, and pipelines.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["ML Engineer", "AI/ML Engineer", "Python Developer"],
+    "level": "Advanced"
+  },
+  {
+    "id": 24,
+    "title": "Git",
+    "description": "Git is a version control system for tracking changes in source code during development.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["All Developer Roles", "Trainee Software Engineer", "Programmer Level 1"],
+    "level": "Default"
+  },
+  {
+    "id": 25,
+    "title": "Jira",
+    "description": "Jira is a tool for project tracking, issue management, and agile team collaboration.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["All Developer Roles", "Program Manager", "QA Engineer"],
+    "level": "Default"
+  },
+  {
+    "id": 26,
+    "title": "Jenkins",
+    "description": "Jenkins is an automation server used to build, test, and deploy applications continuously.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["DevOps Engineer", "Full Stack Developer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 27,
+    "title": "Software Testing",
+    "description": "Principles of testing including unit, integration, system, and automated testing.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Software Tester", "QA Engineer", "Full Stack Developer", "Trainee Software Engineer"],
+    "level": "Default"
+  },
+  {
+    "id": 28,
+    "title": "Automation Testing (Selenium)",
+    "description": "Automating browser actions for testing web apps using Selenium.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Software Tester", "QA Engineer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 29,
+    "title": "Android Development (Kotlin/Java)",
+    "description": "Building Android applications using Kotlin or Java.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["Android Developer", "Programmer Level 1", "Trainee Software Engineer"],
+    "level": "Intermediate"
+  },
+  {
+    "id": 30,
+    "title": "iOS Development (Swift)",
+    "description": "Building iOS applications using Swift.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["iOS Developer", "Programmer Level 1", "Trainee Software Engineer"],
+    "level": "Advanced"
+  },
+  {
+    "id": 31,
+    "title": "Cloud Basics (AWS/GCP/Azure)",
+    "description": "Fundamentals of cloud platforms like AWS, GCP, and Azure.",
+    "image": "",
+    "isSubscribed": true,
+    "roles": ["DevOps Engineer", "Cloud Engineer", "Full Stack Developer"],
+    "level": "Intermediate"
+  }
+]

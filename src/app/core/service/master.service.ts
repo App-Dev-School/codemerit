@@ -125,8 +125,8 @@ export class MasterService {
     //return this.http.get<any>(this.jsonUrl); // Send GET request to fetch the mock data
   }
 
-  fetchMockResources1(): Observable<any> {
-    return this.httpService.getLocalMock('assets/data/topics.json');
+  fetchSubjectRoleMap(): Observable<any> {
+    return this.httpService.getLocalMock('assets/data/master/subjectWithRoles.json');
     //return this.http.get<any>(this.jsonUrl); // Send GET request to fetch the mock data
   }
 

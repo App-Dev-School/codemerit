@@ -80,8 +80,8 @@ export class SignupComponent implements OnInit, OnDestroy {
       designation: ['', Validators.required]
     });
     if (!environment.production) {
-      this.authForm.get('firstName')?.setValue('Test');
-      this.authForm.get('email')?.setValue('user1@codemerit.com');
+      //this.authForm.get('firstName')?.setValue('Test');
+      //this.authForm.get('email')?.setValue('user1@codemerit.com');
       this.authForm.get('city')?.setValue('Bengaluru');
       this.authForm.get('country')?.setValue('India');
       this.authForm.get('designation')?.setValue('IT Fresher (Graduate)');

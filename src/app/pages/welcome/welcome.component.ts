@@ -12,6 +12,10 @@ import { AuthService } from '@core';
 import { Router } from '@angular/router';
 import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
+import { ReportListComponent } from '@shared/components/report-list/report-list.component';
+import { SubjectRole } from '@core/models/subject-role';
+import { Observable } from 'rxjs';
+import { ReportCardWidgetComponent } from '@shared/components/report-card-widget/report-card-widget.component';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -23,7 +27,9 @@ import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-
     MatRippleModule,
     MatIconModule,
     MySubjectsComponent,
-    LearnerWelcomeCardComponent
+    LearnerWelcomeCardComponent,
+    ReportCardWidgetComponent,
+    ReportListComponent
   ],
   //  animations: [
   //     trigger('fadeOut', [
@@ -35,6 +41,8 @@ import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-
   //   ]
 })
 export class WelcomeComponent {
+  public subjectRoleMap: SubjectRole[] = [];
+  //subjectsByRole: { [role: string]: SubjectRole[] } = {};
   subject = "";
   subjectData : any;
   limit: number = 10; // <==== Edit this number to limit API results
@@ -97,6 +105,17 @@ export class WelcomeComponent {
 
   constructor(private router: Router, private master: MasterService, private authService: AuthService) {
     // constructor code
+    this.master.fetchSubjectRoleMap().subscribe(data => {
+this.subjectRoleMap = data;
+// this.subjectRoleMap.forEach(subject => {
+//       subject.roles.forEach(role => {
+//         if (!this.subjectsByRole[role]) {
+//           this.subjectsByRole[role] = [];
+//         }
+//         this.subjectsByRole[role].push(subject);
+//       });
+//     });
+    });
     setInterval(() => {
       this.showCard = true;
     }, 5000);

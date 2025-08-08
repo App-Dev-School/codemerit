@@ -21,6 +21,7 @@ import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
 import { combineLatest, map, Observable, of, startWith } from 'rxjs';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-create-user',
   templateUrl: './create.component.html',
@@ -96,6 +97,14 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       country: ['India', Validators.required],
       designation: ['IT Student', Validators.required]
     });
+
+    if (!environment.production) {
+          //this.authForm.get('firstName')?.setValue('Test');
+          //this.authForm.get('email')?.setValue('user1@codemerit.com');
+          this.authForm.get('city')?.setValue('Bengaluru');
+          this.authForm.get('country')?.setValue('India');
+          this.authForm.get('designation')?.setValue('IT Fresher (Graduate)');
+        }
     // this.editor = new Editor();
     this.filteredOptions = of(this.options);
 

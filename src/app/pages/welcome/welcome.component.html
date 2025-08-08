@@ -1,16 +1,18 @@
 <section class="content">
   <div class="content-block">
-    <div class="row clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-      </div>
-    </div>
 
     <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h3 class="text-center m-t-20">Skills by Job Roles</h3>
+        @if(subjectRoleMap && subjectRoleMap.length > 0){
+       <app-subject-role-map [data]="subjectRoleMap"></app-subject-role-map>
+        }
         <app-learner-welcome-card></app-learner-welcome-card>
         <app-my-subjects [minimal]="true" (subjectSelected)="onSubjectChange($event)"></app-my-subjects>
-    
-        <h4 class="text-center mb-5 mt-5">Welcome Username</h4>
+      </div>
+
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h4 class="text-center mb-5 mt-5">Interact and Explore</h4>
         <owl-carousel-o [options]="customOptions">
 
           @for (engage of engagements; track engage) {
@@ -69,6 +71,25 @@
             </mat-card>
           </ng-template>
         </owl-carousel-o>
+      </div>
+    </div>
+
+        <div class="row clearfix">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+        <app-report-card-widget [heading]="'Question Bank'" [todayCount]="105" [weekCount]="825" [monthCount]="22067"
+          [progressPercentage]="74" progressColor="orange">
+        </app-report-card-widget>
+        <app-report-card-widget [heading]="'Topics'" [todayCount]="1247" [weekCount]="22568"
+          [monthCount]="65147" [progressPercentage]="70" progressColor="Olive">
+        </app-report-card-widget>
+      </div>
+<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+        <app-report-card-widget [heading]="'Question Bank'" [todayCount]="105" [weekCount]="825" [monthCount]="22067"
+          [progressPercentage]="74" progressColor="orange">
+        </app-report-card-widget>
+        <app-report-card-widget [heading]="'Topics'" [todayCount]="1247" [weekCount]="22568"
+          [monthCount]="65147" [progressPercentage]="70" progressColor="Olive">
+        </app-report-card-widget>
       </div>
     </div>
   
