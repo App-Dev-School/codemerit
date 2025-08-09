@@ -1,13 +1,26 @@
-<div class="stars">
-  @for (i of [1,2,3,4,5]; track i) {
+<!-- @for (star of stars; track star;let i = $index) {
+  <span (click)="setRating(i + 1)"
+  (keydown.enter)="setRating(i + 1)"
+  [class.filled]="i < rating"
+  [class.read-only]="readOnly"
+  tabindex="0"
+  role="button"
+>
+  ★
+</span>
+} -->
+<div class="star-rating">
+   @for (star of stars; track star;let i = $index) {
+  <ng-container>
     <span
       class="star"
-      [class.filled]="i < (hovered() || rating)"
+      [class.filled]="(hovered || rating) > i"
       (click)="setRating(i + 1)"
-      (mouseenter)="hover(i + 1)"
-      (mouseleave)="leave()"
+      (mouseenter)="hovered = i + 1"
+      (mouseleave)="hovered = 0"
     >
       ★
     </span>
-  }
+  </ng-container>
+}
 </div>

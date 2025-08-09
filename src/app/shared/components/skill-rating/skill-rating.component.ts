@@ -1,43 +1,60 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  forwardRef,
+  EventEmitter
+} from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-skill-rating',
-  standalone: true,
   templateUrl: './skill-rating.component.html',
   styleUrls: ['./skill-rating.component.scss'],
-  imports: [CommonModule]
+  standalone: true,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SkillRatingComponent),
+      multi: true
+    }
+  ]
 })
-export class SkillRatingComponent {
-
-  @Input({ required: true }) max = 10;
-
-  private _rating = signal(0);
-  private _hovered = signal(0);
-
-  @Input()
-  set rating(value: number) {
-    this._rating.set(value);
-  }
-
-  get rating(): number {
-    return this._rating();
-  }
+export class SkillRatingComponent implements ControlValueAccessor {
+  @Input() maxStars: number = 10; //test with 5 for warnings
+  @Input() readOnly: boolean = false;
 
   @Output() ratingChange = new EventEmitter<number>();
 
-  hover(r: number) {
-    this._hovered.set(r);
+  stars: boolean[] = [];
+  rating: number = 0;
+  hovered = 0;
+
+  private onChange = (rating: number) => {};
+  private onTouched = () => {};
+
+  ngOnInit() {
+    this.stars = Array(this.maxStars).fill(false);
   }
 
-  leave() {
-    this._hovered.set(0);
+  setRating(rating: number): void {
+    if (this.readOnly) return;
+
+    this.rating = rating;
+    this.onChange(rating);
+    this.ratingChange.emit(rating);
   }
 
-  setRating(r: number) {
-    this._rating.set(r);
-    this.ratingChange.emit(r);
+  // ControlValueAccessor interface
+  writeValue(value: number): void {
+    this.rating = value;
   }
 
-  hovered = () => this._hovered();
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
 }

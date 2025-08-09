@@ -1,20 +1,40 @@
-.stars {
-  display: flex;
-  gap: 6px;
-  font-size: 2rem;
+.star-rating {
+  display: inline-flex;
   cursor: pointer;
-}
 
-.star {
-  color: #ccc;
-  transition: transform 0.2s ease, color 0.2s ease;
+  .star {
+    font-size: 2rem;
+    color: #ccc;
+    margin-right: 6px;
+    transition: color 0.2s ease, transform 0.2s ease;
+    transform: scale(1);
+    display: inline-block;
 
-  &.filled {
-    color: #f5b301;
-    transform: scale(1.15);
+    &.filled {
+      color: #ffc107;
+    }
   }
 
-  &:hover {
-    transform: scale(1.25);
+  &:hover .star {
+    animation: pop 0.3s ease forwards;
+  }
+
+  // Generate delay for up to 10 stars
+  @for $i from 1 through 10 {
+    &:hover .star:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 0.05}s;
+    }
+  }
+
+  @keyframes pop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.4);
+    }
+    100% {
+      transform: scale(1.2);
+    }
   }
 }
