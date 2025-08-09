@@ -1,0 +1,36 @@
+.centered-content {
+  margin: 30px;
+}
+.rating {
+  margin: 20px 0 0 0;
+  padding-left: 0px;
+  transition: all 0.3s ease;
+}
+
+.step-actions {
+  margin-top: 20px;
+}
+//:host ::ng-deep 
+mat-divider {
+  margin: 16px 0;
+  border-top-color: grey;
+}
+//mat-step-label font size change
+// .mat-step-label {
+//   font-size: large !important;
+// }
+// .mat-step-label.mat-step-label-selected{
+//   font-size: large !important;
+// }
+// .custom-step-label {
+//   font-size: 48px;
+// }
+
+.my-4{
+   border-top-color: grey;
+}
+
+.card .body{
+  padding: 0px !important;
+}
+

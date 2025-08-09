@@ -58,4 +58,17 @@ export class UtilsService {
     return [year, month, day].join('-');
 }
 
+getGrade(rating: number | null): string {
+  if (rating == null || rating === 0) return 'N/A';
+  if (rating >= 4.5) return 'Excellent';
+  if (rating >= 3.5) return 'Good';
+  if (rating >= 2.5) return 'Average';
+  if (rating >= 1.5) return 'Below Average';
+  return 'Poor';
+}
+
+getStarsArray(rating: number | null): number[] {
+  return Array(Math.round(rating ?? 0)).fill(0);
+}
+
 }

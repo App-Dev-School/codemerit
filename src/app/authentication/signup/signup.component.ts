@@ -16,8 +16,8 @@ import { InitialRole } from '@core/models/initial-role.data';
 import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { environment } from 'src/environments/environment';
 import { map, Observable, of, startWith } from 'rxjs';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -77,7 +77,8 @@ export class SignupComponent implements OnInit, OnDestroy {
       mobile: [''],
       city: ['', Validators.required],
       country: ['', Validators.required],
-      designation: ['', Validators.required]
+      designation: ['', Validators.required],
+      stars: [''],
     });
     if (!environment.production) {
       //this.authForm.get('firstName')?.setValue('Test');

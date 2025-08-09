@@ -16,7 +16,7 @@ import { SubjectRole } from '@core/models/subject-role';
         MatCardModule,
         FormsModule,
         ReactiveFormsModule,
-        MatButtonModule
+        MatButtonModule,
     ]
 })
 export class ReportListComponent implements OnInit {
