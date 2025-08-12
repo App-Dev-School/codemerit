@@ -24,15 +24,15 @@ export const AUTH_ROUTE: Route[] = [
     component: ForgotPasswordComponent,
   },
   {
-    path: "locked",
+    path: "verify",
     component: LockedComponent,
   },
   {
-    path: "page404",
+    path: "404",
     component: Page404Component,
   },
   {
-    path: "page500",
+    path: "500",
     component: Page500Component,
   },
 ];

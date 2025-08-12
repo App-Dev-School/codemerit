@@ -70,7 +70,7 @@ export default class UserComponent implements OnInit{
       if(navigator.onLine){
         //fullProfiles.json getFullProfile
         console.log("NgViewUser userName", this.userName);
-        this.authService.getDummyProfile(this.userName).subscribe(
+        this.authService.getFullProfile(this.userName, this.authData.token).subscribe(
           (data : any) => {
             console.log("NgViewUser Dummy API", data);
             this.loading = false;

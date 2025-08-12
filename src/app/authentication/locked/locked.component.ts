@@ -34,14 +34,22 @@ export class LockedComponent implements OnInit {
     // constuctor
   }
   ngOnInit() {
-    this.authForm = this.formBuilder.group({
-      password: ['', Validators.required],
+    console.log("Verify Comp :: currentUserValue", this.authService.currentUserValue);
+    if(this.authService.currentUserValue && this.authService.currentUserValue?.accountStatus == "PENDING"){
+          this.authForm = this.formBuilder.group({
+      password: ['', [Validators.required, Validators.maxLength(6)]],
     });
     this.userImg = this.authService.currentUserValue.userImage;
+    if(!this.userImg){
+      this.userImg = 'assets/images/users/user.jpg';
+    }
     this.userFullName =
       this.authService.currentUserValue.firstName +
       ' ' +
       this.authService.currentUserValue.lastName;
+    }else{
+    this.authService.redirectToLogin();
+    }
   }
   get f() {
     return this.authForm.controls;

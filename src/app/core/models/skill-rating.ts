@@ -14,6 +14,15 @@ export interface SkillRating {
     ratedBy : number
     ratingType: RatingType
     createdAt : string
-    //frontend specific
-    //skill_icon: string
+  }
+
+  import { QuestionType } from "./question-type"
+  
+  export interface AssessmentSessionCreateDto {
+      user_id: number
+      ratedBy: number
+      assessmentTitle: string
+      skillRatings: SkillRating[]
+      notes: string
+      ratingType: RatingType
   }

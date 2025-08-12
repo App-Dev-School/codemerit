@@ -19,7 +19,6 @@ import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
 import { combineLatest, map, Observable, of, startWith } from 'rxjs';
 import { environment } from 'src/environments/environment';
 @Component({
@@ -40,7 +39,6 @@ import { environment } from 'src/environments/environment';
     MatAutocompleteModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    NgxEditorModule,
     AsyncPipe
   ]
 })
@@ -55,32 +53,18 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   authData : User;
   authForm!: UntypedFormGroup;
   userName = "";
+  userDetail:any;
   loading = false;
   editMode = false;
   screenTitle = 'Add New User';
   screenAction = 'Register User';
-  editor?: Editor;
   html = '';
   submitted = false;
   error = "";
-  randomColor: string = "#000000";
-  alphabeticName = "";
   options: InitialRole[] = AuthConstants.CURRENT_ROLE_OPTIONS;
   filteredOptions?: Observable<InitialRole[]>;
   countries?: Country[];
   filteredCountries?: Observable<Country[]>;
-
-  toolbar: Toolbar = [
-    ['bold', 'italic'],
-    ['underline', 'strike'],
-    ['code', 'blockquote'],
-    ['ordered_list', 'bullet_list'],
-    [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
-    ['link', 'image'],
-    ['text_color', 'background_color'],
-    ['align_left', 'align_center', 'align_right', 'align_justify'],
-  ];
-
 
   ngOnInit(): void {
     this.authData = this.authService.currentUserValue;
@@ -92,15 +76,16 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         'user@codemerit.com',
         [Validators.required, Validators.email, Validators.minLength(5)],
       ],
-      mobile: ['', [Validators.minLength(9)]],
+      mobile: [null, [Validators.minLength(9)]],
       city: ['Bengaluru', Validators.required],
       country: ['India', Validators.required],
-      designation: ['IT Student', Validators.required]
+      designation: ['IT Student', Validators.required],
+      linkedinUrl: ['']
     });
 
     if (!environment.production) {
-          //this.authForm.get('firstName')?.setValue('Test');
-          //this.authForm.get('email')?.setValue('user1@codemerit.com');
+          this.authForm.get('firstName')?.setValue('Test');
+          this.authForm.get('email')?.setValue('user1@codemerit.com');
           this.authForm.get('city')?.setValue('Bengaluru');
           this.authForm.get('country')?.setValue('India');
           this.authForm.get('designation')?.setValue('IT Fresher (Graduate)');
@@ -135,6 +120,8 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       console.log("NgEditUser userName", this.userName);
       if(this.userName){
         this.editMode = true;
+        this.screenTitle = 'Update User';
+        this.screenAction = 'Update User';
         this.loadData();
        }
      }else{
@@ -155,12 +142,12 @@ export class CreateUserComponent implements OnInit, OnDestroy {
                 console.log("NgViewUser Dummy API", data);
                 this.loading = false;
                 if(!data.error){
-                  //this.userDetail = data.data;
-                  //console.log("NgEditUser userDetail", this.userDetail);
-                  // if(this.userDetail == null || this.userDetail == undefined){
-                  //   this.noDataView = true;
-                  //   this.authService.redirectToErrorPage();
-                  // }
+                  this.userDetail = data.data;
+                  console.log("NgEditUser userDetail", this.userDetail);
+                  if(this.userDetail == null || this.userDetail == undefined){
+                    // this.noDataView = true;
+                    //this.authService.redirectToErrorPage();
+                  }
                 }else{
                   //this.noDataView = true;
                   this.loading = false;
@@ -192,23 +179,30 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         email: this.authForm.get('email')?.value,
         mobile: this.authForm.get('mobile')?.value,
         city: this.authForm.get('city')?.value,
-        country: this.authForm.get('country')?.value?.name,
-        designation: this.authForm.get('designation')?.value
+        country: this.authForm.get('country')?.value,
+        designation: this.authForm.get('designation')?.value,
+         ...(this.authForm.get('linkedinUrl')?.value && { linkedinUrl: this.authForm.get('linkedinUrl')?.value })
       };
-
-      this.authService.register(postData).subscribe((res) => {
+      let createUpdateCall : Observable<any>;
+      if (this.editMode){
+      createUpdateCall = this.authService.updateUserAccount(this.authData.token, this.userName, postData);
+      }else{
+      createUpdateCall = this.authService.register(postData);
+      }
+      createUpdateCall.subscribe((res) => {
         this.submitted = false;
         if (res) {
           if (AuthConstants.DEV_MODE) {
-            console.log("/******* Create User APIResponse => " + JSON.stringify(res));
+            console.log("/******* Create/Update User APIResponse => ", res);
           }
           if (!res.error && res.data) {
             // let serverDelay = setTimeout(() => {
               //   this.authService.navigateAfterLogin();
               // }, 3000)
               // this.timeOutIDs.push(serverDelay);
+              console.log("/******* Create User APIResponse => ", res.data);
               this.router.navigate(['/users/list']).then(() => {
-                this.snackbar.display("snackbar-danger", "User account created successfully.", "bottom", "center");
+                this.snackbar.display("snackbar-danger", "User account "+(this.editMode ? "updated" : "created")+" successfully.", "bottom", "center");
               });
           } else {
             if (res.message) {
@@ -232,7 +226,6 @@ export class CreateUserComponent implements OnInit, OnDestroy {
 
   // make sure to destory the editor
   ngOnDestroy(): void {
-    this.editor?.destroy();
   }
 
   /* Auto-complete functions */
@@ -258,7 +251,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     );
   }
 
-  /*** Utils ****/
+  /*** Utils ***
   watchTwoFieldsChange(field1: string, field2: string) {
     const control1 = this.authForm.get('firstName');
     const control2 = this.authForm.get('lastName');
@@ -275,19 +268,19 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         }
       });
     }
-  }
+  } **/
 
-  getInitials(name) {
-    if (!name) return "";
-    const words = name.trim().split(" ");
-    console.log(`words now - ${words}`);
-    if (words.length === 1) return words[0][0];
-    return words[0][0] + words[1][0];
-  }
+  // getInitials(name) {
+  //   if (!name) return "";
+  //   const words = name.trim().split(" ");
+  //   console.log(`words now - ${words}`);
+  //   if (words.length === 1) return words[0][0];
+  //   return words[0][0] + words[1][0];
+  // }
 
-  getRandomColor() {
-    const colors = ["#F44336", "#3F51B5", "#4CAF50", "#FF9800", "#9C27B0", "#2196F3", "#00BCD4", "#8BC34A"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
+  // getRandomColor() {
+  //   const colors = ["#F44336", "#3F51B5", "#4CAF50", "#FF9800", "#9C27B0", "#2196F3", "#00BCD4", "#8BC34A"];
+  //   return colors[Math.floor(Math.random() * colors.length)];
+  // }
 
 }

@@ -27,7 +27,7 @@ export class AuthService {
       lastName: 'Tollee',
       role: Role.Subscriber,
       token: 'admin-token',
-      status: 'Active',
+      accountStatus: 'Active',
       createdAt: ''
     },
     {
@@ -40,7 +40,7 @@ export class AuthService {
       lastName: 'Shaswat',
       role: Role.Subscriber,
       token: 'user-token',
-      status: 'Active',
+      accountStatus: 'Active',
       createdAt: ''
     }
   ];
@@ -142,12 +142,9 @@ export class AuthService {
   redirectToErrorPage() {
     this.router.navigate(["/404"]);
   }
-  redirectToBrowsePage() {
-    this.router.navigate(["/app/browse"]);
-  }
 
-  redirectToSubscriptionPlans() {
-    this.router.navigate(["/app/plans"]);
+  redirectToLogin() {
+    this.router.navigate(["/authentication/login"]);
   }
 
   redirectToUserDashboard() {
@@ -163,35 +160,25 @@ export class AuthService {
   }
 
   getFullProfile(api_key: any, user_name: any): Observable<any> {
-    const url = 'apis/users/' + user_name;
+    const url = 'apis/users/profile/' + user_name;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + " via Token " + api_key);
     }
     return this.httpService.get(url, api_key);
   }
 
-    getDummyProfile(userName) {
-      return this.httpService.getLocalMock('assets/data/profile.json');
-    // return this.httpService.getLocalMock('assets/data/profile.json').pipe(
-    //   map((objects: any) => {
-    //     return objects.filter(obj => obj.username === userName);
-    //   })
-    // );
-  }
-
-  updateUserAccount(api_key: any, postData: any): Observable<any> {
+  updateUserAccount(api_key: any, user_name: any, postData: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
-        //'Content-Type':  'application/json',
+        'Content-Type':  'application/json',
         'Authorization': api_key
       })
     };
-    const url = environment.apiUrl + 'users/update';
+    const url = 'apis/users/update/'+user_name;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
     }
     return this.httpService.post(url, postData, httpOptions);
-    //return this.http.post<any>(url, postData, httpOptions);
   }
 
   changeUserPassword(api_key: any, postData: any): Observable<any> {
@@ -277,7 +264,7 @@ export class AuthService {
         role: user.role,
         token: user.token,
         createdAt: user.createdAt,
-        status: user.status
+        accountStatus: user.accountStatus
       });
     }
   }
@@ -291,7 +278,7 @@ export class AuthService {
     role: string;
     token: string;
     createdAt: string;
-    status: string;
+    accountStatus: string;
   }) {
     return of(new HttpResponse({ status: 200, body }));
   }

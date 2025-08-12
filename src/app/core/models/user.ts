@@ -10,5 +10,6 @@ export class User {
   role: Role;
   email : string;
   token!: string;
+  accountStatus!: string;
   createdAt!: string;
 }

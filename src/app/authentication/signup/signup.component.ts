@@ -7,6 +7,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
@@ -31,6 +32,7 @@ import { environment } from 'src/environments/environment';
     MatOptionModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatProgressSpinnerModule,
     RouterLink,
     MatButtonModule,
     AsyncPipe
@@ -139,6 +141,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     this.submitted = true;
     // stop here if form is invalid
     if (this.authForm.invalid) {
+      this.submitted = false;
       return;
     } else {
       //this.router.navigate(['/admin/dashboard/main']);
@@ -150,32 +153,32 @@ export class SignupComponent implements OnInit, OnDestroy {
         email: this.authForm.get('email')?.value,
         mobile: null,
         city: this.authForm.get('city')?.value,
-        country: this.authForm.get('country')?.value.name,
+        country: this.authForm.get('country')?.value,
         designation: this.authForm.get('designation')?.value,
         flow: "Registration"
       };
 
       this.authService.register(postData).subscribe((res) => {
-        this.submitted = false;
         if (res) {
-          if (AuthConstants.DEV_MODE) {
-            console.log("/******* Signup APIResponse => " + JSON.stringify(res));
-          }
           if (!res.error) {
             if (res.data) {
-              //this.authService.setAuthData(res.userData);
-              // let serverDelay = setTimeout(() => {
-              //   this.authService.navigateAfterLogin();
-              // }, 3000)
-              // this.timeOutIDs.push(serverDelay);
-              this.router.navigate(['/admin/dashboard/main']);
+              //validate and use in verify
+              this.authService.setLocalData(res.data);
+              let serverDelay = setTimeout(() => {
+                 //Send all registration to verify page
+                this.router.navigate(['/authentication/verify']);
+              }, 3000)
+              this.timeOutIDs.push(serverDelay);
+              //this.router.navigate(['/admin/dashboard/main']);
             }
           } else {
+            this.submitted = false;
             if (res.message) {
               this.snackbar.display("snackbar-danger", res.message, "bottom", "center");
             }
           }
         } else {
+          this.submitted = false;
           this.error = "Server Error. Please check your connection and try again.";
           this.snackbar.display("snackbar-danger", this.error, "bottom", "center");
         }

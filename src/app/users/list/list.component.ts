@@ -77,10 +77,10 @@ export class ListUserComponent implements OnInit, OnDestroy {
   columnDefinitions = [
     { def: 'name', label: 'Name', type: 'text', visible: true },
     { def: 'country', label: 'Country', type: 'address', visible: true },
-    { def: 'designation', label: 'Designation', type: 'text', visible: true },
     { def: 'email', label: 'Email', type: 'email', visible: true },
-    { def: 'date', label: 'Join Date', type: 'date', visible: true },
-    { def: 'verified', label: 'Status', type: 'text', visible: true },
+    { def: 'designation', label: 'Designation', type: 'text', visible: false },
+    { def: 'date', label: 'Join Date', type: 'date', visible: false },
+    { def: 'verified', label: 'Status', type: 'text', visible: false },
     { def: 'actions', label: 'Actions', type: 'actionBtn', visible: true },
   ];
 

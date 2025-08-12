@@ -10,7 +10,8 @@
     </div>
     <div class="col-sm-6 auth-form-section">
       <div class="form-section">
-        <div class="auth-wrapper">
+        @if(!submitted){
+<div class="auth-wrapper">
           <h6 class="welcome-msg"> Sign Up </h6>
           <p class="auth-signup-text text-muted">Enter details to create your account</p>
           <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
@@ -113,7 +114,7 @@
               </div>
             </div>
             <div class="container-auth-form-btn">
-              <button mat-flat-button color="accent" class="auth-form-btn" [disabled]="!authForm.valid " type="submit">
+              <button mat-flat-button color="accent" class="auth-form-btn" [disabled]="!authForm.valid || submitted" type="submit">
                 Register
               </button>
             </div>
@@ -134,6 +135,12 @@
               </a></li>
           </ul>
         </div>
+        }@else{
+          <div class="tbl-spinner">
+                <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
+                </mat-progress-spinner>
+            </div>
+        }
       </div>
     </div>
 

@@ -1,5 +1,5 @@
 export enum RatingType {
-  Self = 'Self',
-  Quiz = 'Quiz',
-  Interview = 'Interview'
+  Self = 'SELF',
+  Quiz = 'QUIZ',
+  Interview = 'INTERVIEW'
 }

@@ -24,6 +24,8 @@ import {
   MatStepperModule
 } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
+import { RatingType } from '@core/models/rating-type';
+import { AssessmentSessionCreateDto } from '@core/models/skill-rating';
 import { UtilsService } from '@core/service/utils.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rating.component';
@@ -153,5 +155,16 @@ export class WizardComponent {
     //send flatData to API
     const flatData = this.getAllSubjectEntries();
     console.log(flatData);
+    const assessment : Partial<AssessmentSessionCreateDto> = {
+       user_id: 4,
+             ratedBy: 4,
+             assessmentTitle: 'Self Skill Rating',
+             //skillRatings: flatData,
+             notes: '',
+             ratingType: RatingType.Self,
+             skillRatings: []
+    }
+    console.log(assessment);
+    alert(assessment);
   }
 }
