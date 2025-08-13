@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { environment } from 'src/environments/environment';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -21,6 +22,7 @@ import { environment } from 'src/environments/environment';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatProgressSpinnerModule
   ]
 })
 export class SigninComponent
@@ -55,13 +57,13 @@ export class SigninComponent
   }
 
   onSubmit() {
-    this.submitted = true;
-    this.loading = true;
     this.error = '';
     if (this.authForm.invalid) {
       this.error = 'Username and Password not valid !';
       return;
     } else {
+      this.submitted = true;
+      this.loading = true;
       const payload = {
         email: this.f['username'].value,
         password: this.f['password'].value

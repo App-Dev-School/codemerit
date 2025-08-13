@@ -95,17 +95,13 @@ export class AuthService {
     return this.httpService.postWithParams(url, postData, httpOptions);
   }
 
-   verifyAccount(api_key: any, postData: any): Observable<any> {
+   verifyAccount(postData: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': api_key
+        'Content-Type': 'application/json'
       })
     };
-    const url = environment.apiUrl + 'auth/verify';
-    if (AuthConstants.DEV_MODE) {
-      console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
-    }
+    const url = 'auth/verify';
     return this.httpService.post(url, postData, httpOptions);
   }
   
@@ -144,7 +140,7 @@ export class AuthService {
   }
 
   redirectToLogin() {
-    this.router.navigate(["/authentication/login"]);
+    this.router.navigate(["/authentication/signin"]);
   }
 
   redirectToUserDashboard() {
