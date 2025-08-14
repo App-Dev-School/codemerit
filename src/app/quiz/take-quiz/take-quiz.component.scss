@@ -1,0 +1,44 @@
+.quiz-container {
+  .subject-icon {
+    height: 30px;
+    width: 30px;
+  }
+
+  .quiz-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .question-card {
+    padding: 1rem;
+  }
+
+  .choice {
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.selected {
+      background-color: #f0f0f0;
+    }
+    &.correct {
+      background-color: #d4edda;
+    }
+    &.wrong {
+      background-color: #f8d7da;
+    }
+  }
+
+  .icon-right {
+    height: 20px;
+    width: 20px;
+  }
+  .icon-wrong {
+    height: 20px;
+    width: 20px;
+  }
+
+  .footer-toolbar {
+    padding: 0.5rem 1rem;
+  }
+}

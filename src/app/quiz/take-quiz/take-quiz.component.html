@@ -1,20 +1,80 @@
 <section class="content">
-  <div class="content-block1">
-    <div class="block-header">
-      <!-- breadcrumb -->
+  <div class="content-block">
+    <!-- <div class="quiz-container d-flex flex-column vh-100"> -->
+<div class="quiz-container d-flex flex-column vh-1000">
+      <!-- HEADER -->
+      @if (quiz) {
+      <mat-toolbar color="primary" class="justify-content-between">
+        <div class="d-flex align-items-center">
+          <img [src]="quiz.subject_icon" alt="icon" class="subject-icon me-2">
+          <span class="quiz-title">{{ quiz.title }}</span>
+        </div>
+
+        <div class="d-flex align-items-center">
+          <img src="assets/images/icons/ic_watch.png" class="me-1" alt="timer">
+          <cd-timer [countdown]="true" [startTime]="240" format="mm:ss"></cd-timer>
+        </div>
+      </mat-toolbar>
+      }
+
+      <!-- MAIN CONTENT (Swiper) -->
+      <div class="flex-grow-1 overflow-hidden">
+        @if (questions?.length > 0) {
+        <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
+
+          @for (question of questions; track question.id) {
+          <swiper-slide>
+            <!-- <p>{{question | json }}</p> -->
+            <mat-card class="question-card">
+              <h3 class="mb-3">{{ question.title }}</h3>
+
+              @for (choice of question.choices; track choice) {
+  <div (click)="optionSelected(choice, question)"
+       class="choice p-2 rounded mb-2"
+       [ngClass]="{
+         'selected': question.selectedChoice === choice,
+         'correct': question.selectedChoice === choice && choice === question.correctAnswer,
+         'wrong': question.selectedChoice === choice && choice !== question.correctAnswer
+       }">
+    <div class="d-flex justify-content-between align-items-center">
+      <span>{{ choice }}</span>
+      
+      @if (question.selectedChoice === choice && choice === question.correctAnswer) {
+        <img src="assets/images/icons/ic_correct.png" class="icon-right">
+      }
+      @if (question.selectedChoice === choice && choice !== question.correctAnswer) {
+        <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
+      }
     </div>
-    <div class="row clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
-          <div class="body">
-            <div class="row">
-              <div class="col-md-12">
-                <survey [model]="surveyModel"></survey>
-              </div>
+  </div>
+}
+
+            </mat-card>
+          </swiper-slide>
+          }
+        </swiper-container>
+        }
+      </div>
+
+      <!-- FOOTER -->
+      <mat-toolbar color="accent" class="footer-toolbar">
+        <div class="container-fluid">
+          <div class="row w-100">
+            <div class="col-4 text-start">
+              <button mat-raised-button color="warn" (click)="onSlidePrev()">Skip</button>
+            </div>
+            <div class="col-4 text-center">
+              <button mat-raised-button color="primary" (click)="showHint()">Hint</button>
+            </div>
+            <div class="col-4 text-end">
+              <button mat-raised-button color="primary" (click)="onSlideNext()">
+                {{ currentQuestionId === questions.length - 1 ? 'Complete' : 'Next' }}
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      </mat-toolbar>
+
     </div>
   </div>
 </section>
