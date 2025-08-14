@@ -40,11 +40,6 @@ export const APP_ROUTE: Route[] = [
                     import('./users/users.routes').then((m) => m.USERS_ROUTE),
             },
             {
-                path: 'forms',
-                loadChildren: () =>
-                    import('./forms/forms.routes').then((m) => m.FORMS_ROUTE),
-            },
-            {
                 path: 'app',
                 loadChildren: () =>
                     import('./pages/pages.routes').then(

@@ -180,6 +180,7 @@ export class TopicsComponent implements OnInit, OnDestroy {
       data: { topicItem: data, action },
       direction: varDirection,
       autoFocus: false,
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((result) => {

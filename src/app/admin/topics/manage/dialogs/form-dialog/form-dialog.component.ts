@@ -53,13 +53,13 @@ interface TopicGroup {
     MatSelectModule,
     MatDatepickerModule,
     MatDialogClose,
-    MatCheckboxModule,
-    JsonPipe
+    MatCheckboxModule
   ]
 })
 export class TopicFormComponent {
   action: string;
   dialogTitle: string;
+  topicImage = 'assets/images/icons/topic.png';
   topicForm: UntypedFormGroup;
   initialFormValue: any;
   topicItems: TopicItem;

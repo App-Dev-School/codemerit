@@ -185,8 +185,8 @@
       ],
       "submenu": [
         {
-          "path": "/forms/formkit",
-          "title": "App Forms",
+          "path": "/quiz/take/javascript",
+          "title": "Take Quiz",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",
@@ -199,36 +199,8 @@
           "submenu": []
         },
         {
-          "path": "/forms/wizard",
-          "title": "Form Wizards",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/admin/topics/list",
-          "title": "Topic 1",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/admin/topics/list",
-          "title": "Topic Manager",
+          "path": "/quiz/start/list",
+          "title": "Start Quiz",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",

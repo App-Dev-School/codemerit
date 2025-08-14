@@ -148,14 +148,13 @@
 
                   <div class="col-lg-12">
                     <div class="m-l-25 m-t-20 m-b-20">
-                      <button mat-raised-button color="warn" (click)="authForm.reset()">Cancel</button>
-                      <button mat-flat-button color="accent" class="auth-form-btn m-l-25" [disabled]="!authForm.valid "
+                      <button mat-flat-button color="accent" class="btn" [disabled]="!authForm.valid "
                         type="submit">
                         {{screenAction}}
                       </button>
+                      <button mat-raised-button color="warn" class="m-l-25" (click)="authForm.reset()">Cancel</button>
                     </div>
                   </div>
-
                 </form>
               </div>
             </div>
