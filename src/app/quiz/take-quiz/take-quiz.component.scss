@@ -1,4 +1,34 @@
 .quiz-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  /* Question area scrolls, header/footer fixed */
+  .flex-grow-1 {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    /* Space for footer */
+  }
+
+  /* Sticky Header */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Sticky Footer */
+  .footer-toolbar {
+    padding: 0.5rem 1rem;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  }
+
   .subject-icon {
     height: 30px;
     width: 30px;
@@ -11,38 +41,222 @@
 
   .question-card {
     padding: 1rem;
+    margin: 1rem;
   }
 
+  /* Extra vertical spacing between options */
   .choice {
-    border: 1px solid #ddd;
+    border: 2px solid #ddd;
     cursor: pointer;
-    transition: all 0.3s ease;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.2rem;
+    /* increased spacing */
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.25s ease-in-out;
+    position: relative;
+
+    &:hover {
+      border-color: #2196f3;
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
 
     &.selected {
-      background-color: #f0f0f0;
+      background-color: #e3f2fd;
+      border-color: #2196f3;
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+      animation: pulseSelect 0.3s ease;
     }
+
     &.correct {
       background-color: #d4edda;
+      border-color: #28a745;
+      color: #155724;
+      animation: correctBounce 0.4s ease;
     }
+
     &.wrong {
       background-color: #f8d7da;
+      border-color: #dc3545;
+      color: #721c24;
+      animation: shakeWrong 0.4s ease;
     }
   }
 
-  .icon-right {
-    height: 20px;
-    width: 20px;
+  /* Animations */
+  @keyframes pulseSelect {
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.08);
+    }
+
+    100% {
+      transform: scale(1.05);
+    }
   }
+
+  @keyframes correctBounce {
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes shakeWrong {
+
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    20% {
+      transform: translateX(-5px);
+    }
+
+    40% {
+      transform: translateX(5px);
+    }
+
+    60% {
+      transform: translateX(-5px);
+    }
+
+    80% {
+      transform: translateX(5px);
+    }
+  }
+
+  .icon-right,
   .icon-wrong {
     height: 20px;
     width: 20px;
   }
 
-  .footer-toolbar {
-    padding: 0.5rem 1rem;
-  }
-  .timerIcon{
+  .timerIcon {
     height: 20px;
     width: 20px;
+    margin-right: 5px;
+  }
+}
+
+.toolbar.warning {
+  animation: flashWarning 1s infinite;
+}
+
+@keyframes flashWarning {
+  0% {
+    background-color: #d32f2f;
+  }
+
+  50% {
+    background-color: #ff5252;
+  }
+
+  100% {
+    background-color: #d32f2f;
+  }
+}
+
+.toolbar.warning cd-timer {
+  animation: pulseTimer 1s infinite;
+  font-weight: bold;
+}
+
+@keyframes pulseTimer {
+  0% {
+    transform: scale(1);
+    color: #fff;
+  }
+
+  50% {
+    transform: scale(1.1);
+    color: yellow;
+  }
+
+  100% {
+    transform: scale(1);
+    color: #fff;
+  }
+}
+
+/* Warning Toast Style */
+/* Dimmed background */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Centered warning toast */
+.warning-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ff5252;
+  color: white;
+  font-size: 2rem;
+  padding: 20px 40px;
+  border-radius: 12px;
+  z-index: 1001;
+  text-align: center;
+  font-weight: bold;
+  animation: popUp 0.3s ease-out;
+}
+
+/* Flash animation for toolbar */
+.toolbar.warning {
+  animation: flashWarning 1s infinite;
+}
+
+@keyframes flashWarning {
+  0% {
+    background-color: #d32f2f;
+  }
+
+  50% {
+    background-color: #ff5252;
+  }
+
+  100% {
+    background-color: #d32f2f;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popUp {
+  from {
+    transform: translate(-50%, -60%) scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
   }
 }

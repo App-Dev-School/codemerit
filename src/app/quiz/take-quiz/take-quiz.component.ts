@@ -3,7 +3,7 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, V
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { CdTimerModule } from 'angular-cd-timer';
+import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuizService } from '../quiz.service';
@@ -32,6 +32,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   quiz!: Quiz;
   questions: QuizQuestion[] = [];
   currentQuestionId = 0;
+
+  quizDuration = 100;
+  @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
+  warningActive = false;
+  showWarningToast = false;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
@@ -96,6 +101,25 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     } else {
       alert('No hint available for this question.');
     }
+  }
+
+  onTick(event: any) {
+    if (event.minutes === 1 && event.seconds === 0) {
+      this.showWarningToast = true;
+      //this.timer.stop();
+      // Auto-hide toast after 3 seconds
+      setTimeout(() => {
+        this.warningActive = true;
+        this.showWarningToast = false;
+        //this.timer.start();
+      }, 3000);
+    }
+  }
+  onTimerComplete() {
+    console.log('Timer finished!');
+    this.warningActive = false;
+    this.showWarningToast = false;
+    this.submitQuiz();
   }
 
   /** Handle end of quiz */

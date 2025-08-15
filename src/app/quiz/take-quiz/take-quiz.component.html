@@ -1,10 +1,9 @@
-<section class="content">
-  <div class="content-block">
-    <!-- <div class="quiz-container d-flex flex-column vh-100"> -->
-    <div class="quiz-container d-flex flex-column vh-1000">
+<div class="auth-container">
+  <div class="auth-main">
+    <div class="quiz-container d-flex flex-column vh-100">
       <!-- HEADER -->
       @if (quiz) {
-      <mat-toolbar color="primary" class="justify-content-between">
+      <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
         <div class="d-flex align-items-center">
           <img [src]="quiz.subject_icon" alt="icon" class="subject-icon me-2">
           <span class="quiz-title">{{ quiz.title }}</span>
@@ -12,9 +11,20 @@
 
         <div class="d-flex align-items-center">
           <img src="assets/images/icons/ic_watch.png" class="timerIcon" alt="timer">
-          <cd-timer [countdown]="true" [startTime]="240" format="mm:ss"></cd-timer>
+
+          <cd-timer #timerRef [countdown]="true" [startTime]="quizDuration" [omitZero]="true" maxTimeUnit="minute"
+            [autoStart]="true" [callTick]="true" format="ms" (onTick)="onTick($event)" (onComplete)="onTimerComplete()">
+          </cd-timer>
         </div>
       </mat-toolbar>
+      }
+
+      <!-- Screen Overlay -->
+      @if (showWarningToast) {
+      <div class="overlay"></div>
+      <div class="warning-toast">
+        ⚠️ 1 Minute Left!
+      </div>
       }
 
       <!-- MAIN CONTENT (Swiper) -->
@@ -75,4 +85,4 @@
 
     </div>
   </div>
-</section>
+</div>
