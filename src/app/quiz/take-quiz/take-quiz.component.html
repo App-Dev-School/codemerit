@@ -1,7 +1,7 @@
 <section class="content">
   <div class="content-block">
     <!-- <div class="quiz-container d-flex flex-column vh-100"> -->
-<div class="quiz-container d-flex flex-column vh-1000">
+    <div class="quiz-container d-flex flex-column vh-1000">
       <!-- HEADER -->
       @if (quiz) {
       <mat-toolbar color="primary" class="justify-content-between">
@@ -11,7 +11,7 @@
         </div>
 
         <div class="d-flex align-items-center">
-          <img src="assets/images/icons/ic_watch.png" class="me-1" alt="timer">
+          <img src="assets/images/icons/ic_watch.png" class="timerIcon" alt="timer">
           <cd-timer [countdown]="true" [startTime]="240" format="mm:ss"></cd-timer>
         </div>
       </mat-toolbar>
@@ -29,25 +29,23 @@
               <h3 class="mb-3">{{ question.title }}</h3>
 
               @for (choice of question.choices; track choice) {
-  <div (click)="optionSelected(choice, question)"
-       class="choice p-2 rounded mb-2"
-       [ngClass]="{
+              <div (click)="optionSelected(choice, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedChoice === choice,
          'correct': question.selectedChoice === choice && choice === question.correctAnswer,
          'wrong': question.selectedChoice === choice && choice !== question.correctAnswer
        }">
-    <div class="d-flex justify-content-between align-items-center">
-      <span>{{ choice }}</span>
-      
-      @if (question.selectedChoice === choice && choice === question.correctAnswer) {
-        <img src="assets/images/icons/ic_correct.png" class="icon-right">
-      }
-      @if (question.selectedChoice === choice && choice !== question.correctAnswer) {
-        <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
-      }
-    </div>
-  </div>
-}
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>{{ choice }}</span>
+
+                  @if (question.selectedChoice === choice && choice === question.correctAnswer) {
+                  <img src="assets/images/icons/ic_correct.png" class="icon-right">
+                  }
+                  @if (question.selectedChoice === choice && choice !== question.correctAnswer) {
+                  <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
+                  }
+                </div>
+              </div>
+              }
 
             </mat-card>
           </swiper-slide>

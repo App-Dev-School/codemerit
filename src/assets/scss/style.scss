@@ -3,7 +3,7 @@
  *  Document   : style.css
  *  Author     : AppDev Theme
  *  Description: This is main style scss file
-/*                 [1. Common ]                   			*/
+*/
 @import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
 @import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
@@ -57,10 +57,7 @@
 
 /*                 [6. Pugins ]                   				*/
 @include meta.load-css("plugins/_carousel.scss");
-@include meta.load-css("plugins/_charts.scss");
 @include meta.load-css("plugins/_formwizard.scss");
-@include meta.load-css("plugins/_imagegallery.scss");
-@include meta.load-css("plugins/_maps.scss");
 @include meta.load-css("plugins/_tables.scss");
 
 /*                 [7. UI ]                   */

@@ -7,9 +7,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
-import {
-  NgApexchartsModule
-} from 'ng-apexcharts';
 
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
@@ -31,7 +28,6 @@ import { Observable } from 'rxjs';
     JsonPipe,
     AsyncPipe,
     BreadcrumbComponent,
-    NgApexchartsModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,

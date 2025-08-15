@@ -4,6 +4,7 @@
     question_id: number
     selected_option: number
     is_skipped: boolean
+    hintUsed: boolean
     is_correct: boolean
     score: number
     //frontend

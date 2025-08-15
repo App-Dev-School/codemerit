@@ -1,5 +1,4 @@
-import { CommonModule, JsonPipe, NgClass } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { CommonModule, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,46 +6,36 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CdTimerModule } from 'angular-cd-timer';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
-
-interface Question {
-  id: number | string;
-  title: string;
-  choices: string[];
-  correctAnswer: string;
-  hint?: string;
-  hasAnswered?: boolean;
-  selectedChoice?: string;
-}
-
+import { QuizService } from '../quiz.service';
+import { QuizQuestion } from '@core/models/quiz-question';
 interface Quiz {
   title: string;
   subject_icon: string;
-  questions: Question[];
+  questions: QuizQuestion[];
 }
 
 @Component({
-    selector: 'app-take-quiz',
-    templateUrl: './take-quiz.component.html',
-    styleUrls: ['./take-quiz.component.scss'],
-    schemas: [ CUSTOM_ELEMENTS_SCHEMA],
+  selector: 'app-take-quiz',
+  templateUrl: './take-quiz.component.html',
+  styleUrls: ['./take-quiz.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
     NgClass,
     CdTimerModule,
     MatToolbarModule,
     MatButtonModule,
-    MatCardModule,
-    JsonPipe
+    MatCardModule
   ]
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
   quiz!: Quiz;
-  questions: Question[] = [];
+  questions: QuizQuestion[] = [];
   currentQuestionId = 0;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
-  constructor(private http: HttpClient) {
+  constructor(private quizService: QuizService) {
     register(); // Register Swiper web components
   }
 
@@ -60,7 +49,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   /** Load quiz from local JSON */
   private loadQuiz(): void {
-    this.http.get<Quiz>('./assets/data/quizzes/quiz-angular.json')
+    this.quizService.getQuiz(1)
       .subscribe(data => {
         this.quiz = data;
         // Ensure each question has a selectedChoice field
@@ -73,7 +62,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   /** Record selected answer */
-  optionSelected(choice: string, question: Question): void {
+  optionSelected(choice: string, question: QuizQuestion): void {
     if (!question.hasAnswered) {
       question.selectedChoice = choice;
       question.hasAnswered = true;
@@ -100,22 +89,28 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   /** Called when a hint is requested */
   showHint(): void {
-   const currentQuestion = this.questions[this.currentQuestionId];
-  if (currentQuestion?.hint) {
-    alert(`Hint: ${currentQuestion.hint}`);
-  } else {
-    alert('No hint available for this question.');
-  }
+    const currentQuestion = this.questions[this.currentQuestionId];
+    if (currentQuestion?.hint) {
+      currentQuestion.usedHint = true;
+      alert(`Hint: ${currentQuestion.hint}`);
+    } else {
+      alert('No hint available for this question.');
+    }
   }
 
   /** Handle end of quiz */
   private completeQuiz(): void {
     console.log('Quiz complete!', this.questions);
-    alert('Quiz Complete! Check console for answers.');
+    this.submitQuiz();
   }
+
 
   /** Update current index from Swiper */
   private updateCurrentIndex(): void {
     this.currentQuestionId = this.swiperEx.nativeElement.swiper.activeIndex;
+  }
+
+  submitQuiz() {
+    this.quizService.processAndSaveResults(this.questions, 'quiz-angular-101', 'user-123');
   }
 }

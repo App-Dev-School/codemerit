@@ -13,46 +13,7 @@ import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.
 import { RecentActivityComponent } from '@shared/components/recent-activity/recent-activity.component';
 import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
 import { SubjectCardWidgetComponent } from '@shared/components/subject-card-widget/subject-card-widget.component';
-import { ChartConfiguration } from 'chart.js';
-import {
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexDataLabels,
-  ApexFill,
-  ApexGrid,
-  ApexLegend,
-  ApexMarkers,
-  ApexNonAxisChartSeries,
-  ApexPlotOptions,
-  ApexResponsive,
-  ApexStroke,
-  ApexTitleSubtitle,
-  ApexTooltip,
-  ApexXAxis,
-  ApexYAxis,
-  NgApexchartsModule,
-} from 'ng-apexcharts';
 import { NgScrollbar } from 'ngx-scrollbar';
-
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  series2?: ApexNonAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  stroke: ApexStroke;
-  dataLabels: ApexDataLabels;
-  markers: ApexMarkers;
-  colors: string[];
-  yaxis: ApexYAxis;
-  grid: ApexGrid;
-  responsive?: ApexResponsive[];
-  legend: ApexLegend;
-  tooltip: ApexTooltip;
-  fill: ApexFill;
-  labels?: string[];
-  plotOptions: ApexPlotOptions;
-  title: ApexTitleSubtitle;
-};
 
 @Component({
   selector: 'app-dashboard-analytics',
@@ -60,7 +21,6 @@ export type ChartOptions = {
   styleUrls: ['./dashboard-analytics.component.scss'],
   imports: [
     BreadcrumbComponent,
-    NgApexchartsModule,
     MatCardModule,
     MatButtonModule,
     MatMenuModule,
@@ -69,8 +29,8 @@ export type ChartOptions = {
     SubjectCardWidgetComponent,
     RecentCommentsComponent,
     RecentActivityComponent,
-    ChartSubscribersComponent,
-    ChartCard3Component,
+    // ChartSubscribersComponent,
+    // ChartCard3Component,
     MySubjectsComponent,
     CodeSnippetComponent
   ],
@@ -81,17 +41,6 @@ export class AnalyticsDashboardComponent implements OnInit {
 
   title3 = 'Skill Wise Coverage';
   subtitle3 = 'Number of readables marked as completed';
-  // Doughnut chart start
-
-  public doughnutChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-    },
-  };
-
-  // Doughnut chart end
 
   constructor(private master: MasterService) {
     
