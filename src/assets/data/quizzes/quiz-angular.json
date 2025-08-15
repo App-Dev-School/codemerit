@@ -1,49 +1,140 @@
 {
-    "title": "Angular 18 Awareness",
-    "description": "Angular has evolved many times in terms of developer experience",
-    "subject": "Angular",
-    "subject_icon": "assets/images/tech/angular.png",
-    "topics": "Angular 16, Angular 17, Angular 18, Angular 19",
-    "class": "progress-bar-success",
-    "questions": [
-        {
-            "id": 1,
-            "title": "What is Zone.js?",
-            "choices": [
-                "A JavaScript Library",
-                "Module Bundler",
-                "Compiler Tool",
-                "Angular Builder"
-            ],
-            "correctAnswer": "A JavaScript Library",
-            "hint": "Zone.js is a library that is used by Angular to detect changes in components.",
-            "hasAnswered": false
-        },
-        {
-            "id": 2,
-            "title": "Which is not a feature introduced in Angular 17?",
-            "choices": [
-                "Enhanced Server Side Rendering",
-                "Declrative Control Flow",
-                "Deferrable Views",
-                "Ivy Rendering Engine"
-            ],
-            "correctAnswer": "Ivy Rendering Engine",
-            "hint": "Ivy Rendering Engine was added to Angular 9.",
-            "hasAnswered": false
-        },
-        {
-            "id": 3,
-            "title": "What is OnPush?",
-            "choices": [
-                "A Directive",
-                "A Change Detection Strategy",
-                "Inbuilt Service",
-                "Angular Navigation Strategy"
-            ],
-            "correctAnswer": "A Change Detection Strategy",
-            "hint": "Zone.js is a library that is used by Angular to detect changes in components.",
-            "hasAnswered": false
-        }
-    ]
+  "title": "Angular 18 Proficiency Check",
+  "description": "Test your knowledge of the latest Angular 16–18 features and concepts",
+  "subject": "Angular",
+  "subject_icon": "assets/images/tech/angular.png",
+  "topics": "Angular 16, Angular 17, Angular 18",
+  "class": "progress-bar-success",
+  "questions": [
+    {
+      "id": 1,
+      "title": "Which new build system became the default in Angular 18?",
+      "choices": [
+        "Webpack",
+        "Vite",
+        "Rollup",
+        "Parcel"
+      ],
+      "correctAnswer": "Vite",
+      "hint": "Vite replaced Webpack as the default for faster builds and HMR.",
+      "hasAnswered": false
+    },
+    {
+      "id": 2,
+      "title": "What is the purpose of Angular's 'Partial Hydration' introduced in v18?",
+      "choices": [
+        "Load only interactive parts of the page during client takeover",
+        "Render only the header and footer initially",
+        "Hydrate all components before JavaScript loads",
+        "Remove the need for SSR entirely"
+      ],
+      "correctAnswer": "Load only interactive parts of the page during client takeover",
+      "hint": "This improves SSR performance by hydrating only where needed.",
+      "hasAnswered": false
+    },
+    {
+      "id": 3,
+      "title": "Which of the following is a valid example of Angular’s new control flow syntax?",
+      "choices": [
+        "@if (isLoggedIn) { <app-dashboard/> }",
+        "*if=\"isLoggedIn\"",
+        "ngIf=\"isLoggedIn\"",
+        "switch(isLoggedIn)"
+      ],
+      "correctAnswer": "@if (isLoggedIn) { <app-dashboard/> }",
+      "hint": "Introduced in Angular 17, replaces *ngIf for cleaner templates.",
+      "hasAnswered": false
+    },
+    {
+      "id": 4,
+      "title": "What advantage do Angular Signals provide over traditional RxJS Observables for component state?",
+      "choices": [
+        "Fine-grained reactivity without full stream management",
+        "They completely remove the need for HTTP requests",
+        "They are automatically persisted to localStorage",
+        "They can only be used in standalone components"
+      ],
+      "correctAnswer": "Fine-grained reactivity without full stream management",
+      "hint": "Signals are easier for simple reactive state than RxJS.",
+      "hasAnswered": false
+    },
+    {
+      "id": 5,
+      "title": "Which new directive in Angular 18 helps optimize images for performance?",
+      "choices": [
+        "ngImgOptimized",
+        "ngSrc",
+        "lazyLoadImg",
+        "imgAsync"
+      ],
+      "correctAnswer": "ngSrc",
+      "hint": "It automatically applies lazy loading, resizing, and format optimizations.",
+      "hasAnswered": false
+    },
+    {
+      "id": 6,
+      "title": "What is a 'Deferrable View'?",
+      "choices": [
+        "A view loaded only when triggered by a condition or interaction",
+        "A view that loads before the rest of the app",
+        "An offline-only component",
+        "A deprecated concept from AngularJS"
+      ],
+      "correctAnswer": "A view loaded only when triggered by a condition or interaction",
+      "hint": "This allows splitting the UI to improve initial load performance.",
+      "hasAnswered": false
+    },
+    {
+      "id": 7,
+      "title": "What does the Angular View Transitions API integration enable?",
+      "choices": [
+        "Smooth animations between route changes",
+        "Automatic dark mode switching",
+        "Offline component rendering",
+        "CSS isolation for standalone components"
+      ],
+      "correctAnswer": "Smooth animations between route changes",
+      "hint": "It leverages the browser’s View Transitions API for smoother page changes.",
+      "hasAnswered": false
+    },
+    {
+      "id": 8,
+      "title": "Standalone components were introduced earlier, but how did Angular 18 improve them?",
+      "choices": [
+        "They can now be lazy-loaded without NgModules",
+        "They now support two-way binding automatically",
+        "They require no imports at all",
+        "They auto-generate their own CSS"
+      ],
+      "correctAnswer": "They can now be lazy-loaded without NgModules",
+      "hint": "This makes routing with standalone components easier.",
+      "hasAnswered": false
+    },
+    {
+      "id": 9,
+      "title": "Which feature in Angular 18 allows Router to bind directly to reactive state?",
+      "choices": [
+        "Router Signals",
+        "Route Streams",
+        "Reactive Routes API",
+        "Stateful Navigation"
+      ],
+      "correctAnswer": "Router Signals",
+      "hint": "Router signals let you react to navigation changes without subscribing manually.",
+      "hasAnswered": false
+    },
+    {
+      "id": 10,
+      "title": "Why is Zone.js still relevant even with Signals?",
+      "choices": [
+        "It tracks async tasks for change detection in most existing apps",
+        "It is required for Angular CLI to run",
+        "It powers the Angular compiler",
+        "It is the default router implementation"
+      ],
+      "correctAnswer": "It tracks async tasks for change detection in most existing apps",
+      "hint": "Signals can replace some Zone.js usage, but many apps still rely on it.",
+      "hasAnswered": false
+    }
+  ]
 }

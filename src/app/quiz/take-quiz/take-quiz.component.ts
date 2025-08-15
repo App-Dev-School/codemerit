@@ -33,7 +33,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   questions: QuizQuestion[] = [];
   currentQuestionId = 0;
 
-  quizDuration = 100;
+  quizDuration = 300;
   @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
   warningActive = false;
   showWarningToast = false;
