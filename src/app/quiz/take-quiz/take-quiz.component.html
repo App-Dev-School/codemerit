@@ -103,15 +103,16 @@
           <div class="row">
             <div class="col-4 text-start">
               @if (currentQuestionId > 0) {
-              <button mat-flat-button color="warn" (click)="onSlidePrev()">Previous</button>
+              <button mat-flat-button color="warn" (click)="onSlidePrev()"><mat-icon>keyboard_arrow_left</mat-icon> Prev</button>
               }
             </div>
             <div class="col-4 text-center">
-              <button mat-raised-button color="accent" (click)="showHint()">Hint</button>
+              <button mat-raised-button color="accent" (click)="showHint()">
+                <mat-icon>live_help</mat-icon> Hint</button>
             </div>
             <div class="col-4 text-end">
               <button mat-flat-button color="primary" (click)="onSlideNext()">
-                {{ currentQuestionId === questions.length - 1 ? 'Complete' : 'Next' }}
+                <mat-icon>keyboard_arrow_right</mat-icon> {{ currentQuestionId === questions.length - 1 ? 'Complete' : 'Next' }}
               </button>
             </div>
           </div>

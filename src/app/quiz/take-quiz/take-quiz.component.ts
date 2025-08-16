@@ -8,6 +8,7 @@ import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuizService } from '../quiz.service';
 import { QuizQuestion } from '@core/models/quiz-question';
+import { MatIconModule } from '@angular/material/icon';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -24,6 +25,7 @@ interface Quiz {
     CdTimerModule,
     MatToolbarModule,
     MatButtonModule,
+    MatIconModule,
     MatCardModule
   ]
 })

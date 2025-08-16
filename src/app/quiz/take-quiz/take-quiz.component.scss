@@ -40,6 +40,19 @@
     font-weight: 500;
   }
 
+  cd-timer {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  @media (max-width: 480px) {
+  .quiz-title {
+    font-size: 0.9rem;
+  }
+  cd-timer {
+    font-size: 0.9rem;
+  }
+  }
+
   .question-card {
     padding: 1rem;
     margin: 1rem;
@@ -208,7 +221,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 2rem;
+  font-size: 1.2rem;
   padding: 20px 40px;
   border-radius: 12px;
   z-index: 1001;
@@ -218,18 +231,18 @@
 }
 
 .animToast.warning {
-  background: #ff5252;
+  background: #ce2a2a;
   color: white;
 }
 
 .animToast.hint {
-  background: #ece9e3;
+  background: #f0f3fb;
   color: rgb(29, 5, 5);
 }
 
 .animToast.loading {
   min-width: 60vw;
-  background: #ece9e3;
+  background: #f0f3fb;
   color: rgb(29, 5, 5);
 }
 
