@@ -1,8 +1,26 @@
 <div class="auth-container">
   <div class="auth-main">
     <div class="quiz-container d-flex flex-column vh-100">
+      @if (loading) {
+      <div class="overlay"></div>
+      <div class="animToast loading">
+        <img src="assets/images/icons/creatingQuiz.gif" class="evaluatingIcon" alt="hint">
+        <h4>{{loadingText}}</h4>
+        <h5>Please wait ...</h5>
+      </div>
+      }
+
+      @if (completed) {
+      <div class="overlay"></div>
+      <div class="animToast hint">
+        <img src="assets/images/icons/evaluating.gif" class="evaluatingIcon" alt="hint">
+        <h4>Evaluating Quiz</h4>
+        <h5>Please wait while I am assessing your score</h5>
+      </div>
+      }
+
       <!-- HEADER -->
-      @if (quiz) {
+      @if (!loading && !completed && quiz) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
         <div class="d-flex align-items-center">
           <img [src]="quiz.subject_icon" alt="icon" class="subject-icon me-2">
@@ -22,12 +40,25 @@
       <!-- Screen Overlay -->
       @if (showWarningToast) {
       <div class="overlay"></div>
-      <div class="warning-toast">
+      <div class="animToast warning">
         ⚠️ 1 Minute Left!
       </div>
       }
 
-      <!-- MAIN CONTENT (Swiper) -->
+      <!-- Screen Overlay -->
+      @if (hintActive) {
+      <div class="overlay"></div>
+      <div class="animToast hint">
+        <img src="assets/images/icons/hinting.gif" class="hint-icon" alt="hint">
+        <h5>{{currentHint}}</h5>
+        <button mat-raised-button color="accent" (click)="hideHint()">
+          Okay
+        </button>
+      </div>
+      }
+
+      <!-- MAIN SWIPER CONTENT -->
+      @if (!loading && !completed) {
       <div class="flex-grow-1 overflow-hidden">
         @if (questions?.length > 0) {
         <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
@@ -35,11 +66,11 @@
           @for (question of questions; track question.id) {
           <swiper-slide>
             <!-- <p>{{question | json }}</p> -->
-            <mat-card class="question-card">
+            <div class="question-card">
               <h3 class="mb-3">{{ question.title }}</h3>
 
               @for (choice of question.choices; track choice) {
-              <div (click)="optionSelected(choice, question)" class="choice p-2 rounded mb-2" [ngClass]="{
+              <mat-card (click)="optionSelected(choice, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedChoice === choice,
          'correct': question.selectedChoice === choice && choice === question.correctAnswer,
          'wrong': question.selectedChoice === choice && choice !== question.correctAnswer
@@ -54,34 +85,39 @@
                   <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
                   }
                 </div>
-              </div>
+              </mat-card>
               }
 
-            </mat-card>
+            </div>
           </swiper-slide>
           }
         </swiper-container>
         }
       </div>
+      }
 
       <!-- FOOTER -->
+      @if (!loading && !completed) {
       <mat-toolbar color="accent" class="footer-toolbar">
         <div class="container-fluid">
-          <div class="row w-100">
+          <div class="row">
             <div class="col-4 text-start">
-              <button mat-raised-button color="warn" (click)="onSlidePrev()">Skip</button>
+              @if (currentQuestionId > 0) {
+              <button mat-flat-button color="warn" (click)="onSlidePrev()">Previous</button>
+              }
             </div>
             <div class="col-4 text-center">
-              <button mat-raised-button color="primary" (click)="showHint()">Hint</button>
+              <button mat-raised-button color="accent" (click)="showHint()">Hint</button>
             </div>
             <div class="col-4 text-end">
-              <button mat-raised-button color="primary" (click)="onSlideNext()">
+              <button mat-flat-button color="primary" (click)="onSlideNext()">
                 {{ currentQuestionId === questions.length - 1 ? 'Complete' : 'Next' }}
               </button>
             </div>
           </div>
         </div>
       </mat-toolbar>
+      }
 
     </div>
   </div>

@@ -16,7 +16,7 @@
         "Parcel"
       ],
       "correctAnswer": "Vite",
-      "hint": "Vite replaced Webpack as the default for faster builds and HMR.",
+      "hint": "",
       "hasAnswered": false
     },
     {

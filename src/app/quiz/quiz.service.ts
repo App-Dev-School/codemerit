@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, delay, map } from 'rxjs/operators';
 import { HttpService } from '@core/service/http.service';
 import { environment } from 'src/environments/environment';
 import { AuthConstants } from '@config/AuthConstants';
@@ -20,7 +20,7 @@ export class QuizService {
     private httpService: HttpService, private http: HttpClient) { }
 
   getQuiz(id: number): Observable<Quiz> {
-    return this.http.get<Quiz>('./assets/data/quizzes/quiz-angular.json')
+    return this.http.get<Quiz>('./assets/data/quizzes/quiz-angular.json').pipe(delay(8000));
   }
 
   getAllQuiz(): Observable<Quiz[]> {

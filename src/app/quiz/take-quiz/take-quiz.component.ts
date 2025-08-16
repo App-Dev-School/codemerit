@@ -13,7 +13,6 @@ interface Quiz {
   subject_icon: string;
   questions: QuizQuestion[];
 }
-
 @Component({
   selector: 'app-take-quiz',
   templateUrl: './take-quiz.component.html',
@@ -32,10 +31,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   quiz!: Quiz;
   questions: QuizQuestion[] = [];
   currentQuestionId = 0;
-
-  quizDuration = 300;
+  loading = true;
+  loadingText = 'Generating Quiz';
+  completed = false;
+  quizDuration = 180;
   @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
   warningActive = false;
+  hintActive = false;
+  currentHint = '';
   showWarningToast = false;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
@@ -57,6 +60,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.quizService.getQuiz(1)
       .subscribe(data => {
         this.quiz = data;
+        this.loadingText = 'Almost Ready';
+        this.loading = false;
         // Ensure each question has a selectedChoice field
         this.questions = (data.questions || []).map(q => ({
           ...q,
@@ -96,11 +101,20 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showHint(): void {
     const currentQuestion = this.questions[this.currentQuestionId];
     if (currentQuestion?.hint) {
+      this.currentHint = currentQuestion?.hint;
       currentQuestion.usedHint = true;
-      alert(`Hint: ${currentQuestion.hint}`);
     } else {
-      alert('No hint available for this question.');
+      this.currentHint = 'Hint not available';
     }
+    this.hintActive = true;
+    // setTimeout(() => {
+    //   this.hintActive = false;
+    // }, 3000);
+  }
+
+  hideHint(){
+    this.hintActive = false;
+    this.currentHint = '';
   }
 
   onTick(event: any) {
@@ -135,6 +149,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   submitQuiz() {
+    this.completed = true;
     this.quizService.processAndSaveResults(this.questions, 'quiz-angular-101', 'user-123');
   }
 }
