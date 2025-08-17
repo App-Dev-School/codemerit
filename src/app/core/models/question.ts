@@ -3,7 +3,6 @@ import { QuestionType } from "./question-type"
 export interface Question {
     id: number
     title: string
-    //actual question. Should support html or wysiwug
     question: string
     questionType: QuestionType
     choices: string[]

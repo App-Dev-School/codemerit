@@ -9,5 +9,10 @@ export const ADMIN_ROUTE: Route[] = [
     path: 'topics',
     loadChildren: () =>
       import('./topics/topics.routes').then((m) => m.TOPICS_ROUTE),
+  },
+  {
+    path: 'questions',
+    loadChildren: () =>
+      import('./questions/questions.routes').then((m) => m.QUESTIONS_ROUTE),
   }
 ];

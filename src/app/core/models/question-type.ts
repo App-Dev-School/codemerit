@@ -1,4 +1,5 @@
 export enum QuestionType {
   General = 'General',
-  Trivia = 'Trivia'
+  Trivia = 'Trivia',
+  Survey = 'Survey'
 }

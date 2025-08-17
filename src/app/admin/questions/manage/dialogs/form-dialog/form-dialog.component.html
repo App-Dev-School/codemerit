@@ -1,0 +1,131 @@
+<div class="addContainer">
+  <div class="modalHeader">
+    <div class="avatarDetails">
+      <label class="hoverable">
+        <img [src]='topicImage' alt="avatar">
+      </label>
+      <div class="modalTitle">
+        {{dialogTitle}}
+      </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div mat-dialog-content>
+    <form class="register-form m-4" [formGroup]="questionForm" (ngSubmit)="submit()">
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Question</mat-label>
+            <textarea matInput formControlName="question" required placeholder="Enter the question"></textarea>
+            @if (questionForm.get('question')?.hasError('minLength')) {
+            <mat-error>
+              Question is too short
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Subject</mat-label>
+            <mat-select formControlName="subjectId">
+              @for (subject of subjects; track subject) {
+              <mat-option value="{{subject.id}}">{{subject.title}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Level</mat-label>
+            <mat-select formControlName="level">
+              <mat-option value="Easy">Easy</mat-option>
+              <mat-option value="Intermediate">Intermediate</mat-option>
+              <mat-option value="Advanced">Advanced</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Question Type</mat-label>
+            <mat-select formControlName="questionType">
+              <mat-option value="Trivia">Trivia</mat-option>
+              <mat-option value="General">General</mat-option>
+              <mat-option value="Survey">Survey</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="fill" class="example-full-width">
+            <mat-label>Select Topic(s)</mat-label>
+            <mat-select formControlName="topicIds" multiple>
+              <mat-select-trigger>
+                @for (option of questionForm.get('topicIds')?.value ?? [];track option) {
+                <mat-chip class="chip-spacing">{{ getTopicTitleById(option) }}</mat-chip>
+                }
+              </mat-select-trigger>
+              @for (item of topics; track item.id) {
+              <mat-option [value]="item.id">{{ item.title }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- Other Dynamic Fields -->
+        @if (questionForm.get('questionType')?.value === 'Trivia') {
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <label class="form-label fw-bold">Options</label>
+
+          <div formArrayName="options">
+            @for (option of options.controls; let i = $index; track option) {
+            <div class="card1 mb-2" [formGroupName]="i">
+              <div class="card-body1 row align-items-center">
+                <div class="col-md-9">
+                  <mat-form-field class="w-100" appearance="fill">
+                    <mat-label>Option {{ i + 1 }}</mat-label>
+                    <input matInput formControlName="option" placeholder="Enter option text" required>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                  <mat-checkbox formControlName="correct">Correct</mat-checkbox>
+                </div>
+                <div class="col-md-1">
+                  <button mat-icon-button color="warn" type="button" (click)="removeOption(i)"
+                    [disabled]="options.length <= 2">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+
+          <button mat-mini-fab color="primary" type="button" (click)="addOption()">
+            <mat-icon>add</mat-icon>
+          </button>
+          <small class="text-muted ms-2">Minimum 2 options required</small>
+
+          @if (questionForm.get('options')?.hasError('noCorrectOption')) {
+          <div class="text-danger mt-1">
+            At least one option must be marked as correct.
+          </div>
+          }
+        </div>
+        }
+
+      </div>
+
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <button mat-flat-button class="btn-space" color="primary" [disabled]="!questionForm.valid">Submit</button>
+          <button mat-raised-button color="warn" (click)="questionForm.reset()">Cancel</button>
+        </div>
+        <p>{{questionForm.value| json}}</p>
+      </div>
+    </form>
+  </div>
+</div>
