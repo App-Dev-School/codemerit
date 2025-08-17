@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { catchError, map } from 'rxjs/operators';
-import { TopicItem } from './topic-item.model';
-import { HttpService } from '@core/service/http.service';
-import { environment } from 'src/environments/environment';
+import { Injectable } from '@angular/core';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
-import { TopicsListDto } from '@core/models/dtos/TopicCreate';
+import { TopicsListDto } from '@core/models/dtos/TopicDtos';
+import { HttpService } from '@core/service/http.service';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { TopicItem } from './topic-item.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +15,7 @@ export class TopicService {
   private readonly API_URL = 'assets/data/topics.json';
   dataChange: BehaviorSubject<TopicItem[]> = new BehaviorSubject<TopicItem[]>([]);
 
-  constructor(private authService: AuthService, private httpService: HttpService, private httpClient: HttpClient) {}
+  constructor(private authService: AuthService, private httpService: HttpService, private httpClient: HttpClient) { }
 
   getDummyTopics(): Observable<TopicItem[]> {
     return this.httpClient
@@ -24,50 +23,38 @@ export class TopicService {
       .pipe(catchError(this.handleError));
   }
 
-  //  getAllTopics(): Observable<TopicItem[]> {
-  //  let api_key = '';
-  //   if(this.authService.currentUser && this.authService.currentUser){
-  //   api_key = this.authService.currentUserValue.token;
-  //   }
-  //   const url = 'apis/users';
-  // if (AuthConstants.DEV_MODE) {
-  //     console.log("Hiting " + url + " via Token " + api_key);
-  //   }
-  //   return this.httpService.get(url, api_key);
-  // }
-
   getAllTopics(): Observable<TopicItem[]> {
-   let api_key = '';
-    if(this.authService.currentUser && this.authService.currentUser){
-    api_key = this.authService.currentUserValue.token;
+    let api_key = '';
+    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+      api_key = this.authService.currentUserValue.token;
     }
     const url = 'apis/topics/all';
-  if (AuthConstants.DEV_MODE) {
+    if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " via Token " + api_key);
     }
     return this.httpService.get(url, api_key).pipe(
       map((response: TopicsListDto) => {
-        return response.data; // return response from API
+        return response.data;
       })
     );
   }
 
   addTopic(item: any): Observable<any> {
     let api_key = '';
-    if(this.authService.currentUser && this.authService.currentUser){
-    api_key = this.authService.currentUserValue.token;
+    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+      api_key = this.authService.currentUserValue.token;
     }
     const httpOptions = {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': api_key
-          })
-        };
-        const url = 'apis/topics/create';
-        if (AuthConstants.DEV_MODE) {
-          console.log("Hiting " + url + " with => " + JSON.stringify(item) + " via Token " + api_key);
-        }
-        return this.httpService.postWithParams(url, item, httpOptions).pipe(
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': api_key
+      })
+    };
+    const url = 'apis/topics/create';
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " with => " + JSON.stringify(item) + " via Token " + api_key);
+    }
+    return this.httpService.postWithParams(url, item, httpOptions).pipe(
       map((response) => {
         return response; // return response from API
       }),
@@ -75,22 +62,22 @@ export class TopicService {
     );
   }
 
-  updateTopic(topic: any, topicId:any): Observable<any> {
+  updateTopic(topic: any, topicId: any): Observable<any> {
     let api_key = '';
-    if(this.authService.currentUser && this.authService.currentUser){
-    api_key = this.authService.currentUserValue.token;
+    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+      api_key = this.authService.currentUserValue.token;
     }
     const httpOptions = {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': api_key
-          })
-        };
-        const url = 'apis/topics/update/'+topicId;
-        if (AuthConstants.DEV_MODE) {
-          console.log("Hiting " + url + " with => " + JSON.stringify(topic) + " via Token " + api_key);
-        }
-        return this.httpService.put(url, topic, api_key).pipe(
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': api_key
+      })
+    };
+    const url = 'apis/topics/update/' + topicId;
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " with => " + JSON.stringify(topic) + " via Token " + api_key);
+    }
+    return this.httpService.put(url, topic, api_key).pipe(
       map((response) => {
         return response; // return response from API
       }),
@@ -99,17 +86,17 @@ export class TopicService {
   }
 
   deleteTopic(id: number): Observable<number> {
-     let api_key = '';
-    if(this.authService.currentUser && this.authService.currentUser){
-    api_key = this.authService.currentUserValue.token;
+    let api_key = '';
+    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+      api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/topics/delete/'+id;
+    const url = 'apis/topics/delete/' + id;
     return this.httpService.delete(url, api_key).pipe(
       map((response) => {
         if (AuthConstants.DEV_MODE) {
           console.log("Hiting ", response);
         }
-        return id; // return the ID of the deleted doctor
+        return id;
       }),
       catchError(this.handleError)
     );;

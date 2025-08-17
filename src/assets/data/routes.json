@@ -114,6 +114,20 @@
         }
       ]
     },
+     {
+      "path": "/admin/questions/list",
+      "title": "Question Bank",
+      "iconType": "material-icons-outlined",
+      "icon": "question_answer",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "Admin", "Manager"
+      ],
+      "submenu": []
+    },
     {
       "path": "/admin/topics/list",
       "title": "Topic Manager",

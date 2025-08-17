@@ -9,19 +9,6 @@ export interface TopicCreate {
     isPublished : boolean
     description: string
 }
-// export class TopicListItemDto {
-//   id: number;
-//   title: string;
-//   description: string;
-//   subjectId: number;
-//   subjectName: string;
-//   slug: string;
-//   label: string;
-//   votes?: number;
-//   numQuestions?: number;
-//   numQuizzes?: number;
-//   isPublished: boolean;
-// }
 export interface TopicsListDto{
     error: boolean;
     message: string;

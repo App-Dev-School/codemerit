@@ -49,7 +49,7 @@ export class SigninComponent
     });
     if (!environment.production) {
       this.authForm.get('username')?.setValue('admin@codemerit.com');
-      this.authForm.get('password')?.setValue('997244');
+      this.authForm.get('password')?.setValue('756272');
     }
   }
   get f() {
