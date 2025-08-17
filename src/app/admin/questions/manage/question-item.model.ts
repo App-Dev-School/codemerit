@@ -10,6 +10,9 @@ export class QuestionItem {
   level : string;
   status: string;
   marks : number;
+  order : number;
+  allowedTime : number;
+  hint: string;
   createdAt : string;
 
   constructor(question: Partial<QuestionItem> = {}) {
@@ -21,6 +24,9 @@ export class QuestionItem {
     this.level = question.level || 'Easy';
     this.status = question.status || Status.Pending;
     this.marks = question.marks || 1;
+    this.order = question.order || 1;
+    this.allowedTime = question.allowedTime || 60;
+    this.hint = question.hint || '';
     this.createdAt = question.createdAt || '';
   }
 

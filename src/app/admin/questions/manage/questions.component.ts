@@ -43,6 +43,7 @@ import { QuestionItem } from './question-item.model';
 import { QuestionService } from './questions.service';
 import { QuestionFormComponent } from './dialogs/form-dialog/form-dialog.component';
 import { QuestionDeleteComponent } from './dialogs/delete/delete.component';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-manage-questions',
   templateUrl: './questions.component.html',
@@ -100,7 +101,8 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     public httpClient: HttpClient,
     public dialog: MatDialog,
     public questionService: QuestionService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -153,7 +155,8 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   }
 
   addNew() {
-    this.openDialog('add');
+    //this.openDialog('add');
+    this.router.navigate(['/admin/questions/create']);
   }
 
   editCall(row: QuestionItem) {

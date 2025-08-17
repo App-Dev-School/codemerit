@@ -14,49 +14,39 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChip } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Subject } from '@core/models/subject';
 import { MasterService } from '@core/service/master.service';
-import { QuestionItem } from '../../question-item.model';
-import { QuestionService } from '../../questions.service';
-
-export interface DialogData {
-  id: number;
-  action: string;
-  questionItem: QuestionItem;
-}
+import { QuestionService } from '../manage/questions.service';
+import { QuestionItem } from '../manage/question-item.model';
+import { Router } from '@angular/router';
+import { M } from "../../../../../node_modules/@angular/material/line.d-C-QdueRc";
+import { Status } from '@core/models/status.enum';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @Component({
-  selector: 'app-question-form-dialog',
-  templateUrl: './form-dialog.component.html',
-  styleUrls: ['./form-dialog.component.scss'],
+  selector: 'app-question-form',
+  templateUrl: './question-form.component.html',
+  styleUrls: ['./question-form.component.scss'],
   imports: [
     MatButtonModule,
     MatIconModule,
-    MatDialogContent,
     FormsModule,
     ReactiveFormsModule,
+    TextFieldModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
-    MatDialogClose,
     MatCheckboxModule,
-    MatChip,
-    JsonPipe
-  ]
+    MatChip
+]
 })
-export class QuestionFormComponent implements OnInit {
-  action: string;
+export class QuestionFormPage implements OnInit {
+action: string;
   dialogTitle: string;
   topicImage = 'assets/images/icons/topic.png';
   questionForm: UntypedFormGroup;
@@ -78,16 +68,15 @@ export class QuestionFormComponent implements OnInit {
     }
   ];
   constructor(
-    public dialogRef: MatDialogRef<QuestionFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    public questionService: QuestionService,
+    private router: Router,
+    private questionService: QuestionService,
     private masterSrv: MasterService,
     private fb: UntypedFormBuilder
   ) {
-    this.action = data.action;
+    //this.action = data.action;
     this.dialogTitle =
-      this.action === 'edit' ? 'Update Question' : 'Create New Question';
-    this.questionItem = this.action === 'edit' ? data.questionItem : new QuestionItem({}); // Create a blank object
+    this.action === 'edit' ? 'Update Question' : 'Create New Question';
+    this.questionItem = new QuestionItem(); // Create a blank object
     this.questionForm = this.createQuestionForm();
     if (this.action === 'edit') {
       this.initialFormValue = this.questionForm.getRawValue();
@@ -105,10 +94,12 @@ export class QuestionFormComponent implements OnInit {
       subjectId: ['' + this.questionItem.subjectId, [Validators.required]],
       level: [this.questionItem.level, [Validators.required]],
       marks: ['' + this.questionItem.marks],
-      //status: [this.questionItem.status],
+      order: ['' + this.questionItem.order],
+      allowedTime: ['' + this.questionItem.allowedTime],
+      status: [this.questionItem.status],
       questionType: [this.questionItem.questionType, [Validators.required]],
       topicIds: [[], [Validators.required]],
-      //options: this.fb.array([this.createOption(), this.createOption()])
+      hint: [this.questionItem.hint]
     });
 
   }
@@ -187,8 +178,8 @@ export class QuestionFormComponent implements OnInit {
           .updateQuestion(changedFields, formData.id)
           .subscribe({
             next: (response) => {
-              console.log('QuestionManager UpdateAPI response:', changedFields);
-              this.dialogRef.close(response); // Close dialog and return
+              console.log('QuestionManager UpdateAPI response:', response);
+              this.navigateToQuestionList();
             },
             error: (error) => {
               console.error('QuestionManager ###Update Error:', error);
@@ -203,10 +194,12 @@ export class QuestionFormComponent implements OnInit {
           questionType: formData.questionType,
           title: "",
           level: formData.level,
-          status: formData.status,
-          order: 1,
-          marks: 1,
-          topicIds: formData.topicIds
+          //status: formData.status,
+          status: Status.Active,
+          order: formData.order,
+          marks: formData.marks,
+          topicIds: formData.topicIds,
+          hint: formData.hint
         }
         if (formData.questionType === 'Trivia') {
           payload['options'] = formData.options;
@@ -215,18 +208,28 @@ export class QuestionFormComponent implements OnInit {
           .addQuestion(payload)
           .subscribe({
             next: (response) => {
-              this.dialogRef.close(response); // Close dialog and return newly added doctor data
+              console.log('QuestionManager CreateAPI response:', response);
+              this.navigateToQuestionList();
             },
             error: (error) => {
-              console.error('Add Error:', error);
-              // Optionally display an error message to the user
+              console.error('QuestionManager CreateAPI Error:', error);
             },
           });
       }
     }
   }
 
-  onNoClick(): void {
-    this.dialogRef.close();
+  restrictInput(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const key = event.key;
+    if (['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) return;
+    if (!/^\d$/.test(key) || input.value.length >= 2) {
+      event.preventDefault();
+    }
   }
+
+  navigateToQuestionList(){
+    this.router.navigate(['/admin/questions/list']);
+  }
+
 }

@@ -1,0 +1,14 @@
+::ng-deep .mat-select-trigger {
+  padding-top: 1.2em !important;
+}
+.chip-spacing {
+  margin-right: 4px;
+}
+.option-item {
+  mat-checkbox {
+  margin-bottom: 10px;
+}
+}
+mat-form-field {
+  margin: 0;
+}

@@ -82,9 +82,20 @@
 
           <div formArrayName="options">
             @for (option of options.controls; let i = $index; track option) {
-            <div class="card1 mb-2" [formGroupName]="i">
-              <div class="card-body1 row align-items-center">
-                <div class="col-md-9">
+            <div class="option-item mb-2" [formGroupName]="i">
+              <div class="d-flex align-items-center gap-2">
+
+                <mat-checkbox formControlName="correct" class="me-2"></mat-checkbox>
+                <mat-form-field class="flex-grow-1 mb-0" appearance="outline">
+              <mat-label>Option {{ i + 1 }}</mat-label>
+              <input matInput formControlName="option" placeholder="Enter option text" required>
+            </mat-form-field>
+
+            <button mat-icon-button color="warn" type="button" (click)="removeOption(i)" [disabled]="options.length <= 2">
+              <mat-icon>delete</mat-icon>
+            </button>
+
+                <!-- <div class="col-md-9">
                   <mat-form-field class="w-100" appearance="fill">
                     <mat-label>Option {{ i + 1 }}</mat-label>
                     <input matInput formControlName="option" placeholder="Enter option text" required>
@@ -98,7 +109,7 @@
                     [disabled]="options.length <= 2">
                     <mat-icon>delete</mat-icon>
                   </button>
-                </div>
+                </div> -->
               </div>
             </div>
             }

@@ -1,0 +1,179 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <h5 class="m-t-10">Add New Question</h5>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <form class="register-form m-4" [formGroup]="questionForm" (ngSubmit)="submit()">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Question</mat-label>
+                <textarea matInput formControlName="question" rows="1" cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1"
+                  style="resize: none; overflow: hidden;" placeholder="Enter the question" required></textarea>
+                @if (questionForm.get('question')?.hasError('minLength')) {
+                <mat-error>
+                  Question is too short
+                </mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Select Subject</mat-label>
+                <mat-select formControlName="subjectId">
+                  @for (subject of subjects; track subject) {
+                  <mat-option value="{{subject.id}}">{{subject.title}}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Select Level</mat-label>
+                <mat-select formControlName="level">
+                  <mat-option value="Easy">Easy</mat-option>
+                  <mat-option value="Intermediate">Intermediate</mat-option>
+                  <mat-option value="Advanced">Advanced</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Question Type</mat-label>
+                <mat-select formControlName="questionType">
+                  <mat-option value="Trivia">Trivia</mat-option>
+                  <mat-option value="General">General</mat-option>
+                  <!-- <mat-option value="Survey">Survey</mat-option> -->
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Total Marks</mat-label>
+                <input matInput formControlName="marks" type="number" min="1" max="99" maxlength="2"
+                  (keydown)="restrictInput($event)" placeholder="Maximum marks">
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Order Index</mat-label>
+                <input matInput formControlName="order" type="number" min="1" max="99" maxlength="2"
+                  (keydown)="restrictInput($event)" placeholder="Serial no. for sequence">
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Allowed Time (seconds)</mat-label>
+                <input matInput formControlName="allowedTime" type="number" min="10" max="600" maxlength="3"
+                  (keydown)="restrictInput($event)" placeholder="Max time allowed">
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field appearance="fill" class="example-full-width">
+                <mat-label class="mb-2">Select Topic(s)</mat-label>
+                <mat-select formControlName="topicIds" multiple>
+                  <mat-select-trigger>
+                    @for (option of questionForm.get('topicIds')?.value ?? [];track option) {
+                    <mat-chip class="chip-spacing">{{ getTopicTitleById(option) }}</mat-chip>
+                    }
+                  </mat-select-trigger>
+                  @for (item of topics; track item.id) {
+                  <mat-option [value]="item.id">{{ item.title }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+
+
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field appearance="fill" class="example-full-width">
+                <mat-label class="mb-2">Select Topic(s)</mat-label>
+                <mat-select formControlName="topicIds" multiple>
+                  <mat-select-trigger>
+                    @for (option of questionForm.get('topicIds')?.value ?? [];track option) {
+                    <mat-chip class="chip-spacing">{{ getTopicTitleById(option) }}</mat-chip>
+                    }
+                  </mat-select-trigger>
+                  @for (item of topics; track item.id) {
+                  <mat-option [value]="item.id">{{ item.title }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          
+          <!-- Other Dynamic Fields -->
+          @if (questionForm.get('questionType')?.value === 'Trivia') {
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-label class="mb-2">Enter Options</mat-label>
+              <small class="text-muted ms-2">Minimum 2 options required</small>
+              <div formArrayName="options">
+                @for (option of options.controls; let i = $index; track option) {
+                <div class="option-item mb-2" [formGroupName]="i">
+                  <div class="d-flex align-items-center gap-2">
+                    <mat-checkbox formControlName="correct" class="me-2"></mat-checkbox>
+                    <mat-form-field class="flex-grow-1 mb-0" appearance="fill">
+                      <mat-label>Option {{ i + 1 }}</mat-label>
+                      <input matInput formControlName="option" placeholder="Enter option text" required>
+                    </mat-form-field>
+
+                    <button mat-icon-button color="warn" type="button" (click)="removeOption(i)"
+                      [disabled]="options.length <= 2">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+                }
+              </div>
+
+              <button mat-mini-fab color="primary" type="button" (click)="addOption()">
+                <mat-icon>add</mat-icon>
+              </button>
+
+              @if (questionForm.get('options')?.hasError('noCorrectOption')) {
+              <div class="text-danger mt-10">
+                At least one option must be marked as correct.
+              </div>
+              }
+            </div>
+          </div>
+          }
+
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Hint (Optional)</mat-label>
+                <textarea matInput formControlName="hint" placeholder="Enter a hint for the question" rows="1"
+                  cdkTextareaAutosize #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1"
+                  style="resize: none; overflow: hidden;"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <button mat-flat-button class="btn-space" color="primary" [disabled]="!questionForm.valid">Submit</button>
+              <button mat-raised-button color="warn" (click)="questionForm.reset()">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
