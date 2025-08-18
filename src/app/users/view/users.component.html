@@ -6,33 +6,35 @@
     </div>
     <!-- Your content goes here  -->
     <div class="row clearfix">
-      <div class="col-lg-4 col-md-12">
+      <div class="col-lg-8 col-md-12">
         <div class="card">
           <div class="m-b-20">
             <div class="contact-grid">
               <div class="profile-header bg-dark">
-                <div class="user-name">Eckhart Tollee</div>
-                <div class="name-center">Senior Frontend Engineer</div>
+                <div class="user-name">{{ userDetail.firstName +' '+ userDetail.lastName}}</div>
+                <div class="name-center">{{ userDetail.designation }}</div>
               </div>
               <img src="assets/images/users/user.jpg" class="user-img" alt="">
               <p>
-               Bengaluru, India
+               {{ userDetail.city }} {{ userDetail.country }}
               </p>
-              <div>
+              @if (userDetail.mobile) {
+<div>
                 <span class="phone">
                   <i class="material-icons">phone</i>Verified</span>
               </div>
+              }
               <div class="row">
                 <div class="col-4">
-                  <p class="font-16 font-b-600">564</p>
+                  <p class="font-16 font-b-600">{{ userDetail.profile?.selfRatingDone }}</p>
                   <small>Onboarded</small>
                 </div>
                 <div class="col-4">
-                  <p class="font-16 font-b-600">18k</p>
+                  <p class="font-16 font-b-600">{{ userDetail.profile?.level1Assessment }}</p>
                   <small>Level 1 Done</small>
                 </div>
                 <div class="col-4">
-                  <p class="font-16 font-b-600">565</p>
+                  <p class="font-16 font-b-600">{{ userDetail.profile?.level2Assessment }}</p>
                   <small>Level 2 Done </small>
                 </div>
               </div>
@@ -42,36 +44,9 @@
         <div class="card">
           <mat-tab-group mat-align-tabs="start">
             <mat-tab label="Achievements">
-              <ul class="list-unstyled p-4">
-                 <li>
-                  <div>HTML 5</div>
-                  <div class="progress skill-progress m-b-20">
-                    <div class="progress-bar l-bg-cyan width-per-39" role="progressbar" aria-valuenow="39"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </li>
-                <li>
-                  <div>CSS3</div>
-                  <div class="progress skill-progress m-b-20">
-                    <div class="progress-bar l-bg-green width-per-45" role="progressbar" aria-valuenow="45"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </li>
-                <li>
-                  <div>TypeScript</div>
-                  <div class="progress skill-progress m-b-20">
-                    <div class="progress-bar l-bg-orange width-per-38" role="progressbar" aria-valuenow="38"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </li>
-                <li>
-                  <div>Angular</div>
-                  <div class="progress skill-progress m-b-20">
-                    <div class="progress-bar l-bg-purple width-per-70" role="progressbar" aria-valuenow="70"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </li>
-              </ul>
+              <div class="p-4">
+                <p>This section contains achievements</p>
+              </div>
             </mat-tab>
             <mat-tab label="Skills">
               <ul class="list-unstyled p-4">
@@ -107,12 +82,24 @@
             </mat-tab>
             <mat-tab label="About">
               <div class="p-4">
-                <p class="text-default">I am a senior software engineer with expertise in Frontend application development. I develop modern web and mobile UIs, frontend interactions and integrate API/Services.</p>
+                <p class="text-default">{{ userDetail.profile?.about }}</p>
                 <small class="text-muted">Email address: </small>
-                <p>ekhart.tollee&#64;gmail.com</p>
+                <p>{{ userDetail.email }}</p>
                 <hr>
                 <small class="text-muted">Phone: </small>
-                <p>Test Div Here</p>
+                <p>{{ userDetail.mobile ?? 'NA' }}</p>
+                <hr>
+                <small class="text-muted">LinkedIn: </small>
+                <p>{{ userDetail.profile?.linkedinUrl ?? 'NA' }}</p>
+                <hr>
+                <small class="text-muted">User Name: </small>
+                <p>{{ userDetail.username }}</p>
+                <hr>
+                <small class="text-muted">User ID: </small>
+                <p>CDMR00-{{ userDetail.id }}</p>
+                <hr>
+                <small class="text-muted">Registration Date: </small>
+                <p>{{ userDetail.createdAt | date:'MM/dd/yyyy' }}</p>
                 <hr>
               </div>
             </mat-tab>

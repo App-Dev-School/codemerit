@@ -155,7 +155,7 @@ export class AuthService {
     }
   }
 
-  getFullProfile(api_key: any, user_name: any): Observable<any> {
+  getFullProfile(user_name: any, api_key: any): Observable<any> {
     const url = 'apis/users/profile/' + user_name;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + " via Token " + api_key);
@@ -164,17 +164,11 @@ export class AuthService {
   }
 
   updateUserAccount(api_key: any, user_name: any, postData: any): Observable<any> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-        'Authorization': api_key
-      })
-    };
-    const url = 'apis/users/update/'+user_name;
+    const url = 'apis/users/update?userId='+user_name;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
     }
-    return this.httpService.post(url, postData, httpOptions);
+    return this.httpService.put(url, postData, api_key);
   }
 
   changeUserPassword(api_key: any, postData: any): Observable<any> {

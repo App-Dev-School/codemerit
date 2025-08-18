@@ -72,7 +72,7 @@
       "submenu": []
     },
     {
-      "path": "",
+      "path": "/users/list",
       "title": "Manage Users",
       "iconType": "material-icons-outlined",
       "icon": "dvr",
@@ -83,36 +83,7 @@
       "role": [
         "Admin"
       ],
-      "submenu": [
-        {
-          "path": "/users/list",
-          "title": "List Users",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            "Admin"
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/users/create",
-          "title": "Add New User",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            "Admin"
-          ],
-          "submenu": []
-        }
-      ]
+      "submenu": []
     },
      {
       "path": "/admin/questions/list",

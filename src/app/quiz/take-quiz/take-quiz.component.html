@@ -1,26 +1,18 @@
+@if (!completed) {
 <div class="auth-container">
   <div class="auth-main">
     <div class="quiz-container d-flex flex-column vh-100">
       @if (loading) {
       <div class="overlay"></div>
       <div class="animToast loading">
-        <img src="assets/images/icons/creatingQuiz.gif" class="evaluatingIcon" alt="hint">
+        <img src="assets/images/icons/cube.gif" class="evaluatingIcon" alt="hint">
         <h4>{{loadingText}}</h4>
         <h5>Please wait ...</h5>
       </div>
       }
 
-      @if (completed) {
-      <div class="overlay"></div>
-      <div class="animToast hint">
-        <img src="assets/images/icons/evaluating.gif" class="evaluatingIcon" alt="hint">
-        <h4>Evaluating Quiz</h4>
-        <h5>Please wait while I am assessing your score</h5>
-      </div>
-      }
-
       <!-- HEADER -->
-      @if (!loading && !completed && quiz) {
+      @if (!loading && quiz) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
         <div class="d-flex align-items-center">
           <img [src]="quiz.subject_icon" alt="icon" class="subject-icon me-2">
@@ -41,7 +33,8 @@
       @if (showWarningToast) {
       <div class="overlay"></div>
       <div class="animToast warning">
-        ⚠️ 1 Minute Left!
+        <img src="assets/images/icons/hinting.gif" class="hint-icon text-center" alt="hint">
+        <h5>⚠️ 1 Minute Left!</h5>
       </div>
       }
 
@@ -58,7 +51,7 @@
       }
 
       <!-- MAIN SWIPER CONTENT -->
-      @if (!loading && !completed) {
+      @if (!loading) {
       <div class="flex-grow-1 overflow-hidden">
         @if (questions?.length > 0) {
         <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
@@ -97,13 +90,14 @@
       }
 
       <!-- FOOTER -->
-      @if (!loading && !completed) {
+      @if (!loading) {
       <mat-toolbar color="accent" class="footer-toolbar">
         <div class="container-fluid">
           <div class="row">
             <div class="col-4 text-start">
               @if (currentQuestionId > 0) {
-              <button mat-flat-button color="warn" (click)="onSlidePrev()"><mat-icon>keyboard_arrow_left</mat-icon> Prev</button>
+              <button mat-flat-button color="warn" (click)="onSlidePrev()"><mat-icon>keyboard_arrow_left</mat-icon>
+                Prev</button>
               }
             </div>
             <div class="col-4 text-center">
@@ -112,14 +106,33 @@
             </div>
             <div class="col-4 text-end">
               <button mat-flat-button color="primary" (click)="onSlideNext()">
-                <mat-icon>keyboard_arrow_right</mat-icon> {{ currentQuestionId === questions.length - 1 ? 'Complete' : 'Next' }}
+                <mat-icon>keyboard_arrow_right</mat-icon> {{ currentQuestionId === questions.length - 1 ? 'Complete' :
+                'Next' }}
               </button>
             </div>
           </div>
         </div>
       </mat-toolbar>
       }
-
     </div>
   </div>
 </div>
+}
+
+@if (completed) {
+<div class="quiz-result-container">
+  <div class="content-block">
+    @if (!evaluated) {
+    <div class="overlay"></div>
+    <div class="animToast hint">
+      <img src="assets/images/icons/processing.gif" class="evaluatingIcon" alt="hint">
+      <h4>Evaluating Quiz</h4>
+      <h5 class="col-grey">Please wait while your assessment is in progress</h5>
+    </div>
+    }
+    @if (evaluated) {
+    <app-quiz-result [result]="quizResult"></app-quiz-result>
+    }
+  </div>
+</div>
+}

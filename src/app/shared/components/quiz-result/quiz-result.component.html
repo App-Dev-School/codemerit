@@ -1,0 +1,55 @@
+<div class="row">
+              <div class="col-7">
+                <ng-container *ngTemplateOutlet="scoreChart"></ng-container>
+              </div>
+              <div class="col-5">
+                <mat-card>
+          <mat-card-header>
+            <mat-card-title>Topic Wise Score</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-scrollbar style="height: 400px" visibility="hover">
+              <div class="totalScore">
+                <h3>78%</h3>
+              </div>
+              <app-topics-score [topicScores]="topicWiseScore"></app-topics-score>
+            </ng-scrollbar>
+          </mat-card-content>
+        </mat-card>
+                  <!-- <p>{{ result | json }}</p> -->
+              </div>
+            </div>
+
+<ng-template #scoreChart>
+<mat-card>
+          <mat-card-header>
+            <mat-card-title>Quiz Result</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div id="chart">
+              <!-- echart piechart for score -->
+<!-- <div echarts [options]="pie_chart" class="echart-height"></div> -->
+            </div>
+            <div class="row">
+              <div class="col-4">
+                <p class="text-muted font-15 text-truncate">Total</p>
+                <p class="font-b-600">
+                  <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.total}}
+                </p>
+              </div>
+              <div class="col-4">
+                <p class="text-muted font-15 text-truncate">Correct</p>
+                <p class="font-b-600">
+                  <i class="fas fa-arrow-circle-down col-red m-r-5"></i>{{result.correct}}
+                </p>
+              </div>
+              <div class="col-4">
+                <p class="text-muted text-truncate">Wrong</p>
+                <p class="font-b-600">
+                  <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.wrong}}
+                </p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+</ng-template>

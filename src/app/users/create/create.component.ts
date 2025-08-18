@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
@@ -21,6 +21,7 @@ import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { combineLatest, map, Observable, of, startWith } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { MatCard, MatCardContent } from "@angular/material/card";
 @Component({
   selector: 'app-create-user',
   templateUrl: './create.component.html',
@@ -39,8 +40,9 @@ import { environment } from 'src/environments/environment';
     MatAutocompleteModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    AsyncPipe
-  ]
+    AsyncPipe,
+    MatCard, MatCardContent
+]
 })
 export class CreateUserComponent implements OnInit, OnDestroy {
   constructor(private formBuilder: UntypedFormBuilder,
@@ -168,7 +170,6 @@ export class CreateUserComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     this.submitted = true;
-    // stop here if form is invalid
     if (this.authForm.invalid) {
       this.snackbar.display("snackbar-danger", "Please re-check your submission.", "bottom", "center");
       return;
@@ -185,24 +186,16 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       };
       let createUpdateCall : Observable<any>;
       if (this.editMode){
-      createUpdateCall = this.authService.updateUserAccount(this.authData.token, this.userName, postData);
+      createUpdateCall = this.authService.updateUserAccount(this.authData.token, this.userDetail.id, postData);
       }else{
       createUpdateCall = this.authService.register(postData);
       }
       createUpdateCall.subscribe((res) => {
         this.submitted = false;
         if (res) {
-          if (AuthConstants.DEV_MODE) {
-            console.log("/******* Create/Update User APIResponse => ", res);
-          }
           if (!res.error && res.data) {
-            // let serverDelay = setTimeout(() => {
-              //   this.authService.navigateAfterLogin();
-              // }, 3000)
-              // this.timeOutIDs.push(serverDelay);
-              console.log("/******* Create User APIResponse => ", res.data);
               this.router.navigate(['/users/list']).then(() => {
-                this.snackbar.display("snackbar-danger", "User account "+(this.editMode ? "updated" : "created")+" successfully.", "bottom", "center");
+                this.snackbar.display("snackbar-success", "User account "+(this.editMode ? "updated" : "created")+" successfully.", "bottom", "center");
               });
           } else {
             if (res.message) {

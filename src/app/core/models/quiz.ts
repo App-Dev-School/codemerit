@@ -23,15 +23,20 @@ export interface Quiz {
 
   export interface QuizResult {
     //id:number
-    user_id: string
-    quiz_id: string
-    score: number
+    userId: string
+    quizId: string
     total: number
+    correct: number
+    wrong: number
+    unanswered: number
+    score: number
     //by default take all topics in the subject - heavy
     //Also allow user to pick at time of creation
     //refresh topics list after the quiz is generated for better skill filtering
-    remarks: string
-    attempts: QuestionAttempt[]
+    //remarks?: string
+    dateAttempted?: string
+    //attempts?: QuestionAttempt[]
+    attempts?: any[]
   }
 
 //Do - Inherit well

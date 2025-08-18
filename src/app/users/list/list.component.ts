@@ -1,4 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
+import { CommonModule, DatePipe, formatDate, NgClass } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -6,18 +8,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Subject } from 'rxjs';
-import { CommonModule, DatePipe, formatDate, NgClass } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -31,15 +21,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import {
+  MatSnackBar
+} from '@angular/material/snack-bar';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '@core';
 import { rowsAnimation, TableExportUtil } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-list-users',
@@ -51,6 +48,7 @@ import { TableShowHideColumnComponent } from '@shared/components/table-show-hide
     BreadcrumbComponent,
     FeatherIconsComponent,
     CommonModule,
+    RouterLink,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -178,9 +176,11 @@ export class ListUserComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(event: Event) {
+    console.log('applyFilter', event);
     const filterValue = (event.target as HTMLInputElement).value
       .trim()
       .toLowerCase();
+    console.log('applyFilter filterValue', filterValue);  
     this.dataSource.filter = filterValue;
   }
 

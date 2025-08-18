@@ -6,7 +6,7 @@ import { HttpService } from '@core/service/http.service';
 import { environment } from 'src/environments/environment';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
-import { Quiz } from '@core/models/quiz';
+import { Quiz, QuizResult } from '@core/models/quiz';
 import { QuizQuestion } from '@core/models/quiz-question';
 
 @Injectable({
@@ -110,24 +110,24 @@ export class QuizService {
     );
   }
 
-  processAndSaveResults(questions: QuizQuestion[], quizId: string, userId: string) {
-    const totalQuestions = questions.length;
-    const correctCount = questions.filter(q => q.selectedChoice === q.correctAnswer).length;
-    const wrongCount = questions.filter(q => q.selectedChoice && q.selectedChoice !== q.correctAnswer).length;
-    const unansweredCount = totalQuestions - correctCount - wrongCount;
+  processAndSaveResults(questions: QuizQuestion[], quizId: string, userId: string) : QuizResult {
+    const total = questions.length;
+    const correct = questions.filter(q => q.selectedChoice === q.correctAnswer).length;
+    const wrong = questions.filter(q => q.selectedChoice && q.selectedChoice !== q.correctAnswer).length;
+    const unanswered = total - correct - wrong;
 
-    const scorePercent = ((correctCount / totalQuestions) * 100).toFixed(2);
+    const score = ((correct / total) * 100).toFixed(2);
 
-    const analytics = {
+    const analytics : QuizResult = {
       quizId,
       userId,
-      totalQuestions,
-      correctCount,
-      wrongCount,
-      unansweredCount,
-      scorePercent,
+      total,
+      correct,
+      wrong,
+      unanswered,
+      score : Number(score),
       dateAttempted: new Date().toISOString(),
-      responses: questions.map(q => ({
+      attempts: questions.map(q => ({
         questionId: q.id,
         selectedChoice: q.selectedChoice || null,
         correctAnswer: q.correctAnswer,
@@ -136,11 +136,13 @@ export class QuizService {
       }))
     };
     console.log('Quiz Result => ', analytics);
+    return analytics;
     // Send to backend API
     // return this.http.post(this.apiUrl, analytics).subscribe({
     //   next: res => console.log('✅ Results saved successfully', res),
     //   error: err => console.error('❌ Error saving results', err)
     // });
+    //After saving to server display report in the same component as of now
   }
 
 }

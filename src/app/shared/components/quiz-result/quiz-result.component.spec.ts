@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ReviewWidgetComponent } from './review-widget.component';
+import { QuizResultComponent } from './quiz-result.component';
 
 describe('ReviewWidgetComponent', () => {
-  let component: ReviewWidgetComponent;
-  let fixture: ComponentFixture<ReviewWidgetComponent>;
+  let component: QuizResultComponent;
+  let fixture: ComponentFixture<QuizResultComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReviewWidgetComponent]
+      imports: [QuizResultComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ReviewWidgetComponent);
+    fixture = TestBed.createComponent(QuizResultComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -22,7 +22,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -70,32 +69,29 @@ import { Router } from '@angular/router';
     NgClass,
     MatRippleModule,
     MatProgressSpinnerModule,
-    MatMenuModule,
     MatPaginatorModule,
     TableShowHideColumnComponent,
   ],
 })
 export class QuestionsComponent implements OnInit, OnDestroy {
   columnDefinitions = [
-    { def: 'select', label: 'Checkbox', type: 'check', visible: true },
-    { def: 'question', label: 'Question', type: 'text', visible: true },
-    { def: 'subject', label: 'Subject', type: 'text', visible: true },
-    { def: 'questionType', label: 'Type', type: 'text', visible: true },
-    { def: 'status', label: 'Status', type: 'text', visible: true },
-    { def: 'level', label: 'Level', type: 'text', visible: false },
-    { def: 'actions', label: 'Actions', type: 'actionBtn', visible: true },
+    { def: 'select', label: 'Checkbox', type: 'check',  class: 'col-type', visible: false },
+    { def: 'question', label: 'Question', type: 'text', class: 'col-question',  visible: true },
+    { def: 'subject', label: 'Subject', type: 'text', class: 'col-subject', visible: true },
+    { def: 'questionType', label: 'Type', type: 'text', class: 'col-type', visible: true },
+    { def: 'status', label: 'Status', type: 'text', class: 'col-status',  visible: true },
+    { def: 'level', label: 'Level', type: 'text', class: 'col-level', visible: true },
+    { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-actions', visible: true },
   ];
 
   dataSource = new MatTableDataSource<QuestionItem>([]);
   selection = new SelectionModel<QuestionItem>(true, []);
-  contextMenuPosition = { x: '0px', y: '0px' };
   isLoading = true;
   private destroy$ = new Subject<void>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('filter') filter!: ElementRef;
-  @ViewChild(MatMenuTrigger) contextMenu?: MatMenuTrigger;
 
   constructor(
     public httpClient: HttpClient,
@@ -151,7 +147,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       .trim()
       .toLowerCase();
     this.dataSource.filter = filterValue;
-    console.log("QuestionManager filter applied", filterValue);
+    console.log("QuestionManager applyFilter applied", filterValue);
   }
 
   addNew() {
@@ -271,17 +267,5 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       'bottom',
       'center'
     );
-  }
-  onContextMenu(event: MouseEvent, item: QuestionItem) {
-    event.preventDefault();
-    this.contextMenuPosition = {
-      x: `${event.clientX}px`,
-      y: `${event.clientY}px`,
-    };
-    if (this.contextMenu) {
-      this.contextMenu.menuData = { item };
-      this.contextMenu.menu?.focusFirstItem('mouse');
-      this.contextMenu.openMenu();
-    }
   }
 }

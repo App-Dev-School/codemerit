@@ -15,7 +15,7 @@
                 </li>
                 <li class="tbl-search-box">
                   <label for="search-input"><i class="material-icons search-icon">search</i></label>
-                  <input id="search-input" placeholder="Search" type="text" #filter (keyup)="applyFilter($event)"
+                  <input id="search-input" placeholder="Search" type="text" #filter 
                     class="browser-default search-field" aria-label="Search box">
                 </li>
               </ul>
@@ -51,7 +51,7 @@
                     <span class="truncate-text">{{ column.label }}</span>
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [matTooltip]="row.name"
-                    routerLink="/users/view">
+                    [routerLink]="['/users/view', row.username]">
                     <span class="mobile-label">{{ column.label }}:</span>
                     <!-- Place alph-->
                     <img [src]="'/assets/images/users/user1.jpg'" class="table-img" alt="image" />
@@ -227,8 +227,8 @@
               <!-- context menu end -->
 
               @if (isLoading) {
-              <div class="no-results" [style.display]="dataSource.data.length === 0 ? '' : 'none'">
-                No results
+              <div class="no-results text-center" [style.display]="dataSource.data.length === 0 ? '' : 'none'">
+                Loading Users
               </div>
               }
               <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
