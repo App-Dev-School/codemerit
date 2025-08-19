@@ -120,7 +120,9 @@ export class QuizService {
 
     const analytics : QuizResult = {
       quizId,
+      quizName : 'Angular 18 Proficiency Test',
       userId,
+      userFullName : 'Mark Mcllvain',
       total,
       correct,
       wrong,

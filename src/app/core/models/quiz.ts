@@ -24,7 +24,9 @@ export interface Quiz {
   export interface QuizResult {
     //id:number
     userId: string
+    userFullName : string;
     quizId: string
+    quizName : string
     total: number
     correct: number
     wrong: number

@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { environment } from 'src/environments/environment';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -21,8 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule,
-    MatProgressSpinnerModule
+    MatIconModule
   ]
 })
 export class SigninComponent

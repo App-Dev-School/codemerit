@@ -163,9 +163,9 @@
 }
 
 .quiz-result-container{
-  margin: 35px 25px 0 35px;
+  margin: 30px 25px 0 30px;
   .content-block {
-      padding: 25px 0px 0px 25px;
+      padding: 0px 0px 0px 0px;
   }
 }
 
@@ -248,7 +248,7 @@
 }
 
 .animToast.loading {
-  min-width: 60vw;
+  min-width: 200px;
   background: #f0f3fb;
   color: rgb(29, 5, 5);
 }
@@ -259,7 +259,7 @@
 }
 
 .evaluatingIcon {
-  width: 150px;
+  width: 128px;
 }
 
 /* Flash animation for toolbar */

@@ -57,6 +57,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   userName = "";
   userDetail:any;
   loading = false;
+  loadingTxt = '';
   editMode = false;
   screenTitle = 'Add New User';
   screenAction = 'Register User';
@@ -170,6 +171,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     this.submitted = true;
+    this.loadingTxt = 'Please wait';
     if (this.authForm.invalid) {
       this.snackbar.display("snackbar-danger", "Please re-check your submission.", "bottom", "center");
       return;
@@ -186,8 +188,10 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       };
       let createUpdateCall : Observable<any>;
       if (this.editMode){
+      this.loadingTxt = 'Updating User Details';  
       createUpdateCall = this.authService.updateUserAccount(this.authData.token, this.userDetail.id, postData);
       }else{
+      this.loadingTxt = 'Creating User Account';  
       createUpdateCall = this.authService.register(postData);
       }
       createUpdateCall.subscribe((res) => {
@@ -205,6 +209,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         } else {
           this.error = "Server Error. Please check your connection and try again.";
           this.snackbar.display("snackbar-danger", this.error, "bottom", "center");
+          this.submitted = false;
         }
       },
         (error) => {

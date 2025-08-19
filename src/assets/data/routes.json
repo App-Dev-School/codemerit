@@ -4,7 +4,7 @@
       "path": "/app/welcome",
       "title": "Welcome",
       "iconType": "material-icons-outlined",
-      "icon": "slideshow",
+      "icon": "whatshot",
       "class": "",
       "groupTitle": false,
       "badge": "",
@@ -18,7 +18,7 @@
       "path": "",
       "title": "Dashboard",
       "iconType": "material-icons-outlined",
-      "icon": "space_dashboard",
+      "icon": "dashboard",
       "class": "menu-toggle",
       "groupTitle": false,
       "badge": "",
@@ -28,8 +28,22 @@
       ],
       "submenu": [
         {
+      "path": "/dashboard/select-subject",
+      "title": "User Dashboard",
+      "iconType": "material-icons-outlined",
+      "icon": "school",
+      "class": "ml-menu",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "User"
+      ],
+      "submenu": []
+    },
+        {
           "path": "/admin/dashboard/main",
-          "title": "Main",
+          "title": "LMS Dashboard",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",
@@ -43,7 +57,7 @@
         },
         {
           "path": "/admin/dashboard/analysis",
-          "title": "Analytics",
+          "title": "Admin Panel",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",
@@ -61,6 +75,20 @@
       "path": "/dashboard/select-subject",
       "title": "My Dashboard",
       "iconType": "material-icons-outlined",
+      "icon": "school",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "User"
+      ],
+      "submenu": []
+    },
+    {
+      "path": "/dashboard/select-subject?action=quiz",
+      "title": "Skill Assessment",
+      "iconType": "material-icons-outlined",
       "icon": "space_dashboard",
       "class": "",
       "groupTitle": false,
@@ -75,11 +103,11 @@
       "path": "/users/list",
       "title": "Manage Users",
       "iconType": "material-icons-outlined",
-      "icon": "dvr",
-      "class": "menu-toggle",
+      "icon": "supervised_user_circle",
+      "class": "",
       "groupTitle": false,
-      "badge": "Dev",
-      "badgeClass": "badge bg-blue sidebar-badge float-end",
+      "badge": "",
+      "badgeClass": "",
       "role": [
         "Admin"
       ],
@@ -103,7 +131,7 @@
       "path": "/admin/topics/list",
       "title": "Topic Manager",
       "iconType": "material-icons-outlined",
-      "icon": "space_dashboard",
+      "icon": "grain",
       "class": "",
       "groupTitle": false,
       "badge": "",
@@ -115,7 +143,7 @@
     },
     {
       "path": "",
-      "title": "Survey Creator",
+      "title": "Quiz Player",
       "iconType": "material-icons-outlined",
       "icon": "extension",
       "class": "menu-toggle",
@@ -128,21 +156,7 @@
       "submenu": [
         {
           "path": "/quiz/take/javascript",
-          "title": "Javascript Quiz",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/quiz/take/css",
-          "title": "CSS Quiz",
+          "title": "Player v1",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",
