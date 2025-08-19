@@ -1,12 +1,10 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
+import { appInitializer } from './app/app-initializer';
 
-// import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-// import { AppModule } from './app/app.module';
-
-// platformBrowserDynamic().bootstrapModule(AppModule)
-// .catch(err => console.log(err));
-
-bootstrapApplication(AppComponent, appConfig)
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, appConfig).then(appRef => {
+  const injector = appRef.injector;
+  // Run the master data fetch inside Angular’s DI context
+  injector.runInContext(appInitializer)
+}).catch(err => console.error(err));

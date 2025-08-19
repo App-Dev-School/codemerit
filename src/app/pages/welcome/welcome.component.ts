@@ -1,21 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
-import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 import { MatRippleModule } from '@angular/material/core';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { MasterService } from '@core/service/master.service';
-import { AuthService } from '@core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
-import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
-import { ReportListComponent } from '@shared/components/report-list/report-list.component';
+import { AuthService } from '@core';
 import { SubjectRole } from '@core/models/subject-role';
-import { Observable } from 'rxjs';
+import { MasterService } from '@core/service/master.service';
+import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
 import { ReportCardWidgetComponent } from '@shared/components/report-card-widget/report-card-widget.component';
+import { ReportListComponent } from '@shared/components/report-list/report-list.component';
+import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -39,10 +36,10 @@ import { ReportCardWidgetComponent } from '@shared/components/report-card-widget
   //     ])
   //   ]
 })
-export class WelcomeComponent {
+export class WelcomeComponent implements OnInit {
   public subjectRoleMap: SubjectRole[] = [];
   subject = "";
-  subjectData : any;
+  subjectData: any;
   subjectsByRole: { [role: string]: SubjectRole[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
   customOptions: OwlOptions = {
@@ -52,8 +49,8 @@ export class WelcomeComponent {
     pullDrag: false,
     dots: true,
     margin: 10,
-    animateIn : true,
-    animateOut:true,
+    animateIn: true,
+    animateOut: true,
     navSpeed: 700,
     navText: ['Previous', 'Next'],
     responsive: {
@@ -103,21 +100,39 @@ export class WelcomeComponent {
   showCard: boolean = true;
 
   constructor(private router: Router, private master: MasterService, private authService: AuthService) {
-    // constructor code
+    // Implement Master Data Relationship
     this.master.fetchSubjectRoleMap().subscribe(data => {
-this.subjectRoleMap = data;
-this.subjectRoleMap.forEach(subject => {
-      subject.roles.forEach(role => {
-        if (!this.subjectsByRole[role]) {
-          this.subjectsByRole[role] = [];
-        }
-        this.subjectsByRole[role].push(subject);
+      this.subjectRoleMap = data;
+      this.subjectRoleMap.forEach(subject => {
+        subject.roles.forEach(role => {
+          if (!this.subjectsByRole[role]) {
+            this.subjectsByRole[role] = [];
+          }
+          this.subjectsByRole[role].push(subject);
+        });
       });
-    });
     });
     setInterval(() => {
       this.showCard = true;
     }, 5000);
+  }
+
+  ngOnInit(): void {
+    if (!this.master.subjects.length || !this.master.topics.length) {
+      this.master.dataLoaded$.subscribe((ready) => {
+        if (ready) {
+          console.log("Master Data Fetched Now : ", new Date().toISOString());
+          console.log("Subjects : ", this.master.subjects);
+          console.log("Topics : ", this.master.topics);
+          console.log("Job Roles : ", this.master.jobRoles);
+        }
+      });
+    } else {
+      console.log("Master Data Exists : ");
+      console.log("Subjects : ", this.master.subjects);
+      console.log("Topics : ", this.master.topics);
+      console.log("Job Roles : ", this.master.jobRoles);
+    }
   }
 
   removeItem(itemId: any) {
@@ -130,7 +145,7 @@ this.subjectRoleMap.forEach(subject => {
     }
   }
 
-  bookmark(){
+  bookmark() {
     this.isBookmarked = !this.isBookmarked;
   }
 
@@ -141,9 +156,9 @@ this.subjectRoleMap.forEach(subject => {
   //Review above code
 
 
-  onSubjectChange(subject: string){
+  onSubjectChange(subject: string) {
     console.log("Home @onSubjectChange", subject);
-    if(subject){
+    if (subject) {
       this.router.navigate(['/dashboard/learn', subject]).then(() => {
         console.log('Navigation completed!');
       });

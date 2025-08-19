@@ -47,7 +47,7 @@ export class MySubjectsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.subjects = this.master.getMockMySubjectsData();
+    this.subjects = this.master.getMockSubjectDashboard();
     this.isLoading = false;
     // setTimeout(() => {
     //   this.subjects = this.master.getMockMySubjectsData();

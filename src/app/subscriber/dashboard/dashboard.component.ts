@@ -101,7 +101,7 @@ export class DashboardComponent implements OnInit {
       this.master.fetchSubjectData(this.subject).subscribe((subject) => {
         this.subjectData = subject;
       });
-      this.subjectTopics$ = this.master.fetchSubjectTopics(this.subject);
+      this.subjectTopics$ = this.master.fetchAllSubjectTopics(this.subject);
       //this.subjectTopics = this.master.getTopicsBySubject(this.resources, this.subject);
       //this.subjectTopics = this.subjectData.topics;
       console.log("MyDash #2 subjectTopics", this.subjectTopics$);

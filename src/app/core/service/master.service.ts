@@ -1,149 +1,88 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { AuthConstants } from 'src/app/config/AuthConstants';
-import { AuthService } from './auth.service';
-import { HttpService } from './http.service';
 import { Country } from '@core/models/country.data';
 import { Subject } from '@core/models/subject';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { AuthService } from './auth.service';
+import { HttpService } from './http.service';
+
+export interface MasterData {
+  subjects: any[];
+  topics: any[];
+  jobRoles: any[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class MasterService {
+private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
+  private dataLoaded = new BehaviorSubject<boolean>(false);
+  readonly dataLoaded$ = this.dataLoaded.asObservable();
 
+  private storageKey = 'masterData';
+  
   constructor(private router: Router, private httpService: HttpService,
-    public authService: AuthService) { }
-
-  getHomeData(): Observable<any> {
-    const url = 'apis/codemerit/home';
-    return this.httpService.getWithoutAuth(url);
-  }
-
-  getDocTypes(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.token;
-    const url = 'get/document_types';
-    if (AuthConstants.DEV_MODE) {
-      console.log("Hiting " + url + " with =>  via Token " + api_key);
+    public authService: AuthService) { 
+      const stored = localStorage.getItem(this.storageKey);
+    if (stored) {
+      this.data = JSON.parse(stored);
+      this.dataLoaded.next(true);
     }
-    return this.httpService.get(url, api_key);
-  }
-
-  getSubscriptionPlans(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.token;
-    const url = 'apis/subscription_plans';
-    if (AuthConstants.DEV_MODE) {
-      console.log("Hiting " + url + " with =>  via Token " + api_key);
     }
-    return this.httpService.get(url, api_key);
-  }
 
-  getStatesFromServer(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.token;
-    const url = 'get/states';
-    if (AuthConstants.DEV_MODE) {
-      console.log("Hiting " + url + " via Token " + api_key);
-    }
-    return this.httpService.get(url, api_key).pipe(
-      map((user: any) => {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        if (user.data) {
-          if (AuthConstants.DEV_MODE) {
-            console.log("/************ Fetched States from Server and stored locally => " + JSON.stringify(user.data));
-          }
-          localStorage.setItem(AuthConstants.SUBJECTS, JSON.stringify(user.data));
-          //localStorage.setItem(AuthConstants.STATES, user.data);
+    /***
+     * Enhance to handle failures
+     * To maintain sync using timestamp
+     */
+    fetchMasterDataFromAPI() {
+    return this.httpService.getWithoutAuth('apis/master/data').pipe(
+      tap((res : {error:boolean, message: string, data: MasterData}) => {
+        if(!res.error){
+        console.error('fetched master data', res.data);
+        this.data = res.data;
+        localStorage.setItem(this.storageKey, JSON.stringify(res));
+        this.dataLoaded.next(true);
         }
-        return user.data;
+      }),
+      catchError((err) => {
+        console.error('Failed to fetch master data', err);
+        return of(null);
       })
     );
   }
 
-  getSubjectsMaster(): Observable<any> {
-    if (localStorage.getItem(AuthConstants.SUBJECTS) === null) {
-      let datum = JSON.parse(localStorage.getItem(AuthConstants.SUBJECTS));
-      if (AuthConstants.DEV_MODE) {
-        console.log("getStates() => Fetched sUBJECTS From LocalStorage => " + JSON.stringify(datum));
-      }
-      if (datum == null || datum == undefined) {
-        if (AuthConstants.DEV_MODE) {
-          console.log("getStates() => Null Local data. Requesting Server => ");
-        }
-        return this.getMockSubjects();
-      }
-      return of(datum);
-    } else {
-      return this.getMockSubjects();
-    }
-    //return this.getStatesFromServer();
+  get subjects() { return this.data.subjects; }
+  get topics() { return this.data.topics; }
+  get jobRoles() { return this.data.jobRoles; }
+
+  clear() {
+    this.data = { subjects: [], topics: [], jobRoles: [] };
+    localStorage.removeItem(this.storageKey);
+    this.dataLoaded.next(false);
   }
 
-  getCategories(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.token;
-    const url = 'apis/categories/list';
-    if (AuthConstants.DEV_MODE) {
-      console.log("Hiting " + url + " via Token " + api_key);
-    }
-    return this.httpService.get(url, api_key).pipe(
-      map((user: any) => {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        if (user.data) {
-          if (AuthConstants.DEV_MODE) {
-            console.log("/************ Fetched Categories from Server and stored locally => " + JSON.stringify(user.data));
-          }
-          localStorage.setItem(AuthConstants.CATEGORIES, JSON.stringify(user.data));
-        }
-        return user.data;
-      })
-    );
-  }
-
-  getLastFewNotifications(): Observable<any> {
-    const api_key = this.authService.currentUserValue?.token;
-    const url = 'apis/notifications/latest';
-    if (AuthConstants.DEV_MODE) {
-      console.log("Hiting " + url + " via Token " + api_key);
-    }
-    return this.httpService.get(url, api_key).pipe(
-      map((user: any) => {
-        if (AuthConstants.DEV_MODE) {
-          console.log("Last Few Notifications => " + JSON.stringify(user));
-        }
-        if (user.data) {
-          localStorage.setItem(AuthConstants.CATEGORIES, JSON.stringify(user.data));
-        }
-        return user.data;
-      })
-    );
-  }
-
-
-  /*****/
-  getMockMySubjectsData(): Observable<any> {
-    return this.httpService.getLocalMock('assets/data/my-subjects.json');
-    //return this.http.get<any>(this.jsonUrl); // Send GET request to fetch the mock data
+  /*** 
+   * Mocking all subjects data *
+   * ****/
+  getMockSubjectDashboard(): Observable<any> {
+    return this.httpService.getLocalMock('assets/data/subjectDashboard.json');
   }
 
   fetchSubjectRoleMap(): Observable<any> {
     return this.httpService.getLocalMock('assets/data/master/subjectWithRoles.json');
-    //return this.http.get<any>(this.jsonUrl); // Send GET request to fetch the mock data
-  }
-
-   getTopicsBySubjectOld(inputArr, subjectName) {
-    const subject = inputArr.find(subj => subj.subject === subjectName);
-    return subject ? subject.topics : [];
   }
 
   fetchSubjectData(subjectName) {
-    return this.httpService.getLocalMock('assets/data/my-subjects.json').pipe(
+    return this.httpService.getLocalMock('assets/data/subjectDashboard.json').pipe(
       map((objects: any) => {
-        return objects.find(obj => obj.title === subjectName); // Find the object by title
+        return objects.find(obj => obj.title === subjectName);
       })
     );
   }
 
-  fetchSubjectTopics(subjectName) {
+  fetchAllSubjectTopics(subjectName) {
     return this.httpService.getLocalMock('assets/data/topic-store.json').pipe(
       map((objects: any) => {
         return objects.filter(obj => obj.subject === subjectName); // Find the object by title
@@ -151,19 +90,9 @@ export class MasterService {
     );
   }
 
-  getMockUserProfile(): Observable<any> {
-    return this.httpService.getLocalMock('assets/data/profile.json');
-  }
-
    getCountries(): Observable<Country[]> {
     return this.httpService.getLocalMock('assets/data/master/countries.json').pipe(
       map((data: any) => data as Country[])
-    );
-  }
-
-   getCountriesString(): Observable<string[]> {
-    return this.httpService.getLocalMock('assets/data/master/countries.json').pipe(
-      map((data: any) => data.name as string[])
     );
   }
 

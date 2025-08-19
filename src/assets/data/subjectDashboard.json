@@ -78,39 +78,39 @@
         "class": "progress-bar-warning",
         "labelClass": "label-warning",
         "popularTopics": [
-            { 
-                "title": "Subjects and Multicasting", 
-                "votes": 0 
+            {
+                "title": "Subjects and Multicasting",
+                "votes": 0
             },
-            { 
-                "title": "Schedulers and Concurrency", 
-                "votes": 0 
+            {
+                "title": "Schedulers and Concurrency",
+                "votes": 0
             },
-            { 
-                "title": "Cold vs Hot Observables", 
-                "votes": 0 
+            {
+                "title": "Cold vs Hot Observables",
+                "votes": 0
             },
-            { 
-                "title": "Error Handling in RxJS", 
-                "votes": 0 
+            {
+                "title": "Error Handling in RxJS",
+                "votes": 0
             },
-            { 
-                "title": "Creation Operators", 
-                "votes": 0 
+            {
+                "title": "Creation Operators",
+                "votes": 0
             },
-            { 
-                "title": "Higher Order Observables", 
-                "votes": 0 
+            {
+                "title": "Higher Order Observables",
+                "votes": 0
             },
-            { 
+            {
                 "title": "ReplaySubject",
-                "votes": 0 
+                "votes": 0
             },
-            { 
-                "title": "AsyncSubject", 
-                "votes": 0 
+            {
+                "title": "AsyncSubject",
+                "votes": 0
             }
-        ]        
+        ]
     },
     {
         "title": "React",
