@@ -5,6 +5,33 @@
       <app-breadcrumb [title]="'My Dashboad'"></app-breadcrumb>
     </div>
     
+     <div class="row clearfix">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+        <app-report-card-widget [heading]="'Quizzes'" [todayCount]="105" [weekCount]="825" [monthCount]="22067"
+          [progressPercentage]="74" progressColor="orange">
+        </app-report-card-widget>
+        <app-report-card-widget [heading]="'Lessons'" [todayCount]="1247" [weekCount]="22568" [monthCount]="65147"
+          [progressPercentage]="70" progressColor="Olive">
+        </app-report-card-widget>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+        <app-report-card-widget [heading]="'Questions'" [todayCount]="105" [weekCount]="825" [monthCount]="22067"
+          [progressPercentage]="74" progressColor="orange">
+        </app-report-card-widget>
+        <app-report-card-widget [heading]="'Topics'" [todayCount]="1247" [weekCount]="22568" [monthCount]="65147"
+          [progressPercentage]="70" progressColor="Olive">
+        </app-report-card-widget>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+        <app-report-card-widget [heading]="'Subjects'" [todayCount]="105" [weekCount]="825" [monthCount]="22067"
+          [progressPercentage]="74" progressColor="orange">
+        </app-report-card-widget>
+        <app-report-card-widget [heading]="'Job Roles'" [todayCount]="15" [weekCount]="22568" [monthCount]="65147"
+          [progressPercentage]="70" progressColor="Olive">
+        </app-report-card-widget>
+      </div>
+    </div>
+
     <app-my-subjects></app-my-subjects>
     <div class="row clearfix">
       <!-- <app-info-box></app-info-box> -->

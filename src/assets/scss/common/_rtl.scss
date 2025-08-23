@@ -387,12 +387,6 @@
       right: 7%;
     }
   }
-  .owl-carousel {
-    direction: ltr;
-    .owl-item {
-      direction: rtl;
-    }
-  }
   .bx-wrapper {
     direction: ltr;
   }
@@ -501,13 +495,6 @@
   .modal-close-button {
     left: 10px;
     right: unset;
-  }
-  .owl-dt-container {
-    direction: rtl;
-  }
-
-  .owl-dt-control-arrow-button svg {
-    transform: rotate(180deg);
   }
   .card-statistic-3 .card-icon {
     left: -5px;

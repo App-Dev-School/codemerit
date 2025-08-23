@@ -9,24 +9,24 @@ import { Router } from '@angular/router';
 import { AuthService } from '@core';
 import { SubjectRole } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
+import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
-import { ReportCardWidgetComponent } from '@shared/components/report-card-widget/report-card-widget.component';
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
-import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
+import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
-  imports: [CarouselModule, MatCardModule,
+  imports: [
+    MatCardModule,
     MatDividerModule,
     MatButtonModule,
     MatChipsModule,
     MatRippleModule,
     MatIconModule,
     LearnerWelcomeCardComponent,
-    ReportCardWidgetComponent,
-    ReportListComponent
-  ],
+    CongratulationsCardComponent,
+    ReportListComponent, MedalCardComponent],
   //  animations: [
   //     trigger('fadeOut', [
   //       transition(':leave', [
@@ -42,33 +42,6 @@ export class WelcomeComponent implements OnInit {
   subjectData: any;
   subjectsByRole: { [role: string]: SubjectRole[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
-  customOptions: OwlOptions = {
-    loop: true,
-    mouseDrag: true,
-    touchDrag: false,
-    pullDrag: false,
-    dots: true,
-    margin: 10,
-    animateIn: true,
-    animateOut: true,
-    navSpeed: 700,
-    navText: ['Previous', 'Next'],
-    responsive: {
-      0: {
-        items: 1.5,
-      },
-      400: {
-        items: 1.5,
-      },
-      740: {
-        items: 3,
-      },
-      940: {
-        items: 4,
-      },
-    },
-    nav: true,
-  };
 
   engagements = [
     {
@@ -96,8 +69,49 @@ export class WelcomeComponent implements OnInit {
       "imageUrl": "https://bazichic.com/uploads/images/docs/3111868324376422.jpg"
     }
   ];
-  isBookmarked: boolean = false;
-  showCard: boolean = true;
+
+   userTasks = [
+    {
+      "id": 1,
+      "task": "Complete Project KT",
+      "description": "Attend the project KT session. Take the Q&A to clear doubts and mark as complete.",
+      "percentage": 5,
+      "level": 1,
+      "tag": "Initials"
+    },
+    {
+      "id": 2,
+      "task": "Remove Unreferenced Code",
+      "description": "",
+      "percentage": 5,
+      "level": 1,
+      "tag": "Work"
+    },
+    {
+      "id": 2,
+      "task": "Enable Component Communication",
+      "description": "",
+      "percentage": 5,
+      "level": 1,
+      "tag": "Work"
+    },
+    {
+      "id": 2,
+      "task": "Implement Question Edit",
+      "description": "",
+      "percentage": 5,
+      "level": 1,
+      "tag": "Work"
+    },
+    {
+      "id": 2,
+      "task": "Dialog Component Creation",
+      "description": "",
+      "percentage": 5,
+      "level": 1,
+      "tag": "Work"
+    }
+  ];
 
   constructor(private router: Router, private master: MasterService, private authService: AuthService) {
     // Implement Master Data Relationship
@@ -113,7 +127,7 @@ export class WelcomeComponent implements OnInit {
       });
     });
     setInterval(() => {
-      this.showCard = true;
+      //After 5 secons ore more display the next user task
     }, 5000);
   }
 
@@ -135,7 +149,7 @@ export class WelcomeComponent implements OnInit {
     }
   }
 
-  removeItem(itemId: any) {
+  exploreLesson(itemId: any) {
     if (typeof itemId == 'number') {
       console.log("removeItem ");
       //bad code
@@ -144,16 +158,6 @@ export class WelcomeComponent implements OnInit {
       this.engagements = this.engagements.filter(item => item.id > 1)
     }
   }
-
-  bookmark() {
-    this.isBookmarked = !this.isBookmarked;
-  }
-
-  toggleCard() {
-    this.showCard = !this.showCard;
-  }
-
-  //Review above code
 
 
   onSubjectChange(subject: string) {

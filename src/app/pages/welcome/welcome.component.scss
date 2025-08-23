@@ -9,3 +9,14 @@
     width:40px!important;
     height:40px!important;
   }
+
+  .match-height {
+  > [class*='col'] {
+    display: flex;
+    flex-flow: column;
+
+    > .card {
+      flex: 1 1 auto;
+    }
+  }
+}

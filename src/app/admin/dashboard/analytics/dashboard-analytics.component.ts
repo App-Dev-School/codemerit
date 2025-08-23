@@ -5,13 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MasterService } from '@core/service/master.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
-import { ChartCard3Component } from '@shared/components/chart-card3/chart-card3.component';
-import { ChartSubscribersComponent } from '@shared/components/chart-subscribers/chart-subscribers.component';
 import { CodeSnippetComponent } from '@shared/components/code-snippet/code-snippet.component';
 import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
 import { RecentActivityComponent } from '@shared/components/recent-activity/recent-activity.component';
 import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
+import { ReportCardWidgetComponent } from '@shared/components/report-card-widget/report-card-widget.component';
 import { SubjectCardWidgetComponent } from '@shared/components/subject-card-widget/subject-card-widget.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 
@@ -26,6 +24,7 @@ import { NgScrollbar } from 'ngx-scrollbar';
     MatMenuModule,
     MatIconModule,
     NgScrollbar,
+    ReportCardWidgetComponent,
     SubjectCardWidgetComponent,
     RecentCommentsComponent,
     RecentActivityComponent,

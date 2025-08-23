@@ -1,6 +1,37 @@
 <section class="content">
   <div class="content-block">
 
+    <div class="row match-height m-t-20 clearfix">
+      <!-- Congratulations Card -->
+      <div class="col-12 col-md-6 col-lg-7">
+        <app-congratulations-card></app-congratulations-card>
+      </div>
+      <!-- Medal Card -->
+      <div class="col-12 col-md-6 col-lg-5">
+        <app-medal-card></app-medal-card>
+      </div>
+    </div>
+
+    <div class="row match-height m-t-20 clearfix">
+      <div class="col-12 col-md-6 col-lg-7">
+        <div class="card card-congratulations">
+          <div class="card-body text-center">
+          <h1>Hello test</h1>
+        </div>
+        </div>
+        
+      </div>
+      <div class="col-12 col-md-6 col-lg-5">
+        <div class="card card-congratulations">
+          <div class="card-body text-center">
+             <h1>Hello test</h1>
+          <h1>Hello test</h1>
+          </div>
+         
+        </div>
+      </div>
+    </div>
+
     <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <app-learner-welcome-card></app-learner-welcome-card>
@@ -18,14 +49,10 @@
 
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <h4 class="text-center col-grey mb-5 mt-5">Interact and Explore</h4>
-        <owl-carousel-o [options]="customOptions">
 
           @for (engage of engagements; track engage) {
           <!-- <ng-container @fadeOut> -->
-          <ng-container>
-            <ng-template carouselSlide [id]="''+engage.id">
-              <!-- <img [src]="engage.src" [alt]="engage.alt" [title]="engage.title"> -->
-              <!--- Engage Item based on Type -->
+          
               <mat-card>
                 <mat-card-header>
                   <img mat-card-avatar src="assets/images/tech/javascript.png" style="width: 40px!important;">
@@ -41,70 +68,17 @@
                 <mat-divider></mat-divider>
                 <mat-card-actions>
                   <div fxLayout="row">
-                    <button mat-button (click)="removeItem(engage.id)">
-                      <mat-icon class="col-green">check_circle_outline</mat-icon> Yes
+                    <button mat-button (click)="exploreLesson(engage.id)">
+                      <mat-icon class="col-green">check_circle_outline</mat-icon> Explore
                     </button>
                     <button mat-button>
-                      <mat-icon class="col-red">close</mat-icon> close
+                      <mat-icon class="col-red">close</mat-icon> Close
                     </button>
                   </div>
                 </mat-card-actions>
               </mat-card>
-              <!-- AffirmCard -->
-            </ng-template>
-          </ng-container>
-          }
-
-          <ng-template carouselSlide>
-            <!-- FAQ Card -->
-            <mat-card class="example-card" appearance="outlined">
-              <mat-card-header>
-                <mat-card-title-group>
-                  <mat-card-title>Angular Universal</mat-card-title>
-                  <mat-card-subtitle>SSR</mat-card-subtitle>
-                  <img mat-card-sm-image src="assets/images/tech/angular.png" class="size40px">
-                </mat-card-title-group>
-              </mat-card-header>
-              <mat-card-content>
-                Services in angular are technically Providers. Anything annotated or decorated with Injectable is a
-                provider.
-              </mat-card-content>
-              <mat-card-actions align="end">
-                <button mat-button>Got It</button>
-                <button (click)="removeItem('static1')" mat-button>Learn More</button>
-              </mat-card-actions>
-            </mat-card>
-          </ng-template>
-        </owl-carousel-o>
-      </div>
+            }
     </div>
-
-    <div class="row clearfix">
-      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-        <app-report-card-widget [heading]="'Quizzes'" [todayCount]="105" [weekCount]="825" [monthCount]="22067"
-          [progressPercentage]="74" progressColor="orange">
-        </app-report-card-widget>
-        <app-report-card-widget [heading]="'Lessons'" [todayCount]="1247" [weekCount]="22568" [monthCount]="65147"
-          [progressPercentage]="70" progressColor="Olive">
-        </app-report-card-widget>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-        <app-report-card-widget [heading]="'Questions'" [todayCount]="105" [weekCount]="825" [monthCount]="22067"
-          [progressPercentage]="74" progressColor="orange">
-        </app-report-card-widget>
-        <app-report-card-widget [heading]="'Topics'" [todayCount]="1247" [weekCount]="22568" [monthCount]="65147"
-          [progressPercentage]="70" progressColor="Olive">
-        </app-report-card-widget>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-        <app-report-card-widget [heading]="'Subjects'" [todayCount]="105" [weekCount]="825" [monthCount]="22067"
-          [progressPercentage]="74" progressColor="orange">
-        </app-report-card-widget>
-        <app-report-card-widget [heading]="'Job Roles'" [todayCount]="15" [weekCount]="22568" [monthCount]="65147"
-          [progressPercentage]="70" progressColor="Olive">
-        </app-report-card-widget>
-      </div>
-    </div>
-
+</div>
   </div>
 </section>

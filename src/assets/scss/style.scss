@@ -5,9 +5,6 @@
  *  Description: This is main style scss file
 */
 @import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-@import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
-@import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
-
 @include meta.load-css("common/_variables");
 @include meta.load-css("common/_mixins");
 @include meta.load-css("common/_customanimate.scss");
@@ -56,7 +53,6 @@
 @include meta.load-css("pages/_payslip.scss");
 
 /*                 [6. Pugins ]                   				*/
-@include meta.load-css("plugins/_carousel.scss");
 @include meta.load-css("plugins/_formwizard.scss");
 @include meta.load-css("plugins/_tables.scss");
 
@@ -84,9 +80,3 @@
 /*                 [8. Browser ]                   			*/
 @include meta.load-css("browser/_ie10.scss");
 @include meta.load-css("browser/_ie11.scss");
-
-// @media (prefers-reduced-motion: no-preference) {
-//     :root {
-//         scroll-behavior: smooth;
-//     }
-// }

@@ -23,7 +23,7 @@ export const APP_ROUTE: Route[] = [
             },
             {
                 path: 'dashboard',
-                canActivate: [AuthGuard],
+                //canActivate: [AuthGuard],
                 // data: {
                 //     role: Role.Subscriber,
                 // },
