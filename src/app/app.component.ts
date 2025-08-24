@@ -31,11 +31,11 @@ export class AppComponent implements OnInit{
 
   //Added for animation in router outlet
   ngOnInit() {
-  this.master.getMockSubjects().subscribe(data => {
-      if(data){
-      localStorage.setItem(AuthConstants.SUBJECTS, JSON.stringify(data));
-      }
-    });
+  // this.master.getMockSubjects().subscribe(data => {
+  //     if(data){
+  //     localStorage.setItem(AuthConstants.SUBJECTS, JSON.stringify(data));
+  //     }
+  //   });
     //This is additional code
     //Enable component transition globally
     // this._router.events.subscribe(event => {

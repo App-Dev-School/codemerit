@@ -96,7 +96,7 @@ private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
     );
   }
 
-  getMockSubjects(): Observable<Subject[]> {
+  getMockDataSubjects(): Observable<Subject[]> {
     return this.httpService.getLocalMock('assets/data/master/subjects.json').pipe(
       map((data: any) => data as Subject[])
     );

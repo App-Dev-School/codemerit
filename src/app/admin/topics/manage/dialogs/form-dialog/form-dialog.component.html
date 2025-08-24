@@ -42,7 +42,7 @@
 
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
             <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Select Label</mat-label>
+              <mat-label>Topic Level</mat-label>
               <mat-select formControlName="label">
                 <mat-option value="Beginner">Beginner</mat-option>
                 <mat-option value="Intermediate">Intermediate</mat-option>
@@ -50,46 +50,26 @@
               </mat-select>
             </mat-form-field>
           </div>
-          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width">
-              <mat-label>Parent Topic (Optional)</mat-label>
-              <mat-select formControlName="parent">
-                <mat-option>-- None --</mat-option>
-                @for (group of topicGroups; track group) {
-                <mat-optgroup [label]="group.name" [disabled]="group.disabled">
-                  @for (pokemon of group.pokemon; track pokemon) {
-                  <mat-option [value]="pokemon.title">
-                    {{pokemon.title}}
-                  </mat-option>
-                  }
-                </mat-optgroup>
-                }
-              </mat-select>
-            </mat-form-field>
           </div>
-          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Order</mat-label>
-              <input matInput formControlName="order" type="number" min="0" max="99" maxlength="2"
-                (keydown)="restrictInput($event)" placeholder="Serial no. for sequence">
-            </mat-form-field>
+
+        <div class="row">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <mat-checkbox class="example-margin" formControlName="isPublished">Make this topic available
+            </mat-checkbox>
           </div>
-          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Weight</mat-label>
-              <input matInput formControlName="weight"
-                (keydown)="restrictInput($event)" placeholder="% coverage in subject">
-            </mat-form-field>
+        </div>
+
+         <div class="row">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <mat-checkbox class="example-margin" formControlName="hideOtherFields" checked>Keep other optional fields default
+            </mat-checkbox>
           </div>
-          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Popularity</mat-label>
-              <input matInput formControlName="popularity" (keydown)="restrictInput($event)"
-                placeholder="Extra sorting index">
-            </mat-form-field>
-          </div>
-          <!-- Other Fields -->
-           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+        </div>
+
+<!-- Other Fields -->
+        @if (!topicForm.get('hideOtherFields')?.value) {
+ <div class="row">
+             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
             <mat-form-field class="example-full-width" appearance="fill">
               <mat-label>Description</mat-label>
               <textarea matInput formControlName="description" required
@@ -97,10 +77,43 @@
             </mat-form-field>
           </div>
           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-            <mat-checkbox class="example-margin" formControlName="isPublished">Make this topic available
-            </mat-checkbox>
+            <mat-form-field class="example-full-width">
+              <mat-label>Parent Topic for this Sub-Topic</mat-label>
+              <mat-select formControlName="parent">
+                <mat-option>-- None --</mat-option>
+                @for (group of topicGroups; track group) {
+                <mat-optgroup [label]="group.title">
+                  <mat-option [value]="group.title">
+                    {{group.title}}
+                  </mat-option>
+                </mat-optgroup>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Order</mat-label>
+              <input matInput formControlName="order" type="number" min="0" max="99" maxlength="2"
+                (keydown)="restrictInput($event)" placeholder="Serial no. for sequence">
+            </mat-form-field>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Weight</mat-label>
+              <input matInput formControlName="weight"
+                (keydown)="restrictInput($event)" placeholder="% coverage in subject">
+            </mat-form-field>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Popularity</mat-label>
+              <input matInput formControlName="popularity" (keydown)="restrictInput($event)"
+                placeholder="Extra sorting index">
+            </mat-form-field>
           </div>
         </div>
+        }
 
         <div class="row">
           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
@@ -108,6 +121,7 @@
             <button mat-raised-button color="warn" (click)="topicForm.reset()">Cancel</button>
           </div>
         </div>
+        <!-- <p>{{ topicForm.value | json }}</p> -->
     </form>
   </div>
 </div>

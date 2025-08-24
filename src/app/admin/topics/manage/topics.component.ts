@@ -195,7 +195,7 @@ export class TopicsComponent implements OnInit, OnDestroy {
         this.refreshTable();
         this.showNotification(
           action === 'add' ? 'snackbar-success' : 'black',
-          `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
+          `Topic ${action === 'add' ? 'Add' : 'Edit'} Successful.`,
           'bottom',
           'center'
         );

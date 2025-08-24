@@ -32,12 +32,6 @@ export interface DialogData {
   topicItem: TopicItem;
 }
 
-interface TopicGroup {
-  disabled?: boolean;
-  name: string;
-  pokemon: TopicItem[];
-}
-
 @Component({
   selector: 'app-topic-form-dialog',
   templateUrl: './form-dialog.component.html',
@@ -53,7 +47,8 @@ interface TopicGroup {
     MatSelectModule,
     MatDatepickerModule,
     MatDialogClose,
-    MatCheckboxModule
+    MatCheckboxModule,
+    JsonPipe
   ]
 })
 export class TopicFormComponent {
@@ -64,29 +59,7 @@ export class TopicFormComponent {
   initialFormValue: any;
   topicItems: TopicItem;
   subjects: Subject[] = [];
-  topicGroups: TopicGroup[] = [
-    {
-      name: 'Variables and Constants',
-      pokemon: [
-      ],
-    },
-    {
-      name: 'Control Structures',
-      pokemon: [
-      ],
-    },
-    {
-      name: 'Operations',
-      disabled: true,
-      pokemon: [
-      ],
-    },
-    {
-      name: 'Functions',
-      pokemon: [
-      ],
-    },
-  ];
+  topicGroups: TopicItem[] = [];
   constructor(
     public dialogRef: MatDialogRef<TopicFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -99,29 +72,31 @@ export class TopicFormComponent {
       this.action === 'edit' ? data.topicItem.title : 'Create New Topic';
     this.topicItems = this.action === 'edit' ? data.topicItem : new TopicItem({}); // Create a blank object
     this.topicForm = this.createContactForm();
+    this.topicGroups = this.masterSrv.topics;
+    //filter topics
+     this.topicGroups = this.topicGroups.filter(topic => topic.subjectId == data.topicItem.subjectId);
+
+      this.topicForm.get('subjectId')?.valueChanges.subscribe(subject => {
+      this.topicGroups = this.masterSrv.topics;
+       if (subject > 0) {
+         this.topicGroups = this.topicGroups.filter(topic => topic.subjectId == subject);
+       }
+    });
+
     if (this.action === 'edit') {
       console.log('TopicManager ###Update Form in Edit Mode:', data.topicItem);
       //populate topic
-      this.topicForm.get('title')?.setValue(data.topicItem.title);
-      this.topicForm.get('title')?.updateValueAndValidity();
-      this.topicForm.get('description')?.setValue(data.topicItem.description);
-      this.topicForm.get('label')?.setValue(data.topicItem.label);
-      this.topicForm.get('label')?.updateValueAndValidity();
-      this.topicForm.get('subjectId')?.setValue(data.topicItem.subjectId);
-      this.topicForm.get('subjectId')?.updateValueAndValidity();
-      this.topicForm.get('order')?.setValue(data.topicItem.order);
-      this.topicForm.get('weight')?.setValue(data.topicItem.weight);
-      this.topicForm.get('popularity')?.setValue(data.topicItem.popularity);
-      this.topicForm.get('isPublished')?.setValue(data.topicItem.isPublished);
-      if (data.topicItem.parent) {
-        //this.topicForm.get('parent')?.setValue(data.topicItem.parent);
-      }
-      // this.topicForm.patchValue({
-      //   title: data.topicItem.title,
-      //   description: data.topicItem.description,
-      //   label: data.topicItem.label,
-      //   subjectId: data.topicItem.subjectId,
-      // });
+      this.topicForm.patchValue({
+        title: data.topicItem.title,
+        description: data.topicItem.description,
+        label: data.topicItem.label,
+        subjectId: ''+data.topicItem.subjectId,
+        order: data.topicItem.order,
+        weight: data.topicItem.weight,
+        popularity: data.topicItem.popularity,
+        isPublished: data.topicItem.isPublished,
+        parent: data.topicItem.parent,
+      });
       // Save initial value for later comparison
       this.initialFormValue = this.topicForm.getRawValue();
 
@@ -132,23 +107,19 @@ export class TopicFormComponent {
        * Display Status and other disabled fields in list topics
        */
     }
-    //Make this a local master data
-    this.masterSrv.getMockSubjects().subscribe(data => {
-      this.subjects = data;
-    });
-    //this.subjects = localStorage.getItem(AuthConstants.SUBJECTS);
+    this.subjects = this.masterSrv.subjects;
   }
 
   createContactForm(): UntypedFormGroup {
     return this.fb.group({
       id: [this.topicItems.id],
       image: [''],
-      title: [this.topicItems.title, [Validators.required, Validators.minLength(3), Validators.pattern('[a-zA-Z]+')]],
+      title: [this.topicItems.title, [Validators.required, Validators.minLength(3)]],
       subjectId: ['' + this.topicItems.subjectId, [Validators.required]],
       parent: [''],
       label: [this.topicItems.label, [Validators.required]],
       order: [this.topicItems.order, [
-        Validators.pattern(/^\d{1,2}$/), // Only 1 or 2 digit numbers
+        Validators.pattern(/^\d{1,2}$/),
         Validators.max(99)
       ]],
       weight: [this.topicItems.weight, [
@@ -158,6 +129,7 @@ export class TopicFormComponent {
       popularity: [this.topicItems.popularity, [
         Validators.max(999)
       ]],
+      hideOtherFields: [true],
       description: [this.topicItems.description],
       isPublished: [false]
     });
