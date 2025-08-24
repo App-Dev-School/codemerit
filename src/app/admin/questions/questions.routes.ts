@@ -11,5 +11,9 @@ export const QUESTIONS_ROUTE: Route[] = [
     path: 'create',
     component: QuestionFormPage
   },
+  {
+    path: 'update/:question-slug',
+    component: QuestionFormPage
+  },
   { path: '**', component: Page404Component },
 ];

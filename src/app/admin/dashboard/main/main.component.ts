@@ -11,7 +11,6 @@ import { AuthService } from '@core';
 import { InitialRole } from '@core/models/initial-role.data';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { ChartCard3Component } from '@shared/components/chart-card3/chart-card3.component';
 import { SubscriptionTableWidgetComponent } from '@shared/components/subscription-table-widget/subscription-table-widget.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 @Component({
@@ -29,7 +28,7 @@ import { NgScrollbar } from 'ngx-scrollbar';
         MatMenuModule,
         MatIconModule,
         SubscriptionTableWidgetComponent,
-        ChartCard3Component
+        //CourseProgressComponent
     ]
 })
 export class MainComponent implements OnInit {

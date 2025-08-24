@@ -1,0 +1,61 @@
+@if(isLoading){
+  <div class="progress-container">
+    <div class="preloader pl-size-sm">
+      <div class="spinner-layer pl-purple">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+<div class="row">
+  @for(job of courses|async;track job){
+    <div class="col-lg-3 col-md-3 col-sm-12" (click)="switchSubject(job.title)">
+      <mat-card>
+        <mat-card-content>
+          <div class="subjectHeader">
+            <!-- <img src="{{job.image}}" alt="{{job.title}}" class="subjectImage"> -->
+            <mat-card-title class="text">{{job.title}}</mat-card-title>
+          </div>
+          <p class="font-12">{{job.description}}</p>
+          @if(!minimal){
+          @if(job.isSubscribed){
+            <!-- <ul class="list-unstyled">
+              <li>
+                <div class="mb-2">
+                  <span class="progress-label">Coverage</span>
+                  <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{subject.practice_percentage}}%</span>
+                </div>
+                <div class="progress skill-progress m-b-20 w-100">
+                  <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="subject.practice_percentage + '%'"
+                  role="progressbar" [attr.aria-valuenow]="job.practice_percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </li>
+            </ul> -->
+          }@else{
+            <!-- <p class="m-b-0 font-12 d-flex"><i class="material-icons col-green psr-2">trending_up</i> Continue Practice
+            </p> -->
+            <!-- <mat-card-footer class="example-card-footer">
+              <mat-chip-set aria-label="Tags">
+                <mat-chip>12 Lessons</mat-chip>
+                <mat-chip>28 Questions</mat-chip>
+              </mat-chip-set>
+            </mat-card-footer>
+            <mat-card-actions align="end">
+              <button mat-button mat-ripple>View</button>
+              <button (click)="subscribeSubject(subject.title)" mat-button>Start Learning</button>
+            </mat-card-actions> -->
+          }
+        }
+        </mat-card-content>
+        <!-- @if(!subject.isSubscribed){
+          Enroll to start learning and assessing your skills.
+        } -->
+      </mat-card>
+    </div>
+  }
+</div>

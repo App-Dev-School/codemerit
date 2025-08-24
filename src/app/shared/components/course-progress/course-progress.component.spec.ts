@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChartCard3Component } from './chart-card3.component';
+import { CourseProgressComponent } from './course-progress.component';
 
-describe('ChartCard3Component', () => {
-  let component: ChartCard3Component;
-  let fixture: ComponentFixture<ChartCard3Component>;
+describe('CourseProgressComponent', () => {
+  let component: CourseProgressComponent;
+  let fixture: ComponentFixture<CourseProgressComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChartCard3Component]
+      imports: [CourseProgressComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ChartCard3Component);
+    fixture = TestBed.createComponent(CourseProgressComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

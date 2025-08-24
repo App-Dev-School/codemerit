@@ -1,12 +1,12 @@
 import { Route } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { Page404Component } from '../authentication/page404/page404.component';
 import { SelectSubjectComponent } from './select-subject/select-subject.component';
+import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
 export const SUBSCRIBER_ROUTE: Route[] = [
-  // {
-  //   path: 'learning',
-  //   component: DashboardComponent,
-  // },
+  {
+    path: 'start',
+    component: CourseDashboardComponent,
+  },
   {
     path: "learn/:subject",
     component: DashboardComponent,
@@ -15,6 +15,8 @@ export const SUBSCRIBER_ROUTE: Route[] = [
     path: 'select-subject',
     component: SelectSubjectComponent,
   },
-  { path: '**', component: SelectSubjectComponent }
+  //{ path: '**', component: SelectSubjectComponent }
+  //
+  { path: '**', component: CourseDashboardComponent }
 ];
 

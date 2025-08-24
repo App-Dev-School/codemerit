@@ -1,0 +1,40 @@
+@if(showContent){
+<section class="content" [@slideInOut]>
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb [title]="' Dashboard'" [items]="[]" [active_item]="'Dashboard'"></app-breadcrumb>
+    </div>
+
+    <div class="row clearfix">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+         <div class="card">
+          <div class="m-b-20">
+            <div class="contact-grid">
+              <div class="profile-header bg-dark">
+                <div class="user-name">John Doe</div>
+                <div class="name-center">{{ subject}}</div>
+              </div>
+              <img src="assets/images/users/user.jpg" class="user-img" alt="">
+              <p>
+               India
+              </p>
+              </div>
+            <div class="text-center p-t-20">
+              <button mat-stroked-button (click)="openCourseLauncher('default')" color="primary"><i class="material-icons">lock</i> Switch Role</button>
+              <button mat-stroked-button class="m-r-10" routerLink="/job-roles" color="primary"><i class="material-icons">find_replace</i> All Job Roles</button>
+            </div>
+            </div>
+          </div>
+          <app-course-progress [title]="subject" [config]="courseChartConfig" [subtitle]="'Metadata tag here'"></app-course-progress>
+        </div>
+      <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+       <!-- <p>Subject Dashboard Summary Widget</p>
+       <app-course-picker [minimal]="true" (subjectSelected)="onSubjectChange($event)"></app-course-picker> -->
+
+       <app-subject-performance-card [subject]="subjectData"
+          [indicators]="subjectData?.indicators"></app-subject-performance-card>
+      </div>
+    </div>
+  </div>
+</section>
+}

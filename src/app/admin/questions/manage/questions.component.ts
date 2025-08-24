@@ -156,10 +156,12 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   }
 
   editCall(row: QuestionItem) {
-    this.openDialog('edit', row);
-    console.log("QuestionManager editCall", row);
+     console.log("QuestionManager editCall", row);
+    //this.openDialog('edit', row);
+    this.router.navigate(['/admin/questions/update', row.slug]);
   }
 
+  //Unused
   openDialog(action: 'add' | 'edit', data?: QuestionItem) {
     console.log("QuestionManager openDialog", action, data);
     let varDirection: Direction;

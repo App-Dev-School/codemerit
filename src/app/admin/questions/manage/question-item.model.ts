@@ -11,8 +11,10 @@ export class QuestionItem {
   status: string;
   marks : number;
   order : number;
-  allowedTime : number;
+  timeAllowed : number;
   hint: string;
+  answer: string;
+  slug: string;
   createdAt : string;
 
   constructor(question: Partial<QuestionItem> = {}) {
@@ -25,8 +27,10 @@ export class QuestionItem {
     this.status = question.status || Status.Pending;
     this.marks = question.marks || 1;
     this.order = question.order || 1;
-    this.allowedTime = question.allowedTime || 60;
+    this.timeAllowed = question.timeAllowed || 60;
     this.hint = question.hint || '';
+    this.answer = question.answer || '';
+    this.slug = question.slug || '';
     this.createdAt = question.createdAt || '';
   }
 
@@ -36,4 +40,9 @@ export class QuestionItem {
     };
     return S4() + S4();
   }
+}
+
+export class QuestionItemDetail extends QuestionItem {
+  options?: {id:number;option:string;correct:boolean}[];
+  //topics: string;
 }

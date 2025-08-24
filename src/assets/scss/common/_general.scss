@@ -436,3 +436,11 @@ textarea:-ms-input-placeholder {
     max-width: 100%;
   }
 }
+
+.full-screen-dialog .mat-mdc-dialog-container {
+  padding: 16px;               // inner padding
+  height: 100vh;               // take full height
+  width: 100vw;                // take full width
+  box-sizing: border-box;      // include padding in width/height
+  border-radius: 0 !important; // remove rounded corners for real fullscreen
+}

@@ -1,0 +1,39 @@
+<mat-card class="chart-card2">
+    @if (config().showTitle) {
+    <mat-card-title class="title">
+        <mat-icon>bar_chart</mat-icon> {{title()}}
+    </mat-card-title>
+}
+@if (config().showSubtitle) {
+    <mat-card-subtitle class="subtitle">
+        {{subtitle()}}
+    </mat-card-subtitle>
+}
+@if (config().showIcon) {
+    <div class="subjectHeader">
+            <img src="assets/images/tech/angular.png" alt="{{title()}}" class="subjectImage">
+            @if (config().showTitle) {
+                <mat-card-title class="text">{{title()}}</mat-card-title>
+            }
+          </div>
+        }
+
+    <apx-chart [series]="cardChartOptions.series!" [chart]="cardChartOptions.chart!"
+        [plotOptions]="cardChartOptions.plotOptions!" [colors]="cardChartOptions.colors!"
+        [labels]="cardChartOptions.labels!" />
+
+    <div class="main-label">
+        <p>{{title()}}</p>
+        @if (config().showLegend) {
+ <div class="legend">
+            <div class="m-l-10 m-r-10">
+                <span class="occupied"></span> Completed
+            </div>
+            <div class="m-l-10 m-r-10">
+                <span class="available"></span> Remaining
+            </div>
+        </div>
+        }
+       
+    </div>
+</mat-card>

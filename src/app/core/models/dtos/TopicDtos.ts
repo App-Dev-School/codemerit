@@ -1,5 +1,12 @@
 import { TopicItem } from "src/app/admin/topics/manage/topic-item.model"
 
+export interface TopicItemBasic {
+    id?: number
+    title: string
+    subjectId?: number
+    parent?: number
+    subjectName?: string
+}
 export interface TopicCreate {
     id: number
     title: string

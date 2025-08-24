@@ -4,6 +4,16 @@
     <div class="block-header">
       <app-breadcrumb [title]="' Dashboard'" [items]="[]" [active_item]="'Dashboard'"></app-breadcrumb>
     </div>
+
+    <div class="row clearfix">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+       <app-course-progress [title]="subject" [config]="courseChartConfig" [subtitle]="'Metadata tag here'"></app-course-progress>
+      </div>
+      <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+       <p>Subject Dashboard Summary Widget</p>
+      </div>
+    </div>
+
     @if(subjectData){
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">

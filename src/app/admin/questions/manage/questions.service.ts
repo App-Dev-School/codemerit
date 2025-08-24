@@ -6,7 +6,7 @@ import { QueestionListDto } from '@core/models/dtos/QuestionDtos';
 import { HttpService } from '@core/service/http.service';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { QuestionItem } from './question-item.model';
+import { QuestionItem, QuestionItemDetail } from './question-item.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +21,19 @@ export class QuestionService {
     return this.httpClient
       .get<QuestionItem[]>(this.API_URL)
       .pipe(catchError(this.handleError));
+  }
+
+   getQuestionBySlug(slug: string): Observable<QuestionItemDetail> {
+    let api_key = '';
+    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/question/'+slug;
+    return this.httpService.get(url, api_key).pipe(
+      map((response: {error:boolean,message:string,data:QuestionItemDetail}) => {
+        return response.data;
+      })
+    );
   }
 
   //For specific user

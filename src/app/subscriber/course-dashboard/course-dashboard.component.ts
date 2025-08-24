@@ -18,11 +18,14 @@ import { CourseProgressComponent } from "@shared/components/course-progress/cour
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { Observable } from 'rxjs';
+import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
+import { Direction } from '@angular/cdk/bidi';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
+  selector: 'app-course-dashboard',
+  templateUrl: './course-dashboard.component.html',
+  styleUrls: ['./course-dashboard.component.scss'],
   animations: [slideInOutAnimation],
   imports: [
     JsonPipe,
@@ -33,32 +36,32 @@ import { Observable } from 'rxjs';
     MatIconModule,
     MatCheckboxModule,
     MatTooltipModule,
-    MatChip, MatChipSet,
-    TopicsListComponent,
     MeritListWidgetComponent,
     SubjectPerformanceCardComponent,
-    CourseProgressComponent
-]
+    CourseProgressComponent,
+    CoursePickerComponent
+  ]
 })
-export class DashboardComponent implements OnInit {
+export class CourseDashboardComponent implements OnInit {
   showContent = true;
   subject = "";
-  subjectData : any;
-  subjectTopics$ : Observable<any>;
+  subjectData: any;
+  jobSubjects$: Observable<any>;
   courseChartConfig = {
-  showTitle: false,
-  showSubtitle: false,
-  showIcon: false,
-  showLegend: false
- };
+    showTitle: false,
+    showSubtitle: false,
+    showIcon: false,
+    showLegend: false
+  };
   //For displaying test data
   debugDisplay = false;
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
+    public dialog: MatDialog,
     private authService: AuthService,
     private snackService: SnackbarService
-  ) { 
+  ) {
     console.log("SignInFlow #5 ", this.authService.currentUser);
   }
 
@@ -66,7 +69,7 @@ export class DashboardComponent implements OnInit {
   // toggleSlide() {
   //   this.slideAnimation = (this.slideAnimation === 'in') ? 'out' : 'in';
   // }
-  
+
   ngOnInit() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
@@ -79,10 +82,13 @@ export class DashboardComponent implements OnInit {
         this.showContent = true;
       }
     });
-    this.takeRouteParams();
+    //this.takeRouteParams();
     // if(this.subject){
-    //   this.onSubjectChange(this.subject);
+    //   this.onCourseChange(this.subject);
     // }
+    setTimeout(() => {
+      //launch the course picker
+    }, 4000);
   }
 
   takeRouteParams() {
@@ -92,40 +98,76 @@ export class DashboardComponent implements OnInit {
       console.log("MyDash @RouteParam change detected =>", params.get("subject"));
       if (params.get("subject")) {
         this.subject = params.get("subject");
-        if(this.subject){
-          this.onSubjectChange(this.subject);
+        if (this.subject) {
+          this.onCourseChange(this.subject);
         }
-      }else{
+      } else {
         this.subject = "";
       }
     });
   }
 
-  onSubjectChange(subject: string){
+  onCourseChange(subject: string) {
     this.subject = subject ? subject : "";
-    console.log("MyDash @onSubjectChange", subject);
-    if(this.subject){
+    console.log("MyDash @onCourseChange", subject);
+    if (this.subject) {
       this.master.fetchSubjectData(this.subject).subscribe((subject) => {
         this.subjectData = subject;
       });
-      this.subjectTopics$ = this.master.fetchAllSubjectTopics(this.subject);
+      this.jobSubjects$ = this.master.fetchAllSubjectTopics(this.subject);
       //this.subjectTopics = this.master.getTopicsBySubject(this.resources, this.subject);
       //this.subjectTopics = this.subjectData.topics;
-      console.log("MyDash #2 subjectTopics", this.subjectTopics$);
+      console.log("MyDash #2 jobSubjects", this.jobSubjects$);
     }
   }
 
   onSubscribe(subject: string) {
     console.log("MyDash onSubscribe", subject);
-    this.snackService.display('snackbar-dark',subject+' added to learning list!','bottom','center');
+    this.snackService.display('snackbar-dark', subject + ' added to learning list!', 'bottom', 'center');
   }
 
-  viewMeritList(){
-    this.snackService.display('snackbar-dark','Only Top 3 members are listed currently.','bottom','center');
+  viewMeritList() {
+    this.snackService.display('snackbar-dark', 'Only Top 3 members are listed currently.', 'bottom', 'center');
   }
 
-  goToSubjects(){
+  goToSubjects() {
     console.log("MyDash goToSubjects", this.subject);
     this.router.navigate(['/dashboard', this.subject]);
+    this.snackService.display('snackbar-dark', 'Switched to ' + this.subject + ' Dash', 'bottom', 'center');
   }
+
+  openCourseLauncher(action: 'default' | 'custom', data?: any) {
+    console.log("CoursePicker openDialog", action, data);
+    let varDirection: Direction;
+    if (localStorage.getItem('isRtl') === 'true') {
+      varDirection = 'rtl';
+    } else {
+      varDirection = 'ltr';
+    }
+    const dialogRef = this.dialog.open(CoursePickerComponent, {
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100vw',
+      panelClass: 'full-screen-dialog',
+      data: { topicItem: data, action },
+      direction: varDirection,
+      autoFocus: false,
+      disableClose: false
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log("CoursePicker close result", result);
+        const action = 'add';
+        this.onCourseChange(result);
+        // this.showNotification(
+        //   action === 'add' ? 'snackbar-success' : 'black',
+        //   `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
+        //   'bottom',
+        //   'center'
+        // );
+      }
+    });
+  }
+
 }

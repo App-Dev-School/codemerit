@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-
-export class TopicItem {
+import { TopicItemBasic } from '@core/models/dtos/TopicDtos';
+export class TopicItem implements TopicItemBasic {
   id?: number;
   image?: string;
   title: string;
