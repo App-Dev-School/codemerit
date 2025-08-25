@@ -16,7 +16,7 @@
     <form class="register-form m-4" [formGroup]="topicForm" (ngSubmit)="submit()">
       
       <div class="row">
-          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
             <mat-form-field class="example-full-width" appearance="fill">
               <mat-label>Topic Name</mat-label>
               <input matInput formControlName="title" required placeholder="Name of the topic">
@@ -50,6 +50,15 @@
               </mat-select>
             </mat-form-field>
           </div>
+
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Topic Description</mat-label>
+              <textarea matInput formControlName="description" required
+                placeholder="Short description of topic"></textarea>
+            </mat-form-field>
+          </div>
+
           </div>
 
         <div class="row">
@@ -69,16 +78,9 @@
 <!-- Other Fields -->
         @if (!topicForm.get('hideOtherFields')?.value) {
  <div class="row">
-             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Description</mat-label>
-              <textarea matInput formControlName="description" required
-                placeholder="Short description of topic"></textarea>
-            </mat-form-field>
-          </div>
           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
             <mat-form-field class="example-full-width">
-              <mat-label>Parent Topic for this Sub-Topic</mat-label>
+              <mat-label>Parent Topic for this Topic</mat-label>
               <mat-select formControlName="parent">
                 <mat-option>-- None --</mat-option>
                 @for (group of topicGroups; track group) {
@@ -91,21 +93,21 @@
               </mat-select>
             </mat-form-field>
           </div>
-          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 mb-2">
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
             <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Order</mat-label>
+              <mat-label>Topic Order</mat-label>
               <input matInput formControlName="order" type="number" min="0" max="99" maxlength="2"
                 (keydown)="restrictInput($event)" placeholder="Serial no. for sequence">
             </mat-form-field>
           </div>
-          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 mb-2">
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
             <mat-form-field class="example-full-width" appearance="fill">
               <mat-label>Weight</mat-label>
               <input matInput formControlName="weight"
                 (keydown)="restrictInput($event)" placeholder="% coverage in subject">
             </mat-form-field>
           </div>
-          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 mb-2">
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
             <mat-form-field class="example-full-width" appearance="fill">
               <mat-label>Popularity</mat-label>
               <input matInput formControlName="popularity" (keydown)="restrictInput($event)"

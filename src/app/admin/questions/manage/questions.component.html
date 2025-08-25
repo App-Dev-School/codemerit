@@ -116,16 +116,10 @@
                 </mat-row>
               </table>
               <!-- Loading spinner -->
-              @if (isLoading) {
-              <div class="tbl-spinner">
-                <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
-                </mat-progress-spinner>
-              </div>
-              }
-
-              @if (isLoading) {
+              @if (isLoading || dataSource.data.length === 0) {
               <div class="no-results text-center" [style.display]="dataSource.data.length === 0 ? '' : 'none'">
-                Loading Questions
+              <img src="assets/images/icons/loading.gif" class="smallLoadingIcon">
+                <h4 class="col-grey">Loading Questions</h4>
               </div>
               }
               <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"

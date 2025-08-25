@@ -73,14 +73,12 @@ export class TopicFormComponent {
     this.topicItems = this.action === 'edit' ? data.topicItem : new TopicItem({}); // Create a blank object
     this.topicForm = this.createContactForm();
     this.topicGroups = this.masterSrv.topics;
-    //filter topics
-     this.topicGroups = this.topicGroups.filter(topic => topic.subjectId == data.topicItem.subjectId);
 
-      this.topicForm.get('subjectId')?.valueChanges.subscribe(subject => {
+    this.topicForm.get('subjectId')?.valueChanges.subscribe(subject => {
       this.topicGroups = this.masterSrv.topics;
-       if (subject > 0) {
-         this.topicGroups = this.topicGroups.filter(topic => topic.subjectId == subject);
-       }
+      if (subject > 0) {
+        this.topicGroups = this.topicGroups.filter(topic => topic.subjectId == subject);
+      }
     });
 
     if (this.action === 'edit') {
@@ -90,7 +88,7 @@ export class TopicFormComponent {
         title: data.topicItem.title,
         description: data.topicItem.description,
         label: data.topicItem.label,
-        subjectId: ''+data.topicItem.subjectId,
+        subjectId: '' + data.topicItem.subjectId,
         order: data.topicItem.order,
         weight: data.topicItem.weight,
         popularity: data.topicItem.popularity,
@@ -129,9 +127,9 @@ export class TopicFormComponent {
       popularity: [this.topicItems.popularity, [
         Validators.max(999)
       ]],
-      hideOtherFields: [true],
       description: [this.topicItems.description],
-      isPublished: [false]
+      isPublished: [true],
+      hideOtherFields: [true]
     });
 
   }

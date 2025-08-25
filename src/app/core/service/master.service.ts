@@ -40,7 +40,7 @@ private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
     return this.httpService.getWithoutAuth('apis/master/data').pipe(
       tap((res : {error:boolean, message: string, data: MasterData}) => {
         if(!res.error){
-        console.error('fetched master data', res.data);
+        console.log('CodeMerit master data', res.data);
         this.data = res.data;
         localStorage.setItem(this.storageKey, JSON.stringify(res));
         this.dataLoaded.next(true);

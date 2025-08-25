@@ -44,20 +44,21 @@ import { TopicItem } from '../../topics/manage/topic-item.model';
     MatDatepickerModule,
     MatCheckboxModule,
     MatChip
-]
+  ]
 })
 export class QuestionFormPage implements OnInit {
   questionSlug: string;
-action: string;
+  action: string;
+  actionText: string;
   dialogTitle: string;
+  loading: boolean;
+  submitted: boolean;
   topicImage = 'assets/images/icons/topic.png';
   questionForm: UntypedFormGroup;
   initialFormValue: any;
   questionItem: QuestionItem;
   subjects: Subject[] = [];
-  //topics: { id: number, title: string }[] = [];
   topics: TopicItem[] = [];
-  //subjectId
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -65,19 +66,15 @@ action: string;
     private masterSrv: MasterService,
     private fb: UntypedFormBuilder
   ) {
-    this.questionItem = new QuestionItem(); // Create a blank object
+    this.questionItem = new QuestionItem();
     this.questionForm = this.createQuestionForm();
-    //CT - fetch real subjects and topics
-    // this.masterSrv.getMockSubjects().subscribe(data => {
-    //   this.subjects = data;
-    // });
     this.subjects = this.masterSrv.subjects;
     this.topics = this.masterSrv.topics;
   }
 
   createQuestionForm(): UntypedFormGroup {
     return this.fb.group({
-      id: [this.questionItem.id],
+      id: [''+this.questionItem?.id],
       question: [this.questionItem.question, [Validators.required, Validators.minLength(3)]],
       subjectId: ['' + this.questionItem.subjectId, [Validators.required]],
       level: [this.questionItem.level, [Validators.required]],
@@ -95,27 +92,24 @@ action: string;
   }
 
   ngOnInit() {
-  this.questionSlug = this.route.snapshot.paramMap.get('question-slug');
-  if (this.questionSlug) {
-    this.action = 'edit';
-    this.dialogTitle = 'Update Question';
-    this.loadQuestion(this.questionSlug);
-  } else {
-    this.action = 'create';
-    this.dialogTitle = 'Create New Question';
-  }
+    this.questionSlug = this.route.snapshot.paramMap.get('question-slug');
+    if (this.questionSlug) {
+      this.action = 'edit';
+      this.actionText = 'Updating Question';
+      this.dialogTitle = 'Update Question';
+      this.loadQuestion(this.questionSlug);
+    } else {
+      this.action = 'create';
+      this.actionText = 'Creating Question';
+      this.dialogTitle = 'Create New Question';
+    }
 
-  this.questionForm.get('subjectId')?.valueChanges.subscribe(subject => {
-      console.log("FilterTopic subject changed", subject);
+    this.questionForm.get('subjectId')?.valueChanges.subscribe(subject => {
       this.topics = this.masterSrv.topics;
-      //console.log("FilterTopic this.topics", JSON.stringify(this.topics));
-       if (subject > 0) {
-        //console.log("FilterTopic subject change ok", subject);
-         this.topics = this.topics.filter(topic => topic.subjectId == subject);
-       }
-       //console.log("FilterTopic this.topics now", this.topics);
+      if (subject > 0) {
+        this.topics = this.topics.filter(topic => topic.subjectId == subject);
+      }
     });
-    
     this.questionForm.get('questionType')?.valueChanges.subscribe(type => {
       if (type === 'Trivia') {
         this.questionForm.addControl('options', this.fb.array([
@@ -172,6 +166,7 @@ action: string;
 
   submit() {
     if (this.questionForm.valid) {
+      this.submitted = true;
       const formData = this.questionForm.getRawValue();
       if (this.action === 'edit') {
         const changedFields: any = {};
@@ -184,16 +179,18 @@ action: string;
           }
         }
         changedFields['questionType'] = formData.questionType;
-changedFields['test'] = '111';
+        changedFields['source'] = 'app';
         console.log('QuestionManager Changed fields:', changedFields);
         this.questionService
           .updateQuestion(changedFields, formData.id)
           .subscribe({
             next: (response) => {
               console.log('QuestionManager UpdateAPI response:', response);
+              this.submitted = false;
               this.navigateToQuestionList();
             },
             error: (error) => {
+              this.submitted = false;
               console.error('QuestionManager ###Update Error:', error);
               // Optionally display an error message to the user
             },
@@ -223,9 +220,11 @@ changedFields['test'] = '111';
           .subscribe({
             next: (response) => {
               console.log('QuestionManager CreateAPI response:', response);
+              this.submitted = false;
               this.navigateToQuestionList();
             },
             error: (error) => {
+              this.submitted = false;
               console.error('QuestionManager CreateAPI Error:', error);
             },
           });
@@ -242,59 +241,62 @@ changedFields['test'] = '111';
     }
   }
 
-  loadQuestion(slug: string){
-  if(slug.length > 1){
-    this.questionService
-          .getQuestionBySlug(slug)
-          .subscribe({
-            next: (response : QuestionItemDetail) => {
-              console.log('QuestionManager Get API response:', response);
-              this.questionItem = response;
-              //Must be called after data populated
-              this.patchForm(response);
-      this.initialFormValue = this.questionForm.getRawValue(); // Store original
-            },
-            error: (error) => {
-              console.error('QuestionManager Get API Error:', error);
-            },
-          });
-  }
+  loadQuestion(slug: string) {
+    if (slug.length > 1) {
+      this.loading = true;
+      this.questionService
+        .getQuestionBySlug(slug)
+        .subscribe({
+          next: (response: QuestionItemDetail) => {
+            console.log('QuestionManager Get API response:', response);
+            this.loading = false;
+            this.questionItem = response;
+            //Must be called after data populated
+            this.patchForm(response);
+            this.initialFormValue = this.questionForm.getRawValue(); // Store original
+          },
+          error: (error) => {
+            this.loading = false;
+            console.error('QuestionManager Get API Error:', error);
+          },
+        });
+    }
   }
 
   patchForm(data: QuestionItemDetail): void {
-  this.questionForm.patchValue({
-    id: data.id,
-    question: data.question,
-    subjectId: '' + data.subjectId,
-    level: data.level,
-    marks: '' + data.marks,
-    order: '' + data.order,
-    timeAllowed: '' + data.timeAllowed,
-    status: data.status,
-    questionType: data.questionType,
-    //topicIds: data.topicIds || [],
-    hint: data.hint,
-    answer: data.answer
-  });
+    this.questionForm.patchValue({
+      id: data.id,
+      question: data.question,
+      subjectId: '' + data.subjectId,
+      level: data.level,
+      marks: '' + data.marks,
+      order: '' + data.order,
+      timeAllowed: '' + data.timeAllowed,
+      status: data.status,
+      questionType: data.questionType,
+      //topicIds: data.topicIds || [],
+      hint: data.hint,
+      answer: data.answer
+    });
 
-  if (data.questionType === 'Trivia' && data.options?.length) {
-    console.log("QuestionEditor Patch Options", data.options);
-    const optionControls = data.options.map(opt => this.fb.group({
-      option: [opt.option, Validators.required],
-      correct: [opt.correct]
-    }));
-    console.log("QuestionEditor optionControls", optionControls);
-    
-    this.questionForm.setControl('options', this.fb.array(optionControls, this.atLeastOneCorrectOption()));
-  } else {
-    this.questionForm.setControl('options', this.fb.array([]));
+    if (data.questionType === 'Trivia' && data.options?.length) {
+      console.log("QuestionEditor Patch Options", data.options);
+      const optionControls = data.options.map(opt => this.fb.group({
+        option: [opt.option, Validators.required],
+        correct: [opt.correct]
+      }));
+      console.log("QuestionEditor optionControls", optionControls);
+
+      this.questionForm.setControl('options', this.fb.array(optionControls, this.atLeastOneCorrectOption()));
+    } else {
+      this.questionForm.setControl('options', this.fb.array([]));
+    }
+
+    //console.log("QuestionEditor Patch Topics", data.topicIds);
   }
 
-   //console.log("QuestionEditor Patch Topics", data.topicIds);
-}
 
-
-  navigateToQuestionList(){
+  navigateToQuestionList() {
     this.router.navigate(['/admin/questions/list']);
   }
 

@@ -42,7 +42,7 @@ export class QuestionService {
     if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/question'+'?subjectId=1';
+    const url = 'apis/question'+'?subjectId=0';
     return this.httpService.get(url, api_key).pipe(
       map((response: QueestionListDto) => {
         return response.data;
