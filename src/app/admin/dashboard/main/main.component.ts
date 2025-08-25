@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
 import { InitialRole } from '@core/models/initial-role.data';
@@ -39,7 +39,10 @@ export class MainComponent implements OnInit {
   title = 'LMS Stat';
   subtitle = 'LSMS Resource Overview';
   
-  constructor(private route: ActivatedRoute, private authService: AuthService, private snackService: SnackbarService) {
+  constructor(private route: ActivatedRoute, 
+    private authService: AuthService, 
+    private router: Router,
+    private snackService: SnackbarService) {
     console.log("MainComponent constructor", this.subject);
   }
   ngOnInit() {
@@ -61,5 +64,13 @@ export class MainComponent implements OnInit {
       }
     });
     /********* CHECK ROUTE PARAM REQUESTS ***********/
+  }
+
+  goToQuestions(){
+    this.router.navigate(['/admin/questions/list']);
+  }
+
+  goToTopicManager(){
+    this.router.navigate(['/admin/topics/list']);
   }
 }

@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
 @Component({
   selector: 'app-topics-list',
   imports: [
@@ -28,30 +29,22 @@ import { Observable } from 'rxjs';
 })
 export class TopicsListComponent {
   @Input() subjectTopics: Observable<any[]>;
-
+  generatingQuiz = false;
+  loadingText = "Looking for a Quiz";
   constructor(public router: Router) {
-
   }
 
-  //unused
-  async openTopicContent(slug:string) {
-    // const modal = await this.modalController.create({
-    //   component: TopicExplorerComponent,
-    //   cssClass: 'full-screen-modal',
-    //   backdropDismiss: false,
-    //   componentProps: {
-    //     title: 'Full Screen Modal',
-    //     content: slug
-    //   }
-    // });
-    // return await modal.present();
-    this.router.navigate(["quiz/start/javascript"]);
-    //this.navCtrl.navigateRoot(['./quiz/start/javascript']);
+  async launchTopicQuiz(topic:TopicItem) {
+    const slug = topic.slug;
+    this.generatingQuiz = true;
+    this.loadingText = "Generating Quiz for "+topic.title;
+    setTimeout(() => {
+      this.router.navigate(['quiz/take', slug]);
+      this.generatingQuiz = false;
+    }, 5000);
   }
 
   async launchTopicExplorer(slug:string) {
     this.router.navigate(["learn/topic/angular17"]);
-    //this.navCtrl.navigateForward(['./learn/topic/angular17']);
-    //this.navCtrl.navigateRoot(['./learn/topic/angular17']);
   }
 }

@@ -109,7 +109,17 @@
   z-index: 1001;
   text-align: center;
   font-weight: bold;
-  animation: popUp 0.3s ease-out;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .animToast.warning {

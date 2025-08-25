@@ -276,7 +276,8 @@ export class QuestionFormPage implements OnInit {
       questionType: data.questionType,
       //topicIds: data.topicIds || [],
       hint: data.hint,
-      answer: data.answer
+      answer: data.answer,
+      topicIds: data.topicIds || []
     });
 
     if (data.questionType === 'Trivia' && data.options?.length) {

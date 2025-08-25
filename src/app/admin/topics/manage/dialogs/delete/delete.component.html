@@ -1,7 +1,6 @@
 <div class="container">
-  <h3 mat-dialog-title>Are you sure?</h3>
   <div mat-dialog-content>
-    <h4>Are you sure that you want to delete {{data.name}} permanently?</h4>
+    <h4>Are you sure that you want to delete {{ data?.name ?? 'this topic'}} permanently?</h4>
   </div>
   <div mat-dialog-actions class="mb-1">
     <button mat-flat-button class="formCancelBtn" (click)="confirmDelete()">

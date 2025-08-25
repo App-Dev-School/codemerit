@@ -7,8 +7,20 @@
 
      <div class="row clearfix">
         <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
-          <p>Add a widget here</p>
-        <!-- <app-chart-card3 [title]="title" [subtitle]="subtitle"></app-chart-card3> -->
+           <mat-card>
+          <mat-card-header>
+            <mat-card-title>Popular Topics</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="text-center">
+                  <p class="fw-bold banner-big-font">100</p>
+                  <h4 class="fw-bold banner-big-font2 col-green">Total Questions</h4>
+                  </div>
+            <div class="text-center p-t-20 p-b-20">
+              <button mat-stroked-button color="primary" (click)="goToQuestions()">View All Questions</button>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
 
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
@@ -130,22 +142,7 @@
     <div class="row clearfix">
 
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
-        <mat-card>
-          <mat-card-header class="header-style">
-            <mat-card-title>New Users</mat-card-title>
-            <a mat-button color="primary" href="#" (click)="$event.preventDefault();">View All</a>
-          </mat-card-header>
-          <mat-card-content>
-            <ng-scrollbar style="height: 410px" visibility="hover">
-              <app-subscription-table-widget></app-subscription-table-widget>
-            </ng-scrollbar>
-          </mat-card-content>
-          <mat-card-footer>
-            <div class="text-center p-t-20">
-              <button mat-stroked-button routerLink="/users/list" color="primary">View All Users</button>
-            </div>
-          </mat-card-footer>
-        </mat-card>
+        AAA
       </div>
 
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">

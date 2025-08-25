@@ -15,6 +15,7 @@ export class QuestionItem {
   hint: string;
   answer: string;
   slug: string;
+  topicIds: number[];
   createdAt : string;
 
   constructor(question: Partial<QuestionItem> = {}) {
@@ -32,6 +33,7 @@ export class QuestionItem {
     this.answer = question.answer || '';
     this.slug = question.slug || '';
     this.createdAt = question.createdAt || '';
+    this.topicIds = question.topicIds || [];
   }
 
   public getRandomID(): string {

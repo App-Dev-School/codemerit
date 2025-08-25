@@ -5,7 +5,7 @@ import { AuthService } from '@core';
 import { QueestionListDto } from '@core/models/dtos/QuestionDtos';
 import { HttpService } from '@core/service/http.service';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, delay, map } from 'rxjs/operators';
 import { QuestionItem, QuestionItemDetail } from './question-item.model';
 
 @Injectable({
@@ -62,7 +62,7 @@ export class QuestionService {
       })
     };
     const url = 'apis/question/create';
-    return this.httpService.postWithParams(url, payload, httpOptions).pipe(
+    return this.httpService.postWithParams(url, payload, httpOptions).pipe(delay(3000),
       map((response) => {
         return response;
       }),
@@ -76,7 +76,7 @@ export class QuestionService {
       api_key = this.authService.currentUserValue.token;
     }
     const url = 'apis/question/update?id=' + questionId;
-    return this.httpService.put(url, payload, api_key).pipe(
+    return this.httpService.put(url, payload, api_key).pipe(delay(1000),
       map((response) => {
         return response; // return response from API
       }),

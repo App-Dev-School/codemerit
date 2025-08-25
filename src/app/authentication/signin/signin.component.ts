@@ -102,6 +102,11 @@ export class SigninComponent
     }
   }
 
+  activateTestLogin(){
+      this.authForm.get('username')?.setValue('user3@codemerit.com');
+      this.authForm.get('password')?.setValue('605161');
+  }
+
   onSubmitDummy() {
     this.submitted = true;
     this.loading = true;

@@ -34,8 +34,8 @@ export class TopicItem implements TopicItemBasic {
     this.numQuestions = topic.numQuestions || 0;
     this.numTrivia = topic.numTrivia || 0;
     this.votes = topic.votes || 0;
-    this.weight = topic.weight || 0;
-    this.popularity = topic.popularity || 0;
+    this.weight = topic.weight || 1;
+    this.popularity = topic.popularity || 1;
   }
 
   public getRandomID(): string {

@@ -32,35 +32,32 @@
               <img src="/assets/images/icons/student.png" alt="User Image" />
               <div class="user-details">
                 <h4 class="name">{{result.userFullName}}</h4>
-                <h5 class="exam">{{result.quizName}}</h5>
+                <h4 class="exam">{{result.quizName}}</h4>
               </div>
             </div>
             <div class="score-circle">
-               <div class="totalScore">
-            <h3>{{result.score}}%</h3>
-          </div>
+          <app-quiz-progress [title]="''"></app-quiz-progress>
+          <!-- <hr class="dim-divider">
+          <h5 class="col-purple text-center">Your Score</h5> -->
             </div>
           </div>
         </div>
       </div>
       <hr class="dim-divider">
-      <!-- <div id="chart">
-        <div echarts [options]="pie_chart" class="echart-height"></div>
-      </div> -->
       <div class="row">
-        <div class="col-4">
-          <p class="text-muted font-15 text-truncate">Total</p>
+        <div class="col-md-4 col-lg-4 col-sm-12">
+          <p class="text-muted font-15 text-truncate">Questions</p>
           <p class="font-b-600 font-24">
             <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.total}}
           </p>
         </div>
-        <div class="col-4">
+        <div class="col-md-4 col-lg-4 col-sm-12">
           <p class="text-muted font-15 text-truncate">Correct</p>
           <p class="font-b-600 font-24">
             <i class="fas fa-arrow-circle-down col-red m-r-5"></i>{{result.correct}}
           </p>
         </div>
-        <div class="col-4">
+        <div class="col-md-4 col-lg-4 col-sm-12">
           <p class="text-muted text-truncate">Wrong</p>
           <p class="font-b-600 font-24">
             <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.wrong}}

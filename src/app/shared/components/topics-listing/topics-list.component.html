@@ -1,4 +1,13 @@
 <div class="row">
+  @if (generatingQuiz) {
+    <div class="overlay"></div>
+      <div class="animToast loading">
+        <img src="assets/images/icons/cube.gif" class="loadingIcon">
+        <h4>{{loadingText}}</h4>
+        <h5>Please wait ...</h5>
+      </div>
+  }
+  @if (!generatingQuiz) {
   @for (group of subjectTopics|async; track group) {
   <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
     <mat-card class="example-card" appearance="outlined">
@@ -28,7 +37,7 @@
         }
       </mat-card-content>
       <mat-card-actions align="end">
-        <button mat-button class="icon-button" (click)="openTopicContent(group.slug)"><mat-icon>code</mat-icon> Take
+        <button mat-button class="icon-button" (click)="launchTopicQuiz(group)"><mat-icon>code</mat-icon> Take
           Test</button>
         <button mat-button class="icon-button" matTooltip="{{group.coverage <= 0 ? '' : (group.coverage>= 100
           ? 'Revise' : 'Learn')}}" (click)="launchTopicExplorer(group.slug)">
@@ -39,4 +48,5 @@
     </mat-card>
   </div>
   }
+}
 </div>

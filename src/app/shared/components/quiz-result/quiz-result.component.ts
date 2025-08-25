@@ -6,6 +6,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuizResult } from '@core/models/quiz';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { TopicsScore } from '../topic-wise-score/topics-score.component';
+import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
 //import { EChartsCoreOption } from 'echarts/core';
 //import { NgxEchartsDirective, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 
@@ -20,7 +21,8 @@ import { TopicsScore } from '../topic-wise-score/topics-score.component';
       NgScrollbar,
       NgTemplateOutlet, 
       //NgxEchartsDirective
-      TopicsScore
+      TopicsScore,
+      QuizProgressComponent
       ],
   // providers: [
   //   {

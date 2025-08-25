@@ -176,7 +176,9 @@ export class TopicFormComponent {
           title: formData.title,
           subjectId: Number.parseInt(formData.subjectId),
           order: formData.order,
-          parent: null,
+          parent: formData.parent !== "" ? formData.parent : null,
+          weight : formData.weight,
+          popularity : formData.popularity,
           isPublished: formData.isPublished,
           description: formData.description
         }
