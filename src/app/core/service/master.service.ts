@@ -12,41 +12,56 @@ export interface MasterData {
   topics: any[];
   jobRoles: any[];
 }
+export interface JobSubject {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+}
+
+export interface JobRole {
+  id: number;
+  title: string;
+  slug: string;
+  subjects: JobSubject[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class MasterService {
-private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
+  private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
   private dataLoaded = new BehaviorSubject<boolean>(false);
   readonly dataLoaded$ = this.dataLoaded.asObservable();
   private storageKey = 'masterData';
-  
+  jobRoleSubjectMap: JobRole[];
+
+
   constructor(private router: Router, private httpService: HttpService,
     public authService: AuthService) {
-      const stored = localStorage.getItem(this.storageKey);
+    const stored = localStorage.getItem(this.storageKey);
     if (stored) {
       this.data = JSON.parse(stored);
       this.dataLoaded.next(true);
     }
-    }
+  }
 
-    /***
-     * Enhance to handle failures
-     * To maintain sync using timestamp
-     */
-    fetchMasterDataFromAPI() {
+  /***
+   * Enhance to handle failures
+   * To maintain sync using timestamp
+   */
+  fetchMasterDataFromAPI() {
     return this.httpService.getWithoutAuth('apis/master/data').pipe(
-      tap((res : {error:boolean, message: string, data: MasterData}) => {
-        if(!res.error){
-        console.log('CodeMerit master data', res.data);
-        this.data = res.data;
-        localStorage.setItem(this.storageKey, JSON.stringify(res));
-        this.dataLoaded.next(true);
+      tap((res: { error: boolean, message: string, data: MasterData }) => {
+        if (!res.error) {
+          console.log('MasterDataFlow master data fetched', res.data);
+          this.data = res.data;
+          localStorage.setItem(this.storageKey, JSON.stringify(res));
+          this.dataLoaded.next(true);
         }
       }),
       catchError((err) => {
-        console.error('Failed to fetch master data', err);
+        console.log("MasterDataFlow Error fetching master data", err);
         return of(null);
       })
     );
@@ -60,6 +75,30 @@ private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
     this.data = { subjects: [], topics: [], jobRoles: [] };
     localStorage.removeItem(this.storageKey);
     this.dataLoaded.next(false);
+  }
+
+  fetchJobRoleSubjectMapping() {
+    console.log('MasterDataFlow Invoking JobMap API');
+    return this.httpService.getWithoutAuth('apis/master/jobRoles').pipe(
+      tap((res: { error: boolean, message: string, data: any }) => {
+        if (!res.error) {
+          console.log('MasterDataFlow JobMap API SUCCESS>>>', res.data);
+          this.setJobRoleMap(res.data);
+        }
+      }),
+      catchError((err) => {
+        console.error('MasterDataFlow Failed to fetch job map', err);
+        return of(null);
+      })
+    );
+  }
+
+  getJobRoleMap() {
+    return this.jobRoleSubjectMap;
+  }
+
+  setJobRoleMap(map: any) {
+    this.jobRoleSubjectMap = map;
   }
 
   /*** 
@@ -89,7 +128,7 @@ private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
     );
   }
 
-   getCountries(): Observable<Country[]> {
+  getCountries(): Observable<Country[]> {
     return this.httpService.getLocalMock('assets/data/master/countries.json').pipe(
       map((data: any) => data as Country[])
     );
@@ -100,5 +139,5 @@ private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
       map((data: any) => data as Subject[])
     );
   }
-  
+
 }

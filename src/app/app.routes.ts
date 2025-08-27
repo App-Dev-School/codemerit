@@ -23,10 +23,10 @@ export const APP_ROUTE: Route[] = [
             },
             {
                 path: 'dashboard',
-                //canActivate: [AuthGuard],
-                // data: {
-                //     role: Role.Subscriber,
-                // },
+                canActivate: [AuthGuard],
+                data: {
+                    role: Role.Subscriber,
+                },
                 loadChildren: () =>
                     import('./subscriber/subscriber.routes').then((m) => m.SUBSCRIBER_ROUTE),
             },

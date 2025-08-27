@@ -81,6 +81,13 @@
 @include meta.load-css("browser/_ie10.scss");
 @include meta.load-css("browser/_ie11.scss");
 
+.dim-divider {
+  border: none;
+  height: 1px;
+  background-color: rgb(222, 212, 212);
+  margin: 1rem 0;
+}
+
 .no-results{
     padding: 3rem 2rem 2rem 2rem;
 }

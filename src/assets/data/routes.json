@@ -86,8 +86,8 @@
       "submenu": []
     },
     {
-      "path": "/dashboard/select-subject?action=quiz",
-      "title": "Skill Assessment",
+      "path": "/dashboard/select-job-role",
+      "title": "Job Roles",
       "iconType": "material-icons-outlined",
       "icon": "space_dashboard",
       "class": "",

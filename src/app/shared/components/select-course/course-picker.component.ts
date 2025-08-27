@@ -13,9 +13,9 @@ import { MasterService } from '@core/service/master.service';
 import { Observable, of } from 'rxjs';
 
 @Component({
-    selector: 'app-course-picker',
-    imports: [
-      AsyncPipe,
+  selector: 'app-course-picker',
+  imports: [
+    AsyncPipe,
     NgClass,
     MatCardModule,
     MatDividerModule,
@@ -23,9 +23,9 @@ import { Observable, of } from 'rxjs';
     MatChipsModule,
     MatRippleModule,
     MatIconModule,
-    ],
-    templateUrl: './course-picker.component.html',
-    styleUrls: ['./course-picker.component.scss']
+  ],
+  templateUrl: './course-picker.component.html',
+  styleUrls: ['./course-picker.component.scss']
 })
 export class CoursePickerComponent implements OnInit {
   @Input() minimal = true;
@@ -35,16 +35,17 @@ export class CoursePickerComponent implements OnInit {
   isLoading = true;
   mode: 'dialog' | 'route' = 'route';
   userId?: string;
+  pickerTheme = 'Default';//Default or Merit
 
   constructor(private master: MasterService, private router: Router,
     private route: ActivatedRoute,
     @Optional() public dialogRef?: MatDialogRef<CoursePickerComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: any) {
-      if (this.dialogRef) {
+    if (this.dialogRef) {
       this.mode = 'dialog';
       this.userId = data?.id;
       console.log("CoursePicker Dialog Data ", data);
-      
+
     } else {
       this.mode = 'route';
       this.route.paramMap.subscribe(params => {
@@ -65,25 +66,24 @@ export class CoursePickerComponent implements OnInit {
 
   switchJobRole(course: any) {
     console.log("CoursePicker switchJobRole", course);
-    this.subjectSelected.emit(course);
-    this.dialogRef.close(course);
+    this.subjectSelected.emit(course.slug);
+    this.dialogRef.close(course.slug);
   }
 
   pickJobRole(course: any) {
-    this.onSubscribe.emit(course);
+    this.onSubscribe.emit(course.slug);
     console.log("", course);
-if (this.mode === 'dialog' && this.dialogRef) {
-    this.dialogRef.close(course);
-  }
-  //slug
-    this.router.navigate(['/dashboard/start', course.id]);
+    if (this.mode === 'dialog' && this.dialogRef) {
+      this.dialogRef.close(course.slug);
+    }
+    this.router.navigate(['/dashboard/start', course.slug]);
   }
 
   close() {
     if (this.mode === 'dialog' && this.dialogRef) {
       this.dialogRef.close('Dialog Closed');
     } else {
-      this.router.navigate(['/select-what']);
+      this.router.navigate(['/dashboard/start']);
     }
   }
 }

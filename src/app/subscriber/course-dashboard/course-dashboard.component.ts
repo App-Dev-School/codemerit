@@ -10,16 +10,14 @@ import { Direction } from '@angular/cdk/bidi';
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { AuthConstants } from '@config/AuthConstants';
 import { AuthService, User } from '@core';
-import { MasterService } from '@core/service/master.service';
+import { JobRole, MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { slideInOutAnimation } from '@shared/animations';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { CourseProgressComponent } from "@shared/components/course-progress/course-progress.component";
 import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -46,8 +44,7 @@ export class CourseDashboardComponent implements OnInit {
   userData: Observable<User>;
   showContent = true;
   course = "";
-  subjectData: any;
-  jobSubjects$: Observable<any>;
+  subjectData: JobRole;
   courseChartConfig = {
     showTitle: false,
     showSubtitle: false,
@@ -63,7 +60,7 @@ export class CourseDashboardComponent implements OnInit {
     public authService: AuthService,
     private snackService: SnackbarService
   ) {
-    console.log("MyDash User ", this.authService.currentUser);
+    console.log("CourseDash User ", this.authService.currentUser);
     this.userData = this.authService.currentUser;
     //this.userData.profile = localStorage.getItem(AuthConstants.CACHE_FULL_PROFILE);
   }
@@ -85,11 +82,11 @@ export class CourseDashboardComponent implements OnInit {
 
   takeRouteParams() {
     const course = this.route.snapshot.paramMap.get('course');
-    console.log("MyDash ParamMap course", course);
+    console.log("CourseDash ParamMap course", course);
     this.route.paramMap.subscribe(params => {
-      console.log("MyDash @RouteParam change detected =>", params.get("subject"));
-      if (params.get("subject")) {
-        this.course = params.get("subject");
+      console.log("CourseDash @RouteParam change detected =>", params.get("course"));
+      if (params.get("course")) {
+        this.course = params.get("course");
         if (this.course) {
           this.onCourseChange(this.course);
         }
@@ -99,24 +96,34 @@ export class CourseDashboardComponent implements OnInit {
     });
   }
 
+  filterCourse(allJobRoles: any) {
+    this.subjectData = allJobRoles.find(role => role.slug === this.course);
+    console.log("CourseDash Filter ****", this.subjectData);
+  }
+
   onCourseChange(course: string) {
     this.course = course ? course : "";
-    console.log("MyDash @onCourseChange", course);
+    console.log("CourseDash @1", course);
     if (this.course) {
-      // this.master.fetchSubjectData(this.course).subscribe((subject) => {
-      //   this.subjectData = subject;
-      // });
-      const jobRoles = this.master.jobRoles;
-      console.log("MyDash #2 jobRoles", jobRoles);
-      //this.jobSubjects$ = this.master.fetchAllSubjectTopics(this.course);
-      //this.subjectTopics = this.master.getTopicsBySubject(this.resources, this.subject);
-      //this.subjectTopics = this.subjectData.topics;
-      //console.log("MyDash #2 jobSubjects", this.jobSubjects$);
+      //get this from a service first
+      const allJobs = this.master.getJobRoleMap();
+      if (allJobs) {
+          this.filterCourse(allJobs);
+      }else{
+      //get this from server
+      this.master.fetchJobRoleSubjectMapping().subscribe((data: any) => {
+        console.log("CourseDash #2 fetchJobRoleSubjectMapping", data);
+        if (data && !data.error && data.data) {
+          const allJobRoles = data.data;
+          this.filterCourse(allJobRoles);
+        }
+      });
+      }
     }
   }
 
   onSubscribe(subject: string) {
-    console.log("MyDash onSubscribe", subject);
+    console.log("CourseDash onSubscribe", subject);
     this.snackService.display('snackbar-dark', subject + ' added to learning list!', 'bottom', 'center');
   }
 
@@ -125,13 +132,21 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   goToSubjects() {
-    console.log("MyDash goToSubjects", this.course);
+    console.log("CourseDash goToSubjects", this.course);
     this.router.navigate(['/dashboard', this.course]);
     this.snackService.display('snackbar-dark', 'Switched to ' + this.course + ' Dash', 'bottom', 'center');
   }
 
+  launchSubject(item:any) {
+    this.router.navigate(['/dashboard/learn', item?.title]);
+  }
+
+    goToCourses() {
+    this.router.navigate(['/dashboard/select-job-role']);
+  }
+
   openCourseLauncher(action: 'default' | 'custom', data?: any) {
-    console.log("CoursePicker openDialog", action, data);
+    console.log("CourseDash openDialog", action, data);
     let varDirection: Direction;
     if (localStorage.getItem('isRtl') === 'true') {
       varDirection = 'rtl';

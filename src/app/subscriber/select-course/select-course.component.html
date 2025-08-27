@@ -1,11 +1,13 @@
 @if(showContent){
 <section class="content" [@slideInOut]>
   <div class="content-block">
-    <div class="row m-t-20 clearfix">
+    <div class="row m-t-0 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="cardLike">
-          <h2 class="col-grey">Select Your Job Role</h2>
-          <h6 class="col-grey">Pick what you are or what you want to just bcome.</h6>
+          <!-- <h2 class="col-grey">Select Your Job Role</h2>
+          <h6 class="col-grey">Pick what you are or what you want to just bcome.</h6> -->
+          <h4 class="text-center">Pick your Designation</h4>
+           <hr class="dim-divider">
           <app-course-picker [minimal]="false" (subjectSelected)="onCourseChange($event)"
             (onSubscribe)="onSubscribe($event)"></app-course-picker>
         </div>

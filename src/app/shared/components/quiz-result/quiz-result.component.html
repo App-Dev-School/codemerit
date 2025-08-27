@@ -23,32 +23,29 @@
       <mat-card-title class="center-header">Quiz Report</mat-card-title>
     </mat-card-header> -->
     <mat-card-content>
-      <div class="row">
-        <div class="col-12">
-           <h5 class="center-header">Quiz Report</h5>
-           <hr class="dim-divider">
-          <div class="result-card" style="--score: {{result.score}}">
-            <div class="user-info">
+      <div class="row align-items-center">
+    <div class="col-auto">
+      <!-- Left aligned content -->
+       <div class="user-info">
               <img src="/assets/images/icons/student.png" />
               <div class="user-details">
                 <h4 class="name">{{result.userFullName}}</h4>
                 <h4 class="exam">{{result.quizName}}</h4>
               </div>
             </div>
-            <div class="score-circle">
-              <div class="row">
-        <div class="col-12">
-          <app-quiz-progress [title]="''"></app-quiz-progress>
-          </div>
-          <div class="col-12">
-          <h5 class="col-purple text-center">Your Score</h5>
-          <h6 class="col-green">More details about score</h6>
-          </div>
-          </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          <h6 class="col-green">Angular Test</h6>
+      <p class="mb-0">{{result.userFullName}} took {{result.quizName}} on Aug 24 2025.</p>
+    </div>
+    <div class="col-auto ms-auto text-center">
+      <!-- Right aligned content -->
+        <app-quiz-progress [title]="''"></app-quiz-progress>
+      <h5 class="center-header">Overall Score</h5>
+      <p class="mb-0">Grade : A</p>
+      <p class="mb-0">Time Efficiency : Good</p>
+           <hr class="dim-divider">
+    </div>
+  </div>
+
       <hr class="dim-divider">
       <div class="row">
         <div class="col-4 col-md-4 col-lg-4 col-sm-12">

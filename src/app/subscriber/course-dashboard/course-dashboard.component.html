@@ -5,74 +5,75 @@
       <app-breadcrumb [title]="' Dashboard'" [items]="[]" [active_item]="'Dashboard'"></app-breadcrumb>
     </div>
 
-    <div class="row clearfix">
+    <!-- <div class="row m-t-20 clearfix">
       <div class="col-12 col-md-12 col-lg-12">
-        <!-- <h5>{{ (userData | async) | json }}</h5> -->
         <app-congratulations-card [userName]="(userData| async)?.firstName+' '+(userData| async)?.lastName"></app-congratulations-card>
       </div>
+    </div> -->
+
+    <div class="row match-height clearfix">
+      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+        <app-medal-card [userName]="(userData| async)?.firstName+' '+(userData| async)?.firstName"></app-medal-card>
+
+            <div class="row text-center m-t-20 clearfix">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        <h4 class="text-center clearfix">Explore Subjects</h4>
+        </div>
+        @if (subjectData && subjectData?.subjects) {
+          @for (item of subjectData?.subjects; track item) {
+            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <h5>{{item?.title}}</h5>
+            <p class="card-text font-small-3">{{item?.description}}. {{item.title}} is an essential subject while preparing for
+              {{subjectData.title}} role.</p>
+            <button type="button" (click)="launchSubject(item)" class="btn btn-outline-default" rippleEffect>Launch {{item?.title}}</button>
+            <img src="{{item?.image}}" class="subject-badge" />
+          </div>
+        </div>
+        </div>
+        }
+        }
     </div>
 
-    <div class="row match-height m-t-20 clearfix">
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+      </div>
+       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
         <div class="card">
           <div class="m-b-20">
             <div class="contact-grid">
               <div class="profile-header bg-dark">
                 <div class="user-name">{{(userData| async)?.firstName}} {{(userData| async)?.lastName}}</div>
-                <div class="name-center">{{ course}}</div>
+                @if ((userData| async)?.designation) {
+                <div class="name-center">{{ (userData| async)?.designation }}</div>
+                }@else{
+                <div class="name-center">New Joiner</div>
+                }
               </div>
-              <img src="assets/images/users/user.jpg" class="user-img" alt="">
+              <img src="assets/images/users/user.jpg" class="user-img" alt="{{(userData| async)?.firstName}}">
               <p>
-                India
+                 {{(userData| async)?.country}}
               </p>
             </div>
             <div class="text-center p-t-20">
-              <button mat-stroked-button (click)="openCourseLauncher('default')" color="primary"><i
-                  class="material-icons">lock</i> Switch Role</button>
               
-                  <button type="button" (click)="openCourseLauncher('default')" class="btn btn-outline-default" rippleEffect>Pick a Dream Job Role</button>
+              @if ((userData| async)?.designation) {
+              <button type="button" (click)="openCourseLauncher('default')" class="btn btn-outline-default"
+                rippleEffect>
+                Select Designation</button>
+              }
+              <hr>
+                <button mat-flat-button (click)="goToCourses()" color="primary"><i class="material-icons">lock</i> Switch
+                Role</button>
 
             </div>
           </div>
         </div>
-        <app-course-progress [title]="course" [config]="courseChartConfig"
+        <hr class="col-grey">
+        <app-course-progress [title]="subjectData?.title" [config]="courseChartConfig"
           [subtitle]="'Metadata tag here'"></app-course-progress>
       </div>
-      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-        <app-medal-card [userName]="(userData| async)?.firstName+' '+(userData| async)?.firstName"></app-medal-card>
-      </div>
     </div>
-
-    <div class="row clearfix">
-      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-        <app-course-progress [title]="course" [config]="courseChartConfig"
-          [subtitle]="'Metadata tag here'"></app-course-progress>
-          <hr>
-          <h4>Course Progress</h4>
-      </div>
-      <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
-        <!-- <app-subject-performance-card [subject]="subjectData"
-          [indicators]="subjectData?.indicators"></app-subject-performance-card> -->
-      </div>
-    </div>
-
-    <div class="row clearfix">
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-<div class="card card-congratulation-medal card-dark">
-          <div class="card-body">
-            <h5>Hey {{(userData| async)?.firstName}}!</h5>
-            <p class="card-text font-small-3">Get Started with your Up-Skill Journey.</p>
-            <!-- <h3 class="mb-75 mt-4">
-              <a href="javascript:void(0);">Explore and collaborate more to unlock more badges, recognitions and priviledges.</a>
-            </h3> -->
-            <h4>Select a desired job role to start learning and assessing your skills.</h4>
-            <button type="button" class="btn btn-outline-default" rippleEffect>Pick a Dream Job Role</button>
-            <img src="assets/images/icons/badge.svg" class="congratulation-medal" alt="Medal Pic" />
-          </div>
-        </div>
-      </div>
-    </div>
-
+    
   </div>
 </section>
 }

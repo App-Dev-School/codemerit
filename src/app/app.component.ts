@@ -31,12 +31,6 @@ export class AppComponent implements OnInit{
 
   //Added for animation in router outlet
   ngOnInit() {
-  // this.master.getMockSubjects().subscribe(data => {
-  //     if(data){
-  //     localStorage.setItem(AuthConstants.SUBJECTS, JSON.stringify(data));
-  //     }
-  //   });
-    //This is additional code
     //Enable component transition globally
     // this._router.events.subscribe(event => {
     //   if (event instanceof NavigationStart) {
@@ -48,6 +42,16 @@ export class AppComponent implements OnInit{
     //     }, 300); // Adjust based on your animation duration
     //   }
     // });
+
+    const jobMap = this.master.getJobRoleMap();
+    console.log("MasterDataFlow checking jobMap EXISTS", jobMap);
+    //jobMap
+    if(true){
+    console.log("MasterDataFlow FETCHING NEW jobMap");
+    this.master.fetchJobRoleSubjectMapping();
+    }else{
+      console.log("MasterDataFlow jobMap EXISTS", jobMap);
+    }
   }
 
 }

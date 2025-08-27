@@ -11,6 +11,7 @@ export class User {
   email : string;
   designation: string;
   token!: string;
+  country: string;
   accountStatus!: string;
   createdAt!: string;
 }
