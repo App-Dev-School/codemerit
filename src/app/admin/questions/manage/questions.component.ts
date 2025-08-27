@@ -74,11 +74,11 @@ import { Router } from '@angular/router';
 export class QuestionsComponent implements OnInit, OnDestroy {
   columnDefinitions = [
     { def: 'select', label: 'Checkbox', type: 'check',  class: 'col-type', visible: false },
-    { def: 'question', label: 'Question', type: 'text', class: 'col-question',  visible: true },
+    { def: 'question', label: 'Question', type: 'text', class: 'mat-col-question',  visible: true },
     { def: 'subject', label: 'Subject', type: 'text', class: 'col-subject', visible: true },
-    { def: 'questionType', label: 'Type', type: 'text', class: 'col-type', visible: true },
+    { def: 'questionType', label: 'Type', type: 'text', class: 'col-type', visible: false },
     { def: 'status', label: 'Status', type: 'text', class: 'col-status',  visible: true },
-    { def: 'level', label: 'Level', type: 'text', class: 'col-level', visible: true },
+    { def: 'level', label: 'Level', type: 'text', class: 'col-level', visible: false },
     { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-actions', visible: true },
   ];
 
@@ -149,19 +149,14 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   }
 
   addNew() {
-    //this.openDialog('add');
     this.router.navigate(['/admin/questions/create']);
   }
 
   editCall(row: QuestionItem) {
-     console.log("QuestionManager editCall", row);
-    //this.openDialog('edit', row);
     this.router.navigate(['/admin/questions/update', row.slug]);
   }
 
-  //Unused
-  openDialog(action: 'add' | 'edit', data?: QuestionItem) {
-    console.log("QuestionManager openDialog", action, data);
+  openDialog(data?: QuestionItem) {
     let varDirection: Direction;
     if (localStorage.getItem('isRtl') === 'true') {
       varDirection = 'rtl';
@@ -169,10 +164,8 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       varDirection = 'ltr';
     }
     const dialogRef = this.dialog.open(QuestionFormComponent, {
-      //width: '90vw',
-      //maxWidth: '100vw',
       width: '90vw',
-      data: { topicItem: data, action },
+      data: { data: data },
       direction: varDirection,
       autoFocus: false,
       disableClose: true
@@ -181,16 +174,9 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log("QuestionManager close result", result);
-        if (action === 'add') {
-          if (result.data)
-            this.dataSource.data = [result.data, ...this.dataSource.data];
-        } else {
-          this.updateRecord(result);
-        }
-        this.refreshTable();
         this.showNotification(
-          action === 'add' ? 'snackbar-success' : 'black',
-          `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
+          'black',
+          `Displaying Question.`,
           'bottom',
           'center'
         );
@@ -263,7 +249,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     this.selection.clear();
     this.showNotification(
       'snackbar-danger',
-      `${totalSelect} Record(s) Deleted Successfully...!!!`,
+      `${totalSelect} Question(s) Deleted Successfully.`,
       'bottom',
       'center'
     );

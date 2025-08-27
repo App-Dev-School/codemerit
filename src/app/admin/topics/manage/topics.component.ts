@@ -76,17 +76,18 @@ import { TopicItem } from './topic-item.model';
 })
 export class TopicsComponent implements OnInit, OnDestroy {
   columnDefinitions = [
-    { def: 'select', label: 'Checkbox', type: 'check', visible: true },
-    { def: 'title', label: 'Name', type: 'text', visible: true },
-    { def: 'subjectName', label: 'Subject', type: 'text', visible: true },
+    { def: 'select', label: 'Checkbox', type: 'check', class: 'col-default', visible: true },
+    { def: 'title', label: 'Name', type: 'text', class: 'col-title', visible: true },
+    { def: 'subjectName', label: 'Subject', type: 'text', class: 'col-default', visible: true },
     {
       def: 'label',
       label: 'Level',
       type: 'text',
+      class: 'col-default',
       visible: true,
     },
-    { def: 'numQuestions', label: 'Questions', type: 'text', visible: true },
-    { def: 'actions', label: 'Actions', type: 'actionBtn', visible: true },
+    { def: 'numQuestions', label: 'Questions', type: 'text', class: 'col-default', visible: true },
+    { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-default', visible: true },
   ];
 
   dataSource = new MatTableDataSource<TopicItem>([]);

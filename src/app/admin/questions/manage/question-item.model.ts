@@ -46,5 +46,5 @@ export class QuestionItem {
 
 export class QuestionItemDetail extends QuestionItem {
   options?: {id:number;option:string;correct:boolean}[];
-  //topics: string;
+  topics: {id:number;title:string}[];
 }

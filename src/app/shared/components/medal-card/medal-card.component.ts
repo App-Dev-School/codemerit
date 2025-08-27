@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './medal-card.component.scss'
 })
 export class MedalCardComponent {
-
+  @Input() userName: string = 'Guest';
   constructor() {
   }
 

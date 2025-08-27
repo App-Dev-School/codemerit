@@ -1,14 +1,12 @@
     export interface QuestionAttempt {
     //id:number
-    user_id: number
-    question_id: number
-    selected_option: number
-    is_skipped: boolean
+    userId: number
+    questionId: number
+    selectedOption: number
+    isSkipped: boolean
     hintUsed: boolean
-    is_correct: boolean
-    score: number
-    //frontend
+    isCorrect: boolean
     answer?: string
     createdAt: string
-    updated_at : string
+    updatedAt : string
   }

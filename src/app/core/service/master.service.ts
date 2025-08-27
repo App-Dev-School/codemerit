@@ -20,11 +20,10 @@ export class MasterService {
 private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
   private dataLoaded = new BehaviorSubject<boolean>(false);
   readonly dataLoaded$ = this.dataLoaded.asObservable();
-
   private storageKey = 'masterData';
   
   constructor(private router: Router, private httpService: HttpService,
-    public authService: AuthService) { 
+    public authService: AuthService) {
       const stored = localStorage.getItem(this.storageKey);
     if (stored) {
       this.data = JSON.parse(stored);

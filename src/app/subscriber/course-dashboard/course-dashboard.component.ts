@@ -5,25 +5,22 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
 
+import { Direction } from '@angular/cdk/bidi';
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { MatChip, MatChipSet } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthConstants } from '@config/AuthConstants';
+import { AuthService, User } from '@core';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { slideInOutAnimation } from '@shared/animations';
+import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { CourseProgressComponent } from "@shared/components/course-progress/course-progress.component";
-import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
+import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
+import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { Observable } from 'rxjs';
-import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { Direction } from '@angular/cdk/bidi';
-import { MatDialog } from '@angular/material/dialog';
-import { AuthConstants } from '@config/AuthConstants';
-import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
-import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -40,14 +37,13 @@ import { MedalCardComponent } from '@shared/components/medal-card/medal-card.com
     MatCheckboxModule,
     MatTooltipModule,
     CongratulationsCardComponent,
-    SubjectPerformanceCardComponent,
     CourseProgressComponent,
     MedalCardComponent,
     CoursePickerComponent
   ]
 })
 export class CourseDashboardComponent implements OnInit {
-  userData: any;
+  userData: Observable<User>;
   showContent = true;
   course = "";
   subjectData: any;
@@ -67,26 +63,21 @@ export class CourseDashboardComponent implements OnInit {
     public authService: AuthService,
     private snackService: SnackbarService
   ) {
-    console.log("CodeMerit #5 ", this.authService.currentUser);
+    console.log("MyDash User ", this.authService.currentUser);
     this.userData = this.authService.currentUser;
-    this.userData.profile = localStorage.getItem(AuthConstants.CACHE_FULL_PROFILE);
+    //this.userData.profile = localStorage.getItem(AuthConstants.CACHE_FULL_PROFILE);
   }
 
   ngOnInit() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
-        // Animation trigger can be based on route change
         this.showContent = false; // Hide content when navigation starts
       }
       if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
-        // Ensure content is shown when navigation is complete
         this.showContent = true;
       }
     });
-    //this.takeRouteParams();
-    // if(this.subject){
-    //   this.onCourseChange(this.subject);
-    // }
+    this.takeRouteParams();
     setTimeout(() => {
       //launch the course picker
     }, 4000);
@@ -108,17 +99,19 @@ export class CourseDashboardComponent implements OnInit {
     });
   }
 
-  onCourseChange(subject: string) {
-    this.course = subject ? subject : "";
-    console.log("MyDash @onCourseChange", subject);
+  onCourseChange(course: string) {
+    this.course = course ? course : "";
+    console.log("MyDash @onCourseChange", course);
     if (this.course) {
-      this.master.fetchSubjectData(this.course).subscribe((subject) => {
-        this.subjectData = subject;
-      });
-      this.jobSubjects$ = this.master.fetchAllSubjectTopics(this.course);
+      // this.master.fetchSubjectData(this.course).subscribe((subject) => {
+      //   this.subjectData = subject;
+      // });
+      const jobRoles = this.master.jobRoles;
+      console.log("MyDash #2 jobRoles", jobRoles);
+      //this.jobSubjects$ = this.master.fetchAllSubjectTopics(this.course);
       //this.subjectTopics = this.master.getTopicsBySubject(this.resources, this.subject);
       //this.subjectTopics = this.subjectData.topics;
-      console.log("MyDash #2 jobSubjects", this.jobSubjects$);
+      //console.log("MyDash #2 jobSubjects", this.jobSubjects$);
     }
   }
 

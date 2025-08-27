@@ -27,6 +27,7 @@ import { M } from "../../../../../node_modules/@angular/material/line.d-C-QdueRc
 import { Status } from '@core/models/status.enum';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { TopicItem } from '../../topics/manage/topic-item.model';
+import { QuizQuestionComponent } from '@shared/components/quiz-question/quiz-question.component';
 
 @Component({
   selector: 'app-question-form',
@@ -43,7 +44,7 @@ import { TopicItem } from '../../topics/manage/topic-item.model';
     MatSelectModule,
     MatDatepickerModule,
     MatCheckboxModule,
-    MatChip
+    MatChip, QuizQuestionComponent
   ]
 })
 export class QuestionFormPage implements OnInit {
@@ -136,6 +137,7 @@ export class QuestionFormPage implements OnInit {
 
   createOption(): UntypedFormGroup {
     return this.fb.group({
+      id: [null],
       option: ['', Validators.required],
       correct: [false] // Optional if needed
     });
@@ -171,10 +173,13 @@ export class QuestionFormPage implements OnInit {
       if (this.action === 'edit') {
         const changedFields: any = {};
         // Compare each field
+        console.log('QuestionManager FIELDS#:', formData);
         for (const key in formData) {
           if (formData.hasOwnProperty(key)) {
+            console.log('QuestionManager FIELDS#1:', key, formData[key]);
             if (formData[key] !== this.initialFormValue[key]) {
               changedFields[key] = formData[key];
+              //console.log('QuestionManager FIELDS#1:');
             }
           }
         }
@@ -264,6 +269,10 @@ export class QuestionFormPage implements OnInit {
   }
 
   patchForm(data: QuestionItemDetail): void {
+    let topicIds = [];
+    if(data.topics && data.topics.length > 0){
+      topicIds = data.topics.map(topic => topic.id);
+    }
     this.questionForm.patchValue({
       id: data.id,
       question: data.question,
@@ -274,15 +283,15 @@ export class QuestionFormPage implements OnInit {
       timeAllowed: '' + data.timeAllowed,
       status: data.status,
       questionType: data.questionType,
-      //topicIds: data.topicIds || [],
       hint: data.hint,
       answer: data.answer,
-      topicIds: data.topicIds || []
+      topicIds: topicIds || []
     });
 
     if (data.questionType === 'Trivia' && data.options?.length) {
       console.log("QuestionEditor Patch Options", data.options);
       const optionControls = data.options.map(opt => this.fb.group({
+        id: [opt.id],
         option: [opt.option, Validators.required],
         correct: [opt.correct]
       }));
@@ -292,10 +301,8 @@ export class QuestionFormPage implements OnInit {
     } else {
       this.questionForm.setControl('options', this.fb.array([]));
     }
-
     //console.log("QuestionEditor Patch Topics", data.topicIds);
   }
-
 
   navigateToQuestionList() {
     this.router.navigate(['/admin/questions/list']);

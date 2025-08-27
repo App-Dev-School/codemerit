@@ -40,23 +40,8 @@
           </div>
           <div class="overflow-auto">
             <div class="responsive_table">
-              <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table" style="table-layout: fixed; width: 100%;">
-                <!-- Checkbox Column 
-                <ng-container matColumnDef="select">
-                  <mat-header-cell *matHeaderCellDef>
-                    <mat-checkbox (change)="$event ? masterToggle() : null"
-                      [checked]="selection.hasValue() && isAllSelected()" color="primary"
-                      [indeterminate]="selection.hasValue() && !isAllSelected()" [ngClass]="'tbl-checkbox'">
-                    </mat-checkbox>
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-                      [checked]="selection.isSelected(row)" [ngClass]="'tbl-checkbox'" color="primary">
-                    </mat-checkbox>
-                  </mat-cell>
-                </ng-container>
-                -->
-
+              <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table"
+                style="table-layout: fixed; width: 100%;">
                 @for (column of columnDefinitions; track column) {
                 <!-- Skip rendering if column.label is "select" or "action" -->
                 @if (column.type === 'check' || column.type === 'actionBtn') {
@@ -67,8 +52,7 @@
                   <mat-header-cell [ngClass]="column.class" *matHeaderCellDef mat-sort-header>
                     <span class="truncate-text">{{ column.label }}</span>
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let row" [ngClass]="column.class"
-                    [matTooltip]="row.name">
+                  <mat-cell *matCellDef="let row" [ngClass]="column.class" [matTooltip]="row.name">
                     <span class="mobile-label">{{ column.label }}:</span>
                     <span class="badge" [ngClass]="{
         'badge-solid-purple': row.status === 'Pending',
@@ -84,12 +68,17 @@
                   <mat-header-cell [ngClass]="column.class" *matHeaderCellDef mat-sort-header>
                     <span class="truncate-text">{{ column.label }}</span>
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let row" [ngClass]="column.class" 
-                    [matTooltip]="row.name">
+                  <mat-cell *matCellDef="let row" [ngClass]="column.class" [matTooltip]="row.name">
                     <span class="mobile-label">{{ column.label }}:</span>
-                    <span class="truncate-text">
+                    @if (column.def == 'question') {
+                    <div class="full-text">{{ row.id }}. {{ row[column.def] }}</div>
+                    }@else {
+                    <span class="truncate-text">{{ row[column.def] }}</span>
+                    }
+
+                    <!-- <span class="truncate-text">
                       {{ row[column.def] }}
-                    </span>
+                    </span> -->
                   </mat-cell>
                 </ng-container>
                 }
@@ -112,14 +101,19 @@
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
                 <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: getDisplayedColumns();"
-                  (click)="editCall(row)" [style.cursor]="'pointer'" matRipple>
+                  (click)="openDialog(row)" [style.cursor]="'pointer'" matRipple>
                 </mat-row>
               </table>
               <!-- Loading spinner -->
               @if (isLoading || dataSource.data.length === 0) {
               <div class="no-results text-center" [style.display]="dataSource.data.length === 0 ? '' : 'none'">
-              <img src="assets/images/icons/loading.gif" class="smallLoadingIcon">
+                @if (isLoading) {
+                <img src="assets/images/icons/loading.gif" class="smallLoadingIcon">
                 <h4 class="col-grey">Loading Questions</h4>
+                }
+                @if (dataSource.data.length === 0) {
+                <h4 class="col-grey">No Question Found</h4>
+                }
               </div>
               }
               <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"

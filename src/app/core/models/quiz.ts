@@ -23,6 +23,7 @@ export interface Quiz {
 
   export interface QuizResult {
     //id:number
+    resultCode?: string
     userId: string
     userFullName : string;
     quizId: string
@@ -31,11 +32,12 @@ export interface Quiz {
     correct: number
     wrong: number
     unanswered: number
+    timeSpent: number
     score: number
     //by default take all topics in the subject - heavy
     //Also allow user to pick at time of creation
     //refresh topics list after the quiz is generated for better skill filtering
-    //remarks?: string
+    remarks?: string
     dateAttempted?: string
     //attempts?: QuestionAttempt[]
     attempts?: any[]

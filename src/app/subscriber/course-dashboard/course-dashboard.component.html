@@ -5,69 +5,74 @@
       <app-breadcrumb [title]="' Dashboard'" [items]="[]" [active_item]="'Dashboard'"></app-breadcrumb>
     </div>
 
-    <div class="row match-height m-t-20 clearfix">
+    <div class="row clearfix">
       <div class="col-12 col-md-12 col-lg-12">
-        <app-congratulations-card></app-congratulations-card>
+        <!-- <h5>{{ (userData | async) | json }}</h5> -->
+        <app-congratulations-card [userName]="(userData| async)?.firstName+' '+(userData| async)?.lastName"></app-congratulations-card>
       </div>
     </div>
 
-     <div class="row match-height m-t-20 clearfix">
-<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-         <div class="card">
+    <div class="row match-height m-t-20 clearfix">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+        <div class="card">
           <div class="m-b-20">
             <div class="contact-grid">
               <div class="profile-header bg-dark">
-                <div class="user-name">{{userData?.firstName}} {{userData?.lastName}}</div>
+                <div class="user-name">{{(userData| async)?.firstName}} {{(userData| async)?.lastName}}</div>
                 <div class="name-center">{{ course}}</div>
               </div>
               <img src="assets/images/users/user.jpg" class="user-img" alt="">
               <p>
-               India
+                India
               </p>
-              </div>
-            <div class="text-center p-t-20">
-              <button mat-stroked-button (click)="openCourseLauncher('default')" color="primary"><i class="material-icons">lock</i> Switch Role</button>
-              <button mat-stroked-button class="m-r-10" routerLink="/job-roles" color="primary"><i class="material-icons">find_replace</i> All Job Roles</button>
             </div>
+            <div class="text-center p-t-20">
+              <button mat-stroked-button (click)="openCourseLauncher('default')" color="primary"><i
+                  class="material-icons">lock</i> Switch Role</button>
+              
+                  <button type="button" (click)="openCourseLauncher('default')" class="btn btn-outline-default" rippleEffect>Pick a Dream Job Role</button>
+
             </div>
           </div>
-          <app-course-progress [title]="course" [config]="courseChartConfig" [subtitle]="'Metadata tag here'"></app-course-progress>
         </div>
-      <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
-        <app-medal-card></app-medal-card>
+        <app-course-progress [title]="course" [config]="courseChartConfig"
+          [subtitle]="'Metadata tag here'"></app-course-progress>
+      </div>
+      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+        <app-medal-card [userName]="(userData| async)?.firstName+' '+(userData| async)?.firstName"></app-medal-card>
       </div>
     </div>
 
     <div class="row clearfix">
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-         <div class="card">
-          <div class="m-b-20">
-            <div class="contact-grid">
-              <div class="profile-header bg-dark">
-                <div class="user-name">{{userData?.firstName}} {{userData?.lastName}}</div>
-                <div class="name-center">{{ course}}</div>
-              </div>
-              <img src="assets/images/users/user.jpg" class="user-img" alt="">
-              <p>
-               India
-              </p>
-              </div>
-            <div class="text-center p-t-20">
-              <button mat-stroked-button (click)="openCourseLauncher('default')" color="primary"><i class="material-icons">lock</i> Switch Role</button>
-              <button mat-stroked-button class="m-r-10" routerLink="/job-roles" color="primary"><i class="material-icons">find_replace</i> All Job Roles</button>
-            </div>
-            </div>
-          </div>
-          <app-course-progress [title]="course" [config]="courseChartConfig" [subtitle]="'Metadata tag here'"></app-course-progress>
-        </div>
+        <app-course-progress [title]="course" [config]="courseChartConfig"
+          [subtitle]="'Metadata tag here'"></app-course-progress>
+          <hr>
+          <h4>Course Progress</h4>
+      </div>
       <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
-       <!-- <p>Subject Dashboard Summary Widget</p>
-       <app-course-picker [minimal]="true" (subjectSelected)="onSubjectChange($event)"></app-course-picker> -->
-
-       <app-subject-performance-card [subject]="subjectData"
-          [indicators]="subjectData?.indicators"></app-subject-performance-card>
+        <!-- <app-subject-performance-card [subject]="subjectData"
+          [indicators]="subjectData?.indicators"></app-subject-performance-card> -->
       </div>
     </div>
+
+    <div class="row clearfix">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+<div class="card card-congratulation-medal card-dark">
+          <div class="card-body">
+            <h5>Hey {{(userData| async)?.firstName}}!</h5>
+            <p class="card-text font-small-3">Get Started with your Up-Skill Journey.</p>
+            <!-- <h3 class="mb-75 mt-4">
+              <a href="javascript:void(0);">Explore and collaborate more to unlock more badges, recognitions and priviledges.</a>
+            </h3> -->
+            <h4>Select a desired job role to start learning and assessing your skills.</h4>
+            <button type="button" class="btn btn-outline-default" rippleEffect>Pick a Dream Job Role</button>
+            <img src="assets/images/icons/badge.svg" class="congratulation-medal" alt="Medal Pic" />
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 }

@@ -71,8 +71,11 @@ export class CoursePickerComponent implements OnInit {
 
   pickJobRole(course: any) {
     this.onSubscribe.emit(course);
-    //change state of subject
     console.log("", course);
+if (this.mode === 'dialog' && this.dialogRef) {
+    this.dialogRef.close(course);
+  }
+  //slug
     this.router.navigate(['/dashboard/start', course.id]);
   }
 

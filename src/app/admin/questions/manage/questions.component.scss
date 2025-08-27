@@ -4,24 +4,28 @@
 :host ::ng-deep .advance-table .mat-mdc-header-cell {
   font-weight: 500;
 }
-:host ::ng-deep .mat-column-name {
-  min-width: 150px;
+
+::ng-deep .mat-col-question {
+  min-width: min(50%, 400px) !important;
 }
 
-.col-question {
-  width: 40%!important;
-  //min-width: min(40%, 300px) !important;
+.full-text{
+  white-space: normal;
+  word-wrap: break-word;
+  max-height: 100px;
+  overflow: auto; 
+  padding: 8px;
 }
 
-.col-subject {
+::ng-deep .mat-col-subject {
+  width: 50px;
+}
+
+::ng-deep .mat-col-type {
   width: 10%;
 }
 
-.col-type {
-  width: 10%;
-}
-
-.col-status {
+::ng-deep .mat-col-status {
   width: 10%;
 }
 

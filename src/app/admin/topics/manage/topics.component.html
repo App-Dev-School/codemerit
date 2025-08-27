@@ -66,16 +66,12 @@
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [matTooltip]="row.name">
                     <span class="mobile-label">{{ column.label }}:</span>
-                    <span class="truncate-text">
-                      {{ row[column.def] }}
-                    </span>
-                     <span class="badge" [ngClass]="{
-        'badge-solid-purple': row.status === 'Pending',
-        'badge-solid-green': row.status === 'Active',
-        'badge-solid-red': row.status === 'Inactive'
-      }">
-                        {{ row.status }}
-                      </span>
+
+                    @if (column.def == 'title') {
+                    <div class="full-text">{{ row.id }}. {{ row[column.def] }}</div>
+                    }@else {
+                    <span class="truncate-text">{{ row[column.def] }}</span>
+                    }
                   </mat-cell>
                 </ng-container>
                 }

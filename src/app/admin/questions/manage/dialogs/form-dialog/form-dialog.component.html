@@ -1,11 +1,8 @@
 <div class="addContainer">
   <div class="modalHeader">
     <div class="avatarDetails">
-      <label class="hoverable">
-        View Question
-      </label>
       <div class="modalTitle">
-       View Question
+       Question #{{questionItem.id}}
       </div>
     </div>
     <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
@@ -13,6 +10,6 @@
     </button>
   </div>
   <div mat-dialog-content>
-    <h3>View Question</h3>
+    <app-quiz-question [question]="questionItem"></app-quiz-question>
   </div>
 </div>

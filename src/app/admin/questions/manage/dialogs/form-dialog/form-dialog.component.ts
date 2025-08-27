@@ -22,11 +22,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MasterService } from '@core/service/master.service';
 import { QuestionItem } from '../../question-item.model';
 import { QuestionService } from '../../questions.service';
+import { QuizQuestionComponent } from '@shared/components/quiz-question/quiz-question.component';
 
 export interface DialogData {
   id: number;
   action: string;
-  questionItem: QuestionItem;
+  data: any;
 }
 
 @Component({
@@ -38,32 +39,21 @@ export interface DialogData {
     MatIconModule,
     MatDialogContent,
     FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
     MatDialogClose,
     MatCheckboxModule,
-    MatChip,
-    JsonPipe
+    QuizQuestionComponent
   ]
 })
 export class QuestionFormComponent {
   action: string;
   dialogTitle: string;
-  topicImage = 'assets/images/icons/topic.png';
-  questionForm: UntypedFormGroup;
-  initialFormValue: any;
-  questionItem: QuestionItem;
-  //subjects: Subject[] = [];
+  questionItem: any;
   constructor(
     public dialogRef: MatDialogRef<QuestionFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    public questionService: QuestionService,
-    private masterSrv: MasterService
+    public questionService: QuestionService
   ) {
-    
+    this.questionItem = data.data;
   }
 
   onNoClick(): void {

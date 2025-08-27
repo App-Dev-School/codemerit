@@ -1,0 +1,21 @@
+<div class="trivia-card">
+  <div class="question">{{question.question}}</div>
+  <ul class="options">
+  @for (item of question.options; track $index) {
+    <li [ngClass]="{correct : item.correct}">
+        @if(item.correct){
+            <span class="tick">✔</span> 
+        }
+        {{item.option}}
+    </li>
+  }
+
+  <mat-chip-set aria-label="Tags">
+              @for(topic of question.topics;track topic){
+              <mat-chip>{{topic.title}}
+                <!-- <span class="badge col-purple">{{topic.votes}}</span> -->
+              </mat-chip>
+              }
+            </mat-chip-set>
+  </ul>
+</div>

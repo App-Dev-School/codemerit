@@ -1,10 +1,13 @@
 <section class="content">
   <div class="content-block">
     <div class="block-header">
-      <h5 class="m-t-10">Add New Question</h5>
+      <h5 class="m-t-20">{{ action === 'edit' ? 'Update Question' : 'Add New Question'}}</h5>
     </div>
     <div class="row">
       <div class="col-12">
+        <!-- @if (action === 'edit' && questionItem) {
+          <app-quiz-question [question]="questionItem"></app-quiz-question>
+        } -->
          @if (submitted) {
       <div class="overlay"></div>
       <div class="animToast loading">

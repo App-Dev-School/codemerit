@@ -127,6 +127,7 @@ export class QuizService {
       correct,
       wrong,
       unanswered,
+      timeSpent : 0,
       score : Number(score),
       dateAttempted: new Date().toISOString(),
       attempts: questions.map(q => ({

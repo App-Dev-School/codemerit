@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FeatherIconsComponent } from '../feather-icons/feather-icons.component';
 
@@ -12,7 +12,7 @@ import { FeatherIconsComponent } from '../feather-icons/feather-icons.component'
   styleUrl: './congratulations-card.component.scss'
 })
 export class CongratulationsCardComponent {
-  
+  @Input() userName: string = "User";
   constructor() {
    
   }
