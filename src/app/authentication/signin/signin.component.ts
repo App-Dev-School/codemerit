@@ -42,7 +42,7 @@ export class SigninComponent
 
   ngOnInit() {
     this.authForm = this.formBuilder.group({
-      username: ['', Validators.required],
+      username: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
     if (!environment.production) {
@@ -70,16 +70,14 @@ export class SigninComponent
         .login(payload)
         .subscribe({
           next: (res) => {
-            console.log("SignInFlow #1 API responded ", res);
             if (res && !res.error && res.data) {
               setTimeout(() => {
-                console.log("SignInFlow #2 User dashboard redirection ", res.data.role);
                 const role = this.authService.currentUserValue.role;
                 if (role === Role.All || role === Role.Admin) {
                   this.router.navigate(['/admin/dashboard/main']);
                 } else {
                   if (role === Role.Subscriber) {
-                    this.router.navigate(['/dashboard']);
+                    this.router.navigate(['/dashboard/select-job-role']);
                   } else {
                     if (role === Role.Manager) {
                       this.router.navigate(['/dashboard?manage']);
@@ -102,46 +100,14 @@ export class SigninComponent
     }
   }
 
-  activateTestLogin(){
-      this.authForm.get('username')?.setValue('user3@codemerit.com');
-      this.authForm.get('password')?.setValue('605161');
+  activateTestLogin() {
+    this.authForm.get('username')?.setValue('user3@codemerit.com');
+    this.authForm.get('password')?.setValue('605161');
   }
 
-  onSubmitDummy() {
-    this.submitted = true;
-    this.loading = true;
-    this.error = '';
-    if (this.authForm.invalid) {
-      this.error = 'Username and Password not valid !';
-      return;
-    } else {
-      this.subs.sink = this.authService
-        .loginDummy(this.f['username'].value, this.f['password'].value)
-        .subscribe({
-          next: (res) => {
-            if (res) {
-              setTimeout(() => {
-                const role = this.authService.currentUserValue.role;
-                if (role === Role.All || role === Role.Admin) {
-                  this.router.navigate(['/admin/dashboard/main']);
-                } else if (role === Role.Subscriber) {
-                  this.router.navigate(['/dashboard']);
-                } else {
-                  this.router.navigate(['/authentication/signin']);
-                }
-                this.loading = false;
-              }, 1000);
-            } else {
-              this.error = 'Invalid Login';
-            }
-          },
-          error: (error) => {
-            this.error = error;
-            this.submitted = false;
-            this.loading = false;
-          },
-        });
-    }
+  activateTestUserLogin() {
+    this.authForm.get('username')?.setValue('student@codemerit.com');
+    this.authForm.get('password')?.setValue('788007');
   }
 
   connectWithGoogle() {

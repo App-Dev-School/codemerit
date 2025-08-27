@@ -1,21 +1,23 @@
 .example-card {
-    max-width: 400px;
-    margin-bottom: 8px;
+  max-width: 400px;
+  margin-bottom: 8px;
 }
-.example-card-footer {
-    padding: 16px;
-  }
-  .size40px{
-    width:40px!important;
-    height:40px!important;
-  }
 
-  .match-height {
-  > [class*='col'] {
+.example-card-footer {
+  padding: 16px;
+}
+
+.size40px {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.match-height {
+  >[class*='col'] {
     display: flex;
     flex-flow: column;
 
-    > .card {
+    >.card {
       flex: 1 1 auto;
     }
   }

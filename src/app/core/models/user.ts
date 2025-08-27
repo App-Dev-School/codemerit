@@ -9,6 +9,7 @@ export class User {
   lastName!: string;
   role: Role;
   email : string;
+  designation: string;
   token!: string;
   accountStatus!: string;
   createdAt!: string;

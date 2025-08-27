@@ -186,8 +186,9 @@ export class HeaderComponent
       localStorage.setItem('collapsed_menu', 'true');
     }
   }
+
   logout() {
-    this.subs.sink = this.authService.logout().subscribe((res) => {
+    this.subs.sink = this.authService.logout("Logout from Header").subscribe((res) => {
       if (!res.success) {
         this.router.navigate(['/authentication/signin']);
       }

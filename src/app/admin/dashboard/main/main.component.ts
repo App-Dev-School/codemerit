@@ -73,4 +73,8 @@ export class MainComponent implements OnInit {
   goToTopicManager(){
     this.router.navigate(['/admin/topics/list']);
   }
+
+  goToUsers(){
+    this.router.navigate(['/admin/users/list']);
+  }
 }

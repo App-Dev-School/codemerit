@@ -21,6 +21,9 @@ import { Observable } from 'rxjs';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { Direction } from '@angular/cdk/bidi';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthConstants } from '@config/AuthConstants';
+import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
+import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -36,15 +39,17 @@ import { MatDialog } from '@angular/material/dialog';
     MatIconModule,
     MatCheckboxModule,
     MatTooltipModule,
-    MeritListWidgetComponent,
+    CongratulationsCardComponent,
     SubjectPerformanceCardComponent,
     CourseProgressComponent,
+    MedalCardComponent,
     CoursePickerComponent
   ]
 })
 export class CourseDashboardComponent implements OnInit {
+  userData: any;
   showContent = true;
-  subject = "";
+  course = "";
   subjectData: any;
   jobSubjects$: Observable<any>;
   courseChartConfig = {
@@ -59,16 +64,13 @@ export class CourseDashboardComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog,
-    private authService: AuthService,
+    public authService: AuthService,
     private snackService: SnackbarService
   ) {
-    console.log("SignInFlow #5 ", this.authService.currentUser);
+    console.log("CodeMerit #5 ", this.authService.currentUser);
+    this.userData = this.authService.currentUser;
+    this.userData.profile = localStorage.getItem(AuthConstants.CACHE_FULL_PROFILE);
   }
-
-  // // You can also control the animation state dynamically
-  // toggleSlide() {
-  //   this.slideAnimation = (this.slideAnimation === 'in') ? 'out' : 'in';
-  // }
 
   ngOnInit() {
     this.router.events.subscribe(event => {
@@ -76,7 +78,6 @@ export class CourseDashboardComponent implements OnInit {
         // Animation trigger can be based on route change
         this.showContent = false; // Hide content when navigation starts
       }
-
       if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
         // Ensure content is shown when navigation is complete
         this.showContent = true;
@@ -92,29 +93,29 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   takeRouteParams() {
-    //const subject = this.route.snapshot.paramMap.get('subject');
-    //console.log("MyDash ParamMap subject", subject);
+    const course = this.route.snapshot.paramMap.get('course');
+    console.log("MyDash ParamMap course", course);
     this.route.paramMap.subscribe(params => {
       console.log("MyDash @RouteParam change detected =>", params.get("subject"));
       if (params.get("subject")) {
-        this.subject = params.get("subject");
-        if (this.subject) {
-          this.onCourseChange(this.subject);
+        this.course = params.get("subject");
+        if (this.course) {
+          this.onCourseChange(this.course);
         }
       } else {
-        this.subject = "";
+        this.course = "";
       }
     });
   }
 
   onCourseChange(subject: string) {
-    this.subject = subject ? subject : "";
+    this.course = subject ? subject : "";
     console.log("MyDash @onCourseChange", subject);
-    if (this.subject) {
-      this.master.fetchSubjectData(this.subject).subscribe((subject) => {
+    if (this.course) {
+      this.master.fetchSubjectData(this.course).subscribe((subject) => {
         this.subjectData = subject;
       });
-      this.jobSubjects$ = this.master.fetchAllSubjectTopics(this.subject);
+      this.jobSubjects$ = this.master.fetchAllSubjectTopics(this.course);
       //this.subjectTopics = this.master.getTopicsBySubject(this.resources, this.subject);
       //this.subjectTopics = this.subjectData.topics;
       console.log("MyDash #2 jobSubjects", this.jobSubjects$);
@@ -131,9 +132,9 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   goToSubjects() {
-    console.log("MyDash goToSubjects", this.subject);
-    this.router.navigate(['/dashboard', this.subject]);
-    this.snackService.display('snackbar-dark', 'Switched to ' + this.subject + ' Dash', 'bottom', 'center');
+    console.log("MyDash goToSubjects", this.course);
+    this.router.navigate(['/dashboard', this.course]);
+    this.snackService.display('snackbar-dark', 'Switched to ' + this.course + ' Dash', 'bottom', 'center');
   }
 
   openCourseLauncher(action: 'default' | 'custom', data?: any) {

@@ -59,10 +59,11 @@ export class SignupComponent implements OnInit, OnDestroy {
     private masterService: MasterService
   ) {
   }
+
   ngOnInit() {
     this.authData = this.authService.currentUserValue;
     if (this.authData.token && this.authData.firstName && this.authData.id) {
-      this.authService.logout().subscribe((res) => {
+      this.authService.logout("Sign Up").subscribe((res) => {
         this.snackbar.display("snackbar-danger", "Logging you out! Please login again.", "bottom", "center");
         if (!res.success) {
           this.router.navigate(['/authentication/signin']);
@@ -83,8 +84,6 @@ export class SignupComponent implements OnInit, OnDestroy {
       stars: [''],
     });
     if (!environment.production) {
-      //this.authForm.get('firstName')?.setValue('Test');
-      //this.authForm.get('email')?.setValue('user1@codemerit.com');
       this.authForm.get('city')?.setValue('Bengaluru');
       this.authForm.get('country')?.setValue('India');
       this.authForm.get('designation')?.setValue('IT Fresher (Graduate)');

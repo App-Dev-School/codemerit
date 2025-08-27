@@ -5,14 +5,25 @@
       <app-breadcrumb [title]="' Dashboard'" [items]="[]" [active_item]="'Dashboard'"></app-breadcrumb>
     </div>
 
+     <div class="row match-height m-t-20 clearfix">
+      <!-- Congratulations Card -->
+      <div class="col-12 col-md-6 col-lg-7">
+        <app-congratulations-card></app-congratulations-card>
+      </div>
+      <!-- Medal Card -->
+      <div class="col-12 col-md-6 col-lg-5">
+        <app-medal-card></app-medal-card>
+      </div>
+    </div>
+
     <div class="row clearfix">
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
          <div class="card">
           <div class="m-b-20">
             <div class="contact-grid">
               <div class="profile-header bg-dark">
-                <div class="user-name">John Doe</div>
-                <div class="name-center">{{ subject}}</div>
+                <div class="user-name">{{userData?.firstName}} {{userData?.lastName}}</div>
+                <div class="name-center">{{ course}}</div>
               </div>
               <img src="assets/images/users/user.jpg" class="user-img" alt="">
               <p>
@@ -25,7 +36,7 @@
             </div>
             </div>
           </div>
-          <app-course-progress [title]="subject" [config]="courseChartConfig" [subtitle]="'Metadata tag here'"></app-course-progress>
+          <app-course-progress [title]="course" [config]="courseChartConfig" [subtitle]="'Metadata tag here'"></app-course-progress>
         </div>
       <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
        <!-- <p>Subject Dashboard Summary Widget</p>

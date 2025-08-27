@@ -1,5 +1,5 @@
 // chart-card4.component.ts
-import { AsyncPipe, CommonModule, JsonPipe, NgClass } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -16,8 +16,7 @@ import { Observable, of } from 'rxjs';
     selector: 'app-course-picker',
     imports: [
       AsyncPipe,
-    JsonPipe,
-    //NgClass,
+    NgClass,
     MatCardModule,
     MatDividerModule,
     MatButtonModule,
@@ -29,7 +28,7 @@ import { Observable, of } from 'rxjs';
     styleUrls: ['./course-picker.component.scss']
 })
 export class CoursePickerComponent implements OnInit {
-  @Input() minimal = false;
+  @Input() minimal = true;
   courses: Observable<any>;
   @Output() subjectSelected = new EventEmitter<string>();
   @Output() onSubscribe = new EventEmitter<string>();
@@ -57,8 +56,6 @@ export class CoursePickerComponent implements OnInit {
   ngOnInit(): void {
     this.courses = of(this.master.jobRoles);
     console.log("CoursePicker", this.master.jobRoles);
-    
-    //this.courses = this.master.getMockSubjects();
     this.isLoading = false;
     // setTimeout(() => {
     //   this.subjects = this.master.getMockMySubjectsData();
@@ -66,16 +63,17 @@ export class CoursePickerComponent implements OnInit {
     // }, 2000);
   }
 
-  switchSubject(subjectName: string) {
-    console.log("CoursePicker switchSubject", subjectName);
-    //emit is needed for route only
-    this.subjectSelected.emit(subjectName);
-    this.dialogRef.close(subjectName);
+  switchJobRole(course: any) {
+    console.log("CoursePicker switchJobRole", course);
+    this.subjectSelected.emit(course);
+    this.dialogRef.close(course);
   }
 
-  subscribeSubject(subjectName: string) {
-    this.onSubscribe.emit(subjectName);
+  pickJobRole(course: any) {
+    this.onSubscribe.emit(course);
     //change state of subject
+    console.log("", course);
+    this.router.navigate(['/dashboard/start', course.id]);
   }
 
   close() {

@@ -41,8 +41,9 @@ export class SidebarComponent
   listMaxHeight?: string;
   listMaxWidth?: string;
   userFullName?: string;
-  userImg?: string;
+  userImg?: string = 'assets/images/users/user.jpg';
   userType?: string;
+  userDesignation?: string;
   headerHeight = 60;
   currentRoute?: string;
 
@@ -91,15 +92,21 @@ export class SidebarComponent
     }
   }
   ngOnInit() {
-    if (this.authService.currentUserValue && this.authService.currentUserValue.email) {
+    this.authService.currentUser.subscribe(user =>{
+      if(user){
+        console.log("SidebarWatchUser==> "+JSON.stringify(user));
+      }
+    });
+
+      if (this.authService.currentUserValue && this.authService.currentUserValue.email) {
       const userRole = this.authService.currentUserValue.role;
       this.userFullName =
         this.authService.currentUserValue.firstName +
         ' ' +
       this.authService.currentUserValue.lastName;
-      this.userImg = this.authService.currentUserValue.userImage;
-      if(!this.userImg){
-        this.userImg = 'assets/images/users/user.jpg';
+      this.userDesignation = this.authService.currentUserValue.designation;
+      if(this.authService.currentUserValue.userImage){
+        this.userImg = this.authService.currentUserValue.userImage;
       }
 
       // this.sidebarItems = ROUTES.filter(
@@ -114,12 +121,13 @@ export class SidebarComponent
             (x) =>
               x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
           );
-          console.log("AppFLow Get Sidebar Filtered => ", this.sidebarItems);
         });
       if (userRole === Role.Admin) {
         this.userType = Role.Admin;
       } else if (userRole === Role.Subscriber) {
         this.userType = Role.Subscriber;
+      } else if (userRole === Role.Manager) {
+        this.userType = Role.Manager;
       }
     }else{
       //Allow default visitor placeholder
@@ -169,6 +177,7 @@ export class SidebarComponent
       this.renderer.addClass(this.document.body, 'submenu-closed');
     }
   }
+  
   logout() {
     this.subs.sink = this.authService.logout().subscribe((res) => {
       if (!res.success) {

@@ -5,46 +5,45 @@ import { MatInputModule } from '@angular/material/input';
 import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { MasterService } from '@core/service/master.service';
 import { slideInOutAnimation } from '@shared/animations';
-import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 
 @Component({
-    selector: 'app-select-course',
-    templateUrl: './select-course.component.html',
-    styleUrls: ['./select-course.component.scss'],
-    animations: [slideInOutAnimation],
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        CoursePickerComponent
-    ]
+  selector: 'app-select-course',
+  templateUrl: './select-course.component.html',
+  styleUrls: ['./select-course.component.scss'],
+  animations: [slideInOutAnimation],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    CoursePickerComponent
+  ]
 })
-export class SelectSubjectComponent implements OnInit{
+export class SelectCourseComponent implements OnInit {
   showContent = true;
   subject = "";
-  subjectData : any;
+  subjectData: any;
 
   constructor(private router: Router, private master: MasterService) {
     // constructor code
   }
 
-    ngOnInit() {
-      this.router.events.subscribe(event => {
-        if (event instanceof NavigationStart) {
-          // Animation trigger can be based on route change
-          this.showContent = false; // Hide content when navigation starts
-        }
-        if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
-          // Ensure content is shown when navigation is complete
-          this.showContent = true;
-        }
-      });
-    }
+  ngOnInit() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        // Animation trigger can be based on route change
+        this.showContent = false; // Hide content when navigation starts
+      }
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
+        // Ensure content is shown when navigation is complete
+        this.showContent = true;
+      }
+    });
+  }
 
-  onSubjectChange(subject: string){
+  onCourseChange(subject: string) {
     this.subject = subject ? subject : "";
-    console.log("SelectSubject @onSubjectChange", subject);
+    console.log("SelectSubject @onCourseChange", subject);
     this.router.navigate(['/dashboard/learn', this.subject]).then(() => {
       console.log('Navigation completed!');
     });
@@ -54,5 +53,5 @@ export class SelectSubjectComponent implements OnInit{
     console.log("SelectSubject @onSubscribe", subject);
     //this.snackService.display('snackbar-success',subject+' added to learning list!','bottom','center');
   }
-  
+
 }

@@ -63,15 +63,13 @@ export class AuthService {
       })
     };
     const url = 'auth/login';
-    if (AuthConstants.DEV_MODE) {
-      console.log("/******  Hitting Login API : " + url + " with Params => " + JSON.stringify(postData));
-    }
     return this.httpService.post(url, postData, httpOptions).pipe(map((user: any) => {
       //store user details and jwt token in local storage to keep user logged in between page refreshes
       if (user.data) {
         this.setLocalData(user.data);
         //this.currentUserSubject.next(user.data);
       }
+      console.log("LoginResponse" , user, JSON.stringify(user.data));
       if (user.myProfile) {
         localStorage.setItem(AuthConstants.CACHE_FULL_PROFILE, JSON.stringify(user.myProfile));
       }
@@ -114,8 +112,7 @@ export class AuthService {
   }
 
   logout(debug="") {
-    console.log("NgApp Log out");
-    // remove user from local storage to log user out
+    console.log("CodeMeritApp Log out =>", debug);
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(this.currentUserValue);
     return of({ success: false });
@@ -235,45 +232,6 @@ export class AuthService {
 
   connectToInternet() {
     throw new Error("Method not implemented.");
-  }
-
-  loginDummy(username: string, password: string) {
-    const user = this.users.find((u) => u.username === username && u.password === password);
-    if (!user) {
-      return this.error('Username or password is incorrect');
-    } else {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      this.currentUserSubject.next(user);
-      return this.ok({
-        id: user.id,
-        userImage: user.userImage,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role,
-        token: user.token,
-        createdAt: user.createdAt,
-        accountStatus: user.accountStatus
-      });
-    }
-  }
-  ok(body?: {
-    id: number;
-    userImage: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: string;
-    token: string;
-    createdAt: string;
-    accountStatus: string;
-  }) {
-    return of(new HttpResponse({ status: 200, body }));
-  }
-  error(message: string) {
-    return throwError(message);
   }
 
 }
