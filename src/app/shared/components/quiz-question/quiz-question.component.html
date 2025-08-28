@@ -1,5 +1,14 @@
 <div class="trivia-card">
   <div class="question">{{question.question}}</div>
+  <p>{{question.subject}}</p>
+    <mat-chip-set aria-label="Tags">
+              @for(topic of question.topics;track topic){
+              <mat-chip>{{topic.title}}
+                <!-- <span class="badge col-purple">{{topic.votes}}</span> -->
+              </mat-chip>
+              }
+  </mat-chip-set>
+
   <ul class="options">
   @for (item of question.options; track $index) {
     <li [ngClass]="{correct : item.correct}">
@@ -9,13 +18,9 @@
         {{item.option}}
     </li>
   }
-
-  <mat-chip-set aria-label="Tags">
-              @for(topic of question.topics;track topic){
-              <mat-chip>{{topic.title}}
-                <!-- <span class="badge col-purple">{{topic.votes}}</span> -->
-              </mat-chip>
-              }
-            </mat-chip-set>
   </ul>
+
+  @if (question.answer) {
+    <p>{{question.answer}}</p>
+  }
 </div>

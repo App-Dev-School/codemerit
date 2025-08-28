@@ -69,7 +69,7 @@ export class TopicFormComponent {
   ) {
     this.action = data.action;
     this.dialogTitle =
-      this.action === 'edit' ? data.topicItem.title : 'Create New Topic';
+      this.action === 'edit' ? 'Edit '+data.topicItem.title : 'Create New Topic';
     this.topicItems = this.action === 'edit' ? data.topicItem : new TopicItem({}); // Create a blank object
     this.topicForm = this.createContactForm();
     this.topicGroups = this.masterSrv.topics;

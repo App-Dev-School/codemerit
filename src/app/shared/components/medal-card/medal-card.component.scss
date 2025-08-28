@@ -1,6 +1,10 @@
 .congratulation-medal {
   position: absolute;
   top: 0;
-  right: 37px;
-  height: 96px;
+  right: 30px;
+  height: 60px;
+   @media (max-width: 575px) {
+      right: 20px;
+      height: 45px;
+    }
 }

@@ -41,7 +41,7 @@
             <mat-form-field class="example-full-width" appearance="fill">
               <mat-label>Topic Level</mat-label>
               <mat-select formControlName="label">
-                <mat-option value="Beginner">Beginner</mat-option>
+                <mat-option value="Foundation">Foundation</mat-option>
                 <mat-option value="Intermediate">Intermediate</mat-option>
                 <mat-option value="Advanced">Advanced</mat-option>
               </mat-select>
@@ -116,7 +116,9 @@
 
         <div class="row">
           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-            <button mat-flat-button class="btn-space" color="primary" [disabled]="!topicForm.valid">Submit</button>
+            <button mat-flat-button class="btn-space" color="primary" [disabled]="!topicForm.valid">
+              {{action ==='edit' ? 'Update Topic' : 'Create Topic'}}
+            </button>
             <button mat-raised-button color="warn" (click)="topicForm.reset()">Cancel</button>
           </div>
         </div>
