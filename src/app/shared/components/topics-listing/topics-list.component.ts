@@ -37,7 +37,7 @@ export class TopicsListComponent {
   async launchTopicQuiz(topic:TopicItem) {
     const slug = topic.slug;
     this.generatingQuiz = true;
-    this.loadingText = "Generating Quiz for "+topic.title;
+    this.loadingText = topic.title;
     setTimeout(() => {
       this.router.navigate(['quiz/take', slug]);
       this.generatingQuiz = false;

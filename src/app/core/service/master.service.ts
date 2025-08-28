@@ -120,12 +120,19 @@ export class MasterService {
     );
   }
 
+  //Delete topic-store.json and subjectdashboard.json
   fetchAllSubjectTopics(subjectName) {
+    console.log(subjectName, "MasterTopics", this.topics);
+    const dd = this.topics.filter(obj => obj.subject === subjectName);
+    console.log("MasterTopics for "+subjectName, dd);
+
     return this.httpService.getLocalMock('assets/data/topic-store.json').pipe(
       map((objects: any) => {
         return objects.filter(obj => obj.subject === subjectName); // Find the object by title
       })
     );
+    
+    //return of(this.topics.filter(obj => obj.subject === subjectName))
   }
 
   getCountries(): Observable<Country[]> {
