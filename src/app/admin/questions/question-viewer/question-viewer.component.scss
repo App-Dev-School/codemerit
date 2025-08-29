@@ -1,0 +1,283 @@
+.questionInfo{
+  display: flex; 
+  //gap: 1rem;
+  span{
+    width: 30%;
+  }
+}
+.icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #9e9e9e;
+}
+
+.quiz-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  /* Question area scrolls */
+  .flex-grow-1 {
+    flex: 1;
+    overflow-y: auto;
+    //padding-bottom: 80px;
+  }
+
+  /* Sticky Header */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #1d2658;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Sticky Footer */
+  .footer-toolbar {
+    padding: 0.5rem 1rem;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .subject-icon {
+    height: 30px;
+    width: 30px;
+  }
+
+  .quiz-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  cd-timer {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  @media (max-width: 480px) {
+  .quiz-title {
+    font-size: 0.9rem;
+  }
+  cd-timer {
+    font-size: 0.9rem;
+  }
+  }
+
+  .question-card {
+    border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  background-color: #fff;
+  transition: box-shadow 0.2s ease;
+  padding: 1.25rem;
+  //max-width: 400px;
+  margin: 1rem auto;
+  }
+
+  .question-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+  .choice {
+    border: 2px solid #ddd;
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.25s ease-in-out;
+    position: relative;
+    font-size: 1.2rem;
+    font-weight: 500;
+
+    &:hover {
+      border-color: #2196f3;
+      transform: scale(1.01);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    &.selected {
+      background-color: #e3f2fd;
+      border-color: #2196f3;
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+      animation: pulseSelect 0.3s ease;
+    }
+
+    &.correct {
+      background-color: #d4edda;
+      border-color: #28a745;
+      color: #155724;
+      animation: correctBounce 0.4s ease;
+    }
+
+    &.wrong {
+      background-color: #f8d7da;
+      border-color: #dc3545;
+      color: #721c24;
+      animation: shakeWrong 0.4s ease;
+    }
+  }
+
+  /* Animations */
+  @keyframes pulseSelect {
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.08);
+    }
+
+    100% {
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes correctBounce {
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.03);
+    }
+  }
+
+  @keyframes shakeWrong {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    20% {
+      transform: translateY(-5px);
+    }
+
+    40% {
+      transform: translateY(5px);
+    }
+
+    60% {
+      transform: translateY(-5px);
+    }
+
+    80% {
+      transform: translateY(5px);
+    }
+  }
+
+  .icon-right,
+  .icon-wrong {
+    height: 20px;
+    width: 20px;
+  }
+
+  .timerIcon {
+    height: 20px;
+    width: 20px;
+    margin-right: 5px;
+  }
+}
+
+.quiz-result-container{
+  margin: 30px 25px 0 30px;
+  .content-block {
+      padding: 0px 0px 0px 0px;
+  }
+}
+
+.toolbar.warning {
+  animation: flashWarning 1s infinite;
+}
+
+@keyframes flashWarning {
+  0% {
+    background-color: #d32f2f;
+  }
+
+  50% {
+    background-color: #ff5252;
+  }
+
+  100% {
+    background-color: #d32f2f;
+  }
+}
+
+.toolbar.warning cd-timer {
+  animation: pulseTimer 1s infinite;
+  font-weight: bold;
+}
+
+@keyframes pulseTimer {
+  0% {
+    transform: scale(1);
+    color: #fff;
+  }
+
+  50% {
+    transform: scale(1.05);
+    color: yellow;
+  }
+
+  100% {
+    transform: scale(1);
+    color: #fff;
+  }
+}
+
+/* Warning Toast Style */
+
+
+.hint-icon {
+  height: 128px;
+  width: 128px;
+}
+
+/* Flash animation for toolbar */
+.toolbar.warning {
+  animation: flashWarning 1s infinite;
+}
+
+@keyframes flashWarning {
+  0% {
+    background-color: #d32f2f;
+  }
+
+  50% {
+    background-color: #ff5252;
+  }
+
+  100% {
+    background-color: #d32f2f;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popUp {
+  from {
+    transform: translate(-50%, -60%) scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}

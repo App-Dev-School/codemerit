@@ -12,16 +12,9 @@ import { QuestionItem, QuestionItemDetail } from './question-item.model';
   providedIn: 'root',
 })
 export class QuestionService {
-  private readonly API_URL = 'assets/data/topics.json';
   dataChange: BehaviorSubject<QuestionItem[]> = new BehaviorSubject<QuestionItem[]>([]);
 
   constructor(private authService: AuthService, private httpService: HttpService, private httpClient: HttpClient) { }
-
-  getDummyTopics(): Observable<QuestionItem[]> {
-    return this.httpClient
-      .get<QuestionItem[]>(this.API_URL)
-      .pipe(catchError(this.handleError));
-  }
 
    getQuestionBySlug(slug: string): Observable<QuestionItemDetail> {
     let api_key = '';
@@ -45,6 +38,19 @@ export class QuestionService {
     const url = 'apis/question'+'?subjectId=0';
     return this.httpService.get(url, api_key).pipe(
       map((response: QueestionListDto) => {
+        return response.data;
+      })
+    );
+  }
+
+   fetchMyQuestions(payload: any): Observable<QuestionItemDetail[]> {
+    let api_key = '';
+    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/question/fetch';
+    return this.httpService.postData(url, payload, api_key).pipe(
+      map((response: {error:boolean,message:string,data:QuestionItemDetail[]}) => {
         return response.data;
       })
     );

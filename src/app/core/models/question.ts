@@ -13,4 +13,12 @@ export interface Question {
     tag: string
     createdAt : string
     created_by: number
+
+    subject: string;
+}
+
+export interface QuestionOption {
+    id: number
+    option: string
+    correct: boolean
 }

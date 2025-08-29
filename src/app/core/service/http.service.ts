@@ -18,6 +18,19 @@ export class HttpService {
     return this.http.post(url, JSON.stringify(data), httpOptions);
   }
 
+  //make this default
+  postData(serviceName: string, data: any, apiKey: string = '') {
+    const url = environment.apiUrl + serviceName;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': apiKey
+      })
+    };
+    return this.http.post(url, data, httpOptions);
+  }
+
   get(serviceName: string, apiKey: string = '') {
     const url = environment.apiUrl + serviceName;
     const httpOptions = {

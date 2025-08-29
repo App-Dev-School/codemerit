@@ -65,11 +65,27 @@ export class MainComponent implements OnInit {
     this.router.navigate(['/admin/questions/list']);
   }
 
+    goToQuestionViewer(){
+    this.router.navigate(['/admin/questions/viewer']);
+  }
+
   goToTopicManager(){
     this.router.navigate(['/admin/topics/list']);
   }
 
   goToUsers(){
-    this.router.navigate(['/admin/users/list']);
+    this.router.navigate(['/users/list']);
+  }
+
+    addNewUser(){
+    this.router.navigate(['/users/create']);
+  }
+
+  manageLearning(){
+    this.router.navigate(['/']);
+  }
+
+  viewAttempts(){
+    this.router.navigate(['/app/subscription']);
   }
 }

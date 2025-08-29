@@ -9,16 +9,20 @@ import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.
 import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
-import { QuizService } from '../quiz.service';
+import { QuestionService } from '../manage/questions.service';
+import { QuestionItemDetail } from '../manage/question-item.model';
+import { QuizService } from 'src/app/quiz/quiz.service';
+import { MatChip } from "@angular/material/chips";
+import { Router } from '@angular/router';
 interface Quiz {
   title: string;
   subject_icon: string;
   questions: QuizQuestion[];
 }
 @Component({
-  selector: 'app-take-quiz',
-  templateUrl: './take-quiz.component.html',
-  styleUrls: ['./take-quiz.component.scss'],
+  selector: 'app-question-viewer',
+  templateUrl: './question-viewer.component.html',
+  styleUrls: ['./question-viewer.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
@@ -28,15 +32,16 @@ interface Quiz {
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    QuizResultComponent
+    QuizResultComponent,
+    MatChip
   ]
 })
-export class TakeQuizComponent implements OnInit, AfterViewInit {
+export class QuestionViewerComponent implements OnInit, AfterViewInit {
   quiz!: Quiz;
-  questions: QuizQuestion[] = [];
+  questions: QuestionItemDetail[] = [];
   currentQuestionId = 0;
   loading = true;
-  loadingText = 'Launching Quiz';
+  loadingText = 'Loading Questions';
   completed = false;
   evaluated = false;
   quizResult: any;
@@ -49,7 +54,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
-  constructor(private quizService: QuizService) {
+  constructor(private router: Router, private questionService: QuestionService) {
     register(); // Register Swiper web components
   }
 
@@ -63,28 +68,33 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   /** Load quiz from local JSON */
   private loadQuiz(): void {
-    this.quizService.getQuiz(1)
+    const payload = {
+      action: "latest",
+      subjectIds: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    }
+    this.questionService.fetchMyQuestions(payload)
       .subscribe(data => {
-        this.quiz = data;
-        this.loadingText = 'Almost Ready';
+        this.questions = data;
+        console.log('QuestionViewer API Response', data);
+        this.loadingText = 'Question View is Ready';
         this.loading = false;
 
         //test the completed state
         // this.completed = true;
         // this.evaluated = true;
         // Ensure each question has a selectedChoice field
-        this.questions = (data.questions || []).map(q => ({
-          ...q,
-          choices: q.options || [],
-          selectedChoice: ''
-        }));
+        // this.questions = (data || []).map(q => ({
+        //   ...q,
+        //   options: q.options || [],
+        //   selectedChoice: ''
+        // }));
       });
   }
 
   /** Record selected answer */
-  optionSelected(choice: string, question: QuizQuestion): void {
+  optionSelected(choice: string, question: QuestionItemDetail): void {
     if (!question.hasAnswered) {
-      question.selectedChoice = choice;
+      question.selectedChoice = Number(choice);
       question.hasAnswered = true;
     }
   }
@@ -122,7 +132,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     // }, 3000);
   }
 
-  hideHint(){
+  hideHint() {
     this.hintActive = false;
     this.currentHint = '';
   }
@@ -136,7 +146,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         this.warningActive = true;
         this.showWarningToast = false;
         //this.timer.start();
-      }, 3000);
+      }, 2000);
     }
   }
   onTimerComplete() {
@@ -158,8 +168,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   submitQuiz() {
     this.completed = true;
     setTimeout(() => {
-       this.quizResult =  this.quizService.processAndSaveResults(this.questions, 'quiz-angular-101', 'user-123');
-       this.evaluated = true;
-    }, 4000);
+      //this.quizResult =  this.questionService.processAndSaveResults(this.questions, 'quiz-angular-101', 'user-123');
+      this.evaluated = true;
+      console.log("submitQuiz", this.questions);
+
+    }, 2000);
+  }
+
+  exitViewer(){
+    this.router.navigate(['/admin/dashboard/main']);
   }
 }

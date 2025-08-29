@@ -1,6 +1,10 @@
 @if (!completed) {
-<div class="auth-container">
-  <div class="auth-main">
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <!-- breadcrumb -->
+      <!-- I am cool breadcrumb -->
+    </div>
     <div class="quiz-container d-flex flex-column vh-100">
       @if (loading) {
       <div class="overlay"></div>
@@ -11,8 +15,8 @@
       </div>
       }
 
-      <!-- HEADER -->
-      @if (!loading && quiz) {
+      <!-- HEADER 
+      @if (!loading && questions) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
         <div class="d-flex align-items-center">
           <img [src]="quiz.subject_icon" alt="icon" class="subject-icon me-2">
@@ -27,7 +31,7 @@
           </cd-timer>
         </div>
       </mat-toolbar>
-      }
+      }-->
 
       <!-- Screen Overlay -->
       @if (showWarningToast) {
@@ -35,18 +39,6 @@
       <div class="animToast warning">
         <img src="assets/images/icons/hinting.gif" class="hint-icon text-center" alt="hint">
         <h5>⚠️ 1 Minute Left!</h5>
-      </div>
-      }
-
-      <!-- Screen Overlay -->
-      @if (hintActive) {
-      <div class="overlay"></div>
-      <div class="animToast hint">
-        <img src="assets/images/icons/hinting.gif" class="hint-icon" alt="hint">
-        <h5>{{currentHint}}</h5>
-        <button mat-raised-button color="accent" (click)="hideHint()">
-          Okay
-        </button>
       </div>
       }
 
@@ -58,30 +50,71 @@
 
           @for (question of questions; track question.id) {
           <swiper-slide>
-            <!-- <p>{{question | json }}</p> -->
             <div class="question-card">
-              <h3 class="mb-3">{{ question.title }}</h3>
-
+              @if (question.title) {
+              <h4 class="mb-3">{{ question?.title }}</h4>
+              }
+              <h4 class="mb-3">{{ question?.question }}</h4>
+              <hr class="dim-divider"> 
+              <div class="questionInfo">
+                @if (question.subjectName) {
+                <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subjectName }}</span>
+                }
+                @if (question.questionType) {
+                <span class="mb-3 icon-text"><mat-icon>{{question?.questionType === 'Trivia' ? 'check_boxcheck_box' : 'indeterminate_check_box'}}</mat-icon> {{ question?.questionType }}</span>
+                }
+                @if (question.level) {
+                <span class="mb-3 icon-text"><mat-icon>school</mat-icon> {{ question?.level }}</span>
+                }
+                @if (question.status) {
+                <span class="mb-3 icon-text"><mat-icon>public</mat-icon> {{ question?.status }}</span>
+                }
+                @if (question.createdAt) {
+                <span class="mb-3 icon-text"><mat-icon>access_time</mat-icon> {{ question?.createdAt | date:'short' }}</span>
+                }
+                 @if (question.timeAllowed) {
+                <span class="mb-3 icon-text"><mat-icon>alarm_on</mat-icon> {{ (question?.timeAllowed/60.0) }}s</span>
+                }
+              </div>
+<hr class="dim-divider"> 
               @for (choice of question.options; track choice) {
-               <mat-card (click)="optionSelected(choice.option, question)" class="choice p-2 rounded mb-2" [ngClass]="{
-         'selected': question.selectedChoice === choice.option,
-         'correct': question.selectedChoice === choice.option && choice.option === question.correctAnswer,
-         'wrong': question.selectedChoice === choice.option && choice.option !== question.correctAnswer
+              <mat-card (click)="optionSelected(''+choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
+         'selected': question.selectedChoice === choice.id,
+         'correct': question.selectedChoice === choice.id,
+         'wrong': question.selectedChoice === choice.id
        }">
                 <div class="d-flex justify-content-between align-items-center">
-                  <span>{{ choice }}</span>
+                  <span>{{ choice.option }}</span>
 
-                  @if (question.selectedChoice === choice.option && choice.option === question.correctAnswer) {
+                  @if (question.selectedChoice === choice.id) {
                   <img src="assets/images/icons/ic_correct.png" class="icon-right">
                   }
-                  @if (question.selectedChoice === choice.option && choice.option !== question.correctAnswer) {
+                  @if (question.selectedChoice === choice.id) {
                   <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
                   }
                 </div>
               </mat-card>
               }
-
             </div>
+
+             @if (question.topics) {
+              <mat-chip-set aria-label="Tags">
+                @for (item of question.topics; track $index) {
+                <mat-chip>{{ item?.title }}</mat-chip>
+                }
+              </mat-chip-set>
+              }
+              
+            @if (question.hint) {
+            <hr class="dim-divider">  
+            <h5>Hint Available <span class="col-blue" (click)="showHint()">Show</span> </h5>
+            }
+            @if (question.answer) {
+            <hr class="dim-divider">
+            <h5>Answer:</h5>
+            <h5 class="m-b-10 font-normal">{{ question?.answer }}</h5>
+            <hr class="dim-divider">
+            }
           </swiper-slide>
           }
         </swiper-container>
@@ -101,8 +134,8 @@
               }
             </div>
             <div class="col-4 text-center">
-              <button mat-raised-button color="accent" (click)="showHint()">
-                <mat-icon>live_help</mat-icon> Hint</button>
+              <button mat-raised-button color="dark" (click)="exitViewer()">
+                <mat-icon>cancel</mat-icon> Exit</button>
             </div>
             <div class="col-4 text-end">
               <button mat-flat-button color="primary" (click)="onSlideNext()">
@@ -116,7 +149,7 @@
       }
     </div>
   </div>
-</div>
+</section>
 }
 
 @if (completed) {
@@ -125,9 +158,8 @@
     @if (!evaluated) {
     <div class="overlay"></div>
     <div class="animToast hint">
-      <img src="assets/images/icons/loading.gif" class="loadingIcon" alt="hint">
-      <h4>Evaluating Quiz</h4>
-      <h6 class="col-grey">Please wait while your assessment is in progress</h6>
+      <h4>Finish Review</h4>
+      <h6 class="col-grey">You have reviewed all the questions.</h6>
     </div>
     }
     @if (evaluated) {

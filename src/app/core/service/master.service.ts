@@ -131,7 +131,6 @@ export class MasterService {
         return objects.filter(obj => obj.subject === subjectName); // Find the object by title
       })
     );
-    
     //return of(this.topics.filter(obj => obj.subject === subjectName))
   }
 

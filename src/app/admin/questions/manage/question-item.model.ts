@@ -3,6 +3,7 @@ import { Status } from '@core/models/status.enum';
 
 export class QuestionItem {
   id?: number;
+  title?: string;
   question: string;
   questionType: QuestionType;
   subjectId : number;
@@ -12,8 +13,8 @@ export class QuestionItem {
   marks : number;
   order : number;
   timeAllowed : number;
-  hint: string;
-  answer: string;
+  hint?: string;
+  answer?: string;
   slug: string;
   topicIds: number[];
   createdAt : string;
@@ -47,4 +48,8 @@ export class QuestionItem {
 export class QuestionItemDetail extends QuestionItem {
   options?: {id:number;option:string;correct:boolean}[];
   topics: {id:number;title:string}[];
+  //Auth details
+  hasAnswered?: boolean;
+  usedHint?: boolean;
+  selectedChoice?: number;
 }

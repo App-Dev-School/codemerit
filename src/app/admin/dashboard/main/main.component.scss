@@ -1,0 +1,25 @@
+.banner-big-font
+ {
+    font-size: 25px !important;
+    margin-bottom: 0.3rem!important;
+    font-weight: 500;
+}
+.banner-big-font2 {
+  font-size: 18px !important;
+  margin-bottom: 0.8rem!important;
+  font-weight: 500;
+}
+
+.hoverCard {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  transform: scale(1);
+  will-change: transform;
+}
+.hoverCard:hover{
+  transform: scale(1.02);
+  box-shadow: 0 12px 21px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}

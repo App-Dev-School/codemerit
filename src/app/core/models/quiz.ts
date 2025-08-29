@@ -2,6 +2,7 @@ import { AnswerType } from "./answer-type"
 import { Question } from "./question"
 import { QuestionAttempt } from "./question-attempts"
 import { QuestionType } from "./question-type"
+import { QuizQuestion } from "./quiz-question"
 import { QuizSettings } from "./quiz-settings"
 
 export interface Quiz {
@@ -16,7 +17,7 @@ export interface Quiz {
     topics: string
     class: string
     QuizType: QuestionType
-    questions: Question[]
+    questions: QuizQuestion[]
     settings : QuizSettings
     status: string // Pending, Published, Paused
   }
