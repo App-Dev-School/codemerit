@@ -5,7 +5,7 @@
       <!-- breadcrumb -->
       <!-- I am cool breadcrumb -->
     </div>
-    <div class="quiz-container d-flex flex-column vh-100">
+    <div class="question-viewer d-flex flex-column vh-100">
       @if (loading) {
       <div class="overlay"></div>
       <div class="animToast loading">
@@ -15,70 +15,66 @@
       </div>
       }
 
-      <!-- HEADER 
-      @if (!loading && questions) {
-      <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
-        <div class="d-flex align-items-center">
-          <img [src]="quiz.subject_icon" alt="icon" class="subject-icon me-2">
-          <span class="quiz-title">{{ quiz.title }}</span>
-        </div>
-
-        <div class="d-flex align-items-center">
-          <img src="assets/images/icons/ic_watch.png" class="timerIcon" alt="timer">
-
-          <cd-timer #timerRef [countdown]="true" [startTime]="quizDuration" [omitZero]="true" maxTimeUnit="minute"
-            [autoStart]="true" [callTick]="true" format="ms" (onTick)="onTick($event)" (onComplete)="onTimerComplete()">
-          </cd-timer>
-        </div>
-      </mat-toolbar>
-      }-->
-
-      <!-- Screen Overlay -->
-      @if (showWarningToast) {
-      <div class="overlay"></div>
-      <div class="animToast warning">
-        <img src="assets/images/icons/hinting.gif" class="hint-icon text-center" alt="hint">
-        <h5>⚠️ 1 Minute Left!</h5>
-      </div>
-      }
-
       <!-- MAIN SWIPER CONTENT -->
       @if (!loading) {
-      <div class="flex-grow-1 overflow-hidden">
+      <div class="flex-grow-1 overflow-hidden m-t-10">
         @if (questions?.length > 0) {
         <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
 
-          @for (question of questions; track question.id) {
+          @for (question of questions; track $index) {
           <swiper-slide>
+            <p class="col-grey text-center m-t-16 m-b-10">{{$index}} of {{questions?.length}}</p>
             <div class="question-card">
               @if (question.title) {
               <h4 class="mb-3">{{ question?.title }}</h4>
               }
-              <h4 class="mb-3">{{ question?.question }}</h4>
-              <hr class="dim-divider"> 
+              <!-- <h4 class="mb-3">{{ question?.question }}</h4> -->
+              <div class="mb-3" [innerHTML]="question?.question"></div>
+              <div class="mb-3" [innerHTML]="'<strong>Hello</strong>, <em>Angular</em>!'"><pre>console.log('welcome')</pre></div>
+              <hr class="dim-divider">
               <div class="questionInfo">
                 @if (question.subjectName) {
                 <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subjectName }}</span>
                 }
                 @if (question.questionType) {
-                <span class="mb-3 icon-text"><mat-icon>{{question?.questionType === 'Trivia' ? 'check_boxcheck_box' : 'indeterminate_check_box'}}</mat-icon> {{ question?.questionType }}</span>
+                <span class="mb-3 icon-text"><mat-icon>{{question?.questionType === 'Trivia' ? 'check_boxcheck_box' :
+                    'indeterminate_check_box'}}</mat-icon> {{ question?.questionType }}</span>
                 }
                 @if (question.level) {
                 <span class="mb-3 icon-text"><mat-icon>school</mat-icon> {{ question?.level }}</span>
+                }
+                @if (question.timeAllowed) {
+                <span class="mb-3 icon-text"><mat-icon>alarm_on</mat-icon> {{ (question?.timeAllowed/60.0) }}s</span>
                 }
                 @if (question.status) {
                 <span class="mb-3 icon-text"><mat-icon>public</mat-icon> {{ question?.status }}</span>
                 }
                 @if (question.createdAt) {
-                <span class="mb-3 icon-text"><mat-icon>access_time</mat-icon> {{ question?.createdAt | date:'short' }}</span>
-                }
-                 @if (question.timeAllowed) {
-                <span class="mb-3 icon-text"><mat-icon>alarm_on</mat-icon> {{ (question?.timeAllowed/60.0) }}s</span>
+                <span class="mb-3 icon-text"><mat-icon>access_time</mat-icon> {{ question?.createdAt | date:'mediumDate'
+                  }}</span>
                 }
               </div>
-<hr class="dim-divider"> 
+              <hr class="dim-divider">
               @for (choice of question.options; track choice) {
-              <mat-card (click)="optionSelected(''+choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
+                @if (mode === 0) {
+                  <mat-card class="choice p-2 rounded mb-2" [ngClass]="{
+         'selected': question.hasAnswered,
+         'correct': choice.correct
+       }">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>{{ choice.option }}</span>
+
+                  @if (choice.correct) {
+                  <img src="assets/images/icons/ic_correct.png" class="icon-right">
+                  }
+                  <!-- @if (question.selectedChoice === choice.id) {
+                  <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
+                  } -->
+                </div>
+              </mat-card>
+                }
+                @else {
+<mat-card (click)="optionSelected(''+choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedChoice === choice.id,
          'correct': question.selectedChoice === choice.id,
          'wrong': question.selectedChoice === choice.id
@@ -94,20 +90,21 @@
                   }
                 </div>
               </mat-card>
+                }
               }
             </div>
 
-             @if (question.topics) {
-              <mat-chip-set aria-label="Tags">
-                @for (item of question.topics; track $index) {
-                <mat-chip>{{ item?.title }}</mat-chip>
-                }
-              </mat-chip-set>
+            @if (question.topics) {
+            <mat-chip-set aria-label="Tags">
+              @for (item of question.topics; track $index) {
+              <mat-chip>{{ item?.title }}</mat-chip>
               }
-              
+            </mat-chip-set>
+            }
+
             @if (question.hint) {
-            <hr class="dim-divider">  
-            <h5>Hint Available <span class="col-blue" (click)="showHint()">Show</span> </h5>
+            <hr class="dim-divider">
+            <h5>Hint Available <span class="col-green">{{ question?.hint }}</span> </h5>
             }
             @if (question.answer) {
             <hr class="dim-divider">

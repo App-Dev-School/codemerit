@@ -2,18 +2,16 @@ import { CommonModule, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChip } from "@angular/material/chips";
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
 import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
-import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
-import { QuestionService } from '../manage/questions.service';
 import { QuestionItemDetail } from '../manage/question-item.model';
-import { QuizService } from 'src/app/quiz/quiz.service';
-import { MatChip } from "@angular/material/chips";
-import { Router } from '@angular/router';
+import { QuestionService } from '../manage/questions.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -27,7 +25,6 @@ interface Quiz {
   imports: [
     CommonModule,
     NgClass,
-    CdTimerModule,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -37,7 +34,6 @@ interface Quiz {
   ]
 })
 export class QuestionViewerComponent implements OnInit, AfterViewInit {
-  quiz!: Quiz;
   questions: QuestionItemDetail[] = [];
   currentQuestionId = 0;
   loading = true;
@@ -45,12 +41,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   completed = false;
   evaluated = false;
   quizResult: any;
-  quizDuration = 80;
-  @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
-  warningActive = false;
-  hintActive = false;
-  currentHint = '';
-  showWarningToast = false;
+  mode = 0; //1 for interactive
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
@@ -59,15 +50,14 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.loadQuiz();
+    this.loadQuestions();
   }
 
   ngAfterViewInit(): void {
     // Swiper is automatically initialized via web component
   }
 
-  /** Load quiz from local JSON */
-  private loadQuiz(): void {
+  private loadQuestions(): void {
     const payload = {
       action: "latest",
       subjectIds: [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -105,7 +95,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
       this.swiperEx.nativeElement.swiper.slideNext();
       this.updateCurrentIndex();
     } else {
-      this.completeQuiz();
+      this.completeViewing();
     }
   }
 
@@ -117,47 +107,8 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /** Called when a hint is requested */
-  showHint(): void {
-    const currentQuestion = this.questions[this.currentQuestionId];
-    if (currentQuestion?.hint) {
-      this.currentHint = currentQuestion?.hint;
-      currentQuestion.usedHint = true;
-    } else {
-      this.currentHint = 'Hint not available';
-    }
-    this.hintActive = true;
-    // setTimeout(() => {
-    //   this.hintActive = false;
-    // }, 3000);
-  }
-
-  hideHint() {
-    this.hintActive = false;
-    this.currentHint = '';
-  }
-
-  onTick(event: any) {
-    if (event.minutes === 1 && event.seconds === 0) {
-      this.showWarningToast = true;
-      //this.timer.stop();
-      // Auto-hide toast after 3 seconds
-      setTimeout(() => {
-        this.warningActive = true;
-        this.showWarningToast = false;
-        //this.timer.start();
-      }, 2000);
-    }
-  }
-  onTimerComplete() {
-    console.log('Timer finished!');
-    this.warningActive = false;
-    this.showWarningToast = false;
-    this.submitQuiz();
-  }
-
-  private completeQuiz(): void {
-    console.log('Quiz complete!', this.questions);
+  private completeViewing(): void {
+    console.log('completeViewing', this.questions);
     this.submitQuiz();
   }
 
