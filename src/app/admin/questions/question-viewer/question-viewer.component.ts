@@ -65,7 +65,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     }
     this.questionService.fetchMyQuestions(payload)
       .subscribe(data => {
-        this.questions = data;
+        //this.questions = data;
         console.log('QuestionViewer API Response', data);
         this.loadingText = 'Question View is Ready';
         this.loading = false;
@@ -74,6 +74,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
         // this.completed = true;
         // this.evaluated = true;
         // Ensure each question has a selectedChoice field
+        data.sort((a, b) => b.id - a.id);
         this.questions = (data || []).map(q => ({
           ...q,
           rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
@@ -131,7 +132,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   }
 
   editQuestion(){
-    const question = this.questions.find(ques => ques.id === this.currentQuestionId);
+    const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
     this.router.navigate(['/admin/questions/update', question.slug]);
   }
 }
