@@ -1,3 +1,4 @@
+import { SafeHtml } from '@angular/platform-browser';
 import { QuestionType } from '@core/models/question-type';
 import { Status } from '@core/models/status.enum';
 
@@ -20,7 +21,7 @@ export class QuestionItem {
   createdAt : string;
 
   constructor(question: Partial<QuestionItem> = {}) {
-    this.id = question.id || Number.parseInt(this.getRandomID());
+    this.id = question.id || 0;
     this.question = question.question || '';
     this.questionType = question.questionType || QuestionType.General;
     this.subjectId = question.subjectId || 0;
@@ -36,18 +37,12 @@ export class QuestionItem {
     this.createdAt = question.createdAt || '';
     this.topicIds = question.topicIds || [];
   }
-
-  public getRandomID(): string {
-    const S4 = () => {
-      return ((1 + Math.random()) * 0x10000).toString(16);
-    };
-    return S4() + S4();
-  }
 }
 
 export class QuestionItemDetail extends QuestionItem {
   options?: {id:number;option:string;correct:boolean}[];
   topics: {id:number;title:string}[];
+  rawQuestion?:SafeHtml;
   //Auth details
   hasAnswered?: boolean;
   usedHint?: boolean;

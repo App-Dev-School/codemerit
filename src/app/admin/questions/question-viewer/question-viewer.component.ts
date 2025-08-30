@@ -12,6 +12,7 @@ import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuestionItemDetail } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
+import { DomSanitizer } from '@angular/platform-browser';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -45,7 +46,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
-  constructor(private router: Router, private questionService: QuestionService) {
+  constructor(private sanitizer: DomSanitizer, private router: Router, private questionService: QuestionService) {
     register(); // Register Swiper web components
   }
 
@@ -73,11 +74,10 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
         // this.completed = true;
         // this.evaluated = true;
         // Ensure each question has a selectedChoice field
-        // this.questions = (data || []).map(q => ({
-        //   ...q,
-        //   options: q.options || [],
-        //   selectedChoice: ''
-        // }));
+        this.questions = (data || []).map(q => ({
+          ...q,
+          rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
+        }));
       });
   }
 
