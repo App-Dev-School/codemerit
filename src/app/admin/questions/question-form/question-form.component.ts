@@ -44,7 +44,7 @@ import { QuizQuestionComponent } from '@shared/components/quiz-question/quiz-que
     MatSelectModule,
     MatDatepickerModule,
     MatCheckboxModule,
-    MatChip, QuizQuestionComponent
+    MatChip
   ]
 })
 export class QuestionFormPage implements OnInit {

@@ -41,7 +41,7 @@ export class TopicsListComponent {
     setTimeout(() => {
       this.router.navigate(['quiz/take', slug]);
       this.generatingQuiz = false;
-    }, 5000);
+    }, 4000);
   }
 
   async launchTopicExplorer(slug:string) {

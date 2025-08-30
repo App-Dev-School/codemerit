@@ -20,7 +20,23 @@ export class QuizService {
     private httpService: HttpService, private http: HttpClient) { }
 
   getQuiz(id: number): Observable<Quiz> {
-    return this.http.get<Quiz>('./assets/data/quizzes/quiz-angular.json').pipe(delay(8000));
+    return this.http.get<Quiz>('./assets/data/quizzes/quiz-angular.json').pipe(delay(3000));
+  }
+
+   getQuizResult(resultCode:string): Observable<QuizResult> {
+    return this.http.get<QuizResult>('./assets/data/quizzes/quiz-result-mock.json').pipe(delay(8000));
+    /*
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/quiz/result/'+resultCode;
+    return this.httpService.get(url, api_key).pipe(
+      map((response: any) => {
+        return response.data;
+      })
+    );
+    */
   }
 
   getAllQuiz(): Observable<Quiz[]> {

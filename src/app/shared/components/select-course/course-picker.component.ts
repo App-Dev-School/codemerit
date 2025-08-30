@@ -55,8 +55,18 @@ export class CoursePickerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.courses = of(this.master.jobRoles);
-    console.log("CoursePicker", this.master.jobRoles);
+    const allJobRoles = this.master.jobRoles;
+    const liveJobRoles = allJobRoles.filter(item => item.isPublished);
+
+
+    const myJobRoles = (liveJobRoles || []).map(q => ({
+      ...q,
+      isSubscribed: q.id < 3 ? true : false,
+      progress: 61 + 3*q.id
+    }));
+    this.courses = of(myJobRoles);
+
+    console.log("CoursePicker jobRoles", this.master.jobRoles);
     this.isLoading = false;
     // setTimeout(() => {
     //   this.subjects = this.master.getMockMySubjectsData();
@@ -65,7 +75,6 @@ export class CoursePickerComponent implements OnInit {
   }
 
   switchJobRole(course: any) {
-    console.log("CoursePicker switchJobRole", course);
     this.subjectSelected.emit(course.slug);
     this.dialogRef.close(course.slug);
   }

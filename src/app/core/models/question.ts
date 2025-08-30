@@ -5,7 +5,7 @@ export interface Question {
     title: string
     question: string
     questionType: QuestionType
-    choices: string[]
+    options: string[]
     correctAnswer: string
     hint: string
     hasAnswered: boolean

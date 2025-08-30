@@ -49,12 +49,12 @@ export class QuizProgressComponent {
       series: [83], // 70% used space
       chart: {
         type: 'radialBar',
-        height: 164,
+        height: 265,
       },
       plotOptions: {
         radialBar: {
           hollow: {
-            size: '50%',
+            size: '10%',
           },
           track: {
             show: true,
@@ -67,7 +67,7 @@ export class QuizProgressComponent {
               show: true,
             },
             value: {
-              fontSize: '28px',
+              fontSize: '22px',
               show: true,
               formatter: function (val) {
                 return val + '%';

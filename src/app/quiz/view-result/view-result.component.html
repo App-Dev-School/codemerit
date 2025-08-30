@@ -1,0 +1,15 @@
+<div class="quiz-result-container">
+  <div class="content-block">
+    @if (loading) {
+    <div class="overlay"></div>
+    <div class="animToast hint">
+      <img src="assets/images/icons/loading.gif" class="miniLoadingIcon" alt="Loading Result">
+      <h4>Loading Result</h4>
+      <h6 class="col-grey">Please wait while we fetch this assessment record</h6>
+    </div>
+    }
+    @if (quizResult) {
+    <app-quiz-result [result]="quizResult"></app-quiz-result>
+    }
+  </div>
+</div>

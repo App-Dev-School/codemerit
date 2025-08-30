@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
@@ -14,13 +14,14 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
   styleUrl: './medal-card.component.scss'
 })
 export class MedalCardComponent {
-  @Input() userName: string = 'Guest';
-  @Input() message: string = 'You have won the Explorer badge for completing the self skill rating.';
-  @Input() action: string = 'takeQuiz';
+  readonly userName = input<string>('Guest');
+  readonly message = input<string>('You have won the Explorer badge for completing the self skill rating.');
+  readonly action = input<string>('takeQuiz');
+  medalAction = output<string>();
   constructor() {
   }
 
   handleAction() {
-    console.log('Value');
+    this.medalAction.emit(this.action());
   }
 }

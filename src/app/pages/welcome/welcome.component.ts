@@ -49,30 +49,57 @@ export class WelcomeComponent implements OnInit {
   engagements = [
     {
       "id": 1,
-      "title": "Do you know about Strict Mode in JavaScript?",
+      "title": "Have you heard about Strict Mode in JavaScript?",
       "subject": "JavaScript",
       "topic": "ECMAScript",
       "type": "Ask",
-      "imageUrl": "assets/images/tech/angular.png",
+      "imageUrl": "assets/images/tech/javascript.png",
       "style":"right",
     },
     {
       "id": 2,
-      "title": "Do you know how to access DOM using JS?",
+      "title": "Do you know how to access geo-location using JS?",
       "subject": "JavaScript",
       "topic": "DOM",
       "type": "Ask",
-      "style":"",
+      "style":"right",
       "imageUrl": "assets/images/tech/javascript.png"
     },
     {
       "id": 3,
-      "title": "How to transform an Angular App for SEO?",
+      "title": "How can you transform an Angular App for SEO?",
       "subject": "Angular",
       "topic": "SSR",
       "type": "Ask",
-      "style":"right",
+      "style":"left",
       "imageUrl": "assets/images/tech/angular.png"
+    },
+    {
+      "id": 4,
+      "title": "How will you invoke a method 1000 times concurrently in Java?",
+      "subject": "Java",
+      "topic": "Thread",
+      "type": "Ask",
+      "style":"right",
+      "imageUrl": "assets/images/tech/java.png"
+    },
+    {
+      "id": 5,
+      "title": "What are Hot and Cold observables in RxJS?",
+      "subject": "RxJS",
+      "topic": "Selectors",
+      "type": "Ask",
+      "style":"left",
+      "imageUrl": "assets/images/tech/rxjs.png"
+    },
+    {
+      "id": 6,
+      "title": "What are Pseudo selectors in CSS?",
+      "subject": "CSS",
+      "topic": "Selectors",
+      "type": "Ask",
+      "style":"left",
+      "imageUrl": "assets/images/tech/css.png"
     }
   ];
 
@@ -128,12 +155,14 @@ export class WelcomeComponent implements OnInit {
       if(sub && sub.firstName){
       this.userName = sub.firstName;
       if(sub.designation == ''){
-        this.userMessage = "Let us start by rating your skills.";
-      }
-      //this.snackService.display('snackbar-dark', 'Welcome '+sub.firstName, 'bottom', 'center');
-      this.nextAction = "selfRating";
+        this.nextAction = "selfRating";
+        this.userMessage = "Tell us what you already know. Rate your skills, and we’ll personalize your learning path just for you.";
       }else{
-        this.userMessage = "Sign in to assess your skills.";
+      this.nextAction = "takeQuiz";
+      this.userMessage = "Unlock a customized roadmap to level up faster. Generate a mock exam to assess your skills.";
+      }
+      }else{
+        this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
         this.nextAction = "login";
       }
     });
@@ -198,10 +227,21 @@ export class WelcomeComponent implements OnInit {
     }
   }
 
+  //separate component and then implement
   handleAction(action:String){
     console.log("Welcome Action", action);
-    this.router.navigate(['/dashboard/learn']).then(() => {
-        console.log('Navigation completed!');
+    switch (action) {
+      case "login":
+         this.router.navigate(['/authentication/signin']).then(() => {
       });
+        break;
+    
+        case "takeQuiz":
+         this.router.navigate(['/take-quiz/explore']).then(() => {
+      });
+        break;
+      default:
+        break;
+    }
   }
 }

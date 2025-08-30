@@ -5,134 +5,142 @@
   "subject_icon": "assets/images/tech/angular.png",
   "topics": "Angular 16, Angular 17, Angular 18",
   "class": "progress-bar-success",
+  "quizType": "UserQuiz",
+  "subjects": [
+    {
+      "id": 1,
+      "title": "Angular",
+      "image": "assets/images/tech/angular.png"
+    }
+  ],
   "questions": [
     {
       "id": 1,
-      "title": "Which new build system became the default in Angular 18?",
-      "choices": [
-        "Webpack",
-        "Vite",
-        "Rollup",
-        "Parcel"
+      "title": "",
+      "question": "Which new build system became the default in Angular 18?",
+      "options": [
+        { "id": 1, "option": "Webpack", "correct": false },
+        { "id": 2, "option": "Vite", "correct": true },
+        { "id": 3, "option": "Rollup", "correct": false },
+        { "id": 4, "option": "Parcel", "correct": false }
       ],
-      "correctAnswer": "Vite",
       "hint": "",
       "hasAnswered": false
     },
     {
       "id": 2,
-      "title": "What is the purpose of Angular's 'Partial Hydration' introduced in v18?",
-      "choices": [
-        "Load only interactive parts of the page during client takeover",
-        "Render only the header and footer initially",
-        "Hydrate all components before JavaScript loads",
-        "Remove the need for SSR entirely"
+      "title": "",
+      "question": "What is the purpose of Angular's 'Partial Hydration' introduced in v18?",
+      "options": [
+        { "id": 1, "option": "Load only interactive parts of the page during client takeover", "correct": true },
+        { "id": 2, "option": "Render only the header and footer initially", "correct": false },
+        { "id": 3, "option": "Hydrate all components before JavaScript loads", "correct": false },
+        { "id": 4, "option": "Remove the need for SSR entirely", "correct": false }
       ],
-      "correctAnswer": "Load only interactive parts of the page during client takeover",
       "hint": "This improves SSR performance by hydrating only where needed.",
       "hasAnswered": false
     },
     {
       "id": 3,
-      "title": "Which of the following is a valid example of Angular’s new control flow syntax?",
-      "choices": [
-        "@if (isLoggedIn) { <app-dashboard/> }",
-        "*if=\"isLoggedIn\"",
-        "ngIf=\"isLoggedIn\"",
-        "switch(isLoggedIn)"
+      "title": "",
+      "question": "Which of the following is a valid example of Angular’s new control flow syntax?",
+      "options": [
+        { "id": 1, "option": "@if (isLoggedIn) { <app-dashboard/> }", "correct": true },
+        { "id": 2, "option": "*if=\"isLoggedIn\"", "correct": false },
+        { "id": 3, "option": "ngIf=\"isLoggedIn\"", "correct": false },
+        { "id": 4, "option": "switch(isLoggedIn)", "correct": false }
       ],
-      "correctAnswer": "@if (isLoggedIn) { <app-dashboard/> }",
       "hint": "Introduced in Angular 17, replaces *ngIf for cleaner templates.",
       "hasAnswered": false
     },
     {
       "id": 4,
-      "title": "What advantage do Angular Signals provide over traditional RxJS Observables for component state?",
-      "choices": [
-        "Fine-grained reactivity without full stream management",
-        "They completely remove the need for HTTP requests",
-        "They are automatically persisted to localStorage",
-        "They can only be used in standalone components"
+      "title": "",
+      "question": "What advantage do Angular Signals provide over traditional RxJS Observables for component state?",
+      "options": [
+        { "id": 1, "option": "Fine-grained reactivity without full stream management", "correct": true },
+        { "id": 2, "option": "They completely remove the need for HTTP requests", "correct": false },
+        { "id": 3, "option": "They are automatically persisted to localStorage", "correct": false },
+        { "id": 4, "option": "They can only be used in standalone components", "correct": false }
       ],
-      "correctAnswer": "Fine-grained reactivity without full stream management",
       "hint": "Signals are easier for simple reactive state than RxJS.",
       "hasAnswered": false
     },
     {
       "id": 5,
-      "title": "Which new directive in Angular 18 helps optimize images for performance?",
-      "choices": [
-        "ngImgOptimized",
-        "ngSrc",
-        "lazyLoadImg",
-        "imgAsync"
+      "title": "",
+      "question": "Which new directive in Angular 18 helps optimize images for performance?",
+      "options": [
+        { "id": 1, "option": "ngImgOptimized", "correct": false },
+        { "id": 2, "option": "ngSrc", "correct": true },
+        { "id": 3, "option": "lazyLoadImg", "correct": false },
+        { "id": 4, "option": "imgAsync", "correct": false }
       ],
-      "correctAnswer": "ngSrc",
       "hint": "It automatically applies lazy loading, resizing, and format optimizations.",
       "hasAnswered": false
     },
     {
       "id": 6,
-      "title": "What is a 'Deferrable View'?",
-      "choices": [
-        "A view loaded only when triggered by a condition or interaction",
-        "A view that loads before the rest of the app",
-        "An offline-only component",
-        "A deprecated concept from AngularJS"
+      "title": "",
+      "question": "What is a 'Deferrable View'?",
+      "options": [
+        { "id": 1, "option": "A view loaded only when triggered by a condition or interaction", "correct": true },
+        { "id": 2, "option": "A view that loads before the rest of the app", "correct": false },
+        { "id": 3, "option": "An offline-only component", "correct": false },
+        { "id": 4, "option": "A deprecated concept from AngularJS", "correct": false }
       ],
-      "correctAnswer": "A view loaded only when triggered by a condition or interaction",
       "hint": "This allows splitting the UI to improve initial load performance.",
       "hasAnswered": false
     },
     {
       "id": 7,
-      "title": "What does the Angular View Transitions API integration enable?",
-      "choices": [
-        "Smooth animations between route changes",
-        "Automatic dark mode switching",
-        "Offline component rendering",
-        "CSS isolation for standalone components"
+      "title": "",
+      "question": "What does the Angular View Transitions API integration enable?",
+      "options": [
+        { "id": 1, "option": "Smooth animations between route changes", "correct": true },
+        { "id": 2, "option": "Automatic dark mode switching", "correct": false },
+        { "id": 3, "option": "Offline component rendering", "correct": false },
+        { "id": 4, "option": "CSS isolation for standalone components", "correct": false }
       ],
-      "correctAnswer": "Smooth animations between route changes",
       "hint": "It leverages the browser’s View Transitions API for smoother page changes.",
       "hasAnswered": false
     },
     {
       "id": 8,
-      "title": "Standalone components were introduced earlier, but how did Angular 18 improve them?",
-      "choices": [
-        "They can now be lazy-loaded without NgModules",
-        "They now support two-way binding automatically",
-        "They require no imports at all",
-        "They auto-generate their own CSS"
+      "title": "",
+      "question": "Standalone components were introduced earlier, but how did Angular 18 improve them?",
+      "options": [
+        { "id": 1, "option": "They can now be lazy-loaded without NgModules", "correct": true },
+        { "id": 2, "option": "They now support two-way binding automatically", "correct": false },
+        { "id": 3, "option": "They require no imports at all", "correct": false },
+        { "id": 4, "option": "They auto-generate their own CSS", "correct": false }
       ],
-      "correctAnswer": "They can now be lazy-loaded without NgModules",
       "hint": "This makes routing with standalone components easier.",
       "hasAnswered": false
     },
     {
       "id": 9,
-      "title": "Which feature in Angular 18 allows Router to bind directly to reactive state?",
-      "choices": [
-        "Router Signals",
-        "Route Streams",
-        "Reactive Routes API",
-        "Stateful Navigation"
+      "title": "",
+      "question": "Which feature in Angular 18 allows Router to bind directly to reactive state?",
+      "options": [
+        { "id": 1, "option": "Router Signals", "correct": true },
+        { "id": 2, "option": "Route Streams", "correct": false },
+        { "id": 3, "option": "Reactive Routes API", "correct": false },
+        { "id": 4, "option": "Stateful Navigation", "correct": false }
       ],
-      "correctAnswer": "Router Signals",
       "hint": "Router signals let you react to navigation changes without subscribing manually.",
       "hasAnswered": false
     },
     {
       "id": 10,
-      "title": "Why is Zone.js still relevant even with Signals?",
-      "choices": [
-        "It tracks async tasks for change detection in most existing apps",
-        "It is required for Angular CLI to run",
-        "It powers the Angular compiler",
-        "It is the default router implementation"
+      "title": "",
+      "question": "Why is Zone.js still relevant even with Signals?",
+      "options": [
+        { "id": 1, "option": "It tracks async tasks for change detection in most existing apps", "correct": true },
+        { "id": 2, "option": "It is required for Angular CLI to run", "correct": false },
+        { "id": 3, "option": "It powers the Angular compiler", "correct": false },
+        { "id": 4, "option": "It is the default router implementation", "correct": false }
       ],
-      "correctAnswer": "It tracks async tasks for change detection in most existing apps",
       "hint": "Signals can replace some Zone.js usage, but many apps still rely on it.",
       "hasAnswered": false
     }

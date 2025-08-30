@@ -58,23 +58,23 @@
 
           @for (question of questions; track question.id) {
           <swiper-slide>
-            <!-- <p>{{question | json }}</p> -->
+            <p class="col-grey text-center m-t-16 m-b-10">{{$index}} of {{questions?.length}}</p>
             <div class="question-card">
-              <h3 class="mb-3">{{ question.title }}</h3>
-
+              <h5 class="mb-3">{{ question.title }}</h5>
+              <div class="mb-3 font-24">{{ question.question }}</div>
               @for (choice of question.options; track choice) {
                <mat-card (click)="optionSelected(choice.option, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedChoice === choice.option,
-         'correct': question.selectedChoice === choice.option && choice.option === question.correctAnswer,
-         'wrong': question.selectedChoice === choice.option && choice.option !== question.correctAnswer
+         'correct': question.selectedChoice === choice.option && choice.correct,
+         'wrong': question.selectedChoice === choice.option && !choice.correct
        }">
                 <div class="d-flex justify-content-between align-items-center">
-                  <span>{{ choice }}</span>
+                  <span>{{ choice.option }}</span>
 
-                  @if (question.selectedChoice === choice.option && choice.option === question.correctAnswer) {
+                  @if (question.selectedChoice === choice.option && choice.correct) {
                   <img src="assets/images/icons/ic_correct.png" class="icon-right">
                   }
-                  @if (question.selectedChoice === choice.option && choice.option !== question.correctAnswer) {
+                  @if (question.selectedChoice === choice.option && !choice.correct) {
                   <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
                   }
                 </div>
@@ -82,6 +82,7 @@
               }
 
             </div>
+            <p>{{ question | json}}</p>
           </swiper-slide>
           }
         </swiper-container>

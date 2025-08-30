@@ -164,12 +164,6 @@
   }
 }
 
-.quiz-result-container{
-  margin: 30px 25px 0 30px;
-  .content-block {
-      padding: 0px 0px 0px 0px;
-  }
-}
 .hint-icon {
   height: 128px;
   width: 128px;
@@ -214,4 +208,8 @@
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
+}
+.question{
+  font-size: 1.8rem;
+  font-weight:500;
 }

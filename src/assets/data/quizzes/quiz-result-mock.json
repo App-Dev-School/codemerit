@@ -1,0 +1,75 @@
+{
+    "quizId": 1,
+    "quizName": "Angular 18 Proficiency Test",
+    "userId": "user-123",
+    "userFullName": "Mark Mcllvain",
+    "total": 10,
+    "correct": 8,
+    "wrong": 1,
+    "unanswered": 1,
+    "timeSpent": 480,
+    "score": 77,
+    "dateAttempted": "2025-08-30T20:48:47.811Z",
+    "attempts": [
+        {
+            "questionId": 1,
+            "selectedChoice": "Vite",
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 2,
+            "selectedChoice": "Load only interactive parts of the page during client takeover",
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 3,
+            "selectedChoice": "@if (isLoggedIn) { <app-dashboard/> }",
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 4,
+            "selectedChoice": "Fine-grained reactivity without full stream management",
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 5,
+            "selectedChoice": "ngSrc",
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 6,
+            "selectedChoice": "A view loaded only when triggered by a condition or interaction",
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 7,
+            "selectedChoice": null,
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 8,
+            "selectedChoice": "They now support two-way binding automatically",
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 9,
+            "selectedChoice": null,
+            "isCorrect": false,
+            "usedHint": false
+        },
+        {
+            "questionId": 10,
+            "selectedChoice": "It is required for Angular CLI to run",
+            "isCorrect": false,
+            "usedHint": false
+        }
+    ]
+}

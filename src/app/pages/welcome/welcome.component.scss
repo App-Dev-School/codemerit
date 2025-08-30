@@ -1,3 +1,22 @@
+.header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.title-block {
+  flex: 1;
+  margin: 0 10px;
+}
+
+.subject-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+//others
 .example-card {
   max-width: 400px;
   margin-bottom: 8px;
@@ -21,4 +40,16 @@
       flex: 1 1 auto;
     }
   }
+}
+
+.mat-card-title{
+  font-size: 1rem!important;
+  font-weight: 500;
+  margin-bottom: 0px!important;
+}
+
+.mat-card-subtitle{
+  font-size: 0.8rem!important;
+  font-weight: 500;
+  margin-top: 0px!important;
 }

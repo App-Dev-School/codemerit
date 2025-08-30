@@ -65,7 +65,14 @@
       }
 
       .score-circle {
-        align-self: center;
         margin-top: 10px;
       }
+
+      .user-info img {
+      width: 48px;
+      height: 48px;
+    }
+    .user-details .name {
+      font-size: 1.1em;
+    }
     }

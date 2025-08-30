@@ -8,7 +8,8 @@
       </div>
       <!-- Medal Card -->
       <div class="col-12 col-md-6 col-lg-5">
-        <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"></app-medal-card>
+        <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"
+        (medalAction)="handleAction($event)"></app-medal-card>
       </div>
     </div>
 
@@ -16,18 +17,18 @@
       <div class="col-12 col-md-6 col-lg-7">
         <div class="card card-congratulations">
           <div class="card-body text-center">
-          <h1>Hello test</h1>
+            <h1>Hello test</h1>
+          </div>
         </div>
-        </div>
-        
+
       </div>
       <div class="col-12 col-md-6 col-lg-5">
         <div class="card card-congratulations">
           <div class="card-body text-center">
-             <h1>Hello test</h1>
-          <h1>Hello test</h1>
+            <h1>Hello test</h1>
+            <h1>Hello test</h1>
           </div>
-         
+
         </div>
       </div>
     </div>
@@ -46,44 +47,63 @@
           (subjectSelected)="onSubjectChange($event)"></app-subject-role-map>
         }
       </div>
-      </div>
+    </div>
 
-      <div class="row m-t-20 clearfix">
+    <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <h4 class="text-center mb-5 mt-5">Interact and Explore</h4>
-        </div></div>
+      </div>
+    </div>
 
-        <div class="row clearfix">
-          @for (engage of engagements; track engage) {
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-              <mat-card>
-                <mat-card-header>
-                  <img mat-card-avatar src="assets/images/tech/javascript.png" style="width: 40px!important;">
-                  <!-- <mat-card-title>{{engage.subject}}</mat-card-title> -->
-                  @if(engage.topic){
-                  <mat-card-subtitle>{{engage.topic}}</mat-card-subtitle>
-                  }
-                </mat-card-header>
-                @if (engage.style === 'right') {
-                <img mat-card-image src="assets/images/tech/angular.png" style="width: 40px!important;">
-                }
-                <mat-card-content>
-                  <p>{{engage.title}}</p>
-                </mat-card-content>
-                <mat-divider></mat-divider>
-                <mat-card-actions>
-                  <div fxLayout="row">
-                    <button mat-button (click)="exploreLesson(engage.id)">
-                      <mat-icon class="col-blue">check_circle_outline</mat-icon> Explore
-                    </button>
-                    <button mat-button>
-                      <mat-icon class="col-red" (click)="closeLesson(engage.id)">close</mat-icon> Close
-                    </button>
-                  </div>
-                </mat-card-actions>
-              </mat-card>
+    <div class="row clearfix">
+      @for (engage of engagements; track engage) {
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+
+        <mat-card>
+          <mat-card-header>
+            <div class="header-flex">
+              <!-- LEFT ICON -->
+              @if (engage.style === 'left') {
+              <ng-container>
+                <img src="{{engage.imageUrl}}" class="subject-icon" />
+              </ng-container>
+              }
+
+              <div class="title-block">
+                <mat-card-title class="mat-card-title m-b-0">{{ engage.subject }}</mat-card-title>
+                <mat-card-subtitle class="mat-card-subtitle col-grey m-t-0">{{ engage.topic }}</mat-card-subtitle>
               </div>
-          }
+
+              <!-- RIGHT ICON -->
+              @if (engage.style === 'right') {
+              <ng-container>
+                <img src="{{engage.imageUrl}}" class="subject-icon" />
+              </ng-container>
+              }
+            </div>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p>{{ engage.title }}</p>
+          </mat-card-content>
+
+          <mat-divider class="dim-divider"></mat-divider>
+
+          <mat-card-actions>
+            <div fxLayout="row">
+              <button mat-button (click)="exploreLesson(engage.id)">
+                <mat-icon class="col-blue">check_circle_outline</mat-icon> Explore
+              </button>
+              <button mat-button (click)="closeLesson(engage.id)">
+                <mat-icon class="col-red">close</mat-icon> Close
+              </button>
+            </div>
+          </mat-card-actions>
+        </mat-card>
+
+
+      </div>
+      }
     </div>
   </div>
 </section>

@@ -3,17 +3,7 @@
     <ng-container *ngTemplateOutlet="scoreChart"></ng-container>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title class="text-center">Topic Wise Score</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ng-scrollbar style="height: 400px" visibility="hover">
-          <app-topics-score [topicScores]="topicWiseScore"></app-topics-score>
-        </ng-scrollbar>
-      </mat-card-content>
-    </mat-card>
-    <!-- <p>{{ result | json }}</p> -->
+    <ng-container *ngTemplateOutlet="topicWiseChart"></ng-container>
   </div>
 </div>
 
@@ -69,4 +59,17 @@
       </div>
     </mat-card-content>
   </mat-card>
+</ng-template>
+
+<ng-template #topicWiseChart>
+<mat-card>
+      <mat-card-header>
+        <mat-card-title class="text-center">Topic Wise Score</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ng-scrollbar style="height: 400px" visibility="hover">
+          <app-topics-score [topicScores]="topicWiseScore"></app-topics-score>
+        </ng-scrollbar>
+      </mat-card-content>
+    </mat-card>
 </ng-template>

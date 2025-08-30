@@ -1,22 +1,22 @@
 <div class="card card-congratulation-medal">
           <div class="card-body">
             <img src="assets/images/icons/badge.svg" class="congratulation-medal" alt="Medal Pic" />
-            <h5>{{userName}}</h5>
-            <p class="card-text font-small-3">{{message}}</p>
+            <h5>{{userName()}}</h5>
+            <p class="card-text font-small-3">{{message()}}</p>
             <!-- <h3 class="mb-75 mt-4">
               <a href="javascript:void(0);">Explore and collaborate more to unlock more badges, recognitions and priviledges.</a>
             </h3> -->
             <!-- <p class="m-t-20 card-text font-small-3">{{message}}</p> -->
 
-            @if (action === 'takeQuiz') {
+            @if (action() === 'takeQuiz') {
                <button mat-flat-button color="warn" (click)="handleAction()"><mat-icon>keyboard_arrow_left</mat-icon>
                 Assess My Skill</button>
             }
-            @if (action === 'login') {
+            @if (action() === 'login') {
               <button mat-flat-button color="warn" (click)="handleAction()">
                 Sign Up / Login <mat-icon>keyboard_arrow_right</mat-icon></button>
             }
-            @if (action === 'selfRating') {
+            @if (action() === 'selfRating') {
                <button type="button" class="btn btn-outline-default" (click)="handleAction()" rippleEffect>Start Self Rating</button>
                <h3 class="col-green">OR</h3>
                <button mat-flat-button color="warn" (click)="handleAction()"><mat-icon>star</mat-icon>

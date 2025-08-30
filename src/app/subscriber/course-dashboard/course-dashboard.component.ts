@@ -97,6 +97,7 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   filterCourse(allJobRoles: any) {
+    //Display the job role map
     this.subjectData = allJobRoles.find(role => role.slug === this.course);
     console.log("CourseDash Filter ****", this.subjectData);
   }

@@ -10,6 +10,8 @@ import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuizService } from '../quiz.service';
+import { User } from '@core/models/user';
+import { AuthService } from '@core/service/auth.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -46,10 +48,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   hintActive = false;
   currentHint = '';
   showWarningToast = false;
+  userData: User;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
-  constructor(private quizService: QuizService) {
+  constructor(private authService: AuthService, private quizService: QuizService) {
     register(); // Register Swiper web components
   }
 
@@ -68,14 +71,15 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         this.quiz = data;
         this.loadingText = 'Almost Ready';
         this.loading = false;
-
-        //test the completed state
-        // this.completed = true;
-        // this.evaluated = true;
-        // Ensure each question has a selectedChoice field
+        this.userData = this.authService.currentUserValue;
+         /***
+         DEMO MODE
+         this.completed = true;
+         this.evaluated = true;
+          */
         this.questions = (data.questions || []).map(q => ({
           ...q,
-          choices: q.options || [],
+          options: q.options || [],
           selectedChoice: ''
         }));
       });
@@ -83,6 +87,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   /** Record selected answer */
   optionSelected(choice: string, question: QuizQuestion): void {
+    this.authService.log('Quiz optionSelected', choice, question);
     if (!question.hasAnswered) {
       question.selectedChoice = choice;
       question.hasAnswered = true;
