@@ -129,4 +129,9 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   exitViewer(){
     this.router.navigate(['/admin/dashboard/main']);
   }
+
+  editQuestion(){
+    const question = this.questions.find(ques => ques.id === this.currentQuestionId);
+    this.router.navigate(['/admin/questions/update', question.slug]);
+  }
 }

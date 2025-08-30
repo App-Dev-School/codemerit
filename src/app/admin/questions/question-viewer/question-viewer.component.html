@@ -2,8 +2,6 @@
 <section class="content">
   <div class="content-block">
     <div class="block-header">
-      <!-- breadcrumb -->
-      <!-- I am cool breadcrumb -->
     </div>
     <div class="question-viewer d-flex flex-column vh-100">
       @if (loading) {
@@ -11,7 +9,7 @@
       <div class="animToast loading">
         <img src="assets/images/icons/cube.gif" class="loadingIcon">
         <h4>{{loadingText}}</h4>
-        <h5>Be Ready!</h5>
+        <h5>Please wait...</h5>
       </div>
       }
 
@@ -130,9 +128,13 @@
                 Prev</button>
               }
             </div>
-            <div class="col-4 text-center">
+            <!-- <div class="col-4 text-center">
               <button mat-raised-button color="dark" (click)="exitViewer()">
                 <mat-icon>cancel</mat-icon> Exit</button>
+            </div> -->
+            <div class="col-4 text-center">
+              <button mat-raised-button color="dark" (click)="editQuestion()">
+                <mat-icon>edit</mat-icon> Edit</button>
             </div>
             <div class="col-4 text-end">
               <button mat-flat-button color="primary" (click)="onSlideNext()">

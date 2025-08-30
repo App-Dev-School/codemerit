@@ -4,11 +4,11 @@
     <div class="row match-height m-t-20 clearfix">
       <!-- Congratulations Card -->
       <div class="col-12 col-md-6 col-lg-7">
-        <app-congratulations-card></app-congratulations-card>
+        <app-congratulations-card [userName]="userName"></app-congratulations-card>
       </div>
       <!-- Medal Card -->
       <div class="col-12 col-md-6 col-lg-5">
-        <app-medal-card></app-medal-card>
+        <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"></app-medal-card>
       </div>
     </div>
 
@@ -40,19 +40,22 @@
       </div>
 
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h3 class="text-center col-grey m-t-20">Skills by <b>Job Roles</b></h3>
+        <h3 class="text-center m-t-20">Skills by <span class="col-green">Job Roles</span></h3>
         @if(subjectRoleMap && subjectRoleMap.length > 0){
         <app-subject-role-map [data]="subjectRoleMap"
           (subjectSelected)="onSubjectChange($event)"></app-subject-role-map>
         }
       </div>
+      </div>
 
+      <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h4 class="text-center col-grey mb-5 mt-5">Interact and Explore</h4>
+        <h4 class="text-center mb-5 mt-5">Interact and Explore</h4>
+        </div></div>
 
+        <div class="row clearfix">
           @for (engage of engagements; track engage) {
-          <!-- <ng-container @fadeOut> -->
-          
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
               <mat-card>
                 <mat-card-header>
                   <img mat-card-avatar src="assets/images/tech/javascript.png" style="width: 40px!important;">
@@ -61,7 +64,9 @@
                   <mat-card-subtitle>{{engage.topic}}</mat-card-subtitle>
                   }
                 </mat-card-header>
-                <!-- <img mat-card-image src="assets/images/image-gallery/5.jpg"> -->
+                @if (engage.style === 'right') {
+                <img mat-card-image src="assets/images/tech/angular.png" style="width: 40px!important;">
+                }
                 <mat-card-content>
                   <p>{{engage.title}}</p>
                 </mat-card-content>
@@ -69,16 +74,16 @@
                 <mat-card-actions>
                   <div fxLayout="row">
                     <button mat-button (click)="exploreLesson(engage.id)">
-                      <mat-icon class="col-green">check_circle_outline</mat-icon> Explore
+                      <mat-icon class="col-blue">check_circle_outline</mat-icon> Explore
                     </button>
                     <button mat-button>
-                      <mat-icon class="col-red">close</mat-icon> Close
+                      <mat-icon class="col-red" (click)="closeLesson(engage.id)">close</mat-icon> Close
                     </button>
                   </div>
                 </mat-card-actions>
               </mat-card>
-            }
+              </div>
+          }
     </div>
-</div>
   </div>
 </section>

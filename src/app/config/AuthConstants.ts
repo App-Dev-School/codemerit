@@ -21,8 +21,4 @@ export class AuthConstants {
         { label: 'Career Switcher (Non-IT to IT)', value: 'IT Aspirant' },
         { label: 'Other', value: 'Other' }
     ];
-
-    public log(msg) {
-        console.log("APPDEBUG", msg);
-    }
 }

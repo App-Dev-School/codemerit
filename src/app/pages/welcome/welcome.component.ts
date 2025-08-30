@@ -6,13 +6,14 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthService, User } from '@core';
 import { SubjectRole } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
+import { SnackbarService } from '@core/service/snackbar.service';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -38,11 +39,13 @@ import { MedalCardComponent } from "@shared/components/medal-card/medal-card.com
 })
 export class WelcomeComponent implements OnInit {
   public subjectRoleMap: SubjectRole[] = [];
-  subject = "";
+  userName = "";
+  userMessage = "";
+  nextAction = "login";
+  //clean up
   subjectData: any;
   subjectsByRole: { [role: string]: SubjectRole[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
-
   engagements = [
     {
       "id": 1,
@@ -50,7 +53,8 @@ export class WelcomeComponent implements OnInit {
       "subject": "JavaScript",
       "topic": "ECMAScript",
       "type": "Ask",
-      "imageUrl": "https://bazichic.com/uploads/images/docs/3111868324376422.jpg"
+      "imageUrl": "assets/images/tech/angular.png",
+      "style":"right",
     },
     {
       "id": 2,
@@ -58,15 +62,17 @@ export class WelcomeComponent implements OnInit {
       "subject": "JavaScript",
       "topic": "DOM",
       "type": "Ask",
-      "imageUrl": "https://bazichic.com/uploads/images/docs/3111868324376422.jpg"
+      "style":"",
+      "imageUrl": "assets/images/tech/javascript.png"
     },
     {
       "id": 3,
-      "title": "Have you ever practised using Promise?",
-      "subject": "JavaScript",
-      "topic": "Promise",
+      "title": "How to transform an Angular App for SEO?",
+      "subject": "Angular",
+      "topic": "SSR",
       "type": "Ask",
-      "imageUrl": "https://bazichic.com/uploads/images/docs/3111868324376422.jpg"
+      "style":"right",
+      "imageUrl": "assets/images/tech/angular.png"
     }
   ];
 
@@ -113,7 +119,24 @@ export class WelcomeComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router, private master: MasterService, private authService: AuthService) {
+  constructor(private router: Router, 
+    private master: MasterService, 
+    private snackService: SnackbarService,
+    private authService: AuthService) {
+    this.authService.currentUser.subscribe((sub:User) =>{
+      this.authService.log("Welcome ", sub, "CurrentUser");
+      if(sub && sub.firstName){
+      this.userName = sub.firstName;
+      if(sub.designation == ''){
+        this.userMessage = "Let us start by rating your skills.";
+      }
+      //this.snackService.display('snackbar-dark', 'Welcome '+sub.firstName, 'bottom', 'center');
+      this.nextAction = "selfRating";
+      }else{
+        this.userMessage = "Sign in to assess your skills.";
+        this.nextAction = "login";
+      }
+    });
     // Implement Master Data Relationship
     this.master.fetchSubjectRoleMap().subscribe(data => {
       this.subjectRoleMap = data;
@@ -126,9 +149,12 @@ export class WelcomeComponent implements OnInit {
         });
       });
     });
-    setInterval(() => {
+    setTimeout(() => {
       //After 5 secons ore more display the next user task
-    }, 5000);
+      if(!this.authService.currentUserValue.email){
+      this.snackService.display('snackbar-dark', 'Sign up to start up-skilling and transforming your tech path.', 'bottom', 'center');
+      }
+    }, 8000);
   }
 
   ngOnInit(): void {
@@ -150,8 +176,11 @@ export class WelcomeComponent implements OnInit {
   }
 
   exploreLesson(itemId: any) {
+    this.snackService.display('snackbar-dark', 'Feature coming soon!', 'bottom', 'center');
+  }
+
+  closeLesson(itemId: any) {
     if (typeof itemId == 'number') {
-      console.log("removeItem ");
       //bad code
       this.engagements = this.engagements.filter(item => item.id != itemId)
     } else {
@@ -167,5 +196,12 @@ export class WelcomeComponent implements OnInit {
         console.log('Navigation completed!');
       });
     }
+  }
+
+  handleAction(action:String){
+    console.log("Welcome Action", action);
+    this.router.navigate(['/dashboard/learn']).then(() => {
+        console.log('Navigation completed!');
+      });
   }
 }

@@ -234,4 +234,8 @@ export class AuthService {
     throw new Error("Method not implemented.");
   }
 
+  log(...msg) {
+    console.log("APPDEBUG", msg);
+  }
+
 }
