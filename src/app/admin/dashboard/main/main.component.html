@@ -140,8 +140,8 @@
               </div>
             </div>
             <div class="progress shadow-style">
-              <div class="progress-bar" [style.width]="87 + '%'" [style.backgroundColor]="'#2b982b'"
-                role="progressbar" [attr.aria-valuenow]="87" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar" [style.width]="87 + '%'" [style.backgroundColor]="'#2b982b'" role="progressbar"
+                [attr.aria-valuenow]="87" aria-valuemin="0" aria-valuemax="100">
                 87% Approved
               </div>
             </div>
@@ -154,19 +154,84 @@
           </mat-card-content></mat-card>
       </div>
 
-
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <div class="card hoverCard">
           <div class="header">
-            <h2>Usage Analytics</h2>
+            <h2>User Countries</h2>
+          </div>
+          <div class="body">
+            <div class="progress-list m-b-10">
+              <div class="details">
+                <div class="title">USA</div>
+              </div>
+              <div class="status">
+                <span>40</span>%
+              </div>
+              <div class="progress-sm not-rounded progress">
+                <div class="progress-bar progress-bar-warning width-per-65" role="progressbar" aria-valuenow="40"
+                  aria-valuemin="0" aria-valuemax="100">
+                  <!-- <span class="sr-only">40%</span> -->
+                </div>
+              </div>
+            </div>
+            <div class="progress-list m-b-10">
+              <div class="details">
+                <div class="title">Germany</div>
+              </div>
+              <div class="status">
+                <span>49</span>%
+              </div>
+              <div class="progress-md not-rounded progress">
+                <div class="progress-bar progress-bar-danger width-per-49" role="progressbar" aria-valuenow="49"
+                  aria-valuemin="0" aria-valuemax="100">
+                  <span class="sr-only">49%</span>
+                </div>
+              </div>
+            </div>
+            <div class="progress-list m-b-10">
+              <div class="details">
+                <div class="title">France</div>
+              </div>
+              <div class="status">
+                <span>65</span>%
+              </div>
+              <div class="progress-md not-rounded progress">
+                <div class="progress-bar progress-bar-blue width-per-65" role="progressbar" aria-valuenow="65"
+                  aria-valuemin="0" aria-valuemax="100">
+                  <span class="sr-only">65%</span>
+                </div>
+              </div>
+            </div>
+            <div class="progress-list m-b-10">
+              <div class="details">
+                <div class="title">India</div>
+              </div>
+              <div class="status">
+                <span>28</span>%
+              </div>
+              <div class="progress-md not-rounded progress">
+                <div class="progress-bar progress-bar-success width-per-28" role="progressbar" aria-valuenow="28"
+                  aria-valuemin="0" aria-valuemax="100">
+                  <span class="sr-only">28%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="header">
+            <h2>Learner Groups</h2>
           </div>
           <div class="body">
             <div class="row">
-              <div class="col-md-12 col-lg-6 col-xl-6">
-                <p class="font-b-500 font-18 m-b-30">User Countries</p>
+              <div class="col-md-12 col-lg-12 col-xl-12">
+                @for (roleItem of initialRoles; track roleItem.value) {
                 <div class="progress-list m-b-10">
                   <div class="details">
-                    <div class="title">USA</div>
+                    <div class="title">{{roleItem.label}}</div>
                   </div>
                   <div class="status">
                     <span>40</span>%
@@ -178,92 +243,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="progress-list m-b-10">
-                  <div class="details">
-                    <div class="title">Germany</div>
-                  </div>
-                  <div class="status">
-                    <span>49</span>%
-                  </div>
-                  <div class="progress-md not-rounded progress">
-                    <div class="progress-bar progress-bar-danger width-per-49" role="progressbar" aria-valuenow="49"
-                      aria-valuemin="0" aria-valuemax="100">
-                      <span class="sr-only">49%</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="progress-list m-b-10">
-                  <div class="details">
-                    <div class="title">France</div>
-                  </div>
-                  <div class="status">
-                    <span>65</span>%
-                  </div>
-                  <div class="progress-md not-rounded progress">
-                    <div class="progress-bar progress-bar-blue width-per-65" role="progressbar" aria-valuenow="65"
-                      aria-valuemin="0" aria-valuemax="100">
-                      <span class="sr-only">65%</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="progress-list m-b-10">
-                  <div class="details">
-                    <div class="title">India</div>
-                  </div>
-                  <div class="status">
-                    <span>28</span>%
-                  </div>
-                  <div class="progress-md not-rounded progress">
-                    <div class="progress-bar progress-bar-success width-per-28" role="progressbar" aria-valuenow="28"
-                      aria-valuemin="0" aria-valuemax="100">
-                      <span class="sr-only">28%</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="progress-list m-b-10">
-                  <div class="details">
-                    <div class="title">Other</div>
-                  </div>
-                  <div class="status">
-                    <span>16</span>%
-                  </div>
-                  <div class="progress-md not-rounded progress">
-                    <div class="progress-bar progress-bar-hotpink width-per-16" role="progressbar" aria-valuenow="16"
-                      aria-valuemin="0" aria-valuemax="100">
-                      <span class="sr-only">16%</span>
-                    </div>
-                  </div>
-                </div>
+                }
               </div>
-
-              <div class="col-md-12 col-lg-6 col-xl-6">
-                <div class="card">
-                  <div class="body">
-                    <div class="row">
-                      <div class="col-md-12 col-lg-12 col-xl-12">
-                            <p class="font-b-500 font-18 m-b-30">User Roles</p>
-                            @for (roleItem of initialRoles; track roleItem.value) {
-                            <div class="progress-list m-b-10">
-                              <div class="details">
-                                <div class="title">{{roleItem.label}}</div>
-                              </div>
-                              <div class="status">
-                                <span>40</span>%
-                              </div>
-                              <div class="progress-sm not-rounded progress">
-                                <div class="progress-bar progress-bar-warning width-per-65" role="progressbar"
-                                  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
-                                  <!-- <span class="sr-only">40%</span> -->
-                                </div>
-                              </div>
-                            </div>
-                            }
-                          </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
         </div>

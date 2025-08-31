@@ -47,8 +47,7 @@ export interface DialogData {
     MatSelectModule,
     MatDatepickerModule,
     MatDialogClose,
-    MatCheckboxModule,
-    JsonPipe
+    MatCheckboxModule
   ]
 })
 export class TopicFormComponent {
@@ -72,12 +71,12 @@ export class TopicFormComponent {
       this.action === 'edit' ? 'Edit '+data.topicItem.title : 'Create New Topic';
     this.topicItems = this.action === 'edit' ? data.topicItem : new TopicItem({}); // Create a blank object
     this.topicForm = this.createContactForm();
-    this.topicGroups = this.masterSrv.topics;
-
+    const allTopicGroups = this.masterSrv.topics;
+    console.log('TopicManager all topic', allTopicGroups);
     this.topicForm.get('subjectId')?.valueChanges.subscribe(subject => {
-      this.topicGroups = this.masterSrv.topics;
       if (subject > 0) {
-        this.topicGroups = this.topicGroups.filter(topic => topic.subjectId == subject);
+        this.topicGroups = allTopicGroups.filter(topic => topic.subjectId == subject);
+        console.log('TopicManager filtered topic', this.topicGroups);
       }
     });
 

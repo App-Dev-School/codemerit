@@ -3,7 +3,10 @@
     <div class="block-header m-t-20 m-b-20">
       <h1 class="align-center font-32 m-t-20">Up-Skilling & Work Experience
       </h1>
-      <h4 class="align-center font-15">At Code Merit, we're passionate about building a virtual workplace that empowers tech enthusiasts through an engaging, supportive, and collaborative environment.</h4>
+      <h4 class="align-center font-15">
+        Choose a subscription plan that fits your learning goals. Whether you're preparing for your first job, aiming to
+        sharpen your skills, or gain experience working on a project with a team.
+      </h4>
     </div>
     <div class="row clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -14,33 +17,34 @@
               <div class="col-md-4 col-sm-6">
                 <div class="pricingTable greenColor">
                   <div class="pricingTable-header">
-                     <img class="iconImg" src="assets/images/icons/merit.png">
+                    <img class="iconImg" src="assets/images/icons/merit.png">
                     <div class="price-value">
-                      <span class="month">Free Plan</span>
+                      <span class="month">Join Basic to get started.</span>
                     </div>
                   </div>
                   <h3 class="heading">Basic</h3>
                   <div class="pricing-content">
                     <ul>
                       <li>
+                        Browse all job roles & subjects
+                      </li>
+                      <li>
                         <b>Access</b> to Free Quizzes
                       </li>
                       <li>
-                        <b>1 On-Demand Mock Interview</b>
+                        <b>1 Free Mock Exam</b>
                       </li>
                       <li>
                         Multi Level <b>Skill Assessment</b>
                       </li>
-                      <li>
-                        <b>3+</b> Certifications
-                      </li>
-                      <li>
-                        <b>Unlock more by Engaging</b>
-                      </li>
                     </ul>
                   </div>
                   <div class="pricingTable-signup" (click)="signUp()">
-                    <a href="#">sign up</a>
+                    @if (userData && userData.email && userData.id) {
+                    <a (click)="subscribe('Basic')" href="#">Continue with Basic</a>
+                    }@else {
+                    <a (click)="signUp()" href="#">sign up</a>
+                    }
                   </div>
                 </div>
               </div>
@@ -48,26 +52,42 @@
                 <div class="pricingTable blueColor">
                   <div class="pricingTable-header">
                     <img class="iconImg" src="assets/images/icons/certificate.png">
+                    <div class="price-value">
+                      <span class="month">Go Premium for full access.</span>
+                    </div>
                   </div>
                   <h3 class="heading">PREMIUM</h3>
                   <div class="pricing-content">
                     <ul>
                       <li>
-                        <b>Full Access to</b> Quiz
+                        🔓 Access to All Types of Quizzes
                       </li>
                       <li>
-                        Unlock all <b>Certifications</b>
+                        📈 Prepare for real-world interview
                       </li>
                       <li>
-                       Up to <b>3</b> Mock Interviews
+                        🏆 Track progress and compare performance
                       </li>
                       <li>
-                        Other Rewards & Recognitions
+                        <b>3+</b> Certifications
+                      </li>
+                      <li>
+                        🎯 1 Mock Interview with AI & Human
+                      </li>
+                      <li>
+                        Group Guidance Session
+                      </li>
+                       <li>
+                        Career tips, resume help, Q&A
                       </li>
                     </ul>
                   </div>
                   <div class="pricingTable-signup">
-                    <a href="#">sign up</a>
+                    @if (userData && userData.email && userData.id) {
+                    <a (click)="subscribe('Premium')" href="#">Go Premium</a>
+                    }@else {
+                    <a (click)="signUp()" href="#">sign up</a>
+                    }
                   </div>
                 </div>
               </div>
@@ -76,28 +96,33 @@
                   <div class="pricingTable-header">
                     <img class="iconImg" src="assets/images/icons/upgrade.png">
                     <div class="price-value">
-                      <span class="month">Internship Offer for selected candidates</span>
+                      <span class="month">🤝 Become a part of our team for collaborative growth.</span>
                     </div>
                   </div>
                   <h3 class="heading">TEAM</h3>
                   <div class="pricing-content">
                     <ul>
                       <li>
-                        <b>6 Months</b> of Work Experience
+                        🔄 <b>Acquire</b> Work Experience
                       </li>
                       <li>
-                        <b>Teams</b> Email Account & Workspace Setup
+                        🧑‍🏫 Access to Team Meetings & Project Resources
                       </li>
                       <li>
-                        <b>Real-Time</b> Project Collaboration
+                        📊 <b>Real-Time</b> Project Collaboration
                       </li>
                       <li>
-                        <b>Job Interviews</b> Support
+                        📊 Internship Offer + Work Experience
                       </li>
                     </ul>
+                    <p>👉 Available via partner companies or by invitation.</p>
                   </div>
                   <div class="pricingTable-signup">
-                    <a href="#">sign up</a>
+                    @if (userData && userData.email && userData.id) {
+                    <a (click)="subscribe('Team')" href="#">Apply as Intern</a>
+                    }@else {
+                    <a (click)="signUp()" href="#">sign up</a>
+                    }
                   </div>
                 </div>
               </div>

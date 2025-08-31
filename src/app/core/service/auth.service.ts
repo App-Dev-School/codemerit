@@ -133,7 +133,7 @@ export class AuthService {
   }
 
   redirectToErrorPage() {
-    this.router.navigate(["/404"]);
+    this.router.navigate(["/authentication/page404"]);
   }
 
   redirectToLogin() {

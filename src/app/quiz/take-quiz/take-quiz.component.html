@@ -7,7 +7,7 @@
       <div class="animToast loading">
         <img src="assets/images/icons/cube.gif" class="loadingIcon">
         <h4>{{loadingText}}</h4>
-        <h5>Be Ready!</h5>
+        <h5>Please wait</h5>
       </div>
       }
 
@@ -58,10 +58,12 @@
 
           @for (question of questions; track question.id) {
           <swiper-slide>
-            <p class="col-grey text-center m-t-16 m-b-10">{{$index}} of {{questions?.length}}</p>
+            <p class="col-grey text-center m-t-16 m-b-10">{{$index+1}} of {{questions?.length}}</p>
             <div class="question-card">
+              @if (question.title) {
               <h5 class="mb-3">{{ question.title }}</h5>
-              <div class="mb-3 font-24">{{ question.question }}</div>
+              }
+              <div class="mb-3 font-20">{{ question.question }}</div>
               @for (choice of question.options; track choice) {
                <mat-card (click)="optionSelected(choice.option, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedChoice === choice.option,
@@ -82,7 +84,6 @@
               }
 
             </div>
-            <p>{{ question | json}}</p>
           </swiper-slide>
           }
         </swiper-container>

@@ -131,8 +131,8 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/admin/dashboard/main']);
   }
 
-  editQuestion(){
-    const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
-    this.router.navigate(['/admin/questions/update', question.slug]);
+  editQuestion(slug:string){
+    //const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
+    this.router.navigate(['/admin/questions/update', slug]);
   }
 }

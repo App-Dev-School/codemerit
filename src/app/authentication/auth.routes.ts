@@ -28,11 +28,11 @@ export const AUTH_ROUTE: Route[] = [
     component: LockedComponent,
   },
   {
-    path: "404",
+    path: "page404",
     component: Page404Component,
   },
   {
-    path: "500",
+    path: "page500",
     component: Page500Component,
   },
 ];

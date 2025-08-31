@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from '@core';
+import { Router } from '@angular/router';
+import { AuthService, User } from '@core';
 @Component({
     selector: 'app-pricing',
     templateUrl: './pricing.component.html',
@@ -7,12 +8,17 @@ import { AuthService } from '@core';
     imports: []
 })
 export class PricingComponent {
-  constructor(private auth: AuthService) {
-    // constructor code
+  userData: User;
+  constructor(private auth: AuthService, private router: Router) {
+    this.userData = this.auth.currentUserValue;
+  }
+
+  subscribe(plan:string){
+  this.router.navigate(['/dashboard']);
+  //teams - self rating should be done. Fill up internship form
   }
 
   signUp(){
-  //if visitor launch a dialog based login component
-  //else show membership details
+  this.router.navigate(['/authentication/signup']);
   }
 }

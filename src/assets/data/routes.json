@@ -172,7 +172,7 @@
     },
     {
       "path": "",
-      "title": "Formkit UI",
+      "title": "UI Screens",
       "iconType": "material-icons-outlined",
       "icon": "dvr",
       "class": "menu-toggle",
@@ -197,120 +197,7 @@
           ],
           "submenu": []
         },
-        {
-          "path": "/quiz/start/list",
-          "title": "Start Quiz",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/dashboard/select-subject",
-          "title": "Select Subject",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-         {
-          "path": "/dashboard/learn/java",
-          "title": "Learn Java Deeplink",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/app/profile",
-          "title": "App Profile",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/app/faqs",
-          "title": "App FAQs",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/app/subscription",
-          "title": "App Subscription",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        },
-        {
-          "path": "/app/invoice",
-          "title": "App invoice",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        }
-      ]
-    },
-    {
-      "path": "",
-      "title": "Authentication",
-      "iconType": "material-icons-outlined",
-      "icon": "supervised_user_circle",
-      "class": "menu-toggle",
-      "groupTitle": false,
-      "badge": "",
-      "badgeClass": "",
-      "role": [
-        "Admin"
-      ],
-      "submenu": [
-        {
+       {
           "path": "/authentication/signin",
           "title": "Sign In",
           "iconType": "",
@@ -383,6 +270,48 @@
         {
           "path": "/authentication/page500",
           "title": "500 - Server Error",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/app/faqs",
+          "title": "App FAQs",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/app/subscription",
+          "title": "App Subscription",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [
+            ""
+          ],
+          "submenu": []
+        },
+        {
+          "path": "/app/invoice",
+          "title": "App invoice",
           "iconType": "",
           "icon": "",
           "class": "ml-menu",

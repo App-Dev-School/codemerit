@@ -10,7 +10,7 @@ import { Component, Input, OnInit } from '@angular/core';
     styleUrl: './code-snippet.component.scss'
 })
 export class CodeSnippetComponent implements OnInit{
-  @Input() code: string = '';  // This will hold the code snippet to display
+  @Input() code: string = 'console.log("Welcome to CodeMerit")';  // This will hold the code snippet to display
   @Input() language: string = 'typescript';  // Default language is TypeScript
 
   constructor() { }

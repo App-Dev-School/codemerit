@@ -12,7 +12,7 @@ export class QuestionItem {
   level : string;
   status: string;
   marks : number;
-  order : number;
+  orderId : number;
   timeAllowed : number;
   hint?: string;
   answer?: string;
@@ -29,7 +29,7 @@ export class QuestionItem {
     this.level = question.level || 'Easy';
     this.status = question.status || Status.Pending;
     this.marks = question.marks || 1;
-    this.order = question.order || 1;
+    this.orderId = question.orderId || 1;
     this.timeAllowed = question.timeAllowed || 60;
     this.hint = question.hint || '';
     this.answer = question.answer || '';
