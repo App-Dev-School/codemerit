@@ -22,98 +22,106 @@
           @for (question of questions; track $index) {
           <swiper-slide>
             <p class="col-grey text-center m-t-16 m-b-10">{{$index + 1}} of {{questions?.length}}</p>
-            <div class="question-card">
-              @if (question.title) {
-              <h4 class="mb-3">{{ question?.title }}</h4>
-              }
-              <div class="question mb-3" [innerHTML]="question?.id+'.) '+question?.question"></div>
-              <!-- @if (question?.rawQuestion && question?.id < 2) {
+
+            <div class="row clearfix">
+              <div class="col-lg-8 col-md-12">
+                <div class="question-card">
+                  @if (question.title) {
+                  <h4 class="mb-3">{{ question?.title }}</h4>
+                  }
+                  <div class="question mb-3" [innerHTML]="question?.id+'.) '+question?.question"></div>
+                  <!-- @if (question?.rawQuestion && question?.id < 2) {
               <div class="question mb-3" [innerHTML]="question?.rawQuestion"></div>
               }
               <div class="mb-3" [innerHTML]="'Normal and <strong>Strong Text</strong>, <em>Angular</em>! and code below:<br><pre>console.log(hi)</pre>'"></div>
                -->
-              <hr class="dim-divider">
-              @for (choice of question.options; track choice) {
-              @if (mode === 0) {
-              <mat-card class="choice p-2 rounded mb-2" [ngClass]="{
+                  <hr class="dim-divider">
+                  @for (choice of question.options; track choice) {
+                  @if (mode === 0) {
+                  <mat-card class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.hasAnswered,
          'correct': choice.correct
        }">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span>{{ choice.option }}</span>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>{{ choice.option }}</span>
 
-                  @if (choice.correct) {
-                  <img src="assets/images/icons/ic_correct.png" class="icon-right">
+                      @if (choice.correct) {
+                      <img src="assets/images/icons/ic_correct.png" class="icon-right">
+                      }
+                    </div>
+                  </mat-card>
                   }
-                </div>
-              </mat-card>
-              }
-              @else {
-              <mat-card (click)="optionSelected(''+choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
+                  @else {
+                  <mat-card (click)="optionSelected(''+choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedChoice === choice.id,
          'correct': question.selectedChoice === choice.id,
          'wrong': question.selectedChoice === choice.id
        }">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span>{{ choice.option }}</span>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>{{ choice.option }}</span>
 
-                  @if (question.selectedChoice === choice.id) {
-                  <img src="assets/images/icons/ic_correct.png" class="icon-right">
+                      @if (question.selectedChoice === choice.id) {
+                      <img src="assets/images/icons/ic_correct.png" class="icon-right">
+                      }
+                      @if (question.selectedChoice === choice.id) {
+                      <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
+                      }
+                    </div>
+                  </mat-card>
                   }
-                  @if (question.selectedChoice === choice.id) {
-                  <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
                   }
                 </div>
-              </mat-card>
-              }
-              }
-            </div>
-
-            <div class="question-card">
-              <div class="questionInfo">
-                @if (question.subjectName) {
-                <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subjectName }}</span>
-                }
-                @if (question.questionType) {
-                <span class="mb-3 icon-text"><mat-icon>{{question?.questionType === 'Trivia' ? 'check_boxcheck_box' :
-                    'indeterminate_check_box'}}</mat-icon> {{ question?.questionType }}</span>
-                }
-                @if (question.level) {
-                <span class="mb-3 icon-text"><mat-icon>school</mat-icon> {{ question?.level }}</span>
-                }
-                @if (question.timeAllowed) {
-                <span class="mb-3 icon-text"><mat-icon>alarm_on</mat-icon> {{ (question?.timeAllowed/60.0) }}s</span>
-                }
-                @if (question.status) {
-                <span class="mb-3 icon-text"><mat-icon>public</mat-icon> {{ question?.status }}</span>
-                }
-                @if (question.createdAt) {
-                <span class="mb-3 icon-text"><mat-icon>access_time</mat-icon> {{ question?.createdAt | date:'mediumDate'
-                  }}</span>
-                }
               </div>
-               @if (question.topics) {
-            <mat-chip-set aria-label="Tags">
-              @for (item of question.topics; track $index) {
-              <mat-chip>{{ item?.title }}</mat-chip>
-              }
-            </mat-chip-set>
-            }
+              <div class="col-lg-4 col-md-12">
+                <div class="question-card">
+                  <div class="questionInfo">
+                    @if (question.subjectName) {
+                    <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subjectName }}</span>
+                    }
+                    @if (question.questionType) {
+                    <span class="mb-3 icon-text"><mat-icon>{{question?.questionType === 'Trivia' ? 'check_boxcheck_box'
+                        :
+                        'indeterminate_check_box'}}</mat-icon> {{ question?.questionType }}</span>
+                    }
+                    @if (question.level) {
+                    <span class="mb-3 icon-text"><mat-icon>school</mat-icon> {{ question?.level }}</span>
+                    }
+                    @if (question.timeAllowed) {
+                    <span class="mb-3 icon-text"><mat-icon>alarm_on</mat-icon> {{ (question?.timeAllowed/60.0)
+                      }}s</span>
+                    }
+                    @if (question.status) {
+                    <span class="mb-3 icon-text"><mat-icon>public</mat-icon> {{ question?.status }}</span>
+                    }
+                    @if (question.createdAt) {
+                    <span class="mb-3 icon-text"><mat-icon>access_time</mat-icon> {{ question?.createdAt |
+                      date:'mediumDate'
+                      }}</span>
+                    }
+                  </div>
+                  @if (question.topics) {
+                  <mat-chip-set aria-label="Tags">
+                    @for (item of question.topics; track $index) {
+                    <mat-chip>{{ item?.title }}</mat-chip>
+                    }
+                  </mat-chip-set>
+                  }
 
-            @if (question?.hint) {
-            <hr class="dim-divider">
-            <h5>Hint Available <span class="col-green">{{ question?.hint }}</span> </h5>
-            }
-            @if (question?.answer) {
-            <hr class="dim-divider">
-            <h5>Answer:</h5>
-            <h5 class="m-b-20 font-normal">{{ question?.answer }}</h5>
-            }
-            <hr class="dim-divider">
-            <button mat-raised-button color="dark" (click)="editQuestion(question?.slug)">
-                <mat-icon>edit</mat-icon> Edit</button>
+                  @if (question?.hint) {
+                  <hr class="dim-divider">
+                  <h5>Hint Available <span class="col-green">{{ question?.hint }}</span> </h5>
+                  }
+                  @if (question?.answer) {
+                  <hr class="dim-divider">
+                  <h5>Answer:</h5>
+                  <p class="m-b-20 font-normal">{{ question?.answer }}</p>
+                  }
+                  <hr class="dim-divider">
+                  <button mat-raised-button color="dark" (click)="editQuestion(question?.slug)">
+                    <mat-icon>edit</mat-icon> Edit Question</button>
+                </div>
+              </div>
             </div>
-            <div style="height:30px;margin-bottom: 30px;"></div>
           </swiper-slide>
           }
         </swiper-container>
@@ -159,7 +167,7 @@
     <div class="animToast hint">
       <h4>Finish Review</h4>
       <h6 class="col-grey">You have reviewed all the questions.</h6>
-       <button mat-raised-button color="dark" (click)="exitViewer()">
+      <button mat-raised-button color="dark" (click)="exitViewer()">
         <mat-icon>cancel</mat-icon> Exit Viewer</button>
     </div>
     }
