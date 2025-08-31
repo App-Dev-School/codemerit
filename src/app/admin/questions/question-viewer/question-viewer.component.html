@@ -28,10 +28,11 @@
               }
               <div class="question mb-3" [innerHTML]="question?.id+'.) '+question?.question"></div>
               
-              @if (question?.rawQuestion && question?.id < 2) {
+              <!-- @if (question?.rawQuestion && question?.id < 2) {
               <div class="question mb-3" [innerHTML]="question?.rawQuestion"></div>
               }
               <div class="mb-3" [innerHTML]="'Normal and <strong>Strong Text</strong>, <em>Angular</em>! and code below:<br><pre>console.log(hi)</pre>'"></div>
+               -->
               <hr class="dim-divider">
               <div class="questionInfo">
                 @if (question.subjectName) {
