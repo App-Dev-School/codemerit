@@ -11,3 +11,12 @@
   right: 25px;
   height: 26px;
 }
+.outerPadding{
+  padding: 1rem;
+  //margin: 1rem;
+  background-color: #f0f3fb;
+}
+
+::ng-deep .mat-mdc-dialog-inner-container .mat-mdc-dialog-surface {
+  background-color: #f0f3fb;
+}

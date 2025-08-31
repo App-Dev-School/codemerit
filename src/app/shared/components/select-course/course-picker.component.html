@@ -12,6 +12,8 @@
   </div>
 </div>
 }
+@if(!isLoading){
+<div class="text-center" [ngClass]="{ 'outerPadding': mode === 'dialog' }">
 @if (pickerTheme === 'Merit') {
 <div class="row full-width clearfix">
   @for(job of courses|async;track job){
@@ -30,7 +32,7 @@
 }
 
 @if (pickerTheme === 'Default') {
-<div class="row">
+<div class="row clearfix">
   @for(job of courses|async;track job){
   <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
     <mat-card>
@@ -66,5 +68,7 @@
     </mat-card>
   </div>
   }
+</div>
+}
 </div>
 }

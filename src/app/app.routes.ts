@@ -25,7 +25,7 @@ export const APP_ROUTE: Route[] = [
                 path: 'dashboard',
                 canActivate: [AuthGuard],
                 data: {
-                    role: Role.Subscriber,
+                    role: [Role.Subscriber, Role.Manager, Role.Admin],
                 },
                 loadChildren: () =>
                     import('./subscriber/subscriber.routes').then((m) => m.SUBSCRIBER_ROUTE),

@@ -35,9 +35,12 @@ export class TopicsListComponent {
   }
 
   async launchTopicQuiz(topic:TopicItem) {
-    const slug = topic.slug;
+    const slug = topic.slug || 'testing'; //fix this issue
     this.generatingQuiz = true;
     this.loadingText = topic.title;
+    //let parent do launch a quiz
+    //if generate quiz api success redirect to quiz player
+    //or handle error
     setTimeout(() => {
       this.router.navigate(['quiz/take', slug]);
       this.generatingQuiz = false;

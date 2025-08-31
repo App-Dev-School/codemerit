@@ -24,7 +24,7 @@
       "badge": "",
       "badgeClass": "",
       "role": [
-        "Admin", "User", "Manager", "All"
+        "Admin", "Manager"
       ],
       "submenu": [
         {
@@ -37,7 +37,7 @@
       "badge": "",
       "badgeClass": "",
       "role": [
-        "User"
+        "Admin", "Manager"
       ],
       "submenu": []
     },
@@ -81,7 +81,7 @@
       "badge": "",
       "badgeClass": "",
       "role": [
-        "User"
+        "User", "Admin", "Manager", "All"
       ],
       "submenu": []
     },
@@ -151,7 +151,7 @@
       "badge": "Mock",
       "badgeClass": "badge bg-blue sidebar-badge float-end",
       "role": [
-        "User", "Admin"
+        "Admin"
       ],
       "submenu": [
         {
