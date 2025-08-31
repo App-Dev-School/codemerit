@@ -4,7 +4,16 @@
       <!-- breadcrumb -->
       <app-breadcrumb [title]="'Profile'" [items]="['Extra']" [active_item]="'Profile'"></app-breadcrumb>
     </div>
-    <!-- Your content goes here  -->
+     @if (loading) {
+      <div class="overlay"></div>
+      <div class="animToast loading">
+        <img src="assets/images/icons/loading.gif" class="loadingIcon">
+        <h4>Loading Profile</h4>
+        <h5>Please wait</h5>
+      </div>
+      }
+    <!-- Display User profile, designation details, badges and rewards  -->
+     @if (!loading && userDetail) {
     <div class="row clearfix">
       <div class="col-lg-8 col-md-12">
         <div class="card">
@@ -12,30 +21,52 @@
             <div class="contact-grid">
               <div class="profile-header bg-dark">
                 <div class="user-name">{{ userDetail.firstName +' '+ userDetail.lastName}}</div>
-                <div class="name-center">{{ userDetail.designation }}</div>
+                <div class="name-center">{{ userDetail.city }} {{ userDetail.country }}</div>
               </div>
               <img src="assets/images/users/user.jpg" class="user-img" alt="">
-              <p>
+              <!-- <p>
                {{ userDetail.city }} {{ userDetail.country }}
-              </p>
-              @if (userDetail.mobile) {
-<div>
+              </p> -->
+              @if (selfView && userDetail.mobile) {
+               <div>
                 <span class="phone">
                   <i class="material-icons">phone</i>Verified</span>
               </div>
               }
+              <!-- <hr class="dim-divider"> -->
+              <div class="userDesignation"><mat-icon>stars</mat-icon> {{ userDetail.designation }}</div>
+              <hr class="dim-divider">
+              <ul class="list-unstyled order-list m-b-0">
+                <!-- use userDetail.mysubjects -->
+                @for (subject of mySubjects; track subject) {
+                <li class="avatar avatar-sm">
+                  <img class="rounded-circle" [src]="subject.image" alt="{{subject.title}}">
+                </li>
+                }
+                @if (mySubjects.length > 7) {
+                <li class="avatar avatar-sm">
+                  <span class="badge">+{{ mySubjects.length - 7 }} skills</span>
+                </li>
+                }
+              </ul>
+              <hr class="dim-divider">
               <div class="row">
                 <div class="col-4">
-                  <p class="font-16 font-b-600">{{ userDetail.profile?.selfRatingDone }}</p>
+                  <p class="font-16 font-b-600">
+                    <mat-icon>{{ userDetail.profile?.selfRatingDone ? 'check_circle' : 'cancel' }}</mat-icon></p>
                   <small>Onboarded</small>
                 </div>
                 <div class="col-4">
-                  <p class="font-16 font-b-600">{{ userDetail.profile?.level1Assessment }}</p>
-                  <small>Level 1 Done</small>
+                  <p class="font-16 font-b-600">
+                    <mat-icon>{{ userDetail.profile?.level1Assessment ? 'check_circle' : 'cancel' }}</mat-icon>
+                  </p>
+                  <small>Initial Assessment</small>
                 </div>
                 <div class="col-4">
-                  <p class="font-16 font-b-600">{{ userDetail.profile?.level2Assessment }}</p>
-                  <small>Level 2 Done </small>
+                  <p class="font-16 font-b-600">
+                    <mat-icon>{{ userDetail.profile?.level2Assessment ? 'check_circle' : 'cancel' }}</mat-icon>
+                    </p>
+                  <small>Learner Badge </small>
                 </div>
               </div>
             </div>
@@ -106,6 +137,10 @@
           </mat-tab-group>
         </div>
       </div>
+      <div class="col-lg-4 col-md-12">
+        <app-course-progress [title]="userDetail.designation" [config]="courseChartConfig" [subtitle]="'Metadata tag here'"></app-course-progress>
+      </div>
     </div>
+    }
   </div>
 </section>

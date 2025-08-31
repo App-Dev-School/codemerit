@@ -11,17 +11,21 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, User } from '@core';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
+import { CourseProgressComponent } from '@shared/components/course-progress/course-progress.component';
 @Component({
   selector: 'app-user',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
-  imports: [BreadcrumbComponent,
+  imports: [
+    BreadcrumbComponent,
     DatePipe,
     MatTabsModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule]
+    MatButtonModule,
+    CourseProgressComponent
+  ]
 })
 export default class UserComponent implements OnInit {
   authData: User;
@@ -30,6 +34,71 @@ export default class UserComponent implements OnInit {
   selfView = true;
   userDetail: any;
   noDataView = false;
+  mySubjects = [
+    {
+      id:1,
+      title: 'HTML',
+      image : 'assets/images/tech/html.png',
+      color: '#ffffff',
+      progress: 78
+    },
+    {
+      id:2,
+      title: 'CSS',
+      image : 'assets/images/tech/css.png',
+      color: '#ffffff',
+      progress: 28
+    },
+    {
+      id:1,
+      title: 'JS',
+      image : 'assets/images/tech/js.png',
+      color: '#ffffff',
+      progress: 71
+    },
+    {
+      id:1,
+      title: 'TypeScript',
+      image : 'assets/images/tech/typescript.png',
+      color: '#6937dcff',
+      progress: 78
+    },
+    {
+      id:1,
+      title: 'Angular',
+      image : 'assets/images/tech/angular.png',
+      color: '#ffffff',
+      progress: 28
+    },
+    {
+      id:1,
+      title: 'Nest',
+      image : 'assets/images/tech/nest.png',
+      color: '#ffffff',
+      progress: 28
+    },
+    {
+      id:1,
+      title: 'Spring',
+      image : 'assets/images/tech/spring.png',
+      color: '#ffffff',
+      progress: 28
+    },
+    {
+      id:1,
+      title: 'Docker',
+      image : 'assets/images/tech/docker.png',
+      color: '#ffffff',
+      progress: 28
+    }
+  ];
+    courseChartConfig = {
+  showTitle: false,
+  showSubtitle: false,
+  showIcon: false,
+  showLegend: false
+ };
+
   constructor(private route: ActivatedRoute,
     public ngRouter: Router,
     private snackBar: MatSnackBar,
@@ -46,15 +115,14 @@ export default class UserComponent implements OnInit {
   takeRouteParams() {
     this.route.paramMap.subscribe(params => {
       if (params.get("userName")) {
-        this.userName = params.get("userName");
-        if (this.userName != this.authData.username) {
-          this.selfView = false;
-        }
-        this.loadData();
+        const userNameParam = params.get("userName");
+        this.userName = userNameParam;
+        this.selfView = false;
       } else {
-        this.authService.logout("Invalid link. Please login again.");
-        this.authService.redirectToErrorPage();
+        this.selfView = true;  
+        this.userName = this.authData.username;
       }
+      this.loadData();
     });
   }
 

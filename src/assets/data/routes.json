@@ -24,7 +24,7 @@
       "badge": "",
       "badgeClass": "",
       "role": [
-        "Admin"
+        "Admin", "User", "Manager", "All"
       ],
       "submenu": [
         {

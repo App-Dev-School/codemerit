@@ -47,10 +47,10 @@
                 } @else {
                 @if (column.def === 'name') {
                 <ng-container [matColumnDef]="column.def">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  <mat-header-cell class="mat-col-name" *matHeaderCellDef mat-sort-header>
                     <span class="truncate-text">{{ column.label }}</span>
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [matTooltip]="row.name"
+                  <mat-cell class="mat-col-name" *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [matTooltip]="row.name"
                     [routerLink]="['/users/view', row.username]">
                     <span class="mobile-label">{{ column.label }}:</span>
                     <!-- Place alph-->

@@ -1,0 +1,33 @@
+.order-list li .badge {
+    background: #6c89e4b3;
+    color: #fff;
+    margin-bottom: 10px;
+    width: auto;
+    height: 28px;
+    padding: 0px 10px 0px 10px;
+    line-height: 28px;
+    border: none;
+}
+
+.avatar-sm {
+    width: 48px;
+    margin-left: 2px!important;
+}
+.avatar {
+    position: relative;
+    width: 48px !important;
+    white-space: nowrap;
+    border-radius: 10px;
+    vertical-align: bottom;
+    display: inline-block;
+}
+
+.userDesignation{
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+}
