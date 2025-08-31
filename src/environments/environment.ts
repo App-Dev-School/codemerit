@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
    //apiUrl: "http://localhost:3000/",
-   apiUrl: "http://services.appdevops.in/",
+   apiUrl: "https://services.appdevops.in/",
    uploadsUrl: "http://services.appdevops.in/uploads/",
    stripe: {
      publicKey: 'pk_test_LHMHo4FCtltdVijsCnSjiN8X00Qa33WfAw',
