@@ -19,6 +19,7 @@ import { CourseProgressComponent } from "@shared/components/course-progress/cour
 import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { Observable } from 'rxjs';
+import { GoalPathComponent } from "@shared/components/goal-path/goal-path.component";
 
 @Component({
   selector: 'app-course-dashboard',
@@ -37,8 +38,9 @@ import { Observable } from 'rxjs';
     CongratulationsCardComponent,
     CourseProgressComponent,
     MedalCardComponent,
-    CoursePickerComponent
-  ]
+    CoursePickerComponent,
+    GoalPathComponent
+]
 })
 export class CourseDashboardComponent implements OnInit {
   userData: Observable<User>;

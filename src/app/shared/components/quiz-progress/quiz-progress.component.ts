@@ -46,7 +46,7 @@ export class QuizProgressComponent {
 
   private cardChart() {
     this.cardChartOptions = {
-      series: [83], // 70% used space
+      series: [83],
       chart: {
         type: 'radialBar',
         height: 265,
@@ -54,7 +54,7 @@ export class QuizProgressComponent {
       plotOptions: {
         radialBar: {
           hollow: {
-            size: '10%',
+            size: '70%',
           },
           track: {
             show: true,

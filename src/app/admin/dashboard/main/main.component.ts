@@ -35,15 +35,15 @@ export class MainComponent implements OnInit {
   subtitle = 'LSMS Resource Overview';
   
   constructor(private route: ActivatedRoute, 
-    private authService: AuthService, 
+    private authService: AuthService,
     private router: Router,
     private snackService: SnackbarService) {
     console.log("MainComponent constructor", this.subject);
   }
+  
   ngOnInit() {
     this.takeRouteParams();
   }
-
   //Implement for admin
   takeRouteParams() {
     const subject = this.route.snapshot.paramMap.get('subject');

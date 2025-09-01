@@ -50,7 +50,7 @@ export class QuizService {
     }
     return this.httpService.get(url, api_key).pipe(
       map((response: any) => {
-        return response.data; // return response from API
+        return response.data;
       })
     );
   }
