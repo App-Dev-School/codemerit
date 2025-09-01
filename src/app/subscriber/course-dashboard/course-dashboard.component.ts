@@ -39,7 +39,6 @@ import { GoalPathComponent } from "@shared/components/goal-path/goal-path.compon
     CourseProgressComponent,
     MedalCardComponent,
     CoursePickerComponent,
-    GoalPathComponent
 ]
 })
 export class CourseDashboardComponent implements OnInit {

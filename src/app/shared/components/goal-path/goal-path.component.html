@@ -1,37 +1,41 @@
-<div class="card mt-4">
-  <h2 class="mb-4 text-center">Course Path</h2>
+<div class="goalPath">
+  <h3 class="font-20 text-center">{{title}}</h3>
+  <div>
+<!-- <swiper-container #swiperEx [config]="swiperConfig" slides-per-view="4" [pagination]="pagination" space-between="10" class="h-100"> -->
 
-  <div class="d-flex flex-column flex-md-row align-items-start align-items-md-stretch">
-    @for (topic of topics; let i = $index; track topic.id) {
-      <div class="stepper-item d-flex flex-md-column flex-row align-items-center position-relative mb-4 mb-md-0 me-md-4">
-
+  <swiper-container #swiperEx [config]="swiperConfig" 
+  [breakpoints]="breakpoints"
+  slides-per-view="4" 
+  [pagination]="true" 
+  space-between="10">
+    @for (topic of topicsList; let i = $index; track i) {
+      <swiper-slide class="stepper-slide">
+      <mat-card class="goalCard">
+      <mat-card-content>
         <!-- Step Circle -->
-        <div class="step-circle d-flex justify-content-center align-items-center">
+        <div class="step-circle mb-2 d-flex justify-content-center align-items-center">
           {{ i + 1 }}
         </div>
 
-        <!-- Line Connector (only show if not last item) -->
-        @if (i < topics.length - 1) {
-          <div class="step-line d-none d-md-block"></div>
-        }
+        <!-- Topic Info -->
+        <h6 class="text-truncate">{{ topic.title }}</h6>
 
-        <!-- Topic Content -->
-        <div class="ms-3 ms-md-0 mt-md-2 text-start text-md-center">
-          <h5>{{ topic.title }}</h5>
-          <div class="progress" style="height: 8px;">
-            <div
-              class="progress-bar"
-              [style.width.%]="topic.progress"
-              [ngClass]="{
-                'bg-success': topic.progress === 100,
-                'bg-info': topic.progress < 100 && topic.progress > 0,
-                'bg-secondary': topic.progress === 0
-              }">
-            </div>
+        <div class="progress w-100" style="height: 8px;">
+          <div class="progress-bar"
+               [style.width.%]="topic.progress"
+               [ngClass]="{
+                 'bg-success': topic.progress === 100,
+                 'bg-info': topic.progress > 0 && topic.progress < 100,
+                 'bg-secondary': topic.progress === 0
+               }">
           </div>
-          <small>{{ topic.progress }}% Complete</small>
         </div>
-      </div>
+
+        <small>{{ topic.progress }}%</small>
+      </mat-card-content>
+    </mat-card>
+    </swiper-slide>
     }
+</swiper-container>
   </div>
 </div>

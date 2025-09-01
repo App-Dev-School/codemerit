@@ -1,24 +1,70 @@
-.stepper-item {
-  position: relative;
+.mySwiper {
+  width: 100%;
+  padding: 10px 0;
+}
+
+.stepper-slide {
+  width: auto;
 }
 
 .step-circle {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #07417e;
   color: white;
-  font-weight: bold;
-  text-align: center;
+  font-weight: 500;
   line-height: 40px;
+  text-align: center;
+  margin: 0 auto;
 }
 
-.step-line {
-  position: absolute;
-  left: 50%;
-  top: 40px;
-  width: 2px;
-  height: 60px;
-  background-color: #dee2e6;
-  transform: translateX(-50%);
+.goalPagIcon{
+  // width: 48px;
+  // height: 48px;
+  padding: 20px!important;
+  background-color: #055ebc;
+  color: white;
+  font-weight: bold;
+  // line-height: 50px;
+  // text-align: center;
+  // margin: 0 auto;
+}
+
+.goalCard{
+  width: auto;
+  //width: fit-content;
+  min-width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  will-change: transform;
+  margin-bottom: 50px;
+}
+.goalCard:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 21px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+/* course goal tracker pagination nav */
+:host ::ng-deep .swiper-pagination-bullet {
+  background-color: red;
+  opacity: 1;
+  width: 20px;
+  height: 20px;
+}
+
+:host ::ng-deep .swiper-pagination-bullet-active {
+  background-color: blue;
+}
+
+/* Optional: Mobile stacking */
+@media (max-width: 768px) {
+  // .stepper-item {
+  //   width: 100% !important;
+  //   margin-right: 0 !important;
+  //   margin-bottom: 1rem;
+  // }
 }

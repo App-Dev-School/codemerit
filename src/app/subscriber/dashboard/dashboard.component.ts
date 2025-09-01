@@ -4,10 +4,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
 
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from '@core';
@@ -18,6 +17,8 @@ import { CourseProgressComponent } from "@shared/components/course-progress/cour
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { Observable } from 'rxjs';
+import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,7 +28,8 @@ import { Observable } from 'rxjs';
   imports: [
     JsonPipe,
     AsyncPipe,
-    BreadcrumbComponent,
+    NgTemplateOutlet,
+    MatTabsModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
@@ -37,7 +39,7 @@ import { Observable } from 'rxjs';
     TopicsListComponent,
     MeritListWidgetComponent,
     SubjectPerformanceCardComponent,
-    CourseProgressComponent
+    GoalPathComponent
 ]
 })
 export class DashboardComponent implements OnInit {
@@ -52,7 +54,7 @@ export class DashboardComponent implements OnInit {
   showLegend: false
  };
   //For displaying test data
-  debugDisplay = false;
+  debugDisplay = true;
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
