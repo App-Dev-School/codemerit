@@ -15,16 +15,16 @@
 
       <!-- MAIN SWIPER CONTENT -->
       @if (!loading) {
-      <div class="flex-grow-1 overflow-hidden m-t-10">
+      <div class="viewerContainer flex-grow-1 overflow-hidden m-t-10">
         @if (questions?.length > 0) {
         <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
 
           @for (question of questions; track $index) {
           <swiper-slide>
-            <p class="col-grey text-center m-t-16 m-b-10">{{$index + 1}} of {{questions?.length}}</p>
+            <p class="col-grey text-center m-t-20">{{$index + 1}} of {{questions?.length}}</p>
 
             <div class="row clearfix">
-              <div class="col-lg-8 col-md-12">
+              <div class="col-lg-8 col-md-8 col-sm-12">
                 <div class="question-card">
                   @if (question.title) {
                   <h4 class="mb-3">{{ question?.title }}</h4>
@@ -72,8 +72,17 @@
                   }
                 </div>
               </div>
-              <div class="col-lg-4 col-md-12">
+              <div class="col-lg-4 col-md-4 col-sm-12">
                 <div class="question-card">
+                                    @if (question?.hint) {
+                  <hr class="dim-divider">
+                  <h5>Hint Available <span class="col-green">{{ question?.hint }}</span> </h5>
+                  }
+                  @if (question?.answer) {
+                  <hr class="dim-divider">
+                  <h5>Answer:</h5>
+                  <p class="m-b-20 font-normal">{{ question?.answer }}</p>
+                  }
                   <div class="questionInfo">
                     @if (question.subjectName) {
                     <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subjectName }}</span>
@@ -105,16 +114,6 @@
                     <mat-chip>{{ item?.title }}</mat-chip>
                     }
                   </mat-chip-set>
-                  }
-
-                  @if (question?.hint) {
-                  <hr class="dim-divider">
-                  <h5>Hint Available <span class="col-green">{{ question?.hint }}</span> </h5>
-                  }
-                  @if (question?.answer) {
-                  <hr class="dim-divider">
-                  <h5>Answer:</h5>
-                  <p class="m-b-20 font-normal">{{ question?.answer }}</p>
                   }
                   <hr class="dim-divider">
                   <button mat-raised-button color="dark" (click)="editQuestion(question?.slug)">

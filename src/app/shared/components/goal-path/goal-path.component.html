@@ -6,7 +6,7 @@
   <swiper-container #swiperEx [config]="swiperConfig" 
   [breakpoints]="breakpoints"
   slides-per-view="4" 
-  [pagination]="true" 
+  [pagination]="pagination" 
   space-between="10">
     @for (topic of topicsList; let i = $index; track i) {
       <swiper-slide class="stepper-slide">
@@ -19,8 +19,7 @@
 
         <!-- Topic Info -->
         <h6 class="text-truncate">{{ topic.title }}</h6>
-
-        <div class="progress w-100" style="height: 8px;">
+        <!-- <div class="progress w-100" style="height: 12px;">
           <div class="progress-bar"
                [style.width.%]="topic.progress"
                [ngClass]="{
@@ -30,8 +29,20 @@
                }">
           </div>
         </div>
-
-        <small>{{ topic.progress }}%</small>
+        <small>{{ topic.progress }}%</small> -->
+        <ul>
+          <li>
+            <div class="mb-2">
+              <span class="progress-label">Coverage</span>
+              <span class="float-end progress-percent label m-b-5" [ngClass]="'bg-dark text-white'">{{ topic.progress
+                }}%</span>
+            </div>
+            <div class="progress skill-progress m-b-20 w-100">
+              <div class="progress-bar" [ngClass]="'bg-dark'" [style.width]="topic.progress + '%'" role="progressbar"
+                [attr.aria-valuenow]="topic.progress" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </li>
+        </ul>
       </mat-card-content>
     </mat-card>
     </swiper-slide>

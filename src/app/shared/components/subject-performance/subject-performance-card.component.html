@@ -1,19 +1,19 @@
 <mat-card>
   @if(subject.isSubscribed){
   <mat-card-header>
-    <mat-card-title>{{subject.isSubscribed ? 'Track Progress in ' : 'Learn '}} {{subject.title}}</mat-card-title>
+    <mat-card-title>{{subject.isSubscribed ? 'Learning ' : 'Learn '}} {{subject.title}}</mat-card-title>
   </mat-card-header>
   }
   <mat-card-content>
     <div class="row">
-      <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
         <apx-chart [series]="cardChartOptions.series!" [chart]="cardChartOptions.chart!"
           [plotOptions]="cardChartOptions.plotOptions!" [colors]="cardChartOptions.colors!"
           [labels]="cardChartOptions.labels!" />
-        @if (false) {
+        @if (true) {
         <div class="main-label text-center">
-          <h4>Overall Score</h4>
-          <h6 class="col-green">Rank #7</h6>
+          <h5 class="scoreText m-t-0">Overall Score</h5>
+          <h6 class="text-danger">Rank #7</h6>
           @if (false) {
 <div class="legend">
             <div class="m-l-10 m-r-10">
@@ -28,7 +28,7 @@
         }
 
       </div>
-      <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12">
+      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
         @if(!subject.isSubscribed){
         <div class="text-center">
           <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" />
@@ -65,7 +65,7 @@
     </div>
     <mat-card-footer>
               <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">trending_up</i>
-                Take more {{subject}} quizzes to improve your score
+                Take more quizzes to improve your score
               </p>
               <div class="text-center p-t-20 p-b-20">
                 <button mat-stroked-button color="primary" (click)="goToSubjects()">Take Mock Exam</button>

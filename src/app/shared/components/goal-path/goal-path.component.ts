@@ -18,12 +18,9 @@ import { SwiperOptions } from 'swiper/types';
   styleUrl: './goal-path.component.scss'
 })
 export class GoalPathComponent implements AfterViewInit {
-  //@ViewChild('swiperEx') swiperComponent!: ElementRef<{ swiper: Swiper }>;
-
-  swiper?: Swiper;
+  //swiper?: Swiper;
   @ViewChild("swiperEx") swiperComponent ?: ElementRef<{ swiper: Swiper }>
-  //@ViewChild('swiperEx', { static: true }) swiperComponent!: ElementRef;
-
+ 
   @Input() title: string = 'Progress Tracker';
   //Ask:@Input() topics : Observable<any>;
   @Input() topics!: Observable<any[]>;
@@ -34,7 +31,7 @@ export class GoalPathComponent implements AfterViewInit {
 
   pagination = {
     clickable: true,
-    dynamicBullets: true,
+    dynamicBullets: false,
     renderBullet: function (index, className) {
       console.log("renderBullet", index, className);
       return '<span class="goalPagIcon ' + className + '">' + (index + 1) + "</span>";

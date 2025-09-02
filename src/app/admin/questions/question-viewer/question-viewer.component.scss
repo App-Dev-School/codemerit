@@ -1,3 +1,8 @@
+.viewerContainer{
+  padding-bottom: 64px;
+  background-color: cyan;
+}
+
 .questionInfo{
   display: flex; 
   flex-wrap: wrap;
@@ -33,7 +38,7 @@
 
   /* Sticky Footer */
   .footer-toolbar {
-    padding: 0.5rem 1rem;
+    //padding: 0.5rem 1rem;
     flex-shrink: 0;
     position: sticky;
     bottom: 0;

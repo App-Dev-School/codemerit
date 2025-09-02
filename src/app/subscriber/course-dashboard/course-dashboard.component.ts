@@ -130,7 +130,7 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   viewMeritList() {
-    this.snackService.display('snackbar-dark', 'Only Top 3 members are listed currently.', 'bottom', 'center');
+    this.snackService.display('snackbar-dark', 'Only Top 5 members are listed currently.', 'bottom', 'center');
   }
 
   goToSubjects() {

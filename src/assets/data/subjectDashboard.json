@@ -50,7 +50,7 @@
                 "imageUrl": "assets/images/users/user.jpg",
                 "rank": 1,
                 "points": 626,
-                "designation": "Frontend Engineer"
+                "designation": "Full Stack Developer"
             },
             {
                 "name": "Robin Raina",
@@ -63,6 +63,20 @@
                 "name": "Shailesh Bhatt",
                 "imageUrl": "assets/images/users/user.jpg",
                 "rank": 3,
+                "points": 411,
+                "designation": "Frontend Engineer"
+            },
+            {
+                "name": "Pooja Shah",
+                "imageUrl": "assets/images/users/user.jpg",
+                "rank": 4,
+                "points": 411,
+                "designation": "Angular Developer"
+            },
+            {
+                "name": "Girish Gowda",
+                "imageUrl": "assets/images/users/user.jpg",
+                "rank": 5,
                 "points": 411,
                 "designation": "B.Tech Student"
             }

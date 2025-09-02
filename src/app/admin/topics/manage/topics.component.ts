@@ -176,8 +176,8 @@ export class TopicsComponent implements OnInit, OnDestroy {
       varDirection = 'ltr';
     }
     const dialogRef = this.dialog.open(TopicFormComponent, {
-      width: '90vw',
-      maxWidth: '100vw',
+      width: '500px',
+      minWidth: '100vw',
       data: { topicItem: data, action },
       direction: varDirection,
       autoFocus: false,
