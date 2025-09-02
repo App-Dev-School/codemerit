@@ -30,7 +30,7 @@
     "id": 4,
     "title": "TypeScript",
     "description": "Typed superset of JavaScript",
-    "image": "assets/images/tech/ts.png",
+    "image": "assets/images/tech/typescript.png",
     "isSubscribed": true,
     "roles": ["Angular Developer", "Front‑End Developer", "Full Stack Developer", "Trainee Software Engineer"],
     "level": "Intermediate"

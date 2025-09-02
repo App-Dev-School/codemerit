@@ -50,7 +50,7 @@
       @if(subjectData){
       <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-          <app-goal-path [title]="subject+' Progress Tracker'" [topics]="subjectTopics$"></app-goal-path>
+          <app-goal-path [title]="subject+' Progress Tracker'" [color]="subjectData.color" [topics]="subjectTopics$"></app-goal-path>
         </div>
       </div>
       }
@@ -63,7 +63,7 @@
       }@else{
       <mat-card class="example-card" appearance="outlined">
         <mat-card-header>
-          <mat-card-title>{{ subject }} Curriculum</mat-card-title>
+          <mat-card-title><span [ngStyle]="{'background-color':subjectData.color}"></span>{{ subject }} Curriculum</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <p class="font-15 m-t-0">The Curriculum for {{subject}} is not available at this moment.</p>

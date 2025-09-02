@@ -6,19 +6,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
 
-import { AsyncPipe, JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, JsonPipe, NgStyle, NgTemplateOutlet } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from '@core';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { slideInOutAnimation } from '@shared/animations';
-import { CourseProgressComponent } from "@shared/components/course-progress/course-progress.component";
+import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { Observable } from 'rxjs';
-import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
-import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-dashboard',
@@ -39,7 +38,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     TopicsListComponent,
     MeritListWidgetComponent,
     SubjectPerformanceCardComponent,
-    GoalPathComponent
+    GoalPathComponent,
+    NgStyle
 ]
 })
 export class DashboardComponent implements OnInit {
@@ -60,8 +60,8 @@ export class DashboardComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private snackService: SnackbarService
-  ) { 
-    console.log("SignInFlow #5 ", this.authService.currentUser);
+  ) {
+    console.log("LearnerDashoard currentUser", this.authService.currentUser);
   }
 
   // // You can also control the animation state dynamically
@@ -105,20 +105,19 @@ export class DashboardComponent implements OnInit {
 
   onSubjectChange(subject: string){
     this.subject = subject ? subject : "";
-    console.log("MyDash @onSubjectChange", subject);
+    console.log("LearnerDashoard @onSubjectChange", subject);
     if(this.subject){
       this.master.fetchSubjectData(this.subject).subscribe((subject) => {
         this.subjectData = subject;
+        console.log("LearnerDashoard #1 @subjectData", subject);
       });
       this.subjectTopics$ = this.master.fetchAllSubjectTopics(this.subject);
-      //this.subjectTopics = this.master.getTopicsBySubject(this.resources, this.subject);
-      //this.subjectTopics = this.subjectData.topics;
-      console.log("MyDash #2 subjectTopics", this.subjectTopics$);
+      console.log("LearnerDashoard #2 @subjectTopics", this.subjectTopics$);
     }
   }
 
   onSubscribe(subject: string) {
-    console.log("MyDash onSubscribe", subject);
+    console.log("LearnerDashoard onSubscribe", subject);
     this.snackService.display('snackbar-dark',subject+' added to learning list!','bottom','center');
   }
 
@@ -127,7 +126,6 @@ export class DashboardComponent implements OnInit {
   }
 
   goToSubjects(){
-    console.log("MyDash goToSubjects", this.subject);
     this.router.navigate(['/dashboard', this.subject]);
   }
 }

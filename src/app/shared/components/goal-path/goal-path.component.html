@@ -1,11 +1,9 @@
 <div class="goalPath">
-  <h3 class="font-20 text-center">{{title}}</h3>
-  <div>
-<!-- <swiper-container #swiperEx [config]="swiperConfig" slides-per-view="4" [pagination]="pagination" space-between="10" class="h-100"> -->
-
+  <h3 class="font-20 text-center" [ngStyle]="{'color':color}">{{title}}</h3>
+  <div class="m-t-10 m-b-10">
   <swiper-container #swiperEx [config]="swiperConfig" 
   [breakpoints]="breakpoints"
-  slides-per-view="4" 
+  slides-per-view="auto" 
   [pagination]="pagination" 
   space-between="10">
     @for (topic of topicsList; let i = $index; track i) {
@@ -13,25 +11,15 @@
       <mat-card class="goalCard">
       <mat-card-content>
         <!-- Step Circle -->
-        <div class="step-circle mb-2 d-flex justify-content-center align-items-center">
+        <div class="step-circle mb-2 d-flex justify-content-center align-items-center" [ngStyle]="{'background-color':color}">
           {{ i + 1 }}
         </div>
 
         <!-- Topic Info -->
-        <h6 class="text-truncate">{{ topic.title }}</h6>
-        <!-- <div class="progress w-100" style="height: 12px;">
-          <div class="progress-bar"
-               [style.width.%]="topic.progress"
-               [ngClass]="{
-                 'bg-success': topic.progress === 100,
-                 'bg-info': topic.progress > 0 && topic.progress < 100,
-                 'bg-secondary': topic.progress === 0
-               }">
-          </div>
-        </div>
-        <small>{{ topic.progress }}%</small> -->
+        <h6 class="text-truncate" >{{ topic.title }}</h6>
+        <hr class="dim-divider">
         <ul>
-          <li>
+          <!-- <li>
             <div class="mb-2">
               <span class="progress-label">Coverage</span>
               <span class="float-end progress-percent label m-b-5" [ngClass]="'bg-dark text-white'">{{ topic.progress
@@ -39,6 +27,17 @@
             </div>
             <div class="progress skill-progress m-b-20 w-100">
               <div class="progress-bar" [ngClass]="'bg-dark'" [style.width]="topic.progress + '%'" role="progressbar"
+                [attr.aria-valuenow]="topic.progress" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </li> -->
+<li>
+            <div class="mb-2">
+              <span class="progress-label">Coverage</span>
+              <span class="float-end progress-percent label m-b-5" [ngClass]="'text-white'" [style.backgroundColor]="color">{{ topic.progress
+                }}%</span>
+            </div>
+            <div class="progress skill-progress m-b-20 w-100">
+              <div class="progress-bar"  [style.backgroundColor]="color" [style.width]="topic.progress + '%'" role="progressbar"
                 [attr.aria-valuenow]="topic.progress" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
           </li>

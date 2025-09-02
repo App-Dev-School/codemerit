@@ -7,7 +7,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 
 import { Direction } from '@angular/cdk/bidi';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { CdkNoDataRow } from "@angular/cdk/table";
+import { AsyncPipe, JsonPipe, NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
@@ -15,11 +16,10 @@ import { JobRole, MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { slideInOutAnimation } from '@shared/animations';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
-import { CourseProgressComponent } from "@shared/components/course-progress/course-progress.component";
 import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
+import { QuizProgressComponent } from '@shared/components/quiz-progress/quiz-progress.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { Observable } from 'rxjs';
-import { GoalPathComponent } from "@shared/components/goal-path/goal-path.component";
 
 @Component({
   selector: 'app-course-dashboard',
@@ -28,6 +28,7 @@ import { GoalPathComponent } from "@shared/components/goal-path/goal-path.compon
   animations: [slideInOutAnimation],
   imports: [
     JsonPipe,
+    NgClass,
     AsyncPipe,
     BreadcrumbComponent,
     MatButtonModule,
@@ -36,9 +37,10 @@ import { GoalPathComponent } from "@shared/components/goal-path/goal-path.compon
     MatCheckboxModule,
     MatTooltipModule,
     CongratulationsCardComponent,
-    CourseProgressComponent,
+    QuizProgressComponent,
     MedalCardComponent,
     CoursePickerComponent,
+    CdkNoDataRow
 ]
 })
 export class CourseDashboardComponent implements OnInit {
@@ -46,6 +48,7 @@ export class CourseDashboardComponent implements OnInit {
   showContent = true;
   course = "";
   subjectData: JobRole;
+  showSubjectAction = false;
   courseChartConfig = {
     showTitle: false,
     showSubtitle: false,

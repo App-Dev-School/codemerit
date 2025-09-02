@@ -24,21 +24,21 @@ margin-bottom: 10px;
 }
 
 .goalPagIcon{
-  // width: 48px;
-  // height: 48px;
+  width: 24px;
+  height: 24px;
   padding: 20px!important;
   background-color: #055ebc;
   color: white;
   font-weight: bold;
-  // line-height: 50px;
-  // text-align: center;
+  line-height: 20px;
+  text-align: center;
   // margin: 0 auto;
 }
 
 .goalCard{
-  width: auto;
-  //width: fit-content;
-  min-width: 200px;
+  //width: auto;
+  width: min-content;
+  min-width: 160px;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 0px;

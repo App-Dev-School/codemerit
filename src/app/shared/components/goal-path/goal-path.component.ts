@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -13,7 +13,7 @@ import { SwiperOptions } from 'swiper/types';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [MatProgressBarModule,
     MatCardModule,
-    NgClass],
+    NgClass, NgStyle],
   templateUrl: './goal-path.component.html',
   styleUrl: './goal-path.component.scss'
 })
@@ -24,6 +24,7 @@ export class GoalPathComponent implements AfterViewInit {
   @Input() title: string = 'Progress Tracker';
   //Ask:@Input() topics : Observable<any>;
   @Input() topics!: Observable<any[]>;
+  @Input() color: string = '#000000';
   topicsList: any[] = [];
 
   private subscription!: Subscription;
@@ -33,7 +34,6 @@ export class GoalPathComponent implements AfterViewInit {
     clickable: true,
     dynamicBullets: false,
     renderBullet: function (index, className) {
-      console.log("renderBullet", index, className);
       return '<span class="goalPagIcon ' + className + '">' + (index + 1) + "</span>";
     },
   };
