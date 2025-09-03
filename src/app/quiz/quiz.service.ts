@@ -17,7 +17,7 @@ import { CreateQuizResponse } from '@core/models/dtos/GenerateQuizDto';
 export class QuizService {
   private readonly API_URL = 'assets/data/quizzes/quiz-angular.json';
   dataChange: BehaviorSubject<Quiz[]> = new BehaviorSubject<Quiz[]>([]);
-  currentQuiz : QuizEntity;
+  currentQuiz: QuizEntity;
 
   constructor(private authService: AuthService,
     private httpService: HttpService, private http: HttpClient) { }
@@ -30,7 +30,7 @@ export class QuizService {
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/quiz/fetch/'+slug;
+    const url = 'apis/quiz/fetch/' + slug;
     return this.httpService.get(url, api_key).pipe(
       map((response: any) => {
         return response.data;
@@ -38,7 +38,7 @@ export class QuizService {
     );
   }
 
-   getQuizResult(resultCode:string): Observable<QuizResult> {
+  getQuizResult(resultCode: string): Observable<QuizResult> {
     return this.http.get<QuizResult>('./assets/data/quizzes/quiz-result-mock.json').pipe(delay(8000));
     /*
     let api_key = '';
@@ -77,7 +77,7 @@ export class QuizService {
     }
     const url = 'apis/quiz/create';
     return this.httpService.postData(url, item, api_key).pipe(
-      map((response : CreateQuizResponse) => {
+      map((response: CreateQuizResponse) => {
         this.currentQuiz = response.data;
         this.setCurrentQuiz(this.currentQuiz);
         return response.data; // return response from API
@@ -94,7 +94,7 @@ export class QuizService {
     const url = 'apis/quiz/submit';
     console.log('QuizPlayer Submitted Quiz => ', item);
     return this.httpService.postData(url, item, api_key).pipe(
-      map((response : SubmitQuizResponse) => {
+      map((response: SubmitQuizResponse) => {
         console.log("QuizPlayer SubmitQuiz API response", response);
         return response.data; // return response from API
       }),
@@ -146,7 +146,7 @@ export class QuizService {
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error.message);
     let errorMsg = 'Something went wrong; please try again later.';
-    if(error.message){
+    if (error.message) {
       errorMsg = error.message;
     }
     return throwError(
@@ -154,41 +154,66 @@ export class QuizService {
     );
   }
 
-  processAndSaveResults(questions: QuizQuestion[], quizId: number, userId: number) : Observable<QuizResult> {
+  processAndSaveResults(questions: QuizQuestion[], quizId: number): Observable<QuizResult> {
     const total = questions.length;
-    const correct = questions.filter(q => q.selectedOption === q.correctAnswer).length;
-    const wrong = questions.filter(q => q.selectedOption && q.selectedOption !== q.correctAnswer).length;
+    //const correct = questions.filter(q => q.selectedOption === q.correctAnswer).length;
+    const correct = questions.filter(q => {
+      const correctOption = q.options.find(option => option.correct === true);
+      return q.selectedOption === correctOption?.id;
+    }).length;
+
+    const wrong = questions.filter(q => {
+      const correctOption = q.options.find(option => option.correct === true);
+      return q.selectedOption && q.selectedOption !== correctOption?.id;
+    }).length;
+
     const unanswered = total - correct - wrong;
-
     const score = ((correct / total) * 100).toFixed(2);
-
-    const analytics : QuizResult = {
+    const analytics: QuizResult = {
       quizId,
-      userId,
+      userId: this.authService.currentUserValue.id,
       total,
       correct,
       wrong,
       unanswered,
-      timeSpent : 0,
-      score : Number(score),
-      dateAttempted: new Date().toISOString(),
-      attempts: questions.map(q => ({
+      timeSpent: 0,
+      score: Number(score),
+      dateAttempted: new Date().toISOString()
+      // attempts: questions.map(q => ({
+      //   const correctOption = q.options.find(option => option.correct === true);
+      //   questionId: q.id,
+      //   selectedOption: q.selectedOption || null,
+      //   answer: q.correctAnswer,
+      //   isCorrect: q.selectedOption === q.correctAnswer,
+      //   isSkipped: q.isSkipped || false,
+      //   timeTaken: q.timeTaken || 0,
+      //   hintUsed: q.hintUsed || false
+      // }))
+    };
+
+    const attempts = questions.map(q => {
+      const correctOption = q.options.find(option => option.correct === true);
+      return {
         questionId: q.id,
         selectedOption: q.selectedOption || null,
-        correctAnswer: q.correctAnswer,
-        isCorrect: q.selectedOption === q.correctAnswer,
+        answer: correctOption ? correctOption.option : null,
+        isCorrect: q.selectedOption && q.selectedOption === correctOption.id,
+        isSkipped: q.isSkipped || false,
+        timeTaken: q.timeTaken || 0,
         hintUsed: q.hintUsed || false
-      }))
-    };
+      };
+    });
+    analytics['attempts'] = attempts;
+
     console.log('Quiz Result => ', analytics);
     return this.submitQuiz(analytics);
   }
 
-  setCurrentQuiz(quiz: QuizEntity){
+  setCurrentQuiz(quiz: QuizEntity) {
     this.currentQuiz = quiz;
   }
 
-  getCurrentQuiz() : QuizEntity{
+  getCurrentQuiz(): QuizEntity {
     return this.currentQuiz;
   }
 

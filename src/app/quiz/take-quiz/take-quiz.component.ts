@@ -14,6 +14,7 @@ import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
 import { CreateQuizResponse, QuizEntity } from '@core/models/dtos/GenerateQuizDto';
 import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -56,7 +57,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
   constructor(private authService: AuthService,
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
     private quizService: QuizService) {
     register(); // Register Swiper web components
   }
@@ -65,8 +67,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.userData = this.authService.currentUserValue;
     this.quizSlug = this.route.snapshot.paramMap.get('qcode');
     if (this.quizSlug) {
-    this.loadQuiz();
-    }else{
+      this.loadQuiz();
+    } else {
       this.authService.redirectToErrorPage();
     }
   }
@@ -83,12 +85,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         this.loadingText = 'Almost Ready';
         this.loading = false;
         console.log("QuizPlayer Loaded Quiz", data);
-        
-         /***
-         DEMO MODE
-         this.completed = true;
-         this.evaluated = true;
-          */
+
+        /***
+        DEMO MODE
+        this.completed = true;
+        this.evaluated = true;
+         */
         this.questions = (data.questions || []).map(q => ({
           ...q,
           options: q.options || [],
@@ -99,7 +101,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   /** Record selected answer */
-  optionSelected(choice: string, question: QuizQuestion): void {
+  optionSelected(choice: number, question: QuizQuestion): void {
     this.authService.log('Quiz optionSelected', choice, question);
     if (!question.hasAnswered) {
       question.selectedOption = choice;
@@ -140,7 +142,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     // }, 3000);
   }
 
-  hideHint(){
+  hideHint() {
     this.hintActive = false;
     this.currentHint = '';
   }
@@ -175,9 +177,23 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   submitQuiz() {
     this.completed = true;
-    this.quizResult =  this.quizService.processAndSaveResults(this.questions, this.quiz.id, this.authService.currentUserValue.id).subscribe(
-      (data:any) => {
+    this.quizResult = this.quizService.processAndSaveResults(this.questions, this.quiz.id).subscribe(
+      (data: any) => {
         console.log("QuizPlayer Quiz Submitted", data);
+        //alert("QuizPlayer Quiz Submitted - "+ data.title);
+        this.showNotification(
+          "snackbar-danger",
+          'Great! '+data.message,
+          "bottom",
+          "center"
+        );
+      }, (error: any) => {
+        this.showNotification(
+          "snackbar-danger",
+          error,
+          "bottom",
+          "center"
+        );
       }
     );
     this.evaluated = true;
@@ -187,5 +203,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     //    //this.quizService.submitQuiz(this.quizResult);
     //    this.evaluated = true;
     // }, 4000);
+  }
+
+  showNotification(colorName, text, placementFrom, placementAlign) {
+    this.snackBar.open(text, "", {
+      duration: 2000,
+      verticalPosition: placementFrom,
+      horizontalPosition: placementAlign,
+      panelClass: colorName
+    });
   }
 }
