@@ -10,6 +10,6 @@ export interface QuizQuestion {
   hint?: string;
   //local
   hasAnswered?: boolean;
-  selectedChoice?: string;
-  usedHint?: boolean;
+  selectedOption?: string;
+  hintUsed?: boolean;
 }

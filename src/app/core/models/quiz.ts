@@ -25,11 +25,11 @@ export interface Quiz {
 
   export interface QuizResult {
     //id:number
+    userId: number
+    quizId: number
     resultCode?: string
-    userId: string
-    userFullName : string;
-    quizId: string
-    quizName : string
+    userFullName?: string;
+    quizName ?: string
     total: number
     correct: number
     wrong: number

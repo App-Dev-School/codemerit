@@ -12,6 +12,8 @@ import { register } from 'swiper/element/bundle';
 import { QuizService } from '../quiz.service';
 import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
+import { CreateQuizResponse, QuizEntity } from '@core/models/dtos/GenerateQuizDto';
+import { ActivatedRoute } from '@angular/router';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -34,11 +36,12 @@ interface Quiz {
   ]
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
-  quiz!: Quiz;
+  quiz!: QuizEntity;
   questions: QuizQuestion[] = [];
   currentQuestionId = 0;
   loading = true;
   loadingText = 'Launching Quiz';
+  quizSlug = '';
   completed = false;
   evaluated = false;
   quizResult: any;
@@ -52,12 +55,20 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
-  constructor(private authService: AuthService, private quizService: QuizService) {
+  constructor(private authService: AuthService,
+    private route: ActivatedRoute, 
+    private quizService: QuizService) {
     register(); // Register Swiper web components
   }
 
   ngOnInit(): void {
+    this.userData = this.authService.currentUserValue;
+    this.quizSlug = this.route.snapshot.paramMap.get('qcode');
+    if (this.quizSlug) {
     this.loadQuiz();
+    }else{
+      this.authService.redirectToErrorPage();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -66,12 +77,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   /** Load quiz from local JSON */
   private loadQuiz(): void {
-    this.quizService.getQuiz(1)
+    this.quizService.getQuiz(this.quizSlug)
       .subscribe(data => {
         this.quiz = data;
         this.loadingText = 'Almost Ready';
         this.loading = false;
-        this.userData = this.authService.currentUserValue;
+        console.log("QuizPlayer Loaded Quiz", data);
+        
          /***
          DEMO MODE
          this.completed = true;
@@ -82,6 +94,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           options: q.options || [],
           selectedChoice: ''
         }));
+        console.log("QuizPlayer Transformed Loaded Questions", this.questions);
       });
   }
 
@@ -89,7 +102,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   optionSelected(choice: string, question: QuizQuestion): void {
     this.authService.log('Quiz optionSelected', choice, question);
     if (!question.hasAnswered) {
-      question.selectedChoice = choice;
+      question.selectedOption = choice;
       question.hasAnswered = true;
     }
   }
@@ -117,7 +130,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     const currentQuestion = this.questions[this.currentQuestionId];
     if (currentQuestion?.hint) {
       this.currentHint = currentQuestion?.hint;
-      currentQuestion.usedHint = true;
+      currentQuestion.hintUsed = true;
     } else {
       this.currentHint = 'Hint not available';
     }
@@ -162,9 +175,17 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   submitQuiz() {
     this.completed = true;
-    setTimeout(() => {
-       this.quizResult =  this.quizService.processAndSaveResults(this.questions, 'quiz-angular-101', 'user-123');
-       this.evaluated = true;
-    }, 4000);
+    this.quizResult =  this.quizService.processAndSaveResults(this.questions, this.quiz.id, this.authService.currentUserValue.id).subscribe(
+      (data:any) => {
+        console.log("QuizPlayer Quiz Submitted", data);
+      }
+    );
+    this.evaluated = true;
+    //this.quizService.submitQuiz(this.quizResult);
+    // setTimeout(() => {
+    //    this.quizResult =  this.quizService.processAndSaveResults(this.questions, 'quiz-angular-101', 'user-123');
+    //    //this.quizService.submitQuiz(this.quizResult);
+    //    this.evaluated = true;
+    // }, 4000);
   }
 }

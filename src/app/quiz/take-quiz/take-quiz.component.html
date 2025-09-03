@@ -15,7 +15,7 @@
       @if (!loading && quiz) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
         <div class="d-flex align-items-center">
-          <img [src]="quiz.subject_icon" alt="icon" class="subject-icon me-2">
+          <img [src]="quiz.image" alt="icon" class="subject-icon me-2">
           <span class="quiz-title">{{ quiz.title }}</span>
         </div>
 
@@ -66,17 +66,17 @@
               <div class="mb-3 font-20">{{ question.question }}</div>
               @for (choice of question.options; track choice) {
                <mat-card (click)="optionSelected(choice.option, question)" class="choice p-2 rounded mb-2" [ngClass]="{
-         'selected': question.selectedChoice === choice.option,
-         'correct': question.selectedChoice === choice.option && choice.correct,
-         'wrong': question.selectedChoice === choice.option && !choice.correct
+         'selected': question.selectedOption === choice.option,
+         'correct': question.selectedOption === choice.option && choice.correct,
+         'wrong': question.selectedOption === choice.option && !choice.correct
        }">
                 <div class="d-flex justify-content-between align-items-center">
                   <span>{{ choice.option }}</span>
 
-                  @if (question.selectedChoice === choice.option && choice.correct) {
+                  @if (question.selectedOption === choice.option && choice.correct) {
                   <img src="assets/images/icons/ic_correct.png" class="icon-right">
                   }
-                  @if (question.selectedChoice === choice.option && !choice.correct) {
+                  @if (question.selectedOption === choice.option && !choice.correct) {
                   <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
                   }
                 </div>

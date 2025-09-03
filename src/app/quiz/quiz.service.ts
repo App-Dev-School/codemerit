@@ -22,9 +22,20 @@ export class QuizService {
   constructor(private authService: AuthService,
     private httpService: HttpService, private http: HttpClient) { }
 
-  getQuiz(id: number): Observable<QuizEntity> {
-    //return this.http.get<Quiz>('./assets/data/quizzes/quiz-angular.json').pipe(delay(3000));
-    return of(this.getCurrentQuiz());
+  getQuiz(slug: string): Observable<QuizEntity> {
+    //return this.http.get<QuizEntity>('./assets/data/quizzes/finaltest.json').pipe(delay(3000));
+    //return of(this.getCurrentQuiz());
+
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/quiz/fetch/'+slug;
+    return this.httpService.get(url, api_key).pipe(
+      map((response: any) => {
+        return response.data;
+      })
+    );
   }
 
    getQuizResult(resultCode:string): Observable<QuizResult> {
@@ -81,8 +92,10 @@ export class QuizService {
       api_key = this.authService.currentUserValue.token;
     }
     const url = 'apis/quiz/submit';
+    console.log('QuizPlayer Submitted Quiz => ', item);
     return this.httpService.postData(url, item, api_key).pipe(
       map((response : SubmitQuizResponse) => {
+        console.log("QuizPlayer SubmitQuiz API response", response);
         return response.data; // return response from API
       }),
       catchError(this.handleError)
@@ -132,25 +145,26 @@ export class QuizService {
   /** Handle Http operation that failed */
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error.message);
-    alert("Handle Quiz Submit Error!!!");
+    let errorMsg = 'Something went wrong; please try again later.';
+    if(error.message){
+      errorMsg = error.message;
+    }
     return throwError(
-      () => new Error('Something went wrong; please try again later.')
+      () => new Error(errorMsg)
     );
   }
 
-  processAndSaveResults(questions: QuizQuestion[], quizId: string, userId: string) : Observable<QuizResult> {
+  processAndSaveResults(questions: QuizQuestion[], quizId: number, userId: number) : Observable<QuizResult> {
     const total = questions.length;
-    const correct = questions.filter(q => q.selectedChoice === q.correctAnswer).length;
-    const wrong = questions.filter(q => q.selectedChoice && q.selectedChoice !== q.correctAnswer).length;
+    const correct = questions.filter(q => q.selectedOption === q.correctAnswer).length;
+    const wrong = questions.filter(q => q.selectedOption && q.selectedOption !== q.correctAnswer).length;
     const unanswered = total - correct - wrong;
 
     const score = ((correct / total) * 100).toFixed(2);
 
     const analytics : QuizResult = {
       quizId,
-      quizName : 'Angular 18 Proficiency Test',
       userId,
-      userFullName : 'Mark Mcllvain',
       total,
       correct,
       wrong,
@@ -160,10 +174,10 @@ export class QuizService {
       dateAttempted: new Date().toISOString(),
       attempts: questions.map(q => ({
         questionId: q.id,
-        selectedChoice: q.selectedChoice || null,
+        selectedOption: q.selectedOption || null,
         correctAnswer: q.correctAnswer,
-        isCorrect: q.selectedChoice === q.correctAnswer,
-        usedHint: q.usedHint || false
+        isCorrect: q.selectedOption === q.correctAnswer,
+        hintUsed: q.hintUsed || false
       }))
     };
     console.log('Quiz Result => ', analytics);
