@@ -5,20 +5,21 @@ import { QuestionType } from "./question-type"
 import { QuizQuestion } from "./quiz-question"
 import { QuizSettings } from "./quiz-settings"
 
+//proposed structure. Not in use.
 export interface Quiz {
     //id:number
     title: string
-    description: string
-    subject: string
-    subject_icon: string
+    description?: string
+    subject?: string
+    subject_icon?: string
     //by default take all topics in the subject - heavy
     //Also allow user to pick at time of creation
     //refresh topics list after the quiz is generated for better skill filtering
-    topics: string
-    class: string
+    topics?: string
+    class?: string
     QuizType: QuestionType
     questions: QuizQuestion[]
-    settings : QuizSettings
+    settings? : QuizSettings
     status: string // Pending, Published, Paused
   }
 

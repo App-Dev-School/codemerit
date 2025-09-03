@@ -17,7 +17,7 @@ import { slideInOutAnimation } from '@shared/animations';
 import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -40,19 +40,19 @@ import { Observable } from 'rxjs';
     SubjectPerformanceCardComponent,
     GoalPathComponent,
     NgStyle
-]
+  ]
 })
 export class DashboardComponent implements OnInit {
   showContent = true;
   subject = "";
-  subjectData : any;
-  subjectTopics$ : Observable<any>;
+  subjectData: any;
+  subjectTopics$: Observable<any>;
   courseChartConfig = {
-  showTitle: false,
-  showSubtitle: false,
-  showIcon: false,
-  showLegend: false
- };
+    showTitle: false,
+    showSubtitle: false,
+    showIcon: false,
+    showLegend: false
+  };
   //For displaying test data
   debugDisplay = true;
   constructor(private master: MasterService,
@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit {
   // toggleSlide() {
   //   this.slideAnimation = (this.slideAnimation === 'in') ? 'out' : 'in';
   // }
-  
+
   ngOnInit() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
@@ -94,38 +94,41 @@ export class DashboardComponent implements OnInit {
       console.log("MyDash @RouteParam change detected =>", params.get("subject"));
       if (params.get("subject")) {
         this.subject = params.get("subject");
-        if(this.subject){
+        if (this.subject) {
           this.onSubjectChange(this.subject);
         }
-      }else{
+      } else {
         this.subject = "";
       }
     });
   }
 
-  onSubjectChange(subject: string){
+  onSubjectChange(subject: string) {
     this.subject = subject ? subject : "";
     console.log("LearnerDashoard @onSubjectChange", subject);
-    if(this.subject){
-      this.master.fetchSubjectData(this.subject).subscribe((subject) => {
-        this.subjectData = subject;
-        console.log("LearnerDashoard #1 @subjectData", subject);
-      });
-      this.subjectTopics$ = this.master.fetchAllSubjectTopics(this.subject);
-      console.log("LearnerDashoard #2 @subjectTopics", this.subjectTopics$);
+    if (this.subject) {
+      // this.master.fetchSubjectData(this.subject).subscribe((subject) => {
+      //   this.subjectData = subject;
+      //   console.log("LearnerDashoard #1 @subjectData", subject);
+      // });
+      // this.subjectTopics$ = this.master.fetchAllSubjectTopics(this.subject);
+      // console.log("LearnerDashoard #2 @subjectTopics", this.subjectTopics$);
+
+      this.subjectData = this.master.subjects;
+      this.subjectTopics$ = of(this.master.topics);
     }
   }
 
   onSubscribe(subject: string) {
     console.log("LearnerDashoard onSubscribe", subject);
-    this.snackService.display('snackbar-dark',subject+' added to learning list!','bottom','center');
+    this.snackService.display('snackbar-dark', subject + ' added to learning list!', 'bottom', 'center');
   }
 
-  viewMeritList(){
-    this.snackService.display('snackbar-dark','Only Top 5 members are listed currently.','bottom','center');
+  viewMeritList() {
+    this.snackService.display('snackbar-dark', 'Only Top 5 members are listed currently.', 'bottom', 'center');
   }
 
-  goToSubjects(){
+  goToSubjects() {
     this.router.navigate(['/dashboard', this.subject]);
   }
 }

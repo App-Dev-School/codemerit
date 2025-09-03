@@ -8,6 +8,8 @@ import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
 import { Quiz, QuizResult } from '@core/models/quiz';
 import { QuizQuestion } from '@core/models/quiz-question';
+import { QuizCreateModel, QuizEntity, SubmitQuizResponse } from '@core/models/dtos/GenerateQuizDto';
+import { CreateQuizResponse } from '@core/models/dtos/GenerateQuizDto';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +17,14 @@ import { QuizQuestion } from '@core/models/quiz-question';
 export class QuizService {
   private readonly API_URL = 'assets/data/quizzes/quiz-angular.json';
   dataChange: BehaviorSubject<Quiz[]> = new BehaviorSubject<Quiz[]>([]);
+  currentQuiz : QuizEntity;
 
   constructor(private authService: AuthService,
     private httpService: HttpService, private http: HttpClient) { }
 
-  getQuiz(id: number): Observable<Quiz> {
-    return this.http.get<Quiz>('./assets/data/quizzes/quiz-angular.json').pipe(delay(3000));
+  getQuiz(id: number): Observable<QuizEntity> {
+    //return this.http.get<Quiz>('./assets/data/quizzes/quiz-angular.json').pipe(delay(3000));
+    return of(this.getCurrentQuiz());
   }
 
    getQuizResult(resultCode:string): Observable<QuizResult> {
@@ -55,24 +59,31 @@ export class QuizService {
     );
   }
 
-  addQuiz(item: any): Observable<any> {
+  addQuiz(item: QuizCreateModel): Observable<QuizEntity> {
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
     }
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': api_key
-      })
-    };
     const url = 'apis/quiz/create';
-    if (AuthConstants.DEV_MODE) {
-      console.log("Hiting " + url + " with => " + JSON.stringify(item) + " via Token " + api_key);
+    return this.httpService.postData(url, item, api_key).pipe(
+      map((response : CreateQuizResponse) => {
+        this.currentQuiz = response.data;
+        this.setCurrentQuiz(this.currentQuiz);
+        return response.data; // return response from API
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  submitQuiz(item: QuizResult): Observable<QuizResult> {
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
     }
-    return this.httpService.postWithParams(url, item, httpOptions).pipe(
-      map((response) => {
-        return response; // return response from API
+    const url = 'apis/quiz/submit';
+    return this.httpService.postData(url, item, api_key).pipe(
+      map((response : SubmitQuizResponse) => {
+        return response.data; // return response from API
       }),
       catchError(this.handleError)
     );
@@ -121,12 +132,13 @@ export class QuizService {
   /** Handle Http operation that failed */
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error.message);
+    alert("Handle Quiz Submit Error!!!");
     return throwError(
       () => new Error('Something went wrong; please try again later.')
     );
   }
 
-  processAndSaveResults(questions: QuizQuestion[], quizId: string, userId: string) : QuizResult {
+  processAndSaveResults(questions: QuizQuestion[], quizId: string, userId: string) : Observable<QuizResult> {
     const total = questions.length;
     const correct = questions.filter(q => q.selectedChoice === q.correctAnswer).length;
     const wrong = questions.filter(q => q.selectedChoice && q.selectedChoice !== q.correctAnswer).length;
@@ -155,13 +167,15 @@ export class QuizService {
       }))
     };
     console.log('Quiz Result => ', analytics);
-    return analytics;
-    // Send to backend API
-    // return this.http.post(this.apiUrl, analytics).subscribe({
-    //   next: res => console.log('✅ Results saved successfully', res),
-    //   error: err => console.error('❌ Error saving results', err)
-    // });
-    //After saving to server display report in the same component as of now
+    return this.submitQuiz(analytics);
+  }
+
+  setCurrentQuiz(quiz: QuizEntity){
+    this.currentQuiz = quiz;
+  }
+
+  getCurrentQuiz() : QuizEntity{
+    return this.currentQuiz;
   }
 
 }
