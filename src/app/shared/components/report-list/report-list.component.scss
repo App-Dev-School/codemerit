@@ -18,3 +18,12 @@
 ::ng-deep .mat-mdc-card-title{
   font-size: 18px !important;
 }
+
+::ng-deep .mat-tab-body-wrapper {
+  overflow-x: hidden;
+}
+
+::ng-deep .mat-tab-body .row {
+  margin-left: 0;
+  margin-right: 0;
+}

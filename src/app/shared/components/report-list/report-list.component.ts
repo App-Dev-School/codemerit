@@ -7,26 +7,26 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { SubjectRole } from '@core/models/subject-role';
 
 @Component({
-    selector: 'app-subject-role-map',
-    templateUrl: './report-list.component.html',
-    styleUrl: './report-list.component.scss',
-    imports: [
-        MatTabsModule,
-        MatIconModule,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatButtonModule,
-    ]
+  selector: 'app-subject-role-map',
+  templateUrl: './report-list.component.html',
+  styleUrl: './report-list.component.scss',
+  imports: [
+    MatTabsModule,
+    MatIconModule,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+  ]
 })
 export class ReportListComponent implements OnInit {
-   @Input() data: SubjectRole[];
-    tabs = [];
+  @Input() data: SubjectRole[];
+  tabs = [];
   selected = new UntypedFormControl(0);
   subjectsByRole: { [role: string]: SubjectRole[] } = {};
   @Output() subjectSelected = new EventEmitter<string>();
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     this.data.forEach(subject => {
       subject.roles.forEach(role => {
         if (!this.subjectsByRole[role]) {
@@ -37,7 +37,7 @@ export class ReportListComponent implements OnInit {
     });
   }
 
-    get roles(): string[] {
+  get roles(): string[] {
     return Object.keys(this.subjectsByRole);
   }
 

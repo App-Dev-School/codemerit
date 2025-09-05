@@ -84,10 +84,20 @@
               <mat-card-title>Badges & Recognitions</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              @if(debugDisplay){
-              <p>subjectTopics Length: {{(subjectTopics$ | async) | json }}</p>
-              <p>subjectData: {{subjectData |json }}</p>
-              }
+              <p>subjectTopics: {{(subjectTopics$ | async) | json }}</p>
+              <div class="text-center p-t-20 p-b-20">
+                <button mat-stroked-button color="primary" (click)="goToSubjects()">Explore Subjects</button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          <mat-card>
+            <mat-card-header class="header-style">
+              <mat-card-title>Subject Logs</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+            <p>subjectTopics Length: {{(subjectTopics$ | async) | json }}</p>
               <div class="text-center p-t-20 p-b-20">
                 <button mat-stroked-button color="primary" (click)="goToSubjects()">Explore Subjects</button>
               </div>
