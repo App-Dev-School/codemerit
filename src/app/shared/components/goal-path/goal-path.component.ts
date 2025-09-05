@@ -30,6 +30,11 @@ export class GoalPathComponent implements AfterViewInit {
   private subscription!: Subscription;
   currentSlideIndex = this.getFirstIncompleteIndex();
 
+  navigation = {
+        nextEl: '.swiper-button-next-custom',
+        prevEl: '.swiper-button-prev-custom',
+  };
+
   pagination = {
     clickable: true,
     dynamicBullets: false,

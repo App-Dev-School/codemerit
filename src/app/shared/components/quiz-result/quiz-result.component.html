@@ -19,16 +19,16 @@
        <div class="user-info">
               <img src="/assets/images/icons/student.png" />
               <div class="user-details">
-                <h4 class="name">{{result.userFullName}}</h4>
-                <h4 class="exam">{{result.quizName}}</h4>
+                <h4 class="name">{{result.userFullName ?? 'Anonymous'}}</h4>
+                <h4 class="exam">{{result.quizName ?? 'CodeMerit Quiz'}}</h4>
               </div>
             </div>
           <!-- <h6 class="col-green">Angular Test</h6> -->
-      <h6 class="mb-0">{{result.userFullName}} took {{result.quizName}} on Aug 24 2025.</h6>
+      <h6 class="mb-0">{{result.userFullName ? result.userFullName : 'Anonymous'}} took quiz on {{result.quizName ?? 'CodeMerit Quiz'}}.</h6>
     </div>
     <div class="col-auto ms-auto text-center">
       <!-- Right aligned content -->
-        <app-quiz-progress [title]="'Overall Score %'"></app-quiz-progress>
+        <app-quiz-progress [score]="result.score"></app-quiz-progress>
       <h5 class="center-header">Overall Score <span class="col-green">83%</span></h5>
       <p class="mb-0">Grade : A</p>
       <p class="mb-0">Time Efficiency : Good</p>
@@ -38,19 +38,19 @@
 
       <hr class="dim-divider">
       <div class="row">
-        <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-sm-12">
+        <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-sm-4">
           <p class="text-muted font-15 text-truncate">Questions</p>
           <p class="font-b-600 font-24">
             <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.total}}
           </p>
         </div>
-        <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-sm-12">
+        <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-sm-4">
           <p class="text-muted font-15 text-truncate">Correct</p>
           <p class="font-b-600 font-24">
             <i class="fas fa-arrow-circle-down col-red m-r-5"></i>{{result.correct}}
           </p>
         </div>
-        <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-sm-12">
+        <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-sm-4">
           <p class="text-muted text-truncate">Wrong</p>
           <p class="font-b-600 font-24">
             <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.wrong}}
@@ -67,7 +67,7 @@
         <mat-card-title class="text-center">Topic Wise Score</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <ng-scrollbar style="height: 400px" visibility="hover">
+        <ng-scrollbar style="height: auto;" visibility="hover">
           <app-topics-score [topicScores]="topicWiseScore"></app-topics-score>
         </ng-scrollbar>
       </mat-card-content>

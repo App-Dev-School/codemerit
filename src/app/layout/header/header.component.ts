@@ -140,7 +140,6 @@ export class HeaderComponent
     }
 
     this.sidebarService.watchIsCollapsed.subscribe((data)=>{
-      console.log("ResponsiveLogo Listening Collapse => "+data);
       this.isSidebarCollapsed = data;
     })
   }
@@ -173,6 +172,7 @@ export class HeaderComponent
       this.isMobileMenuOpen = false;
       this.renderer.addClass(this.document.body, className);
     }
+    console.log("Header mobileMenuSidebarOpen :: className => ", className);
   }
   callSidemenuCollapse() {
     const hasClass = this.document.body.classList.contains('side-closed');
@@ -185,10 +185,11 @@ export class HeaderComponent
       this.renderer.addClass(this.document.body, 'submenu-closed');
       localStorage.setItem('collapsed_menu', 'true');
     }
+    console.log("Header callSidemenuCollapse :: hasClass side-closed? ", hasClass);
   }
 
   logout() {
-    this.subs.sink = this.authService.logout("Logout from Header").subscribe((res) => {
+    this.subs.sink = this.authService.logout("Logging out for now.").subscribe((res) => {
       if (!res.success) {
         this.router.navigate(['/authentication/signin']);
       }

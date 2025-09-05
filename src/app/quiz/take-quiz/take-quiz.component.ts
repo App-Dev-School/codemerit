@@ -13,7 +13,7 @@ import { QuizService } from '../quiz.service';
 import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
 import { CreateQuizResponse, QuizEntity } from '@core/models/dtos/GenerateQuizDto';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 interface Quiz {
   title: string;
@@ -58,6 +58,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   constructor(private authService: AuthService,
     private route: ActivatedRoute,
+    private router: Router,
     private snackBar: MatSnackBar,
     private quizService: QuizService) {
     register(); // Register Swiper web components
@@ -177,9 +178,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   submitQuiz() {
     this.completed = true;
-    this.quizResult = this.quizService.processAndSaveResults(this.questions, this.quiz.id).subscribe(
+    this.quizService.processAndSaveResults(this.questions, this.quiz.id).subscribe(
       (data: any) => {
         console.log("QuizPlayer Quiz Submitted", data);
+        this.quizResult = data;
+        this.navigateToResult(data.quizSlug);
         //alert("QuizPlayer Quiz Submitted - "+ data.title);
         this.showNotification(
           "snackbar-danger",
@@ -212,5 +215,9 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       horizontalPosition: placementAlign,
       panelClass: colorName
     });
+  }
+
+  navigateToResult(resultCode:string){
+    this.router.navigate(['quiz/result', resultCode]);
   }
 }

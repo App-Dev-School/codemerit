@@ -22,7 +22,6 @@
           @for (question of questions; track $index) {
           <swiper-slide>
             <p class="col-grey text-center m-t-20">{{$index + 1}} of {{questions?.length}}</p>
-
             <div class="row clearfix">
               <div class="col-lg-8 col-md-8 col-sm-12">
                 <div class="question-card">
@@ -74,7 +73,7 @@
               </div>
               <div class="col-lg-4 col-md-4 col-sm-12">
                 <div class="question-card">
-                                    @if (question?.hint) {
+                  @if (question?.hint) {
                   <hr class="dim-divider">
                   <h5>Hint Available <span class="col-green">{{ question?.hint }}</span> </h5>
                   }
@@ -161,18 +160,13 @@
 @if (completed) {
 <div class="quiz-result-container">
   <div class="content-block">
-    @if (!evaluated) {
     <div class="overlay"></div>
     <div class="animToast hint">
       <h4>Finish Review</h4>
-      <h6 class="col-grey">You have reviewed all the questions.</h6>
+      <h6 class="col-grey">You have reviewed all the last fetched questions.</h6>
       <button mat-raised-button color="dark" (click)="exitViewer()">
         <mat-icon>cancel</mat-icon> Exit Viewer</button>
     </div>
-    }
-    @if (evaluated) {
-    <app-quiz-result [result]="quizResult"></app-quiz-result>
-    }
   </div>
 </div>
 }

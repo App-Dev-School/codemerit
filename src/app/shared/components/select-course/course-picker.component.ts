@@ -56,7 +56,7 @@ export class CoursePickerComponent implements OnInit {
 
   ngOnInit(): void {
     const allJobRoles = this.master.jobRoles;
-    const liveJobRoles = allJobRoles.filter(item => item.isPublished);
+    const liveJobRoles = (allJobRoles || []).filter(item => item.isPublished);
     const myJobRoles = (liveJobRoles || []).map(q => ({
       ...q,
       isSubscribed: q.id < 3 ? true : false,

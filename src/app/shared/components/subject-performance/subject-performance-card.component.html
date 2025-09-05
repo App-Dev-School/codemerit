@@ -30,12 +30,13 @@
       </div>
       <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
         @if(!subject.isSubscribed){
-        <div class="text-center">
+        <div class="text-end">
           <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" />
-          <mat-card-title>Learn {{subject.title}}</mat-card-title>
+          <mat-card-title>Level up {{subject.title}} skills</mat-card-title>
           <p>{{subject.description}}</p>
           <p>Subscribe to learn, assess topic wise skills and get access to frequently asked questions in
             {{subject.title}}.</p>
+            <p>{{subject.image}}</p>
         </div>
         <div class="text-center p-t-20 p-b-20">
           <button mat-stroked-button color="primary" (click)="goToSubjects()">Enroll Now</button>

@@ -5,14 +5,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChip } from "@angular/material/chips";
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
-import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuestionItemDetail } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
-import { DomSanitizer } from '@angular/platform-browser';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -30,7 +29,6 @@ interface Quiz {
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    QuizResultComponent,
     MatChip
   ]
 })
@@ -40,8 +38,6 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   loading = true;
   loadingText = 'Loading Questions';
   completed = false;
-  evaluated = false;
-  quizResult: any;
   mode = 0; //1 for interactive
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
@@ -69,20 +65,15 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
         console.log('QuestionViewer API Response', data);
         this.loadingText = 'Question View is Ready';
         this.loading = false;
-
-        //test the completed state
-        // this.completed = true;
-        // this.evaluated = true;
-        // Ensure each question has a selectedChoice field
         data.sort((a, b) => b.id - a.id);
         this.questions = (data || []).map(q => ({
           ...q,
-          rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
+        rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
         }));
       });
   }
 
-  /** Record selected answer */
+  /** Capture selected answer */
   optionSelected(choice: string, question: QuestionItemDetail): void {
     if (!question.hasAnswered) {
       question.selectedChoice = Number(choice);
@@ -96,7 +87,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
       this.swiperEx.nativeElement.swiper.slideNext();
       this.updateCurrentIndex();
     } else {
-      this.completeViewing();
+      this.exitViewer();
     }
   }
 
@@ -108,23 +99,8 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private completeViewing(): void {
-    console.log('completeViewing', this.questions);
-    this.submitQuiz();
-  }
-
   private updateCurrentIndex(): void {
     this.currentQuestionId = this.swiperEx.nativeElement.swiper.activeIndex;
-  }
-
-  submitQuiz() {
-    this.completed = true;
-    setTimeout(() => {
-      //this.quizResult =  this.questionService.processAndSaveResults(this.questions, 'quiz-angular-101', 'user-123');
-      this.evaluated = true;
-      console.log("submitQuiz", this.questions);
-
-    }, 2000);
   }
 
   exitViewer(){

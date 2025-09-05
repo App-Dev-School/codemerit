@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row topicList">
   @if (generatingQuiz) {
     <div class="overlay"></div>
       <div class="animToast text-center loading" style="max-width:400px;">
@@ -11,7 +11,7 @@
   @if (!generatingQuiz) {
   @for (group of subjectTopics|async; track group) {
   <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-    <mat-card class="example-card" appearance="outlined">
+    <mat-card class="card hoverCard" appearance="outlined">
       <mat-card-header>
         <mat-card-subtitle>{{ group.title }}</mat-card-subtitle>
       </mat-card-header>

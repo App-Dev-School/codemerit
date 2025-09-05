@@ -33,7 +33,7 @@ export interface ChartConfig {
 })
 export class QuizProgressComponent {
   public cardChartOptions!: Partial<ChartOptions>;
-  readonly title = input<string>('');
+  readonly score = input<number>(0);
 
   readonly config = input<ChartConfig>({
   showTitle: true,
@@ -46,7 +46,7 @@ export class QuizProgressComponent {
 
   private cardChart() {
     this.cardChartOptions = {
-      series: [83],
+      series: [this.score()],
       chart: {
         type: 'radialBar',
         height: 265,
