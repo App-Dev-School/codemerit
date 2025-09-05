@@ -27,6 +27,9 @@ export const USERS_ROUTE: Route[] = [
   },
   {
     path: "profile",
+    data: {
+      role: [Role.Admin, Role.Manager, Role.Subscriber, Role.All]
+    },
     component: UserComponent,
   },
   {

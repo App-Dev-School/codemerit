@@ -169,7 +169,7 @@ export class QuizService {
 
     const unanswered = total - correct - wrong;
     const score = ((correct / total) * 100).toFixed(2);
-    const analytics: QuizResult = {
+    let analytics: QuizResult = {
       quizId,
       userId: this.authService.currentUserValue.id,
       total,
@@ -195,9 +195,9 @@ export class QuizService {
       const correctOption = q.options.find(option => option.correct === true);
       return {
         questionId: q.id,
-        selectedOption: q.selectedOption || null,
+        selectedOption: q.selectedOption || 0,
         answer: correctOption ? correctOption.option : null,
-        isCorrect: q.selectedOption && q.selectedOption === correctOption.id,
+        isCorrect: (q.selectedOption && q.selectedOption === correctOption.id) ?? false,
         isSkipped: q.isSkipped || false,
         timeTaken: q.timeTaken || 0,
         hintUsed: q.hintUsed || false

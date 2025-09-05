@@ -1,0 +1,464 @@
+{
+    "error": false,
+    "result_code": 200,
+    "message": "Quiz added successfully.",
+    "data": {
+        "title": "JavaScript Arrays and Objects Quiz",
+        "tag": "Topic",
+        "quizType": "UserQuiz",
+        "slug": "javascript-arrays-and-objects-quiz",
+        "image": null,
+        "shortDesc": null,
+        "description": null,
+        "goal": null,
+        "createdBy": null,
+        "updatedBy": null,
+        "id": 6,
+        "label": "Foundation",
+        "isPublished": true,
+        "createdAt": "2025-09-03T18:32:42.946Z",
+        "updatedAt": "2025-09-03T18:32:42.946Z",
+        "questions": [
+            {
+                "id": 81,
+                "title": "",
+                "question": "What is the index of the first element in a JavaScript array?",
+                "subjectId": 3,
+                "questionType": "Trivia",
+                "level": "Easy",
+                "marks": 1,
+                "slug": "what-is-the-index-of-the-first-element-i",
+                "timeAllowed": 60,
+                "tag": null,
+                "status": "Active",
+                "answer": " JavaScript arrays are zero-indexed, so counting starts at 0.",
+                "hint": "",
+                "order": 1,
+                "createdAt": "2025-09-02T09:04:05.896Z",
+                "subject": {
+                    "id": 3,
+                    "title": "JavaScript",
+                    "description": "Scripting language for web interactivity",
+                    "body": "This subject covers scripting language for web interactivity.",
+                    "scope": "",
+                    "image": "assets/images/tech/javascript.png",
+                    "color": "#F7DF1E",
+                    "isPublished": true,
+                    "createdAt": "2025-08-16T14:54:01.000Z"
+                },
+                "topics": [
+                    {
+                        "id": 81,
+                        "questionId": 81,
+                        "topicId": 7,
+                        "createdAt": "2025-09-02T09:04:05.899Z",
+                        "topic": {
+                            "id": 7,
+                            "title": "JavaScript Arrays and Objects",
+                            "subjectId": 3,
+                            "image": null,
+                            "label": "Foundation",
+                            "shortDesc": null,
+                            "slug": "javascript-arrays-and-objects",
+                            "order": 0,
+                            "weight": 1,
+                            "popularity": 1,
+                            "parent": null,
+                            "isPublished": true,
+                            "description": "Store and manipulate collections of data using arrays and objects.",
+                            "goal": "Build real data-driven features like task lists, filters, and configurations.",
+                            "createdAt": "2025-08-28T08:56:44.502Z"
+                        }
+                    }
+                ],
+                "options": [
+                    {
+                        "id": 306,
+                        "option": "1",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 81,
+                        "createdAt": "2025-09-02T09:04:05.902Z"
+                    },
+                    {
+                        "id": 308,
+                        "option": "undefined",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 81,
+                        "createdAt": "2025-09-02T09:04:05.904Z"
+                    },
+                    {
+                        "id": 305,
+                        "option": "o",
+                        "correct": true,
+                        "comment": null,
+                        "questionId": 81,
+                        "createdAt": "2025-09-02T09:04:05.901Z"
+                    },
+                    {
+                        "id": 307,
+                        "option": "-1",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 81,
+                        "createdAt": "2025-09-02T09:04:05.903Z"
+                    }
+                ],
+                "userCreatedBy": null
+            },
+            {
+                "id": 91,
+                "title": "",
+                "question": "When is an array a better choice than an object?\n",
+                "subjectId": 3,
+                "questionType": "Trivia",
+                "level": "Intermediate",
+                "marks": 1,
+                "slug": "when-is-an-array-a-better-choice-than-an",
+                "timeAllowed": 60,
+                "tag": null,
+                "status": "Active",
+                "answer": "Arrays are ideal for ordered lists; objects are better for labeled data.",
+                "hint": "",
+                "order": 1,
+                "createdAt": "2025-09-02T09:50:10.017Z",
+                "subject": {
+                    "id": 3,
+                    "title": "JavaScript",
+                    "description": "Scripting language for web interactivity",
+                    "body": "This subject covers scripting language for web interactivity.",
+                    "scope": "",
+                    "image": "assets/images/tech/javascript.png",
+                    "color": "#F7DF1E",
+                    "isPublished": true,
+                    "createdAt": "2025-08-16T14:54:01.000Z"
+                },
+                "topics": [
+                    {
+                        "id": 91,
+                        "questionId": 91,
+                        "topicId": 7,
+                        "createdAt": "2025-09-02T09:50:10.020Z",
+                        "topic": {
+                            "id": 7,
+                            "title": "JavaScript Arrays and Objects",
+                            "subjectId": 3,
+                            "image": null,
+                            "label": "Foundation",
+                            "shortDesc": null,
+                            "slug": "javascript-arrays-and-objects",
+                            "order": 0,
+                            "weight": 1,
+                            "popularity": 1,
+                            "parent": null,
+                            "isPublished": true,
+                            "description": "Store and manipulate collections of data using arrays and objects.",
+                            "goal": "Build real data-driven features like task lists, filters, and configurations.",
+                            "createdAt": "2025-08-28T08:56:44.502Z"
+                        }
+                    }
+                ],
+                "options": [
+                    {
+                        "id": 348,
+                        "option": "When preventing modifications",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 91,
+                        "createdAt": "2025-09-02T09:50:10.024Z"
+                    },
+                    {
+                        "id": 347,
+                        "option": "When using string keys",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 91,
+                        "createdAt": "2025-09-02T09:50:10.023Z"
+                    },
+                    {
+                        "id": 346,
+                        "option": "When storing ordered data",
+                        "correct": true,
+                        "comment": null,
+                        "questionId": 91,
+                        "createdAt": "2025-09-02T09:50:10.022Z"
+                    },
+                    {
+                        "id": 345,
+                        "option": "When storing key-value pairs",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 91,
+                        "createdAt": "2025-09-02T09:50:10.021Z"
+                    }
+                ],
+                "userCreatedBy": null
+            },
+            {
+                "id": 96,
+                "title": "",
+                "question": "Why is it preferable to use push instead of direct assignment to the next index?",
+                "subjectId": 3,
+                "questionType": "Trivia",
+                "level": "Advanced",
+                "marks": 1,
+                "slug": "why-is-it-preferable-to-use-push-instead",
+                "timeAllowed": 60,
+                "tag": null,
+                "status": "Active",
+                "answer": "push safely adds elements without creating empty slots.\n  *Level:* Advanced",
+                "hint": "",
+                "order": 1,
+                "createdAt": "2025-09-02T10:05:48.314Z",
+                "subject": {
+                    "id": 3,
+                    "title": "JavaScript",
+                    "description": "Scripting language for web interactivity",
+                    "body": "This subject covers scripting language for web interactivity.",
+                    "scope": "",
+                    "image": "assets/images/tech/javascript.png",
+                    "color": "#F7DF1E",
+                    "isPublished": true,
+                    "createdAt": "2025-08-16T14:54:01.000Z"
+                },
+                "topics": [
+                    {
+                        "id": 96,
+                        "questionId": 96,
+                        "topicId": 7,
+                        "createdAt": "2025-09-02T10:05:48.316Z",
+                        "topic": {
+                            "id": 7,
+                            "title": "JavaScript Arrays and Objects",
+                            "subjectId": 3,
+                            "image": null,
+                            "label": "Foundation",
+                            "shortDesc": null,
+                            "slug": "javascript-arrays-and-objects",
+                            "order": 0,
+                            "weight": 1,
+                            "popularity": 1,
+                            "parent": null,
+                            "isPublished": true,
+                            "description": "Store and manipulate collections of data using arrays and objects.",
+                            "goal": "Build real data-driven features like task lists, filters, and configurations.",
+                            "createdAt": "2025-08-28T08:56:44.502Z"
+                        }
+                    }
+                ],
+                "options": [
+                    {
+                        "id": 365,
+                        "option": " It makes arrays immutable",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 96,
+                        "createdAt": "2025-09-02T10:05:48.317Z"
+                    },
+                    {
+                        "id": 368,
+                        "option": " It removes duplicates automatically",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 96,
+                        "createdAt": "2025-09-02T10:05:48.319Z"
+                    },
+                    {
+                        "id": 367,
+                        "option": "It decreases performance",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 96,
+                        "createdAt": "2025-09-02T10:05:48.319Z"
+                    },
+                    {
+                        "id": 366,
+                        "option": " It ensures no gaps are left in the array",
+                        "correct": true,
+                        "comment": null,
+                        "questionId": 96,
+                        "createdAt": "2025-09-02T10:05:48.318Z"
+                    }
+                ],
+                "userCreatedBy": null
+            },
+            {
+                "id": 89,
+                "title": "",
+                "question": " What happens if an object has two properties with the same key?",
+                "subjectId": 3,
+                "questionType": "Trivia",
+                "level": "Intermediate",
+                "marks": 1,
+                "slug": "what-happens-if-an-object-has-two-prope",
+                "timeAllowed": 60,
+                "tag": null,
+                "status": "Active",
+                "answer": "Object keys must be unique, duplicates overwrite previous ones.",
+                "hint": "",
+                "order": 1,
+                "createdAt": "2025-09-02T09:41:22.357Z",
+                "subject": {
+                    "id": 3,
+                    "title": "JavaScript",
+                    "description": "Scripting language for web interactivity",
+                    "body": "This subject covers scripting language for web interactivity.",
+                    "scope": "",
+                    "image": "assets/images/tech/javascript.png",
+                    "color": "#F7DF1E",
+                    "isPublished": true,
+                    "createdAt": "2025-08-16T14:54:01.000Z"
+                },
+                "topics": [
+                    {
+                        "id": 89,
+                        "questionId": 89,
+                        "topicId": 7,
+                        "createdAt": "2025-09-02T09:41:22.358Z",
+                        "topic": {
+                            "id": 7,
+                            "title": "JavaScript Arrays and Objects",
+                            "subjectId": 3,
+                            "image": null,
+                            "label": "Foundation",
+                            "shortDesc": null,
+                            "slug": "javascript-arrays-and-objects",
+                            "order": 0,
+                            "weight": 1,
+                            "popularity": 1,
+                            "parent": null,
+                            "isPublished": true,
+                            "description": "Store and manipulate collections of data using arrays and objects.",
+                            "goal": "Build real data-driven features like task lists, filters, and configurations.",
+                            "createdAt": "2025-08-28T08:56:44.502Z"
+                        }
+                    }
+                ],
+                "options": [
+                    {
+                        "id": 339,
+                        "option": "The last one overwrites the first",
+                        "correct": true,
+                        "comment": null,
+                        "questionId": 89,
+                        "createdAt": "2025-09-02T09:41:22.362Z"
+                    },
+                    {
+                        "id": 338,
+                        "option": " It throws an error",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 89,
+                        "createdAt": "2025-09-02T09:41:22.361Z"
+                    },
+                    {
+                        "id": 340,
+                        "option": "It becomes an array",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 89,
+                        "createdAt": "2025-09-02T09:41:22.363Z"
+                    },
+                    {
+                        "id": 337,
+                        "option": " Both remain stored",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 89,
+                        "createdAt": "2025-09-02T09:41:22.359Z"
+                    }
+                ],
+                "userCreatedBy": null
+            },
+            {
+                "id": 80,
+                "title": "",
+                "question": " What is the main purpose of an array in JavaScript?",
+                "subjectId": 3,
+                "questionType": "Trivia",
+                "level": "Easy",
+                "marks": 1,
+                "slug": "what-is-the-main-purpose-of-an-array-in",
+                "timeAllowed": 60,
+                "tag": null,
+                "status": "Active",
+                "answer": "Arrays are designed to store multiple values in an ordered way.",
+                "hint": "",
+                "order": 1,
+                "createdAt": "2025-09-02T08:54:26.848Z",
+                "subject": {
+                    "id": 3,
+                    "title": "JavaScript",
+                    "description": "Scripting language for web interactivity",
+                    "body": "This subject covers scripting language for web interactivity.",
+                    "scope": "",
+                    "image": "assets/images/tech/javascript.png",
+                    "color": "#F7DF1E",
+                    "isPublished": true,
+                    "createdAt": "2025-08-16T14:54:01.000Z"
+                },
+                "topics": [
+                    {
+                        "id": 80,
+                        "questionId": 80,
+                        "topicId": 7,
+                        "createdAt": "2025-09-02T08:54:26.864Z",
+                        "topic": {
+                            "id": 7,
+                            "title": "JavaScript Arrays and Objects",
+                            "subjectId": 3,
+                            "image": null,
+                            "label": "Foundation",
+                            "shortDesc": null,
+                            "slug": "javascript-arrays-and-objects",
+                            "order": 0,
+                            "weight": 1,
+                            "popularity": 1,
+                            "parent": null,
+                            "isPublished": true,
+                            "description": "Store and manipulate collections of data using arrays and objects.",
+                            "goal": "Build real data-driven features like task lists, filters, and configurations.",
+                            "createdAt": "2025-08-28T08:56:44.502Z"
+                        }
+                    }
+                ],
+                "options": [
+                    {
+                        "id": 304,
+                        "option": "To create objects",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 80,
+                        "createdAt": "2025-09-02T08:54:26.874Z"
+                    },
+                    {
+                        "id": 302,
+                        "option": "To store multiple values in one variable",
+                        "correct": true,
+                        "comment": null,
+                        "questionId": 80,
+                        "createdAt": "2025-09-02T08:54:26.872Z"
+                    },
+                    {
+                        "id": 303,
+                        "option": "To define functions",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 80,
+                        "createdAt": "2025-09-02T08:54:26.873Z"
+                    },
+                    {
+                        "id": 301,
+                        "option": "To store a single value",
+                        "correct": false,
+                        "comment": null,
+                        "questionId": 80,
+                        "createdAt": "2025-09-02T08:54:26.868Z"
+                    }
+                ],
+                "userCreatedBy": null
+            }
+        ]
+    }
+}

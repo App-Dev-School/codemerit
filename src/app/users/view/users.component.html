@@ -2,7 +2,7 @@
   <div class="content-block">
     <div class="block-header">
       <!-- breadcrumb -->
-      <app-breadcrumb [title]="'Profile'" [items]="['Extra']" [active_item]="'Profile'"></app-breadcrumb>
+      <!-- <app-breadcrumb [title]="'Profile'" [items]="['Extra']" [active_item]="'Profile'"></app-breadcrumb> -->
     </div>
      @if (loading) {
       <div class="overlay"></div>
@@ -14,7 +14,7 @@
       }
     <!-- Display User profile, designation details, badges and rewards  -->
      @if (!loading && userDetail) {
-    <div class="row clearfix">
+    <div class="row m-t-10 clearfix">
       <div class="col-lg-8 col-md-12">
         <div class="card">
           <div class="m-b-20">
