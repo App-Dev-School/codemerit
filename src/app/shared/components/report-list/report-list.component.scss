@@ -5,7 +5,7 @@
 }
 
 .subjectImage {
-  height: 32px;
+  height: 48px;
   width: auto;
 }
 
@@ -19,11 +19,11 @@
   font-size: 18px !important;
 }
 
-::ng-deep .mat-tab-body-wrapper {
-  overflow-x: hidden;
+::ng-deep .mat-mdc-tab-body-content {
+    height: max-content;
+    overflow: hidden;
 }
-
-::ng-deep .mat-tab-body .row {
-  margin-left: 0;
-  margin-right: 0;
+.mat-mdc-tab-body-content {
+    height: max-content;
+    overflow: hidden;
 }
