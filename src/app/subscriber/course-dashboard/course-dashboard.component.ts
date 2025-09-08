@@ -178,6 +178,7 @@ export class CourseDashboardComponent implements OnInit {
             if (slug && slug !== '') {
               setTimeout(() => {
                 this.loading = false;
+                this.generatingQuiz = false;
                 this.router.navigate(['quiz/take', slug]);
                 //this.generatingQuiz = false;
               }, 4000);
@@ -188,6 +189,7 @@ export class CourseDashboardComponent implements OnInit {
           console.error('QuizManager CreateAPI Error:', error);
           setTimeout(() => {
             this.loading = false;
+            this.generatingQuiz = false;
             this.snackService.display('snackbar-dark', error, 'bottom', 'center');
           }, 2000);
         },
