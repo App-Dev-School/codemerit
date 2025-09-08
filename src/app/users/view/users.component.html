@@ -36,15 +36,15 @@
               <!-- <hr class="dim-divider"> -->
               <div class="userDesignation"><mat-icon>stars</mat-icon> {{ userDetail.designation }}</div>
               <hr class="dim-divider">
-              <ul class="list-unstyled order-list m-b-0">
+              <ul class="list-unstyled cm-icon-list m-b-0">
                 <!-- use userDetail.mysubjects -->
                 @for (subject of mySubjects; track subject) {
                 <li class="avatar avatar-sm">
-                  <img class="rounded-circle" [src]="subject.image" alt="{{subject.title}}">
+                  <img class="rounded-circle1" [src]="subject.image" alt="{{subject.title}}">
                 </li>
                 }
                 @if (mySubjects.length > 7) {
-                <li class="avatar avatar-sm">
+                <li class="cm-avatar cm-avatar-sm">
                   <span class="badge">+{{ mySubjects.length - 7 }} skills</span>
                 </li>
                 }

@@ -4,11 +4,16 @@ import { Component, Input } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 
 interface MeritList {
+  id: number;
   name: string;
-  designation: string;
-  imageUrl: string;
-  rank: number;
-  points: number;
+  designationName?: string;
+  username: string;
+  image?: string;
+  rank?: number;
+  score: number;
+  avgAccuracy?: number;
+  totalAttempt?: number;
+  totalCorrect?: number;
 }
 
 @Component({

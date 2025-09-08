@@ -21,7 +21,7 @@
 
           @for (question of questions; track $index) {
           <swiper-slide>
-            <p class="col-grey text-center m-t-20">{{$index + 1}} of {{questions?.length}}</p>
+            <p class="col-grey text-center m-t-10">{{$index + 1}} of {{questions?.length}}</p>
             <div class="row clearfix">
               <div class="col-lg-8 col-md-8 col-sm-12">
                 <div class="question-card">
@@ -83,8 +83,8 @@
                   <p class="m-b-20 font-normal">{{ question?.answer }}</p>
                   }
                   <div class="questionInfo">
-                    @if (question.subjectName) {
-                    <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subjectName }}</span>
+                    @if (question?.subject?.title) {
+                    <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subject?.title }}</span>
                     }
                     @if (question.questionType) {
                     <span class="mb-3 icon-text"><mat-icon>{{question?.questionType === 'Trivia' ? 'check_boxcheck_box'

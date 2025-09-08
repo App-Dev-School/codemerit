@@ -13,7 +13,7 @@ import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Route
 import { AuthService, User } from '@core';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { slideInOutAnimation } from '@shared/animations';
+import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { CourseProgressComponent } from '@shared/components/course-progress/course-progress.component';
 import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
@@ -23,17 +23,15 @@ import { Subject } from '@core/models/subject';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { QuizService } from 'src/app/quiz/quiz.service';
 import { JobRole } from '@core/models/subject-role';
+import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 
 @Component({
   selector: 'app-course-dashboard',
   templateUrl: './course-dashboard.component.html',
   styleUrls: ['./course-dashboard.component.scss'],
-  animations: [slideInOutAnimation],
+  animations: [fadeInAnimation],
   imports: [
-    JsonPipe,
-    NgClass,
     AsyncPipe,
-    BreadcrumbComponent,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
@@ -41,6 +39,7 @@ import { JobRole } from '@core/models/subject-role';
     MatTooltipModule,
     CongratulationsCardComponent,
     MedalCardComponent,
+    SubjectTrackerCardComponent,
     CoursePickerComponent,
     CourseProgressComponent
   ]
@@ -48,6 +47,7 @@ import { JobRole } from '@core/models/subject-role';
 export class CourseDashboardComponent implements OnInit {
   loading = true;
   loadingText = 'Loading your Dashboard';
+  generatingQuiz = false;
   userData: Observable<User>;
   showContent = true;
   course = "";
@@ -162,10 +162,11 @@ export class CourseDashboardComponent implements OnInit {
   async generateSubjectQuiz(topic: any) {
     console.log('QuizManager generateSubjectQuiz:', topic);
     this.loading = true;
+    this.generatingQuiz = true;
     this.loadingText = "Generating Quiz";
     const payload = new QuizCreateModel();
     payload.userId = this.authService.currentUserValue.id
-    payload.subjectIds = [topic.id];
+    payload.subjectIds = '' + topic.id;
     console.log('QuizManager Invoked with Subject:', payload);
     this.quizService
       .addQuiz(payload)
@@ -186,9 +187,9 @@ export class CourseDashboardComponent implements OnInit {
         error: (error) => {
           console.error('QuizManager CreateAPI Error:', error);
           setTimeout(() => {
-                this.loading = false;
-                this.snackService.display('snackbar-dark', error, 'bottom', 'center');
-              }, 2000);
+            this.loading = false;
+            this.snackService.display('snackbar-dark', error, 'bottom', 'center');
+          }, 2000);
         },
       });
   }
@@ -231,4 +232,10 @@ export class CourseDashboardComponent implements OnInit {
     });
   }
 
+  //implement for subjects
+  launchSubjectExplorer(subject: any) {
+    console.log("View Path clicked:", subject);
+    if (subject && subject.slug)
+    this.router.navigate(['/dashboard/learn', subject?.slug]);
+  }
 }

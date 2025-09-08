@@ -119,7 +119,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    this.questionService.getAllQuestions().subscribe({
+    this.questionService.getAllQuestions(false).subscribe({
       next: (data) => {
         console.log("QuestionManager data", data);
         this.dataSource.data = data;

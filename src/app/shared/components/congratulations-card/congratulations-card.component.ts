@@ -9,7 +9,6 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     FormsModule,
     FeatherIconsComponent,
-    MatIcon, 
     MatButtonModule
   ],
   templateUrl: './congratulations-card.component.html',

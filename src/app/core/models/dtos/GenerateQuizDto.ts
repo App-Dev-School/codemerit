@@ -9,7 +9,7 @@ export interface QuizCreateDto {
     shortDesc?: string;
     userId: number;
     description?: string;
-    subjectIds?: number[];
+    subjectIds?: string;
     jobIds?: string;
     topicIds?: string;
     quizType: QuizTypeEnum;
@@ -21,7 +21,7 @@ export class QuizCreateModel implements QuizCreateDto{
     shortDesc: string;
     userId: number;
     description: string;
-    subjectIds?: number[];
+    subjectIds?: string;
     jobIds?: string;
     topicIds?: string;
     quizType: QuizTypeEnum;

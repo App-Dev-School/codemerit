@@ -235,24 +235,6 @@ table {
   text-align: center;
 }
 
-.map iframe {
-  width: 100%;
-}
-
-.jqvmap-label {
-  position: absolute;
-  display: none;
-  -webkit-border-radius: 30px;
-  -moz-border-radius: 30px;
-  border-radius: 30px;
-  background: #eee;
-  color: black;
-  font-size: 14px;
-  font-family: sans-serif, Verdana;
-  padding: 10px;
-  pointer-events: none;
-}
-
 .logo-white {
   .navbar-toggle,
   .bars:before,

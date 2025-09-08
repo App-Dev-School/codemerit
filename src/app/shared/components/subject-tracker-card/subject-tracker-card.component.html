@@ -1,0 +1,79 @@
+<!--- Start Subject Tracker Card -->
+<mat-card class="hoverCard">
+  <mat-card-content>
+    <!-- <div class="subject-card d-flex align-items-start">
+      <div class="avatar-section">
+        <img [src]="item?.image || 'assets/images/tech/placeholder.png'" alt="Avatar" class="avatar-img" />
+      </div>
+      <div class="subject-info flex-grow-1">
+        <div class="subjectHeader">
+          <mat-card-title class="text">{{item?.title}}</mat-card-title>
+        </div>
+        <p class="font-12">{{item?.description}}</p>
+      </div>
+      <div class="score-section text-center">
+        <app-course-progress [score]="0"></app-course-progress>
+        <small class="m-b-10 center-header miniTxt">Score</small>
+      </div>
+    </div>
+    <hr class="dim-divider"> -->
+    <div class="row align-items-center">
+  <!-- Left Column -->
+  <div class="col-12 col-sm-6 text-center text-sm-start mb-2 mb-sm-0">
+    <div class="d-flex align-items-center justify-content-center justify-content-sm-start">
+      <img 
+        [src]="item?.image || 'assets/images/tech/placeholder.png'" 
+        alt="Subject Icon"
+        class="subject-icon me-2" 
+      />
+      <span class="font-20">{{ item?.title }}</span>
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="col-12 col-sm-6 text-center text-sm-end">
+    <div class="d-flex flex-column align-items-center align-items-sm-end">
+      <app-course-progress [score]="item.id"></app-course-progress>
+      <small class="miniTxt">Score</small>
+    </div>
+  </div>
+</div>
+
+
+    <hr class="dim-divider">
+    <mat-card-footer>
+      <ul class="list-unstyled m-b-10 m-t-10">
+        <li>
+          <div class="mb-2 d-flex justify-content-between">
+            <span class="progress-label">Coverage</span>
+            <span class="progress-percent label label-success">{{item.id}}%</span>
+          </div>
+          <div class="progress skill-progress w-100">
+            <div class="progress-bar progress-bar-success" [style.width]="item.id + '%'" role="progressbar"
+              [attr.aria-valuenow]="item.id" aria-valuemin="0" aria-valuemax="100">
+            </div>
+          </div>
+        </li>
+      </ul>
+      <hr class="dim-divider">
+      <div class="d-flex flex-column flex-sm-row justify-content-center text-center">
+  <button 
+    (click)="onViewPath()" 
+    mat-stroked-button 
+    color="primary" 
+    class="mb-2 mb-sm-0 me-sm-2">
+    View Path
+  </button>
+
+  <button 
+    (click)="onTakeQuiz()" 
+    mat-flat-button 
+    color="accent">
+    Take Quiz
+  </button>
+</div>
+
+    </mat-card-footer>
+  </mat-card-content>
+</mat-card>
+<!--- End Subject Tracker Card -->

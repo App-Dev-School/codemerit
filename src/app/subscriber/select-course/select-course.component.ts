@@ -5,14 +5,14 @@ import { MatInputModule } from '@angular/material/input';
 import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from '@core';
 import { MasterService } from '@core/service/master.service';
-import { slideInOutAnimation } from '@shared/animations';
+import { slideInOutAnimation, topToBottomAnimation } from '@shared/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 
 @Component({
   selector: 'app-select-course',
   templateUrl: './select-course.component.html',
   styleUrls: ['./select-course.component.scss'],
-  animations: [slideInOutAnimation],
+  animations: [topToBottomAnimation],
   imports: [
     MatFormFieldModule,
     MatInputModule,

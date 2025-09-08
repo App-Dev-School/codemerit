@@ -13,7 +13,7 @@ import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Route
 import { AuthService } from '@core';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { slideInOutAnimation } from '@shared/animations';
+import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
 import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
@@ -26,7 +26,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  animations: [slideInOutAnimation],
+  animations: [slideInOutAnimation, fadeInAnimation],
   imports: [
     JsonPipe,
     AsyncPipe,
@@ -151,7 +151,7 @@ export class DashboardComponent implements OnInit {
   }
 
   viewMeritList() {
-    this.snackService.display('snackbar-dark', 'Only Top 5 members are listed currently.', 'bottom', 'center');
+    this.snackService.display('snackbar-dark', 'Top Performers appear in the Merit List.', 'bottom', 'center');
   }
 
   goToSubjects() {
@@ -164,7 +164,7 @@ export class DashboardComponent implements OnInit {
       this.loadingText = 'Generating '+subject.title+' Quiz';
       const payload = new QuizCreateModel();
       payload.userId = this.authService.currentUserValue.id
-      payload.subjectIds = [subject.id];
+      payload.subjectIds = ''+subject.id;
       console.log('QuizManager Invoked with Topic:', payload);
       this.quizService
         .addQuiz(payload)

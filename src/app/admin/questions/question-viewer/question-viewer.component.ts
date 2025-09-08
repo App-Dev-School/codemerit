@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
-import { QuestionItemDetail } from '../manage/question-item.model';
+import { FullQuestion } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
 interface Quiz {
   title: string;
@@ -33,7 +33,7 @@ interface Quiz {
   ]
 })
 export class QuestionViewerComponent implements OnInit, AfterViewInit {
-  questions: QuestionItemDetail[] = [];
+  questions: FullQuestion[] = [];
   currentQuestionId = 0;
   loading = true;
   loadingText = 'Loading Questions';
@@ -55,11 +55,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   }
 
   private loadQuestions(): void {
-    const payload = {
-      action: "latest",
-      subjectIds: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    }
-    this.questionService.fetchMyQuestions(payload)
+    this.questionService.getAllQuestions(true)
       .subscribe(data => {
         //this.questions = data;
         console.log('QuestionViewer API Response', data);
@@ -74,7 +70,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   }
 
   /** Capture selected answer */
-  optionSelected(choice: string, question: QuestionItemDetail): void {
+  optionSelected(choice: string, question: FullQuestion): void {
     if (!question.hasAnswered) {
       question.selectedChoice = Number(choice);
       question.hasAnswered = true;

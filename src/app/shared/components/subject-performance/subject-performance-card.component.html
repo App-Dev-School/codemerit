@@ -46,29 +46,29 @@
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
         <div class="text-center">
           <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" />
-          <mat-card-title>Learn {{subject.title}}</mat-card-title>
-          <h5>{{subject.description}}</h5>
+          <h5>{{subject.title}}</h5>
+          <mat-card-title>Learn {{subject.description}}</mat-card-title>
           <p>Enroll into {{subject.title}} to start levelling up your skills.</p>
         </div>
       </div>
       }
     </div>
-    <mat-card-footer>
+  </mat-card-content>
+  <mat-card-footer>
       @if (subject?.isSubscribed) {
-      <p class="text-center m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">trending_up</i>
+      <p class="text-center m-b-0 font-12 d-flex justifyCenter flex-center"><i class="material-icons col-green psr-2">trending_up</i>
         Take more quizzes to improve your score
       </p>
       <div class="text-center p-t-20 p-b-20">
         <button mat-stroked-button color="primary" (click)="goToSubjects()">Take Mock Exam</button>
       </div>
       }@else{
-      <div class="text-center p-t-20 p-b-20">
-         <p class="text-center m-b-0 font-12"><i class="material-icons col-green psr-2">trending_up</i>
+      <p class="m-b-0 font-12 d-flex flex-center justifyCenter"><i class="material-icons col-green psr-2">trending_up</i>
         Level up your {{subject.title}} skills.
       </p>
+      <div class="text-center p-t-20 p-b-20">
         <button mat-stroked-button color="primary" (click)="goToSubjects()">Start Learning</button>
       </div>
       }
     </mat-card-footer>
-  </mat-card-content>
 </mat-card>

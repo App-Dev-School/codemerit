@@ -1,25 +1,39 @@
 @if(showContent){
-<section class="content" [@slideInOut]>
-    @if (loading) {
-      <div class="overlay"></div>
-      <div class="animToast loading">
-        <img src="assets/images/icons/loading.gif" class="smallLoadingIcon">
-        @if (courseData?.title) {
-        <h6>Loading your Dashboard</h6>
-        }@else {
-        <h5>{{loadingText}}</h5>
-        <h6>Please wait</h6>
-        }
-      </div>
+<section class="content" [@fadeIn]>
+  @if (loading) {
+  <div class="overlay"></div>
+  <div class="animToast loading">
+    <img src="assets/images/icons/loading.gif" class="smallLoadingIcon">
+    <h5>{{loadingText}}</h5>
+    @if (generatingQuiz) {
+    <h6>Please wait</h6>
+    }@else {
+    <h6>Please wait</h6>
+    }
+    <!-- <p class="col-grey font-12">Selected Role : {{courseData?.title}}</p> -->
+  </div>
   }
-   @if (!loading && courseData) {
+  @if (!loading && !generatingQuiz && courseData) {
   <div class="content-block">
     <div class="block-header">
     </div>
 
     <div class="row m-t-20 match-height clearfix">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        @if ((userData | async)?.userDesignation) {
+        <app-congratulations-card
+          [userName]="(userData| async)?.firstName+' '+(userData| async)?.lastName"></app-congratulations-card>
+        }
+        @if (!((userData | async)?.userDesignation?.title)) {
+        <app-medal-card [userName]="'Hi '+(userData| async)?.firstName +'!'"
+          [message]="'Up-Skill and Evaluate Skills in '+courseData?.title+'.'"></app-medal-card>
+        }
+      </div>
+    </div>
+
+    <div class="row m-t-20 match-height clearfix">
       <div class="col-xl-4 col-lg-5 col-md-5 col-sm-12">
-        <div class="card hoverCard">
+        <div class="card">
           <div class="m-b-20">
             <div class="contact-grid">
               <div class="profile-header bg-dark">
@@ -52,19 +66,18 @@
 
               @if (!((userData| async)?.designation)) {
               <small>Aspiring to become a {{courseData.title}}?</small>
-              <button mat-stroked-button (click)="openCourseLauncher('default')" class="btn"
-                rippleEffect>
+              <button mat-stroked-button (click)="openCourseLauncher('default')" class="btn" rippleEffect>
                 <i class="material-icons">autorenew</i> &nbsp;Select Designation</button>
               }
               <small (click)="openCourseLauncher('default')">Launch as a dialog</small>
               <hr>
-                @if (!((userData| async)?.designation)) {
-                  <button mat-flat-button (click)="goToCourses()" color="primary">
+              @if (!((userData| async)?.designation)) {
+              <button mat-flat-button (click)="goToCourses()" color="primary">
                 <i class="material-icons">autorenew</i> &nbsp;Explore Other Tech Roles</button>
-                }@else{
-                <button mat-flat-button (click)="goToCourses()" color="primary">
+              }@else{
+              <button mat-flat-button (click)="goToCourses()" color="primary">
                 <i class="material-icons">autorenew</i> Switch Role</button>
-                }
+              }
             </div>
           </div>
         </div>
@@ -72,68 +85,16 @@
       </div>
 
       <div class="col-xl-8 col-lg-7 col-md-7 col-sm-12">
-        @if (!((userData | async)?.userDesignation?.title)) {
-        <app-medal-card [userName]="'Hi '+(userData| async)?.firstName +'!'"
-          [message]="'Up-Skill and Evaluate Skills in '+courseData?.title+'.'"></app-medal-card>
-        }
-        @if ((userData | async)?.userDesignation) {
-        <app-congratulations-card
-          [userName]="(userData| async)?.firstName+' '+(userData| async)?.lastName"></app-congratulations-card>
-        }
-
-        <div class="row text-center m-t-20 m-b-20 clearfix">
+        <div class="row text-center m-t-10 m-b-20 clearfix">
           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-            <h4 class="text-center font-20"><span class="col-grey">{{courseData?.title}} Skill Assessment</span>
+            <h4 class="text-center font-20 m-b-10"><span class="bold">{{courseData?.title}} Skill Assessment</span>
             </h4>
           </div>
           @if (courseData && courseData?.subjects) {
           @for (item of courseData?.subjects; track item) {
           <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
-            <!--- Start Subject Tracker Card -->
-            <mat-card>
-              <mat-card-content>
-                <div class="subject-card d-flex align-items-start">
-                  <div class="avatar-section">
-                    <img [src]="item?.image || 'assets/images/tech/placeholder.png'" alt="Avatar" class="avatar-img" />
-                  </div>
-                  <!-- Subject Info -->
-                  <div class="subject-info flex-grow-1">
-                    <div class="subjectHeader">
-                      <mat-card-title class="text">{{item?.title}}</mat-card-title>
-                    </div>
-                    <!-- <p class="font-12">{{item?.description}}</p> -->
-                  </div>
-                  <!-- Score Box -->
-                  <div class="score-section text-center">
-                    <app-course-progress [score]="item.id"></app-course-progress>
-                    <small class="m-b-10 center-header miniTxt">Score</small>
-                  </div>
-                </div>
-                <hr class="dim-divider">
-                <mat-card-footer>
-                  <ul class="list-unstyled m-b-10 m-t-10">
-                    <li>
-                      <div class="mb-2 d-flex justify-content-between">
-                        <span class="progress-label">Coverage</span>
-                        <span class="progress-percent label label-success">{{item.id}}%</span>
-                      </div>
-                      <div class="progress skill-progress w-100">
-                        <div class="progress-bar progress-bar-success" [style.width]="item.id + '%'" role="progressbar"
-                          [attr.aria-valuenow]="item.id" aria-valuemin="0" aria-valuemax="100">
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                  <hr class="dim-divider">
-                  <div class="text-center">
-                  <button (click)="launchSubject(item)" mat-stroked-button>View Path</button>
-                  <button (click)="generateSubjectQuiz(item)" class="m-l-20" mat-flat-button rippleEffect>Take Quiz</button>
-                  <!-- <button (click)="launchSubject(item.title)" mat-raised-button>Raised Explore</button> -->
-                </div>
-                </mat-card-footer>
-              </mat-card-content>
-            </mat-card>
-            <!--- End Subject Tracker Card -->
+            <app-subject-tracker-card [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
+              (takeQuiz)="generateSubjectQuiz($event)"></app-subject-tracker-card>
           </div>
           }
           }
@@ -143,9 +104,6 @@
     </div>
 
   </div>
-}
+  }
 </section>
 }
-<ng-template #subjectTracker>
-
-</ng-template>

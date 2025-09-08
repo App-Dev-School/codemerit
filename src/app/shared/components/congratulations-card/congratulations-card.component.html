@@ -8,14 +8,13 @@
       </div>
     </div>
     <div class="text-center">
-      <h3 class="mb-1 text-white">Welcome {{userName}}</h3>
+      <h5 class="mb-1 text-white">Welcome {{userName}}</h5>
       <p class="card-text m-auto w-75">
         {{message}}
       </p>
-      <!-- <button mat-button class="icon-button" (click)="handleAction()"><mat-icon>code</mat-icon> Take
-        {{action}}</button> -->
-        <!-- <button mat-button class="icon-button" (click)="handleAction()">
-            <mat-icon>thumb_up</mat-icon> {{action}}</button> -->
+      <div class="text-center m-t-20 m-b-20">
+        <button (click)="handleAction()" class="btn-white" mat-stroked-button>Start Self Skill Rating</button>
+      </div>
     </div>
   </div>
 </div>

@@ -6,7 +6,7 @@ import { QueestionListDto } from '@core/models/dtos/QuestionDtos';
 import { HttpService } from '@core/service/http.service';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
-import { QuestionItem, QuestionItemDetail } from './question-item.model';
+import { FullQuestion, QuestionItem, QuestionItemDetail, QuestionViewerResponse } from './question-item.model';
 
 @Injectable({
   providedIn: 'root',
@@ -30,14 +30,14 @@ export class QuestionService {
   }
 
   //For specific user
-  getAllQuestions(): Observable<QuestionItem[]> {
+  getAllQuestions(fullData:boolean): Observable<FullQuestion[]> {
     let api_key = '';
     if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/question'+'?subjectId=0';
+    const url = 'apis/question'+(fullData ? '?fullData=true' : '');
     return this.httpService.get(url, api_key).pipe(
-      map((response: QueestionListDto) => {
+      map((response: QuestionViewerResponse) => {
         return response.data;
       })
     );

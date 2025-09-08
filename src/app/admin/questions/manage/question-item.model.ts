@@ -48,3 +48,38 @@ export class QuestionItemDetail extends QuestionItem {
   usedHint?: boolean;
   selectedChoice?: number;
 }
+
+export class FullQuestion extends QuestionItem{
+  tag: string | null;
+  //optional - unused
+  rawQuestion?:SafeHtml;
+  //Auth details
+  hasAnswered?: boolean;
+  usedHint?: boolean;
+  selectedChoice?: number;
+  //end of optional
+
+  subject: {
+    id: number;
+    title: string;
+  };
+  topics: {id:number;title:string}[];
+  options: {
+    id: number;
+    option: string;
+    correct: boolean;
+  }[];
+
+  userCreatedBy: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    username: string;
+  };
+}
+
+export class QuestionViewerResponse {
+  error?: boolean;
+  message?: string;
+  data?: FullQuestion[];
+}

@@ -16,25 +16,6 @@
   height: 48px;
 }
 
-.subject-card {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  align-items: flex-start;
-  flex-wrap: wrap; // ensures mobile responsiveness
-}
-
-.avatar-section {
-  width: 50px;
-  flex-shrink: 0;
-}
-
-.avatar-img {
-  width: 100%;
-  height: auto;
-  border-radius: 50%;
-}
-
 .subject-info {
   flex: 1 1 auto;
   min-width: 0;
@@ -43,50 +24,6 @@
   flex-direction: column;
   align-items: flex-start;
 }
-
-.score-section {
-  width: 64px;
-  flex-shrink: 0;
-}
-
-@media (max-width: 480px) {
-  .subject-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .score-section {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-}
-
-//Taken from users component
-.order-list li .badge {
-  background: #6c89e4b3;
-  color: #fff;
-  margin-bottom: 10px;
-  width: auto;
-  height: 28px;
-  padding: 0px 10px 0px 10px;
-  line-height: 28px;
-  border: none;
-}
-
-.avatar-sm {
-  width: 48px;
-  margin-left: 2px !important;
-}
-
-.avatar {
-  position: relative;
-  width: 48px !important;
-  white-space: nowrap;
-  border-radius: 10px;
-  vertical-align: bottom;
-  display: inline-block;
-}
-
 .miniTxt {
   font-size: 0.7rem;
 }
