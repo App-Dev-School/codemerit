@@ -102,7 +102,22 @@ export class AuthService {
     const url = 'auth/verify';
     return this.httpService.post(url, postData, httpOptions);
   }
-  
+   
+  forgotPassword(postData: any): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    const url = 'auth/recover-password';
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " with => " + JSON.stringify(postData));
+    }
+    //return this.http.post<any>(url, postData, httpOptions);
+    return this.httpService.postWithParams(url, postData, httpOptions);
+  }
+
+ 
   setLocalData(userData: any) {
     //talk to storage service
     if (userData && userData.id > 0) {
