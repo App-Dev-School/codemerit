@@ -69,7 +69,7 @@ export class SubjectPerformanceCardComponent {
 
   private cardChart() {
     this.cardChartOptions = {
-      series: [83],
+      series: [this.subject?.score ?? 0],
       chart: {
         type: 'radialBar',
         height: 265,
@@ -111,6 +111,6 @@ export class SubjectPerformanceCardComponent {
   }
 
   goToSubjects() {
-
+  
   }
 }

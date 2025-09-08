@@ -1,76 +1,74 @@
 <mat-card>
-  @if(subject.isSubscribed){
+  @if(subject?.isSubscribed){
   <mat-card-header>
     <mat-card-title>{{subject.isSubscribed ? 'Learning ' : 'Learn '}} {{subject.title}}</mat-card-title>
   </mat-card-header>
   }
   <mat-card-content>
     <div class="row">
+      @if (subject?.isSubscribed) {
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
         <apx-chart [series]="cardChartOptions.series!" [chart]="cardChartOptions.chart!"
           [plotOptions]="cardChartOptions.plotOptions!" [colors]="cardChartOptions.colors!"
           [labels]="cardChartOptions.labels!" />
-        @if (true) {
         <div class="main-label text-center">
-          <h5 class="scoreText m-t-0">Overall Score</h5>
+          <h6 class="scoreText m-t-0">Overall Score</h6>
           <h6 class="text-danger">Rank #7</h6>
-          @if (false) {
-          <div class="legend">
-            <div class="m-l-10 m-r-10">
-              <span class="occupied"></span> Completed
-            </div>
-            <div class="m-l-10 m-r-10">
-              <span class="available"></span> Remaining
-            </div>
-          </div>
-          }
         </div>
-        }
-
       </div>
       <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-        @if(!subject.isSubscribed){
-        <div class="text-end">
-          <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" />
-          <mat-card-title>Level up {{subject.title}} skills</mat-card-title>
-          <p>{{subject.description}}</p>
-          <p>Subscribe to learn, assess topic wise skills and get access to frequently asked questions in
-            {{subject.title}}.</p>
-            <p>{{subject.image}}</p>
-        </div>
-        <div class="text-center p-t-20 p-b-20">
-          <button mat-stroked-button color="primary" (click)="goToSubjects()">Enroll Now</button>
-        </div>
-        }
-        @if(subject.isSubscribed){
         <ul class="list-unstyled">
-          @for (source of indicators; track source) {
           <li>
             <div class="mb-2">
-              <span class="progress-label">{{ source.label }}</span>
-              <span class="float-end progress-percent label m-b-5" [ngClass]="'bg-dark text-white'">{{ source.percentage
+              <span class="progress-label">Score</span>
+              <span class="float-end progress-percent label m-b-5" [ngClass]="'bg-dark text-white'">{{ subject.score
                 }}%</span>
             </div>
             <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [ngClass]="'bg-dark'" [style.width]="source.percentage + '%'" role="progressbar"
-                [attr.aria-valuenow]="source.percentage" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="progress-bar" [ngClass]="'bg-dark'" [style.width]="subject.score + '%'" role="progressbar"
+                [attr.aria-valuenow]="subject.score" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
           </li>
-          }
+          <li>
+            <div class="mb-2">
+              <span class="progress-label">Coverage</span>
+              <span class="float-end progress-percent label m-b-5" [ngClass]="'bg-dark text-white'">{{ subject.coverage
+                }}%</span>
+            </div>
+            <div class="progress skill-progress m-b-20 w-100">
+              <div class="progress-bar" [ngClass]="'bg-dark'" [style.width]="subject.coverage + '%'" role="progressbar"
+                [attr.aria-valuenow]="subject.coverage" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </li>
         </ul>
-        <!-- <div class="text-end text-right p-t-20 p-b-20">
-          <button mat-stroked-button color="primary" (click)="goToSubjects()">Take Mock Exam</button>
-        </div> -->
-        }
       </div>
+      }@else {
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        <div class="text-center">
+          <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" />
+          <mat-card-title>Learn {{subject.title}}</mat-card-title>
+          <h5>{{subject.description}}</h5>
+          <p>Enroll into {{subject.title}} to start levelling up your skills.</p>
+        </div>
+      </div>
+      }
     </div>
     <mat-card-footer>
+      @if (subject?.isSubscribed) {
       <p class="text-center m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">trending_up</i>
         Take more quizzes to improve your score
       </p>
       <div class="text-center p-t-20 p-b-20">
         <button mat-stroked-button color="primary" (click)="goToSubjects()">Take Mock Exam</button>
       </div>
+      }@else{
+      <div class="text-center p-t-20 p-b-20">
+         <p class="text-center m-b-0 font-12"><i class="material-icons col-green psr-2">trending_up</i>
+        Level up your {{subject.title}} skills.
+      </p>
+        <button mat-stroked-button color="primary" (click)="goToSubjects()">Start Learning</button>
+      </div>
+      }
     </mat-card-footer>
   </mat-card-content>
 </mat-card>

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { UnsubscribeOnDestroyAdapter } from '@shared';
-import { AuthService, Role } from '@core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService, Role } from '@core';
+import { MasterService } from '@core/service/master.service';
+import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-signin',
@@ -33,7 +34,7 @@ export class SigninComponent
   hide = true;
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private route: ActivatedRoute,
+    private master: MasterService,
     private router: Router,
     private authService: AuthService
   ) {
@@ -76,16 +77,16 @@ export class SigninComponent
                 if (role === Role.All || role === Role.Admin) {
                   this.router.navigate(['/admin/dashboard/main']);
                 } else {
-                  if (role === Role.Subscriber) {
-                    this.router.navigate(['/dashboard/select-job-role']);
-                  } else {
-                    if (role === Role.Manager) {
-                      this.router.navigate(['/dashboard?manage']);
-                    } else {
+                  if (role === Role.Subscriber || role === Role.Manager) {
+                    if(this.authService.currentUserValue?.userDesignation?.slug){
+                      this.router.navigate(['/dashboard/start', this.authService.currentUserValue?.userDesignation?.slug]);
+                    }else{
+                      this.router.navigate(['/dashboard/select-job-role']);
                     }
                   }
                 }
                 this.loading = false;
+                this.master.fetchMasterDataFromAPI();
               }, 1000);
             } else {
               this.error = 'Invalid Login';

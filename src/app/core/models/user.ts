@@ -9,7 +9,12 @@ export class User {
   lastName!: string;
   role: Role;
   email : string;
-  designation: string;
+  designation: number;
+  userDesignation: {
+    id: number,
+    title: string,
+    slug:string
+  }
   token!: string;
   country: string;
   accountStatus!: string;

@@ -95,8 +95,8 @@ export class QuizService {
     console.log('QuizPlayer Submitted Quiz => ', item);
     return this.httpService.postData(url, item, api_key).pipe(
       map((response: SubmitQuizResponse) => {
-        console.log("QuizPlayer SubmitQuiz API response", response);
-        return response.data; // return response from API
+        //console.log("QuizPlayer SubmitQuiz API response", response);
+        return response.data;
       }),
       catchError(this.handleError)
     );
@@ -179,23 +179,13 @@ export class QuizService {
       timeSpent: 0,
       score: Number(score),
       dateAttempted: new Date().toISOString()
-      // attempts: questions.map(q => ({
-      //   const correctOption = q.options.find(option => option.correct === true);
-      //   questionId: q.id,
-      //   selectedOption: q.selectedOption || null,
-      //   answer: q.correctAnswer,
-      //   isCorrect: q.selectedOption === q.correctAnswer,
-      //   isSkipped: q.isSkipped || false,
-      //   timeTaken: q.timeTaken || 0,
-      //   hintUsed: q.hintUsed || false
-      // }))
     };
 
     const attempts = questions.map(q => {
       const correctOption = q.options.find(option => option.correct === true);
       return {
         questionId: q.id,
-        selectedOption: q.selectedOption || 0,
+        selectedOption: q.selectedOption || null,
         answer: correctOption ? correctOption.option : null,
         isCorrect: (q.selectedOption && q.selectedOption === correctOption.id) ?? false,
         isSkipped: q.isSkipped || false,

@@ -7,19 +7,22 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 
 import { Direction } from '@angular/cdk/bidi';
-import { CdkNoDataRow } from "@angular/cdk/table";
 import { AsyncPipe, JsonPipe, NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
-import { JobRole, MasterService } from '@core/service/master.service';
+import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { slideInOutAnimation } from '@shared/animations';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
+import { CourseProgressComponent } from '@shared/components/course-progress/course-progress.component';
 import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
-import { QuizProgressComponent } from '@shared/components/quiz-progress/quiz-progress.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { Observable } from 'rxjs';
+import { Subject } from '@core/models/subject';
+import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
+import { QuizService } from 'src/app/quiz/quiz.service';
+import { JobRole } from '@core/models/subject-role';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -37,17 +40,18 @@ import { Observable } from 'rxjs';
     MatCheckboxModule,
     MatTooltipModule,
     CongratulationsCardComponent,
-    QuizProgressComponent,
     MedalCardComponent,
     CoursePickerComponent,
-    CdkNoDataRow
-]
+    CourseProgressComponent
+  ]
 })
 export class CourseDashboardComponent implements OnInit {
+  loading = true;
+  loadingText = 'Loading your Dashboard';
   userData: Observable<User>;
   showContent = true;
   course = "";
-  subjectData: JobRole;
+  courseData: JobRole;
   showSubjectAction = false;
   courseChartConfig = {
     showTitle: false,
@@ -62,6 +66,7 @@ export class CourseDashboardComponent implements OnInit {
     private router: Router,
     public dialog: MatDialog,
     public authService: AuthService,
+    private quizService: QuizService,
     private snackService: SnackbarService
   ) {
     console.log("CourseDash User ", this.authService.currentUser);
@@ -80,30 +85,34 @@ export class CourseDashboardComponent implements OnInit {
     });
     this.takeRouteParams();
     setTimeout(() => {
-      //launch the course picker
-    }, 4000);
+      this.loading = false;
+    }, 2200);
   }
 
   takeRouteParams() {
     const course = this.route.snapshot.paramMap.get('course');
     console.log("CourseDash ParamMap course", course);
-    this.route.paramMap.subscribe(params => {
-      console.log("CourseDash @RouteParam change detected =>", params.get("course"));
-      if (params.get("course")) {
-        this.course = params.get("course");
-        if (this.course) {
-          this.onCourseChange(this.course);
-        }
-      } else {
-        this.course = "";
-      }
-    });
+    if (course) {
+      this.course = course;
+      this.onCourseChange(course);
+    }
+    // this.route.paramMap.subscribe(params => {
+    //   console.log("CourseDash @RouteParam change detected =>", params.get("course"));
+    //   if (params.get("course")) {
+    //     this.course = params.get("course");
+    //     if (this.course) {
+    //       this.onCourseChange(this.course);
+    //     }
+    //   } else {
+    //     this.course = "";
+    //   }
+    // });
   }
 
   filterCourse(allJobRoles: any) {
     //Display the job role map
-    this.subjectData = allJobRoles.find(role => role.slug === this.course);
-    console.log("CourseDash Filter ****", this.subjectData);
+    this.courseData = allJobRoles.find(role => role.slug === this.course);
+    console.log("CourseDash Filter ****", this.courseData);
   }
 
   onCourseChange(course: string) {
@@ -111,18 +120,18 @@ export class CourseDashboardComponent implements OnInit {
     console.log("CourseDash @1", course);
     if (this.course) {
       //get this from a service first
-      const allJobs = this.master.getJobRoleMap();
+      const allJobs = this.master.jobRoles;
       if (allJobs) {
-          this.filterCourse(allJobs);
-      }else{
-      //get this from server
-      this.master.fetchJobRoleSubjectMapping().subscribe((data: any) => {
-        console.log("CourseDash #2 fetchJobRoleSubjectMapping", data);
-        if (data && !data.error && data.data) {
-          const allJobRoles = data.data;
-          this.filterCourse(allJobRoles);
-        }
-      });
+        this.filterCourse(allJobs);
+      } else {
+        //get this from server
+        this.master.fetchJobRoleSubjectMapping().subscribe((data: any) => {
+          console.log("CourseDash #2 fetchJobRoleSubjectMapping", data);
+          if (data && !data.error && data.data) {
+            const allJobRoles = data.data;
+            this.filterCourse(allJobRoles);
+          }
+        });
       }
     }
   }
@@ -142,11 +151,49 @@ export class CourseDashboardComponent implements OnInit {
     this.snackService.display('snackbar-dark', 'Switched to ' + this.course + ' Dash', 'bottom', 'center');
   }
 
-  launchSubject(item:any) {
-    this.router.navigate(['/dashboard/learn', item?.title]);
+  launchSubject(item: any) {
+    if (item && item.id) {
+      const selectedSubject = this.master.subjects.find(sub => sub.id === item?.id);
+      if (selectedSubject && selectedSubject.slug)
+        this.router.navigate(['/dashboard/learn', selectedSubject?.slug]);
+    }
   }
 
-    goToCourses() {
+  async generateSubjectQuiz(topic: any) {
+    console.log('QuizManager generateSubjectQuiz:', topic);
+    this.loading = true;
+    this.loadingText = "Generating Quiz";
+    const payload = new QuizCreateModel();
+    payload.userId = this.authService.currentUserValue.id
+    payload.subjectIds = [topic.id];
+    console.log('QuizManager Invoked with Subject:', payload);
+    this.quizService
+      .addQuiz(payload)
+      .subscribe({
+        next: (response) => {
+          console.log('QuizManager CreateAPI response:', response);
+          if (response && response?.slug) {
+            const slug = response?.slug;
+            if (slug && slug !== '') {
+              setTimeout(() => {
+                this.loading = false;
+                this.router.navigate(['quiz/take', slug]);
+                //this.generatingQuiz = false;
+              }, 4000);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('QuizManager CreateAPI Error:', error);
+          setTimeout(() => {
+                this.loading = false;
+                this.snackService.display('snackbar-dark', error, 'bottom', 'center');
+              }, 2000);
+        },
+      });
+  }
+
+  goToCourses() {
     this.router.navigate(['/dashboard/select-job-role']);
   }
 

@@ -10,21 +10,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, User } from '@core';
-import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { CourseProgressComponent } from '@shared/components/course-progress/course-progress.component';
 @Component({
   selector: 'app-user',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
   imports: [
-    BreadcrumbComponent,
     DatePipe,
     MatTabsModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    CourseProgressComponent
+    MatButtonModule
   ]
 })
 export default class UserComponent implements OnInit {

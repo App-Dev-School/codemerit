@@ -69,7 +69,7 @@ export class AuthService {
         this.setLocalData(user.data);
         //this.currentUserSubject.next(user.data);
       }
-      console.log("LoginResponse" , user, JSON.stringify(user.data));
+      //console.log("LoginResponse" , user, JSON.stringify(user.data));
       if (user.myProfile) {
         localStorage.setItem(AuthConstants.CACHE_FULL_PROFILE, JSON.stringify(user.myProfile));
       }

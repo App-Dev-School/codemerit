@@ -15,24 +15,25 @@
     <mat-card-content>
       <div class="row align-items-center">
     <div class="col-auto">
+      <small>Assessment ID : CMA{{result?.resultCode}}</small>
+      <small>{{ result?.createdAt | date:'dd/MM/yyyy' }}</small>
       <!-- Left aligned content -->
-       <div class="user-info">
+       <div class="user-info m-b-20">
               <img src="/assets/images/icons/student.png" />
               <div class="user-details">
-                <h4 class="name">{{result.userFullName ?? 'Anonymous'}}</h4>
-                <h4 class="exam">{{result.quizName ?? 'CodeMerit Quiz'}}</h4>
+                <h4 class="name">{{result?.userFullName ?? 'Anonymous'}}</h4>
+                <h4 class="exam">{{result?.quizName ?? 'CodeMerit Quiz'}}</h4>
               </div>
             </div>
           <!-- <h6 class="col-green">Angular Test</h6> -->
-      <h6 class="mb-0">{{result.userFullName ? result.userFullName : 'Anonymous'}} took quiz on {{result.quizName ?? 'CodeMerit Quiz'}}.</h6>
+      <h6 class="mb-0">{{result?.userFullName ?? 'Anonymous'}} took quiz on {{result?.quizName ?? 'CodeMerit Quiz'}} and obtained {{result?.score}} % score.</h6>
     </div>
     <div class="col-auto ms-auto text-center">
       <!-- Right aligned content -->
-        <app-quiz-progress [score]="result.score"></app-quiz-progress>
-      <h5 class="center-header">Overall Score <span class="col-green">83%</span></h5>
-      <p class="mb-0">Grade : A</p>
-      <p class="mb-0">Time Efficiency : Good</p>
-           <hr class="dim-divider">
+        <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
+      <h5 class="center-header"><span class="col-green">Overall Score</span></h5>
+      <!-- <p class="mb-0">Grade : A</p>
+      <p class="mb-0">Time Efficiency : Good</p> -->
     </div>
   </div>
 

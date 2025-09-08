@@ -14,6 +14,7 @@ export class AuthGuard {
     if (this.authService.currentUserValue) {
       const userRole = this.authService.currentUserValue.role;
       if (route.data['role'] && route.data['role'].indexOf(userRole) === -1) {
+        console.log("Codemerit AuthGuard :: ", userRole, "Not Allowed", this.router.url);
         this.router.navigate(['/authentication/signin']);
         return false;
       }

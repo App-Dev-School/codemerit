@@ -178,18 +178,22 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   submitQuiz() {
     this.completed = true;
+    this.loading = true;
+    this.loadingText = 'Submitting Quiz';
     this.quizService.processAndSaveResults(this.questions, this.quiz.id).subscribe(
       (data: any) => {
-        console.log("QuizPlayer Quiz Submitted", data);
+        console.log("QuizPlayer Quiz", data);
         this.quizResult = data;
-        this.navigateToResult(data.quizSlug);
-        //alert("QuizPlayer Quiz Submitted - "+ data.title);
         this.showNotification(
           "snackbar-danger",
-          'Great! '+data.message,
+          'Great! '+data?.message,
           "bottom",
           "center"
         );
+        //delay until result page is fixed
+        setTimeout(() => {
+          this.navigateToResult(data.resultCode);
+        }, 8000);
       }, (error: any) => {
         this.showNotification(
           "snackbar-danger",
@@ -200,12 +204,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }
     );
     this.evaluated = true;
-    //this.quizService.submitQuiz(this.quizResult);
-    // setTimeout(() => {
-    //    this.quizResult =  this.quizService.processAndSaveResults(this.questions, 'quiz-angular-101', 'user-123');
-    //    //this.quizService.submitQuiz(this.quizResult);
-    //    this.evaluated = true;
-    // }, 4000);
   }
 
   showNotification(colorName, text, placementFrom, placementAlign) {

@@ -3,12 +3,13 @@
   <div class="content-block">
     <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h6 class="text-center m-b-0">Pick an <span>aspiring job role</span> or</h6>
-          <h6 class="text-center m-t-5">Select your <span>Designation</span></h6>
+        <h6 class="text-center font-20 m-t-10">Pick an <span style="font-size:1.5rem;color:rgb(15, 15, 147);">Aspiring Job Role </span> or Select your current <span style="font-size:1.5rem;color:rgb(161, 114, 13);">Designation</span></h6>
+        <!-- <h6 class="text-center m-b-0">Pick an <span>aspiring job role</span> or</h6>
+          <h6 class="text-center m-t-5">Select your <span>Designation</span></h6> -->
            <hr class="dim-divider">
       </div>
     </div>
-    <app-course-picker [minimal]="false" (subjectSelected)="onCourseChange($event)"
+    <app-course-picker [minimal]="true" (subjectSelected)="onCourseChange($event)"
             (onSubscribe)="onSubscribe($event)"></app-course-picker>
   </div>
 </section>

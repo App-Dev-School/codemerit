@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Country } from '@core/models/country.data';
 import { Subject } from '@core/models/subject';
+import { JobRole } from '@core/models/subject-role';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
@@ -17,13 +18,6 @@ export interface JobSubject {
   title: string;
   description: string;
   image: string;
-}
-
-export interface JobRole {
-  id: number;
-  title: string;
-  slug: string;
-  subjects: JobSubject[];
 }
 
 @Injectable({
@@ -51,10 +45,11 @@ export class MasterService {
    * To maintain sync using timestamp
    */
   fetchMasterDataFromAPI() {
-    return this.httpService.getWithoutAuth('apis/master/data').pipe(
+    console.log("fetchMasterDataFromAPI() called");
+    return this.httpService.get('apis/master/data', this.authService.currentUserValue?.token).pipe(
       tap((res: { error: boolean, message: string, data: MasterData }) => {
         if (!res.error) {
-          console.log('MasterDataFlow master data fetched', res.data);
+          console.log('MasterDataFlow Topics', res.data.topics);
           this.data = res.data;
           localStorage.setItem(this.storageKey, JSON.stringify(res));
           this.dataLoaded.next(true);
@@ -62,6 +57,22 @@ export class MasterService {
       }),
       catchError((err) => {
         console.log("MasterDataFlow Error fetching master data", err);
+        return of(null);
+      })
+    );
+  }
+
+    fetchSubjectDashboard(slug: string) {
+    console.log("CourseDash fetchSubjectDashboard()", slug);
+    return this.httpService.get('apis/master/subjectDashboard?slug='+slug, this.authService.currentUserValue?.token).pipe(
+      tap((res: { error: boolean, message: string, data: MasterData }) => {
+        console.log('CourseDash master subjectDashboard API response=>', res);
+        if (!res.error) {
+          //console.log('CourseDash master subjectDashboard API response=>', res.data);
+        }
+      }),
+      catchError((err) => {
+        console.log("CourseDash Error fetching subjectDashboard", err);
         return of(null);
       })
     );
@@ -77,61 +88,34 @@ export class MasterService {
     this.dataLoaded.next(false);
   }
 
-  fetchJobRoleSubjectMapping() {
-    console.log('MasterDataFlow Invoking JobMap API');
-    return this.httpService.getWithoutAuth('apis/master/jobRoles').pipe(
-      tap((res: { error: boolean, message: string, data: any }) => {
+  fetchJobRoleSubjectMapping(): Observable<JobRole[]> {
+  console.log('MasterDataFlow Invoking JobMap API');
+
+  return this.httpService
+    .get('apis/master/jobRoles', this.authService.currentUserValue?.token)
+    .pipe(
+      map((res: { error: boolean; message: string; data: JobRole[] }) => {
         if (!res.error) {
           console.log('MasterDataFlow JobMap API SUCCESS>>>', res.data);
           this.setJobRoleMap(res.data);
+          return res.data; // ✅ make sure to return it
         }
+        return []; // ✅ fallback return to satisfy type
       }),
       catchError((err) => {
         console.error('MasterDataFlow Failed to fetch job map', err);
-        return of(null);
+        return of([]); // ✅ return empty array instead of null
       })
     );
-  }
+}
 
+//Delete this as unused
   getJobRoleMap() {
     return this.jobRoleSubjectMap;
   }
 
   setJobRoleMap(map: any) {
     this.jobRoleSubjectMap = map;
-  }
-
-  /*** 
-   * Mocking all subjects data *
-   * ****/
-  getMockSubjectDashboard(): Observable<any> {
-    return this.httpService.getLocalMock('assets/data/subjectDashboard.json');
-  }
-
-  fetchSubjectRoleMap(): Observable<any> {
-    return this.httpService.getLocalMock('assets/data/master/subjectWithRoles.json');
-  }
-
-  fetchSubjectData(subjectName) {
-    return this.httpService.getLocalMock('assets/data/subjectDashboard.json').pipe(
-      map((objects: any) => {
-        return objects.find(obj => obj.title === subjectName);
-      })
-    );
-  }
-
-  //Delete topic-store.json and subjectdashboard.json
-  fetchAllSubjectTopics(subjectName) {
-    console.log(subjectName, "MasterTopics", this.topics);
-    const dd = this.topics.filter(obj => obj.subject === subjectName);
-    console.log("MasterTopics for "+subjectName, dd);
-
-    return this.httpService.getLocalMock('assets/data/topic-store.json').pipe(
-      map((objects: any) => {
-        return objects.filter(obj => obj.subject === subjectName); // Find the object by title
-      })
-    );
-    //return of(this.topics.filter(obj => obj.subject === subjectName))
   }
 
   getCountries(): Observable<Country[]> {

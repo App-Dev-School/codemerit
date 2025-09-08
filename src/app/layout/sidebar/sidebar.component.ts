@@ -92,11 +92,11 @@ export class SidebarComponent
     }
   }
   ngOnInit() {
-    this.authService.currentUser.subscribe(user =>{
-      if(user){
-        console.log("SidebarWatchUser==> "+JSON.stringify(user));
-      }
-    });
+    // this.authService.currentUser.subscribe(user =>{
+    //   if(user){
+    //     console.log("SidebarWatchUser==> "+JSON.stringify(user));
+    //   }
+    // });
 
       if (this.authService.currentUserValue && this.authService.currentUserValue.email) {
       const userRole = this.authService.currentUserValue.role;
@@ -104,7 +104,10 @@ export class SidebarComponent
         this.authService.currentUserValue.firstName +
         ' ' +
       this.authService.currentUserValue.lastName;
-      this.userDesignation = this.authService.currentUserValue.designation;
+      this.userDesignation = "New Joiner";
+      if(this.authService.currentUserValue?.userDesignation?.title){
+        this.userDesignation = this.authService.currentUserValue?.userDesignation?.title;
+      }
       if(this.authService.currentUserValue.userImage){
         this.userImg = this.authService.currentUserValue.userImage;
       }
@@ -116,7 +119,7 @@ export class SidebarComponent
       this.subs.sink = this.sidebarService
         .getRouteInfo()
         .subscribe((routes: RouteInfo[]) => {
-          console.log("AppFLow Get Sidebar => ", userRole, routes);
+          //console.log("AppFLow Get Sidebar => ", userRole, routes);
           this.sidebarItems = routes.filter(
             (x) =>
               x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1

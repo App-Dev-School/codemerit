@@ -1,21 +1,34 @@
 @if(showContent){
 <section class="content" [@slideInOut]>
+    @if (loading) {
+      <div class="overlay"></div>
+      <div class="animToast loading">
+        <img src="assets/images/icons/loading.gif" class="smallLoadingIcon">
+        @if (courseData?.title) {
+        <h6>Loading your Dashboard</h6>
+        }@else {
+        <h5>{{loadingText}}</h5>
+        <h6>Please wait</h6>
+        }
+      </div>
+  }
+   @if (!loading && courseData) {
   <div class="content-block">
     <div class="block-header">
-      <app-breadcrumb [title]="' Dashboard'" [items]="[]" [active_item]="'Dashboard'"></app-breadcrumb>
     </div>
 
-    <div class="row m-t-5 match-height clearfix">
+    <div class="row m-t-20 match-height clearfix">
       <div class="col-xl-4 col-lg-5 col-md-5 col-sm-12">
-        <div class="card">
+        <div class="card hoverCard">
           <div class="m-b-20">
             <div class="contact-grid">
               <div class="profile-header bg-dark">
                 <div class="user-name">{{(userData| async)?.firstName}} {{(userData| async)?.lastName}}</div>
-                @if ((userData| async)?.designation) {
-                <div class="name-center">{{ (userData| async)?.designation }}</div>
+                @if ((userData| async)?.userDesignation) {
+                <div class="name-center">{{ (userData| async)?.userDesignation?.title }}</div>
                 }@else{
                 <div class="name-center">New Joiner</div>
+                <small class="miniTxt">Let us know your Tech Career Preference</small>
                 }
               </div>
               <img src="assets/images/users/user.jpg" class="user-img" alt="{{(userData| async)?.firstName}}">
@@ -24,14 +37,34 @@
               </p>
             </div>
             <div class="text-center p-t-20">
-              @if ((userData| async)?.designation) {
-              <button type="button" (click)="openCourseLauncher('default')" class="btn btn-outline-default"
-                rippleEffect>
-                Select Designation</button>
+              <small>Subjects in {{courseData.title}} roles</small>
+              <h4 class="name-center">{{courseData.title}}</h4>
+              @if (courseData && courseData?.subjects) {
+              <ul class="list-unstyled order-list m-b-0">
+                @for (item of courseData?.subjects; track item) {
+                <li class="avatar avatar-sm">
+                  <img class="rounded-circle" [src]="item.image" alt="{{item.title}}">
+                </li>
+                }
+              </ul>
+              <hr class="dim-divider">
               }
+
+              @if (!((userData| async)?.designation)) {
+              <small>Aspiring to become a {{courseData.title}}?</small>
+              <button mat-stroked-button (click)="openCourseLauncher('default')" class="btn"
+                rippleEffect>
+                <i class="material-icons">autorenew</i> &nbsp;Select Designation</button>
+              }
+              <small (click)="openCourseLauncher('default')">Launch as a dialog</small>
               <hr>
-              <button mat-flat-button (click)="goToCourses()" color="primary"><i class="material-icons">lock</i> Switch
-                Role</button>
+                @if (!((userData| async)?.designation)) {
+                  <button mat-flat-button (click)="goToCourses()" color="primary">
+                <i class="material-icons">autorenew</i> &nbsp;Explore Other Tech Roles</button>
+                }@else{
+                <button mat-flat-button (click)="goToCourses()" color="primary">
+                <i class="material-icons">autorenew</i> Switch Role</button>
+                }
             </div>
           </div>
         </div>
@@ -39,29 +72,27 @@
       </div>
 
       <div class="col-xl-8 col-lg-7 col-md-7 col-sm-12">
-        @if (!(userData | async)?.designation) {
+        @if (!((userData | async)?.userDesignation?.title)) {
         <app-medal-card [userName]="'Hi '+(userData| async)?.firstName +'!'"
-          [message]="'Up-Skill and Evaluate Skills in '+subjectData?.title+'.'"></app-medal-card>
-
+          [message]="'Up-Skill and Evaluate Skills in '+courseData?.title+'.'"></app-medal-card>
         }
-        @if ((userData | async)?.country) {
+        @if ((userData | async)?.userDesignation) {
         <app-congratulations-card
           [userName]="(userData| async)?.firstName+' '+(userData| async)?.lastName"></app-congratulations-card>
-
         }
+
         <div class="row text-center m-t-20 m-b-20 clearfix">
           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-            <h4 class="text-center font-20"><span class="col-grey">{{subjectData?.title}} Skill Assessment</span>
+            <h4 class="text-center font-20"><span class="col-grey">{{courseData?.title}} Skill Assessment</span>
             </h4>
           </div>
-          @if (subjectData && subjectData?.subjects) {
-          @for (item of subjectData?.subjects; track item) {
+          @if (courseData && courseData?.subjects) {
+          @for (item of courseData?.subjects; track item) {
           <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
             <!--- Start Subject Tracker Card -->
             <mat-card>
               <mat-card-content>
                 <div class="subject-card d-flex align-items-start">
-                  <!-- Avatar -->
                   <div class="avatar-section">
                     <img [src]="item?.image || 'assets/images/tech/placeholder.png'" alt="Avatar" class="avatar-img" />
                   </div>
@@ -70,48 +101,38 @@
                     <div class="subjectHeader">
                       <mat-card-title class="text">{{item?.title}}</mat-card-title>
                     </div>
-                    <p class="font-12">{{item?.description}}</p>
+                    <!-- <p class="font-12">{{item?.description}}</p> -->
                   </div>
-
                   <!-- Score Box -->
                   <div class="score-section text-center">
-                    <div class="score-box">
-                      {{80+item?.id}}%
-                    </div>
-                    <!-- <app-quiz-progress [title]="'Overall Score %'"></app-quiz-progress> -->
-      <h6 class="center-header">Overall Score</h6>
-      <small class="mb-0">Grade : A</small>
+                    <app-course-progress [score]="item.id"></app-course-progress>
+                    <small class="m-b-10 center-header miniTxt">Score</small>
                   </div>
                 </div>
+                <hr class="dim-divider">
                 <mat-card-footer>
-                  <!-- Optional Coverage Section -->
-                    <ul class="list-unstyled">
-                      <li>
-                        <div class="mb-2 d-flex justify-content-between">
-                          <span class="progress-label">Coverage</span>
-                          <span class="progress-percent label label-success">{{item.id}}%</span>
+                  <ul class="list-unstyled m-b-10 m-t-10">
+                    <li>
+                      <div class="mb-2 d-flex justify-content-between">
+                        <span class="progress-label">Coverage</span>
+                        <span class="progress-percent label label-success">{{item.id}}%</span>
+                      </div>
+                      <div class="progress skill-progress w-100">
+                        <div class="progress-bar progress-bar-success" [style.width]="item.id + '%'" role="progressbar"
+                          [attr.aria-valuenow]="item.id" aria-valuemin="0" aria-valuemax="100">
                         </div>
-                        <div class="progress skill-progress w-100">
-                          <div class="progress-bar progress-bar-success" [style.width]="item.id + '%'"
-                            role="progressbar" [attr.aria-valuenow]="item.id" aria-valuemin="0" aria-valuemax="100">
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
+                      </div>
+                    </li>
+                  </ul>
+                  <hr class="dim-divider">
+                  <div class="text-center">
+                  <button (click)="launchSubject(item)" mat-stroked-button>View Path</button>
+                  <button (click)="generateSubjectQuiz(item)" class="m-l-20" mat-flat-button rippleEffect>Take Quiz</button>
+                  <!-- <button (click)="launchSubject(item.title)" mat-raised-button>Raised Explore</button> -->
+                </div>
                 </mat-card-footer>
               </mat-card-content>
-
-              <!-- Footer -->
-              <mat-card-footer>
-                <div class="text-center">
-                  <button type="button" (click)="launchSubject(item?.title)" class="btn btn-outline-default"
-                    rippleEffect>
-                    Start
-                  </button>
-                </div>
-              </mat-card-footer>
             </mat-card>
-
             <!--- End Subject Tracker Card -->
           </div>
           }
@@ -122,9 +143,9 @@
     </div>
 
   </div>
+}
 </section>
 }
-
 <ng-template #subjectTracker>
 
 </ng-template>

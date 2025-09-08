@@ -7,7 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { AuthService, User } from '@core';
-import { SubjectRole } from '@core/models/subject-role';
+import { JobRole } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
@@ -38,13 +38,13 @@ import { SnackbarService } from '@core/service/snackbar.service';
   //   ]
 })
 export class WelcomeComponent implements OnInit {
-  public subjectRoleMap: SubjectRole[] = [];
+  public subjectRoleMap: JobRole[] = [];
   userName = "";
   userMessage = "";
   nextAction = "login";
   //clean up
   subjectData: any;
-  subjectsByRole: { [role: string]: SubjectRole[] } = {};
+  subjectsByRole: { [role: string]: JobRole[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
   engagements = [
     {
@@ -154,7 +154,7 @@ export class WelcomeComponent implements OnInit {
       this.authService.log("Welcome ", sub, "CurrentUser");
       if(sub && sub.firstName){
       this.userName = sub.firstName;
-      if(sub.designation == ''){
+      if(sub.designation){
         this.nextAction = "selfRating";
         this.userMessage = "Tell us what you already know. Rate your skills, and we’ll personalize your learning path just for you.";
       }else{
@@ -167,23 +167,25 @@ export class WelcomeComponent implements OnInit {
       }
     });
     // Implement Master Data Relationship
-    this.master.fetchSubjectRoleMap().subscribe(data => {
+    this.master.fetchJobRoleSubjectMapping().subscribe(data => {
       this.subjectRoleMap = data;
       this.subjectRoleMap.forEach(subject => {
-        subject.roles.forEach(role => {
-          if (!this.subjectsByRole[role]) {
-            this.subjectsByRole[role] = [];
-          }
-          this.subjectsByRole[role].push(subject);
-        });
+        console.log("TaskJobRole ", subject);
+        // subject.subjects.forEach(role => {
+        //   if (!this.subjectsByRole[role]) {
+        //     this.subjectsByRole[role] = [];
+        //   }
+        //   this.subjectsByRole[role].push(subject);
+        // });
       });
     });
     setTimeout(() => {
       //After 5 secons ore more display the next user task
+      //AAA destroy 
       if(!this.authService.currentUserValue.email){
       this.snackService.display('snackbar-dark', 'Sign up to start up-skilling and transforming your tech path.', 'bottom', 'center');
       }
-    }, 8000);
+    }, 10000);
   }
 
   ngOnInit(): void {

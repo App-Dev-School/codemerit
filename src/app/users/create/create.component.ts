@@ -42,7 +42,7 @@ import { MatCard, MatCardContent } from "@angular/material/card";
     MatProgressSpinnerModule,
     AsyncPipe,
     MatCard, MatCardContent
-]
+  ]
 })
 export class CreateUserComponent implements OnInit, OnDestroy {
   constructor(private formBuilder: UntypedFormBuilder,
@@ -52,10 +52,10 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     private snackbar: SnackbarService,
     public authService: AuthService) {
   }
-  authData : User;
+  authData: User;
   authForm!: UntypedFormGroup;
   userName = "";
-  userDetail:any;
+  userDetail: any;
   loading = false;
   loadingTxt = '';
   editMode = false;
@@ -87,20 +87,20 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     });
 
     if (!environment.production) {
-          this.authForm.get('firstName')?.setValue('Test');
-          this.authForm.get('email')?.setValue('user1@codemerit.com');
-          this.authForm.get('city')?.setValue('Bengaluru');
-          this.authForm.get('country')?.setValue('India');
-          this.authForm.get('designation')?.setValue('IT Fresher (Graduate)');
-        }
+      this.authForm.get('firstName')?.setValue('Test');
+      this.authForm.get('email')?.setValue('user1@codemerit.com');
+      this.authForm.get('city')?.setValue('Bengaluru');
+      this.authForm.get('country')?.setValue('India');
+      this.authForm.get('designation')?.setValue('IT Fresher (Graduate)');
+    }
     // this.editor = new Editor();
     this.filteredOptions = of(this.options);
 
     this.filteredOptions = this.authForm.get('designation').valueChanges.pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value?.label || ''),
-        map(name => this._filter(name))
-      );
+      startWith(''),
+      map(value => typeof value === 'string' ? value : value?.label || ''),
+      map(name => this._filter(name))
+    );
 
     this.masterService.getCountries().subscribe((countryData: any) => {
       this.countries = countryData;
@@ -113,60 +113,58 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     });
   }
 
-  takeRouteParams(){
+  takeRouteParams() {
     console.log("takeRoute ===>", this.router.url);
-    
+
     this.route.paramMap.subscribe(params => {
       console.log("takeRoute paramMap ===>", params);
-      if(params.get("userName")){
-      this.userName = params.get("userName");
-      console.log("NgEditUser userName", this.userName);
-      if(this.userName){
-        this.editMode = true;
-        this.screenTitle = 'Update User';
-        this.screenAction = 'Update User';
-        this.loadData();
-       }
-     }else{
-      //Do redirect back
-       //this.authService.redirectToErrorPage();
-     }
+      if (params.get("userName")) {
+        this.userName = params.get("userName");
+        console.log("NgEditUser userName", this.userName);
+        if (this.userName) {
+          this.editMode = true;
+          this.screenTitle = 'Update User';
+          this.screenAction = 'Update User';
+          this.loadData();
+        }
+      } else {
+        //Do redirect back
+        //this.authService.redirectToErrorPage();
+      }
     });
   }
 
   public loadData() {
     this.loading = true;
-    if(this.userName){
-          if(navigator.onLine){
-            //fullProfiles.json getFullProfile
-            console.log("NgEditUser userName", this.userName);
-            this.authService.getFullProfile(this.userName, this.authData.token).subscribe(
-              (data : any) => {
-                console.log("NgViewUser Dummy API", data);
-                this.loading = false;
-                if(!data.error){
-                  this.userDetail = data.data;
-                  console.log("NgEditUser userDetail", this.userDetail);
-                  if(this.userDetail == null || this.userDetail == undefined){
-                    // this.noDataView = true;
-                    //this.authService.redirectToErrorPage();
-                  }
-                }else{
-                  //this.noDataView = true;
-                  this.loading = false;
-                  console.log("NgEditUser Dummy API Failure", data);
-                }
-              },
-              (error: HttpErrorResponse) => {
-                this.loading = false;
+    if (this.userName) {
+      if (navigator.onLine) {
+        this.authService.getFullProfile(this.userName, this.authData.token).subscribe(
+          (data: any) => {
+            console.log("NgViewUser Dummy API", data);
+            this.loading = false;
+            if (!data.error) {
+              this.userDetail = data.data;
+              console.log("NgEditUser userDetail", this.userDetail);
+              if (this.userDetail == null || this.userDetail == undefined) {
+                // this.noDataView = true;
                 //this.authService.redirectToErrorPage();
-                console.log("NgEditUser API Error", error.name + " " + error.message);
               }
-            );
-          }else{
-            this.snackbar.display("snackbar-danger", "Error loading user details.", "bottom", "center");
+            } else {
+              //this.noDataView = true;
+              this.loading = false;
+              console.log("NgEditUser Dummy API Failure", data);
+            }
+          },
+          (error: HttpErrorResponse) => {
+            this.loading = false;
+            //this.authService.redirectToErrorPage();
+            console.log("NgEditUser API Error", error.name + " " + error.message);
           }
-        }
+        );
+      } else {
+        this.snackbar.display("snackbar-danger", "Error loading user details.", "bottom", "center");
+      }
+    }
   }
 
   onSubmit() {
@@ -184,23 +182,23 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         city: this.authForm.get('city')?.value,
         country: this.authForm.get('country')?.value,
         designation: this.authForm.get('designation')?.value,
-         ...(this.authForm.get('linkedinUrl')?.value && { linkedinUrl: this.authForm.get('linkedinUrl')?.value })
+        ...(this.authForm.get('linkedinUrl')?.value && { linkedinUrl: this.authForm.get('linkedinUrl')?.value })
       };
-      let createUpdateCall : Observable<any>;
-      if (this.editMode){
-      this.loadingTxt = 'Updating User Details';  
-      createUpdateCall = this.authService.updateUserAccount(this.authData.token, this.userDetail.id, postData);
-      }else{
-      this.loadingTxt = 'Creating User Account';  
-      createUpdateCall = this.authService.register(postData);
+      let createUpdateCall: Observable<any>;
+      if (this.editMode) {
+        this.loadingTxt = 'Updating User Details';
+        createUpdateCall = this.authService.updateUserAccount(this.authData.token, this.userDetail.id, postData);
+      } else {
+        this.loadingTxt = 'Creating User Account';
+        createUpdateCall = this.authService.register(postData);
       }
       createUpdateCall.subscribe((res) => {
         this.submitted = false;
         if (res) {
           if (!res.error && res.data) {
-              this.router.navigate(['/users/list']).then(() => {
-                this.snackbar.display("snackbar-success", "User account "+(this.editMode ? "updated" : "created")+" successfully.", "bottom", "center");
-              });
+            this.router.navigate(['/users/list']).then(() => {
+              this.snackbar.display("snackbar-success", "User account " + (this.editMode ? "updated" : "created") + " successfully.", "bottom", "center");
+            });
           } else {
             if (res.message) {
               this.snackbar.display("snackbar-danger", res.message, "bottom", "center");
@@ -222,7 +220,6 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     }
   }
 
-  // make sure to destory the editor
   ngOnDestroy(): void {
   }
 
@@ -248,37 +245,4 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       country.name.toLowerCase().includes(filterValue)
     );
   }
-
-  /*** Utils ***
-  watchTwoFieldsChange(field1: string, field2: string) {
-    const control1 = this.authForm.get('firstName');
-    const control2 = this.authForm.get('lastName');
-    if (control1 && control2) {
-      combineLatest([
-        control1.valueChanges.pipe(startWith(this.authForm.get('firstName')!.value)),
-        control2.valueChanges.pipe(startWith(this.authForm.get('lastName')!.value))
-      ]).subscribe(([val1, val2]) => {
-        console.log(`Both fields changed - ${field1}: ${val1}, ${field2}: ${val2}`);
-        const newAlphaName = this.getInitials(val1 + ' ' + val2);
-        if (this.alphabeticName != newAlphaName) {
-          this.alphabeticName = newAlphaName;
-          this.randomColor = this.getRandomColor();
-        }
-      });
-    }
-  } **/
-
-  // getInitials(name) {
-  //   if (!name) return "";
-  //   const words = name.trim().split(" ");
-  //   console.log(`words now - ${words}`);
-  //   if (words.length === 1) return words[0][0];
-  //   return words[0][0] + words[1][0];
-  // }
-
-  // getRandomColor() {
-  //   const colors = ["#F44336", "#3F51B5", "#4CAF50", "#FF9800", "#9C27B0", "#2196F3", "#00BCD4", "#8BC34A"];
-  //   return colors[Math.floor(Math.random() * colors.length)];
-  // }
-
 }

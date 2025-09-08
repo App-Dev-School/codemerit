@@ -43,15 +43,15 @@ export class AppComponent implements OnInit{
     //   }
     // });
 
-    const jobMap = this.master.getJobRoleMap();
-    console.log("MasterDataFlow checking jobMap EXISTS", jobMap);
-    //jobMap
-    if(true){
-    console.log("MasterDataFlow FETCHING NEW jobMap");
-    this.master.fetchJobRoleSubjectMapping();
-    }else{
-      console.log("MasterDataFlow jobMap EXISTS", jobMap);
-    }
+    // const jobMap = this.master.getJobRoleMap();
+    // console.log("MasterDataFlow checking jobMap EXISTS", jobMap);
+    // //jobMap
+    // if(true){
+    // console.log("MasterDataFlow FETCHING NEW jobMap");
+    // this.master.fetchJobRoleSubjectMapping();
+    // }else{
+    //   console.log("MasterDataFlow jobMap EXISTS", jobMap);
+    // }
   }
 
 }

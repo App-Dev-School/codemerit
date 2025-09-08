@@ -14,16 +14,17 @@
 }
 <div class="row">
   @for(subject of subjects|async;track subject){
-    <div class="col-lg-3 col-md-3 col-sm-12" (click)="switchSubject(subject.title)">
-      <mat-card>
+    <div class="col-lg-3 col-md-3 col-sm-12" (click)="switchSubject(subject?.slug)">
+      <mat-card class="hoverCard">
         <mat-card-content>
           <div class="subjectHeader">
-            <img src="{{subject.image}}" alt="{{subject.title}}" class="subjectImage">
+            <img src="{{subject?.image}}" alt="{{subject?.title}}" class="subjectImage">
             <mat-card-title class="text">{{subject.title}}</mat-card-title>
           </div>
           <p class="font-12">{{subject.description}}</p>
+          <p class="font-12">{{subject.numTrivia}} Trivia</p>
           @if(!minimal){
-          @if(subject.isSubscribed){
+          @if(subject?.isSubscribed){
             <ul class="list-unstyled">
               <li>
                 <div class="mb-2">
@@ -42,12 +43,12 @@
             <mat-card-footer class="example-card-footer">
               <mat-chip-set aria-label="Tags">
                 <mat-chip>12 Lessons</mat-chip>
-                <mat-chip>28 Questions</mat-chip>
+                <mat-chip>{{subject?.numQuestions}} Questions</mat-chip>
               </mat-chip-set>
             </mat-card-footer>
             <mat-card-actions align="end">
               <!-- <button mat-button mat-ripple>View</button> -->
-              <button (click)="subscribeSubject(subject.title)" mat-button>Explore</button>
+              <button (click)="subscribeSubject(subject.slug)" mat-button>Explore</button>
             </mat-card-actions>
           }
         }

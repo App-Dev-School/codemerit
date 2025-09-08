@@ -1,93 +1,88 @@
-import { Component, input } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import {
-  ApexChart,
-  ApexFill,
-  ApexNonAxisChartSeries,
-  ApexPlotOptions,
-  ApexStroke,
-  NgApexchartsModule,
-} from 'ng-apexcharts';
-
-export type ChartOptions = {
-  series: ApexNonAxisChartSeries;
-  chart: ApexChart;
-  plotOptions: ApexPlotOptions;
-  fill: ApexFill;
-  colors: string[];
-  stroke: ApexStroke;
-  labels: string[];
-};
-
-export interface ChartConfig {
-  showTitle: boolean;
-  showSubtitle: boolean;
-  showIcon: boolean;
-  showLegend: boolean;
-}
-
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 @Component({
-    selector: 'app-course-progress',
-    imports: [MatCardModule, NgApexchartsModule, MatIconModule],
-    templateUrl: './course-progress.component.html',
-    styleUrl: './course-progress.component.scss'
+  selector: 'app-course-progress',
+  imports: [CommonModule],
+  templateUrl: './course-progress.component.html',
+  styleUrl: './course-progress.component.scss'
 })
-export class CourseProgressComponent {
-  public cardChartOptions!: Partial<ChartOptions>;
-  readonly title = input<string>('');
-  readonly subtitle = input<string>('');
-  readonly config = input<ChartConfig>({
-  showTitle: true,
-  showSubtitle: true,
-  showIcon: true,
-  showLegend: true
-});
+export class CourseProgressComponent implements AfterViewInit, OnChanges {
+  @Input() score = 0;           // 0–100
+  @Input() size = 64;           // css pixels
+  @Input() thickness = 6;       // px
+  @Input() duration = 900;      // ms
+  @Input() barColor = '#3f51b5';
+  @Input() trackColor = '#e6e6e6';
+  @Input() showLabel = true;
 
-  constructor() {
-    this.cardChart();
+  @ViewChild('c', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
+  current = 0;
+
+  ngAfterViewInit() {
+    this.setupCanvas();
+    this.animateTo(this.score);
   }
 
-  private cardChart() {
-    this.cardChartOptions = {
-      series: [70], // 70% used space
-      chart: {
-        type: 'radialBar',
-        height: 265,
-      },
-      plotOptions: {
-        radialBar: {
-          hollow: {
-            size: '50%',
-          },
-          track: {
-            show: true,
-            background: '#dbdbdb',
-            opacity: 1,
-            margin: 5,
-          },
-          dataLabels: {
-            name: {
-              show: false,
-            },
-            value: {
-              fontSize: '22px',
-              show: true,
-              formatter: function (val) {
-                return val + '%';
-              },
-            },
-          },
-        },
-      },
-      fill: {
-        colors: ['#FFA726'], // Orange gradient
-      },
-      stroke: {
-        lineCap: 'round',
-      },
-      colors: ['#FFA726'],
-      labels: ['Assessment Completion'],
+  ngOnChanges(ch: SimpleChanges) {
+    if (!this.canvasRef) return;
+    this.setupCanvas();
+    if (ch['score']) this.animateTo(this.score);
+  }
+
+  private setupCanvas() {
+    const canvas = this.canvasRef.nativeElement;
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    canvas.width = this.size * dpr;
+    canvas.height = this.size * dpr;
+    canvas.style.width = `${this.size}px`;
+    canvas.style.height = `${this.size}px`;
+  }
+
+  private draw(p: number) {
+    const canvas = this.canvasRef.nativeElement;
+    const ctx = canvas.getContext('2d')!;
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const s = this.size * dpr;
+    const cx = s / 2;
+    const cy = s / 2;
+    const r = (this.size / 2 - this.thickness / 2) * dpr;
+    const start = -Math.PI / 2; // start at top
+    const end = start + (p / 100) * Math.PI * 2;
+
+    ctx.clearRect(0, 0, s, s);
+    ctx.lineCap = 'round';
+    ctx.lineWidth = this.thickness * dpr;
+
+    // track
+    ctx.beginPath();
+    ctx.strokeStyle = this.trackColor;
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // bar
+    if (p > 0) {
+      ctx.beginPath();
+      ctx.strokeStyle = this.barColor;
+      ctx.arc(cx, cy, r, start, end);
+      ctx.stroke();
+    }
+  }
+
+  private animateTo(target: number) {
+    target = Math.max(0, Math.min(100, Math.round(target)));
+    const start = this.current;
+    const diff = target - start;
+    const startTime = performance.now();
+    const dur = Math.max(0, this.duration);
+
+    const step = (now: number) => {
+      const t = dur === 0 ? 1 : Math.min(1, (now - startTime) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const value = start + diff * eased;
+      this.current = Math.round(value);
+      this.draw(value);
+      if (t < 1) requestAnimationFrame(step);
     };
+    requestAnimationFrame(step);
   }
 }

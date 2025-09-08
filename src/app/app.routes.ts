@@ -34,7 +34,7 @@ export const APP_ROUTE: Route[] = [
                 path: 'users',
                 canActivate: [AuthGuard],
                  data: {
-                    role: [Role.Subscriber, Role.Manager, Role.Admin],
+                    role: [Role.Subscriber, Role.Manager, Role.Admin, Role.All],
                 },
                 loadChildren: () =>
                     import('./users/users.routes').then((m) => m.USERS_ROUTE),

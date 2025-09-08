@@ -1,7 +1,7 @@
 @if(showContent){
   <section class="content" [@slideInOut]>
     <div class="content-block">
-
+      <h5 class="text-center">Select Subject</h5>
       <div class="row m-t-20 clearfix">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
       <app-my-subjects [minimal]="false" (subjectSelected)="onSubjectChange($event)" (onSubscribe)="onSubscribe($event)"></app-my-subjects>

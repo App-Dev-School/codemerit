@@ -18,6 +18,9 @@ import { GoalPathComponent } from '@shared/components/goal-path/goal-path.compon
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { Observable, of } from 'rxjs';
+import { Subject } from '@core/models/subject';
+import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
+import { QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -43,31 +46,25 @@ import { Observable, of } from 'rxjs';
   ]
 })
 export class DashboardComponent implements OnInit {
+  pageTitle = 'SubjectDashboard';
+  loading = true;
+  generatingQuiz = false;
+  loadingText = 'Loading Subject Dashboard';
   showContent = true;
   subject = "";
   subjectData: any;
+  currentSubject: any;
   subjectTopics$: Observable<any>;
-  courseChartConfig = {
-    showTitle: false,
-    showSubtitle: false,
-    showIcon: false,
-    showLegend: false
-  };
-  //For displaying test data
-  debugDisplay = true;
+
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
+    private quizService: QuizService,
     private snackService: SnackbarService
   ) {
-    console.log("LearnerDashoard currentUser", this.authService.currentUser);
+    console.log(this.pageTitle, "User", this.authService.currentUserValue);
   }
-
-  // // You can also control the animation state dynamically
-  // toggleSlide() {
-  //   this.slideAnimation = (this.slideAnimation === 'in') ? 'out' : 'in';
-  // }
 
   ngOnInit() {
     this.router.events.subscribe(event => {
@@ -82,40 +79,69 @@ export class DashboardComponent implements OnInit {
       }
     });
     this.takeRouteParams();
-    // if(this.subject){
-    //   this.onSubjectChange(this.subject);
-    // }
+    setTimeout(() => {
+      this.loading = false;
+    }, 3800);
   }
 
   takeRouteParams() {
-    //const subject = this.route.snapshot.paramMap.get('subject');
-    //console.log("MyDash ParamMap subject", subject);
-    this.route.paramMap.subscribe(params => {
-      console.log("MyDash @RouteParam change detected =>", params.get("subject"));
-      if (params.get("subject")) {
-        this.subject = params.get("subject");
-        if (this.subject) {
+    const subject = this.route.snapshot.paramMap.get('subject');
+    console.log(this.pageTitle, "route.snapshot", "Keep paramMap ##", subject);
+    if (subject) {
+          this.subject = subject;
           this.onSubjectChange(this.subject);
-        }
-      } else {
-        this.subject = "";
-      }
-    });
+    }
+    // this.route.paramMap.subscribe(params => {
+    //   if (params.get("subject")) {
+    //     this.subject = params.get("subject");
+    //     if (this.subject) {
+    //       this.onSubjectChange(this.subject);
+    //     }
+    //   } else {
+    //     this.subject = "";
+    //   }
+    //   console.log(this.pageTitle, "@RouteParam changed =>", this.subject);
+    // });
   }
 
   onSubjectChange(subject: string) {
+    //check for master data presence
+    if(!this.master.subjects || !this.master.topics || !this.master.jobRoles){
+    console.log(this.pageTitle, "^^^ NO MASTER DATA FOUND ^^^", subject);
+    //this.master.fetchMasterDataFromAPI();
+    }
     this.subject = subject ? subject : "";
-    console.log("LearnerDashoard @onSubjectChange", subject);
     if (this.subject) {
-      // this.master.fetchSubjectData(this.subject).subscribe((subject) => {
-      //   this.subjectData = subject;
-      //   console.log("LearnerDashoard #1 @subjectData", subject);
-      // });
-      // this.subjectTopics$ = this.master.fetchAllSubjectTopics(this.subject);
-      // console.log("LearnerDashoard #2 @subjectTopics", this.subjectTopics$);
-
-      this.subjectData = this.master.subjects;
-      this.subjectTopics$ = of(this.master.topics);
+      //fetch this subject details
+      this.currentSubject = this.master.subjects.find(subjectItem => subjectItem.slug === this.subject);
+      console.log(this.pageTitle, "#1 @currentSubject", this.currentSubject);
+      if(this.currentSubject && this.currentSubject.id){
+      //fetch this subject topics from topics master
+      let subjectTopics = this.master.topics;
+      subjectTopics = subjectTopics.filter(topic => topic.subjectId == this.currentSubject.id);
+      this.subjectTopics$ = of(subjectTopics);
+      console.log(this.pageTitle, "#2 @subjectTopics", subjectTopics);
+      //this.subjectTopics$ = of(subjectTopics);
+      //fetch the subject dashboard
+      this.loading = true;
+      this.master
+      .fetchSubjectDashboard(this.currentSubject.slug)
+      .subscribe({
+        next: (response) => {
+          console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
+          if(response){
+            this.subjectData = response.data;
+          }
+          setTimeout(() => {
+            this.loading = false;
+          }, 3000);
+        },
+        error: (error) => {
+          this.loading = false;
+          console.error(this.pageTitle, '#3 SubjectDashAPI Error:', error);
+        },
+      });
+      }
     }
   }
 
@@ -131,4 +157,37 @@ export class DashboardComponent implements OnInit {
   goToSubjects() {
     this.router.navigate(['/dashboard', this.subject]);
   }
+
+    async launchSubjectQuiz(subject: Subject) {
+      console.log('QuizManager Invoked with Subject:', subject);
+      this.generatingQuiz = true;
+      this.loadingText = 'Generating '+subject.title+' Quiz';
+      const payload = new QuizCreateModel();
+      payload.userId = this.authService.currentUserValue.id
+      payload.subjectIds = [subject.id];
+      console.log('QuizManager Invoked with Topic:', payload);
+      this.quizService
+        .addQuiz(payload)
+        .subscribe({
+          next: (response) => {
+            console.log('QuizManager CreateAPI response:', response);
+            this.loadingText = 'Almost There';
+            //this.submitted = false;
+            if(response && response?.slug ){
+            const slug = response?.slug;
+            if(slug && slug !== ''){
+            setTimeout(() => {
+              //this.quizService.
+              this.router.navigate(['quiz/take', slug]);
+              this.generatingQuiz = false;
+            }, 2000);
+            }
+            }
+          },
+          error: (error) => {
+            //this.submitted = false;
+            console.error('QuizManager CreateAPI Error:', error);
+          },
+        });
+    }
 }

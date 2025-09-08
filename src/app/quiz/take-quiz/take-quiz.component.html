@@ -132,7 +132,7 @@
       <h6 class="col-grey">Please wait while your assessment is in progress</h6>
     </div>
     }
-    @if (evaluated) {
+    @if (evaluated && quizResult) {
     <app-quiz-result [result]="quizResult"></app-quiz-result>
     }
   </div>

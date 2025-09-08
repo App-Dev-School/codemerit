@@ -49,7 +49,7 @@ export class QuizProgressComponent {
       series: [this.score()],
       chart: {
         type: 'radialBar',
-        height: 265,
+        height: 180,
       },
       plotOptions: {
         radialBar: {
@@ -67,7 +67,7 @@ export class QuizProgressComponent {
               show: true,
             },
             value: {
-              fontSize: '22px',
+              fontSize: '24px',
               show: true,
               formatter: function (val) {
                 return val + '%';

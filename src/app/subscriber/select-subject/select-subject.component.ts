@@ -8,50 +8,48 @@ import { slideInOutAnimation } from '@shared/animations';
 import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
 
 @Component({
-    selector: 'app-select-subject',
-    templateUrl: './select-subject.component.html',
-    styleUrls: ['./select-subject.component.scss'],
-    animations: [slideInOutAnimation],
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MySubjectsComponent
-    ]
+  selector: 'app-select-subject',
+  templateUrl: './select-subject.component.html',
+  styleUrls: ['./select-subject.component.scss'],
+  animations: [slideInOutAnimation],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MySubjectsComponent
+  ]
 })
-export class SelectSubjectComponent implements OnInit{
+export class SelectSubjectComponent implements OnInit {
   showContent = true;
   subject = "";
-  subjectData : any;
+  subjectData: any;
 
   constructor(private router: Router, private master: MasterService) {
     // constructor code
   }
 
-    ngOnInit() {
-      this.router.events.subscribe(event => {
-        if (event instanceof NavigationStart) {
-          // Animation trigger can be based on route change
-          this.showContent = false; // Hide content when navigation starts
-        }
-        if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
-          // Ensure content is shown when navigation is complete
-          this.showContent = true;
-        }
-      });
-    }
+  ngOnInit() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        // Animation trigger can be based on route change
+        this.showContent = false; // Hide content when navigation starts
+      }
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
+        // Ensure content is shown when navigation is complete
+        this.showContent = true;
+      }
+    });
+  }
 
-  onSubjectChange(subject: string){
+  onSubjectChange(subject: string) {
     this.subject = subject ? subject : "";
     console.log("SelectSubject @onSubjectChange", subject);
-    this.router.navigate(['/dashboard/learn', this.subject]).then(() => {
-      console.log('Navigation completed!');
-    });
+    this.router.navigate(['/dashboard/learn', this.subject]);
   }
 
   onSubscribe(subject: string) {
     console.log("SelectSubject @onSubscribe", subject);
     //this.snackService.display('snackbar-success',subject+' added to learning list!','bottom','center');
   }
-  
+
 }

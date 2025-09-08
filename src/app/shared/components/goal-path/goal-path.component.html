@@ -8,9 +8,8 @@
   space-between="10"> -->
     <swiper-container #swiperEx [config]="swiperConfig" 
   slides-per-view="auto"
-  [navigation]="navigation" 
   space-between="10">
-  <div class="swiper-wrapper">
+  <!-- <div class="swiper-wrapper"> -->
     @for (topic of topicsList; let i = $index; track i) {
       <swiper-slide class="stepper-slide">
       <mat-card class="goalCard">
@@ -52,9 +51,9 @@
     </swiper-slide>
     }
     <!-- Custom navigation buttons at the bottom -->
-      <div class="swiper-button-prev-custom">Previous</div>
+      <!-- <div class="swiper-button-prev-custom">Previous</div>
       <div class="swiper-button-next-custom">Next</div>
-    </div>
+    </div> -->
 </swiper-container>
   </div>
 </div>

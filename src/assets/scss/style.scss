@@ -173,3 +173,20 @@
   // text-align: center;
   // margin: 0 auto;
 }
+
+.image-pulse {
+  display: inline-block;
+  animation: pulseScale 4s ease-in-out infinite;
+}
+
+@keyframes pulseScale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1); /* Slightly larger */
+  }
+  100% {
+    transform: scale(1);
+  }
+}

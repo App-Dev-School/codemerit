@@ -1,8 +1,31 @@
 @if(showContent){
 <section class="content" [@slideInOut]>
+  @if (loading) {
+      <div class="overlay"></div>
+      <div class="animToast loading">
+        @if (currentSubject) {
+        <img [src]="currentSubject?.image" class="image-pulse loadingIcon m-b-20">
+        <h6>Loading {{currentSubject?.title}} Dashboard</h6>
+        }@else {
+        <img src="assets/images/icons/cube.gif" class="smallLoadingIcon">
+        <h5>{{loadingText}}</h5>
+        <h6>Please wait</h6>
+        }
+        <!-- <p>display image once available: {{subjectData.image}} | {{subjectData.color}}</p> -->
+      </div>
+  }
+  @if (generatingQuiz && currentSubject) {
+    <div class="overlay"></div>
+      <div class="animToast text-center loading" style="max-width:400px;">
+        <img src="assets/images/icons/cube.gif" class="loadingIcon">
+        <h6>Generating Quiz for {{currentSubject?.title}}</h6>
+        <h5>Please wait ...</h5>
+      </div>
+  }
+  @if (!loading && currentSubject) {
   <div class="content-block">
     <mat-tab-group mat-align-tabs="start" class="m-t-20">
-      <mat-tab label="{{ subject }} Dashboard">
+      <mat-tab label="{{ currentSubject?.title }} Dashboard">
         <ng-container *ngTemplateOutlet="subjectDashboard"></ng-container>
       </mat-tab>
       <mat-tab label="Practice">
@@ -21,15 +44,15 @@
     <ng-template #subjectDashboard>
       <div class="row m-t-10">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
-          <app-subject-performance-card [subject]="subjectData"
-            [indicators]="subjectData?.indicators"></app-subject-performance-card>
+          <!-- <p>{{subjectData|json}}</p> -->
+          <app-subject-performance-card [subject]="currentSubject"></app-subject-performance-card>
         </div>
 
          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
           <mat-card>
             <mat-card-header class="header-style">
               <!-- <img mat-card-avatar src="{{topic.image}}"> -->
-              <mat-card-title>{{subject}} Merits</mat-card-title>
+              <mat-card-title>{{currentSubject?.title}} Merits</mat-card-title>
               <a mat-button color="primary" (click)="viewMeritList()">View</a>
             </mat-card-header>
             <mat-card-content>
@@ -37,20 +60,21 @@
             </mat-card-content>
             <mat-card-footer>
               <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">trending_up</i>
-                Compete with Peers. Level up in {{subject}}. Earn Merit points.
+                Compete with Peers.
               </p>
               <div class="text-center p-t-20 p-b-20">
-                <button mat-stroked-button color="primary" (click)="goToSubjects()">Start Skill Assessment</button>
+                <button mat-stroked-button color="primary" (click)="launchSubjectQuiz(currentSubject)">Start Skill Assessment</button>
               </div>
             </mat-card-footer>
           </mat-card>
         </div>
       </div>
 
-      @if(subjectData){
+      @if(currentSubject){
       <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-          <app-goal-path [title]="subject+' Progress Tracker'" [color]="subjectData.color" [topics]="subjectTopics$"></app-goal-path>
+          <h6>Progress Tracker</h6>
+          <app-goal-path [title]="subject+' Progress Tracker'" [color]="currentSubject.color" [topics]="subjectTopics$"></app-goal-path>
         </div>
       </div>
       }
@@ -58,19 +82,19 @@
 
     <ng-template #subjectTopics>
       @if((subjectTopics$ | async)?.length > 0){
-      <h4 class="text-center col-green m-t-20 m-b-10">{{ subject }} Topics</h4>
+      <h4 class="text-center m-t-20 m-b-10">{{ currentSubject?.title }} Topics ({{ (subjectTopics$|async)?.length }})</h4>
       <app-topics-list [subjectTopics]="subjectTopics$"></app-topics-list>
       }@else{
       <mat-card class="card" appearance="outlined">
         <mat-card-header>
-          <mat-card-title><span [ngStyle]="{'background-color':subjectData.color}"></span>{{ subject }} Curriculum</mat-card-title>
+          <mat-card-title><span [ngStyle]="{'background-color':currentSubject.color}"></span>{{ currentSubject?.title }} Curriculum</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p class="font-15 m-t-0">The Curriculum for {{subject}} is not available at this moment.</p>
+          <p class="font-15 m-t-0">The Curriculum for {{currentSubject?.title}} is not available at this moment.</p>
         </mat-card-content>
         <mat-card-actions align="end">
           <button mat-button class="icon-button">
-            <mat-icon>thumb_up</mat-icon> Vote for {{subject}}</button>
+            <mat-icon>thumb_up</mat-icon> Vote for {{currentSubject?.title}}</button>
         </mat-card-actions>
       </mat-card>
       }
@@ -78,32 +102,10 @@
 
     <ng-template #subjectGoals>
       <div class="row m-t-10 clearfix">
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-          <mat-card>
-            <mat-card-header class="header-style">
-              <mat-card-title>Badges & Recognitions</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <p>subjectTopics: {{(subjectTopics$ | async) | json }}</p>
-              <div class="text-center p-t-20 p-b-20">
-                <button mat-stroked-button color="primary" (click)="goToSubjects()">Explore Subjects</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
+        <!-- <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-          <mat-card>
-            <mat-card-header class="header-style">
-              <mat-card-title>Subject Logs</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-            <p>subjectTopics Length: {{(subjectTopics$ | async) | json }}</p>
-              <div class="text-center p-t-20 p-b-20">
-                <button mat-stroked-button color="primary" (click)="goToSubjects()">Explore Subjects</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
+        </div> -->
          @if(subjectData?.popularTopics){
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
           <mat-card>
@@ -128,5 +130,6 @@
       </div>
     </ng-template>
   </div>
+}
 </section>
 }

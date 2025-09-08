@@ -7,17 +7,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MasterService } from '@core/service/master.service';
-import { Observable } from 'rxjs';
-
-interface MySubject {
-  title: string;
-  learn_percentage: number;
-  practice_percentage: number;
-  description: string;
-  image: string;
-  class: string; // Class for the progress bar color
-  labelClass: string; // Class for the label background color
-}
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-my-subjects',
@@ -47,12 +37,11 @@ export class MySubjectsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.subjects = this.master.getMockSubjectDashboard();
+    this.subjects = of(this.master.subjects);
     this.isLoading = false;
-    // setTimeout(() => {
-    //   this.subjects = this.master.getMockMySubjectsData();
-    //   this.isLoading = false;
-    // }, 2000);
+    if(!this.master.subjects){
+     alert("Handle No Masterdata");
+    }
   }
 
   switchSubject(subjectName: string) {

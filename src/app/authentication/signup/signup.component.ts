@@ -80,19 +80,19 @@ export class SignupComponent implements OnInit, OnDestroy {
       mobile: [''],
       city: ['', Validators.required],
       country: ['', Validators.required],
-      designation: ['', Validators.required],
+      about: ['', Validators.required],
       stars: [''],
     });
     if (!environment.production) {
       this.authForm.get('city')?.setValue('Bengaluru');
       this.authForm.get('country')?.setValue('India');
-      this.authForm.get('designation')?.setValue('IT Fresher (Graduate)');
+      this.authForm.get('about')?.setValue('IT Fresher (Graduate)');
     }
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     console.log("NgSignUp returnUrl", this.returnUrl);
     this.filteredOptions = of(this.options);
-    this.filteredOptions = this.authForm.get('designation').valueChanges.pipe(
+    this.filteredOptions = this.authForm.get('about').valueChanges.pipe(
       startWith(''),
       map(value => typeof value === 'string' ? value : value?.label || ''),
       map(name => this._filter(name))
@@ -153,7 +153,7 @@ export class SignupComponent implements OnInit, OnDestroy {
         mobile: null,
         city: this.authForm.get('city')?.value,
         country: this.authForm.get('country')?.value,
-        designation: this.authForm.get('designation')?.value,
+        about: this.authForm.get('about')?.value,
         flow: "Registration"
       };
 
@@ -190,6 +190,10 @@ export class SignupComponent implements OnInit, OnDestroy {
         }
       );
     }
+  }
+
+  navigateToLogin(){
+    this.router.navigate(['/authentication/signin']);
   }
 
   ngOnDestroy() {
