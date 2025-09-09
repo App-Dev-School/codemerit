@@ -67,6 +67,7 @@ export class ViewResultComponent implements OnInit {
     this.loading = true;
     this.quizService.getQuizResult(this.quizResultCode)
       .subscribe(data => {
+        console.log("loadQuizResult API #####", data);
         this.quizResult = data;
         this.loadingText = '';
         this.loading = false;

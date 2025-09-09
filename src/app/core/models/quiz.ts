@@ -37,13 +37,21 @@ export interface Quiz {
     timeSpent: number;
     score: number;
     createdAt?: string;
-    //by default take all topics in the subject - heavy
-    //Also allow user to pick at time of creation
-    //refresh topics list after the quiz is generated for better skill filtering
     remarks?: string;
     dateAttempted?: string;
-    //attempts?: QuestionAttempt[]
     attempts?: any[];
+    user?:{
+      id: number,
+      firstName: string;
+      lastName: string;
+      username: string
+    },
+    quiz?:{
+      id: number,
+      title: string;
+      description: string;
+      quizType: string
+    }
   }
 
 //Do - Inherit well

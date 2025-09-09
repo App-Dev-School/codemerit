@@ -1,23 +1,21 @@
 @if(showContent){
 <!-- <section class="content" [@slideInOut]> -->
-  <section class="content" [@fadeInAnimation]>
+<section class="content" [@fadeInAnimation]>
   @if (loading || generatingQuiz) {
-      <div class="overlay"></div>
-      <div class="animToast loading">
-        <img [src]="currentSubject ? currentSubject?.image : 'assets/images/icons/cube.gif'" class="image-pulse loadingIcon m-b-20">
-        <h5>{{loadingText}}</h5>
-        <h6>Please wait</h6>
-        <!-- <p>display image once available: {{subjectData.image}} | {{subjectData.color}}</p> -->
-      </div>
-  }
-  @if (generatingQuiz && currentSubject) {
-    <div class="overlay"></div>
-      <div class="animToast text-center loading" style="max-width:400px;">
-        <img src="assets/images/icons/cube.gif" class="loadingIcon">
-        <h6>Generating Quiz for {{currentSubject?.title}}</h6>
-        <h5>Please wait ...</h5>
-      </div>
-  }
+  <div class="overlay"></div>
+  <div class="animToast loading">
+    <img [src]="currentSubject ? currentSubject?.image : 'assets/images/icons/cube.gif'"
+      class="image-pulse loadingIcon m-b-20">
+      @if(generatingQuiz){
+      <h6>Generating Quiz for {{currentSubject?.title}}</h6>
+      }@else{
+     <h5>{{loadingText}}</h5>
+      }
+    <h6>Please wait</h6>
+    <!-- <p>display image once available: {{subjectData.image}} | {{subjectData.color}}</p> -->
+  </div>
+}
+
   @if (!loading && !generatingQuiz && currentSubject) {
   <div class="content-block">
     <mat-tab-group mat-align-tabs="start" class="m-t-20">
@@ -44,7 +42,7 @@
           <app-subject-performance-card [subject]="currentSubject"></app-subject-performance-card>
         </div>
 
-         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
           <mat-card>
             <mat-card-header class="header-style">
               <!-- <img mat-card-avatar src="{{topic.image}}"> -->
@@ -59,7 +57,8 @@
                 Compete with Peers.
               </p>
               <div class="text-center p-t-20 p-b-20">
-                <button mat-stroked-button color="primary" (click)="launchSubjectQuiz(currentSubject)">Start Skill Assessment</button>
+                <button mat-stroked-button color="primary" (click)="launchSubjectQuiz(currentSubject)">Start Skill
+                  Assessment</button>
               </div>
             </mat-card-footer>
           </mat-card>
@@ -69,7 +68,8 @@
       @if(currentSubject && (subjectTopics$|async)?.length > 0){
       <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-          <app-goal-path [title]="currentSubject.title+' Progress Tracker'" [color]="currentSubject.color" [topics]="subjectTopics$"></app-goal-path>
+          <app-goal-path [title]="currentSubject.title+' Progress Tracker'" [color]="currentSubject.color"
+            [topics]="subjectTopics$"></app-goal-path>
         </div>
       </div>
       }
@@ -77,15 +77,18 @@
 
     <ng-template #subjectTopics>
       @if((subjectTopics$ | async)?.length > 0){
-      <h4 class="text-center m-t-20 m-b-10">{{ currentSubject?.title }} Topics ({{ (subjectTopics$|async)?.length }})</h4>
+      <h4 class="text-center m-t-20 m-b-10">{{ currentSubject?.title }} Topics ({{ (subjectTopics$|async)?.length }})
+      </h4>
       <app-topics-list [subjectTopics]="subjectTopics$"></app-topics-list>
       }@else{
       <mat-card class="card no-results text-center" appearance="outlined">
         <mat-card-header>
-          <mat-card-title><span [ngStyle]="{'background-color':currentSubject.color}"></span>{{ currentSubject?.title }} Practice Path</mat-card-title>
+          <mat-card-title><span [ngStyle]="{'background-color':currentSubject.color}"></span>{{ currentSubject?.title }}
+            Practice Path</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <h6 class="font-15 m-t-0 col-grey">The Curriculum for {{currentSubject?.title}} is not available at this moment.</h6>
+          <h6 class="font-15 m-t-0 col-grey">The Curriculum for {{currentSubject?.title}} is not available at this
+            moment.</h6>
         </mat-card-content>
         <mat-card-actions align="end">
           <button mat-button class="icon-button">
@@ -101,7 +104,7 @@
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
         </div> -->
-         @if(subjectData?.popularTopics){
+        @if(subjectData?.popularTopics){
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
           <mat-card>
             <mat-card-header>
@@ -125,6 +128,6 @@
       </div>
     </ng-template>
   </div>
-}
+  }
 </section>
 }

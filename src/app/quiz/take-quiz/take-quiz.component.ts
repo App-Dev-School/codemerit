@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { QuizQuestion } from '@core/models/quiz-question';
-import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
 import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
@@ -32,8 +31,7 @@ interface Quiz {
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MatCardModule,
-    QuizResultComponent
+    MatCardModule
   ]
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
@@ -160,6 +158,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }, 3000);
     }
   }
+  
   onTimerComplete() {
     console.log('Timer finished!');
     this.warningActive = false;
@@ -183,7 +182,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.quizService.processAndSaveResults(this.questions, this.quiz.id).subscribe(
       (data: any) => {
         console.log("QuizPlayer Quiz", data);
-        this.quizResult = data;
+        this.quizResult = data.data;
         this.showNotification(
           "snackbar-danger",
           'Great! '+data?.message,
@@ -192,8 +191,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         );
         //delay until result page is fixed
         setTimeout(() => {
-          this.navigateToResult(data.resultCode);
-        }, 8000);
+          this.navigateToResult(this.quizResult.resultCode);
+        }, 2000);
       }, (error: any) => {
         this.showNotification(
           "snackbar-danger",

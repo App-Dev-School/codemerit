@@ -65,7 +65,7 @@
               }
               <div class="mb-3 font-20">{{ question.question }}</div>
               @for (choice of question.options; track choice) {
-               <mat-card (click)="optionSelected(choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
+              <mat-card (click)="optionSelected(choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedOption === choice.id,
          'correct': question.selectedOption === choice.id && choice.correct,
          'wrong': question.selectedOption === choice.id && !choice.correct
@@ -131,9 +131,6 @@
       <h4>Evaluating Quiz</h4>
       <h6 class="col-grey">Please wait while your assessment is in progress</h6>
     </div>
-    }
-    @if (evaluated && quizResult) {
-    <app-quiz-result [result]="quizResult"></app-quiz-result>
     }
   </div>
 </div>

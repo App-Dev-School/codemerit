@@ -161,6 +161,7 @@ export class DashboardComponent implements OnInit {
     async launchSubjectQuiz(subject: Subject) {
       console.log('QuizManager Invoked with Subject:', subject);
       this.generatingQuiz = true;
+      this.loading = true;
       this.loadingText = 'Generating '+subject.title+' Quiz';
       const payload = new QuizCreateModel();
       payload.userId = this.authService.currentUserValue.id
@@ -180,12 +181,17 @@ export class DashboardComponent implements OnInit {
               //this.quizService.
               this.router.navigate(['quiz/take', slug]);
               this.generatingQuiz = false;
+              this.loading = false;
             }, 2000);
             }
+            }else{
+              this.snackService.display('snackbar-dark', 'We could not generate a Quiz at this moment. Please try again later.', 'bottom', 'center');
             }
           },
           error: (error) => {
-            //this.submitted = false;
+            this.generatingQuiz = false;
+            this.loading = false;
+            this.snackService.display('snackbar-dark', 'Error generating Quiz. Please try again.', 'bottom', 'center');
             console.error('QuizManager CreateAPI Error:', error);
           },
         });

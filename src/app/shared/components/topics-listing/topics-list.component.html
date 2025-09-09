@@ -11,19 +11,19 @@
   @if (!generatingQuiz) {
   @for (group of subjectTopics|async; track group) {
   <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-    <mat-card class="card hoverCard" appearance="outlined">
+    <mat-card class="card hoverCard">
       <mat-card-header>
         <mat-card-subtitle>{{ group.title }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p class="font-121 m-t-0">{{ group.description }}</p>
+        <p class="font-12 m-t-0">{{ group.description }}</p>
         <!-- <div class="patient-group-list">
           <div class="ms-auto">
             <div class="media-title text-muted mb-0 font-12">{{ group.numLessons }} Lessons</div>
             <div class="media-title text-muted mb-0 font-12">{{ group.numQuestions }} Questions</div>
           </div>
         </div> -->
-
+<p class="font-12 m-t-0">{{ group.numTrivia }} Trivia | {{group.coverage }}%</p>
         <!-- Coverage Progress -->
         @if(group.coverage > 0){
         <div class="mb-2">

@@ -39,8 +39,6 @@ export class QuizService {
   }
 
   getQuizResult(resultCode: string): Observable<QuizResult> {
-    return this.http.get<QuizResult>('./assets/data/quizzes/quiz-result-mock.json').pipe(delay(8000));
-    /*
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
@@ -51,7 +49,7 @@ export class QuizService {
         return response.data;
       })
     );
-    */
+    //return this.http.get<QuizResult>('./assets/data/quizzes/quiz-result-mock.json').pipe(delay(8000));
   }
 
   getAllQuiz(): Observable<Quiz[]> {
@@ -86,7 +84,7 @@ export class QuizService {
     );
   }
 
-  submitQuiz(item: QuizResult): Observable<QuizResult> {
+  submitQuizAAAA(item: QuizResult): Observable<QuizResult> {
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
@@ -97,6 +95,22 @@ export class QuizService {
       map((response: SubmitQuizResponse) => {
         //console.log("QuizPlayer SubmitQuiz API response", response);
         return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  submitQuiz(item: QuizResult): Observable<QuizResult> {
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/quiz/submit';
+    console.log('QuizPlayer Submitted Quiz => ', item);
+    return this.httpService.postData(url, item, api_key).pipe(
+      map((response: QuizResult) => {
+        //console.log("QuizPlayer SubmitQuiz API response", response);
+        return response;
       }),
       catchError(this.handleError)
     );

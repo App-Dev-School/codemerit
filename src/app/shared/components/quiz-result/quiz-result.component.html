@@ -9,33 +9,51 @@
 
 <ng-template #scoreChart>
   <mat-card>
-    <!-- <mat-card-header>
-      <mat-card-title class="center-header">Quiz Report</mat-card-title>
-    </mat-card-header> -->
     <mat-card-content>
-      <div class="row align-items-center">
-    <div class="col-auto">
-      <small>Assessment ID : CMA{{result?.resultCode}}</small>
-      <small>{{ result?.createdAt | date:'dd/MM/yyyy' }}</small>
-      <!-- Left aligned content -->
-       <div class="user-info m-b-20">
-              <img src="/assets/images/icons/student.png" />
-              <div class="user-details">
-                <h4 class="name">{{result?.userFullName ?? 'Anonymous'}}</h4>
-                <h4 class="exam">{{result?.quizName ?? 'CodeMerit Quiz'}}</h4>
-              </div>
+      <!-- <div class="row align-items-center">
+        <div class="col-auto">
+          <small>Assessment ID : CMA{{result?.resultCode}}</small>
+          <small>{{ result?.createdAt | date:'dd/MM/yyyy' }}</small>
+          <div class="user-info m-b-20">
+            <img src="/assets/images/icons/student.png" />
+            <div class="user-details">
+              <h4 class="name">{{result?.userFullName ?? 'Anonymous'}}</h4>
+              <h4 class="exam">{{result?.quizName ?? 'CodeMerit Quiz'}}</h4>
             </div>
+          </div>
+          <h6 class="mb-0">{{result?.userFullName ?? 'Anonymous'}} took quiz on {{result?.quizName ?? 'CodeMerit Quiz'}}
+            and obtained {{result?.score}} % score.</h6>
+        </div>
+        <div class="col-auto ms-auto text-center">
+          <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
+          <h5 class="center-header"><span class="col-green">Overall Score</span></h5>
+        </div>
+      </div> -->
+    <div class="row align-items-center">
+  <!-- Left Column -->
+  <div class="col-12 col-sm-6 text-center text-sm-start mb-2 mb-sm-0">
+    <div class="d-flex align-items-center justify-content-center justify-content-sm-start">
+      <div class="user-info m-b-20">
+            <img src="/assets/images/icons/student.png" />
+            <div class="user-details">
+              <h4 class="name">{{result?.user?.firstName +' '+ result?.user?.lastName}}</h4>
+              <h4 class="exam">{{result?.quiz?.title ?? 'CodeMerit Quiz'}}</h4>
+            </div>
+          </div>
           <!-- <h6 class="col-green">Angular Test</h6> -->
-      <h6 class="mb-0">{{result?.userFullName ?? 'Anonymous'}} took quiz on {{result?.quizName ?? 'CodeMerit Quiz'}} and obtained {{result?.score}} % score.</h6>
-    </div>
-    <div class="col-auto ms-auto text-center">
-      <!-- Right aligned content -->
-        <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
-      <h5 class="center-header"><span class="col-green">Overall Score</span></h5>
-      <!-- <p class="mb-0">Grade : A</p>
-      <p class="mb-0">Time Efficiency : Good</p> -->
+          <h6 class="mb-0">{{result?.user?.firstName +' '+ result?.user?.lastName}} took quiz on {{result?.quiz?.title ?? 'CodeMerit Quiz'}}
+            and obtained {{result?.score}} % score.</h6>
     </div>
   </div>
+
+  <!-- Right Column -->
+  <div class="col-12 col-sm-6 text-center text-sm-end">
+    <div class="d-flex flex-column align-items-center align-items-sm-end">
+       <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
+        <h5 class="center-header"><span class="col-green">Overall Score</span></h5>
+    </div>
+  </div>
+</div>
 
       <hr class="dim-divider">
       <div class="row">
@@ -63,14 +81,14 @@
 </ng-template>
 
 <ng-template #topicWiseChart>
-<mat-card>
-      <mat-card-header>
-        <mat-card-title class="text-center">Topic Wise Score</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ng-scrollbar style="height: auto;" visibility="hover">
-          <app-topics-score [topicScores]="topicWiseScore"></app-topics-score>
-        </ng-scrollbar>
-      </mat-card-content>
-    </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title class="text-center">Topic Wise Score</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ng-scrollbar style="height: auto;" visibility="hover">
+        <app-topics-score [topicScores]="topicWiseScore"></app-topics-score>
+      </ng-scrollbar>
+    </mat-card-content>
+  </mat-card>
 </ng-template>
