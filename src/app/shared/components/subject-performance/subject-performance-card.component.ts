@@ -72,7 +72,7 @@ export class SubjectPerformanceCardComponent {
       series: [this.subject?.score ?? 0],
       chart: {
         type: 'radialBar',
-        height: 265,
+        height: 180,
       },
       plotOptions: {
         radialBar: {
@@ -90,8 +90,9 @@ export class SubjectPerformanceCardComponent {
               show: false,
             },
             value: {
-              fontSize: '22px',
+              fontSize: '30px',
               show: true,
+              offsetY: 16,
               formatter: function (val) {
                 return val + '%';
               },

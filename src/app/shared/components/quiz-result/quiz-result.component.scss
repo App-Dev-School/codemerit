@@ -39,7 +39,7 @@
 
     .user-details .name {
       font-weight: 500;
-      font-size: 1.3em;
+      font-size: 1.2em;
       color: #333;
     }
 
@@ -55,6 +55,17 @@
       align-items: center;
       justify-content: center;
       margin-top: 5px;
+    }
+    .cardMargin{
+      margin-left: 2rem;
+      margin-right: 2rem;
+      margin-bottom: 1rem;
+    }
+
+        .cardPadding{
+      padding-left: 2rem;
+      padding-right: 2rem;
+      padding-bottom: 1rem;
     }
 
     @media (max-width: 480px) {

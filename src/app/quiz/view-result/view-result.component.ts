@@ -74,9 +74,15 @@ export class ViewResultComponent implements OnInit {
       });
   }
 
-  private shareResult(): void {
+  onShareResult(): void {
     console.log('Quiz Result Share!');
   }
 
-  //add methods for sharing quiz, invite etc.
+  onContinue(): void {
+    console.log('Back to my dashboard');
+    let designationSlug = '';
+    //this.userData
+    this.router.navigate(['/dashboard/start', designationSlug]);
+  }
+  //add methods for sharing options, invite etc.
 }

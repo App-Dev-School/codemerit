@@ -54,7 +54,7 @@ export class QuizProgressComponent {
       plotOptions: {
         radialBar: {
           hollow: {
-            size: '70%',
+            size: '50%',
           },
           track: {
             show: true,
@@ -64,11 +64,13 @@ export class QuizProgressComponent {
           },
           dataLabels: {
             name: {
-              show: true,
+              show: false,
             },
             value: {
-              fontSize: '24px',
+              fontSize: '32px',
               show: true,
+              fontWeight: 600,
+              offsetY: 16,
               formatter: function (val) {
                 return val + '%';
               },

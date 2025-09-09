@@ -8,52 +8,51 @@
 </div>
 
 <ng-template #scoreChart>
-  <mat-card>
+  <mat-card class="cardPadding hoverCard">
     <mat-card-content>
-      <!-- <div class="row align-items-center">
-        <div class="col-auto">
-          <small>Assessment ID : CMA{{result?.resultCode}}</small>
-          <small>{{ result?.createdAt | date:'dd/MM/yyyy' }}</small>
-          <div class="user-info m-b-20">
-            <img src="/assets/images/icons/student.png" />
-            <div class="user-details">
-              <h4 class="name">{{result?.userFullName ?? 'Anonymous'}}</h4>
-              <h4 class="exam">{{result?.quizName ?? 'CodeMerit Quiz'}}</h4>
-            </div>
-          </div>
-          <h6 class="mb-0">{{result?.userFullName ?? 'Anonymous'}} took quiz on {{result?.quizName ?? 'CodeMerit Quiz'}}
-            and obtained {{result?.score}} % score.</h6>
+      <div class="row align-items-center text-center text-sm-center text-md-start m-b-10">
+        <!-- Left text -->
+        <div class="col-12 col-md-4 order-2 order-md-1">
+          <p class="small mb-2 mb-md-0 col-grey">Assessment ID : CMA{{result?.resultCode}}</p>
         </div>
-        <div class="col-auto ms-auto text-center">
-          <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
-          <h5 class="center-header"><span class="col-green">Overall Score</span></h5>
-        </div>
-      </div> -->
-    <div class="row align-items-center">
-  <!-- Left Column -->
-  <div class="col-12 col-sm-6 text-center text-sm-start mb-2 mb-sm-0">
-    <div class="d-flex align-items-center justify-content-center justify-content-sm-start">
-      <div class="user-info m-b-20">
-            <img src="/assets/images/icons/student.png" />
-            <div class="user-details">
-              <h4 class="name">{{result?.user?.firstName +' '+ result?.user?.lastName}}</h4>
-              <h4 class="exam">{{result?.quiz?.title ?? 'CodeMerit Quiz'}}</h4>
-            </div>
-          </div>
-          <!-- <h6 class="col-green">Angular Test</h6> -->
-          <h6 class="mb-0">{{result?.user?.firstName +' '+ result?.user?.lastName}} took quiz on {{result?.quiz?.title ?? 'CodeMerit Quiz'}}
-            and obtained {{result?.score}} % score.</h6>
-    </div>
-  </div>
 
-  <!-- Right Column -->
-  <div class="col-12 col-sm-6 text-center text-sm-end">
-    <div class="d-flex flex-column align-items-center align-items-sm-end">
-       <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
-        <h5 class="center-header"><span class="col-green">Overall Score</span></h5>
-    </div>
-  </div>
-</div>
+        <!-- Center image -->
+        <div class="col-12 col-md-4 order-1 m-b-10 order-md-2 d-flex justify-content-center">
+          <img src="/assets/images/logo.png" alt="CodeMerit Assessment Report" class="img-fluid"
+            style="max-width: 164px;">
+        </div>
+
+        <!-- Right text -->
+        <div class="col-12 col-md-4 order-3 order-md-3 text-sm-center text-md-end m-b-10">
+          <p class="small mb-0 col-grey">{{ result?.createdAt | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <!-- Left Column -->
+        <div class="col-12 col-sm-6 text-center text-sm-start mb-2 mb-sm-0">
+          <div class="d-flex align-items-center justify-content-center justify-content-sm-start">
+            <div class="user-info m-b-20">
+              <img src="/assets/images/icons/student.png" />
+              <div class="user-details">
+                <!-- <h4 class="name">{{result?.user?.firstName +' '+ result?.user?.lastName}}</h4>
+              <h4 class="exam">{{result?.quiz?.title ?? 'CodeMerit Quiz'}}</h4> -->
+                <h4>{{result?.user?.firstName +' '+ result?.user?.lastName}} took quiz on {{result?.quiz?.title ??
+                  'CodeMerit Quiz'}}
+                  and obtained {{result?.score}} % score.</h4>
+              </div>
+            </div>
+            <!-- <h6 class="mb-0">{{result?.user?.firstName +' '+ result?.user?.lastName}} took quiz on {{result?.quiz?.title ?? 'CodeMerit Quiz'}}
+            and obtained {{result?.score}} % score.</h6> -->
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-12 col-sm-6 text-center text-sm-end">
+          <div class="d-flex flex-column align-items-center align-items-sm-end">
+            <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
+          </div>
+        </div>
+      </div>
 
       <hr class="dim-divider">
       <div class="row">
@@ -77,6 +76,32 @@
         </div>
       </div>
     </mat-card-content>
+    <mat-card-footer class="footer">
+      <ul class="list-unstyled m-b-10 m-t-10">
+        <li>
+          <div class="mb-2 d-flex justify-content-between">
+            <span class="progress-label">Coverage</span>
+            <span class="progress-percent label label-success">{{result.score}}%</span>
+          </div>
+          <div class="progress skill-progress w-100">
+            <div class="progress-bar progress-bar-success" [style.width]="result.score + '%'" role="progressbar"
+              [attr.aria-valuenow]="result.score" aria-valuemin="0" aria-valuemax="100">
+            </div>
+          </div>
+        </li>
+      </ul>
+      <hr class="dim-divider">
+      <div class="d-flex flex-column flex-sm-row justify-content-center text-center">
+        <button (click)="doOnContinue()" mat-stroked-button color="primary" class="mb-2 mb-sm-0 me-sm-2">
+          Continue Learning
+        </button>
+
+        <button (click)="doOnShareResult()" mat-flat-button color="accent">
+          Share Result
+        </button>
+      </div>
+
+    </mat-card-footer>
   </mat-card>
 </ng-template>
 

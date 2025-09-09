@@ -155,12 +155,19 @@
   width: 50px;
 }
 
-.quiz-result-container{
+.quiz-result-container {
   margin: 30px 25px 0 30px;
   .content-block {
-      padding: 0px 0px 0px 0px;
+    padding: 0px;
+  }
+  @media (max-width: 576px) {
+    margin: 10px 10px 0 10px;
+    .content-block {
+      padding: 5px;
+    }
   }
 }
+
 //used in sub dash
 .goalPagIcon{
   // width: 48px;

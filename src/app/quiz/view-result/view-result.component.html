@@ -9,7 +9,7 @@
     </div>
     }
     @if (quizResult) {
-    <app-quiz-result [result]="quizResult"></app-quiz-result>
+    <app-quiz-result [result]="quizResult" (onShareResult)="onShareResult()" (onContinue)="onContinue()"></app-quiz-result>
     }
   </div>
 </div>

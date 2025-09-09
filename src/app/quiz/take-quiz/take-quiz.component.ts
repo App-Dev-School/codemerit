@@ -158,7 +158,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }, 3000);
     }
   }
-  
+
   onTimerComplete() {
     console.log('Timer finished!');
     this.warningActive = false;
@@ -185,7 +185,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         this.quizResult = data.data;
         this.showNotification(
           "snackbar-danger",
-          'Great! '+data?.message,
+          'Great! ' + data?.message,
           "bottom",
           "center"
         );
@@ -214,7 +214,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     });
   }
 
-  navigateToResult(resultCode:string){
+  navigateToResult(resultCode: string) {
     this.router.navigate(['quiz/result', resultCode]);
   }
 }

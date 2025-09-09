@@ -1,12 +1,13 @@
 
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuizResult } from '@core/models/quiz';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
 import { TopicsScore } from '../topic-wise-score/topics-score.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-quiz-result',
@@ -16,6 +17,7 @@ import { TopicsScore } from '../topic-wise-score/topics-score.component';
     CommonModule,
     MatCardModule,
     MatProgressBarModule,
+    MatButton,
     NgScrollbar,
     NgTemplateOutlet,
     TopicsScore,
@@ -24,6 +26,8 @@ import { TopicsScore } from '../topic-wise-score/topics-score.component';
 })
 export class QuizResultComponent {
   @Input() result: QuizResult;
+  @Output() onShareResult = new EventEmitter<string>();
+  @Output() onContinue = new EventEmitter<string>();
   //should be a part of the quizResult
   topicWiseScore = [
     {
@@ -60,5 +64,13 @@ export class QuizResultComponent {
 
   constructor(){
     console.log("QuizResult Dumb Comp", this.result);
+  }
+
+  doOnShareResult() {
+    this.onShareResult.emit("");
+  }
+
+  doOnContinue() {
+    this.onContinue.emit("");
   }
 }
