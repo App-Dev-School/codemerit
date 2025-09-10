@@ -42,7 +42,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   loadingText = 'Launching Quiz';
   quizSlug = '';
   completed = false;
-  evaluated = false;
   quizResult: any;
   quizDuration = 80;
   @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
@@ -84,12 +83,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         this.loadingText = 'Almost Ready';
         this.loading = false;
         console.log("QuizPlayer Loaded Quiz", data);
-
-        /***
-        DEMO MODE
-        this.completed = true;
-        this.evaluated = true;
-         */
         this.questions = (data.questions || []).map(q => ({
           ...q,
           options: q.options || [],
@@ -176,21 +169,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   submitQuiz() {
-    this.completed = true;
     this.loading = true;
     this.loadingText = 'Submitting Quiz';
     this.quizService.processAndSaveResults(this.questions, this.quiz.id).subscribe(
       (data: any) => {
         console.log("QuizPlayer Quiz", data);
         this.quizResult = data.data;
-        this.showNotification(
-          "snackbar-danger",
-          'Great! ' + data?.message,
-          "bottom",
-          "center"
-        );
-        //delay until result page is fixed
         setTimeout(() => {
+          this.completed = true;
           this.navigateToResult(this.quizResult.resultCode);
         }, 2000);
       }, (error: any) => {
@@ -202,7 +188,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         );
       }
     );
-    this.evaluated = true;
   }
 
   showNotification(colorName, text, placementFrom, placementAlign) {

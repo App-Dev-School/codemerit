@@ -1,6 +1,6 @@
 @if(showContent){
 <!-- <section class="content" [@slideInOut]> -->
-<section class="content" [@fadeInAnimation]>
+<section class="content" [@fadeIn]>
   @if (loading || generatingQuiz) {
   <div class="overlay"></div>
   <div class="animToast loading">
@@ -44,21 +44,43 @@
 
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
           <mat-card>
-            <mat-card-header class="header-style">
-              <!-- <img mat-card-avatar src="{{topic.image}}"> -->
-              <mat-card-title>{{currentSubject?.title}} Merits</mat-card-title>
-              <a mat-button color="primary" (click)="viewMeritList()">View</a>
-            </mat-card-header>
-            <mat-card-content>
-              <app-merit-list-widget [meritList]="subjectData?.meritList"></app-merit-list-widget>
+            <!-- <mat-card-header class="header-style">
+              <img mat-card-avatar src="'assets/images/icons/badges/genius.png'">
+               @if (currentSubject?.image) {
+                <img mat-card-avatar [src]="currentSubject?.image" class="m-b-10">
+               }
+              <mat-card-title>Example Card Header with left icon and right icon</mat-card-title>
+              <a mat-button color="primary" (click)="viewMeritList()">
+                <i class="material-icons psr-2">trending_up</i>
+              </a>
+            </mat-card-header> -->
+            <mat-card-content class="text-center">
+              <img [src]="currentSubject?.image" class="text-center loadingIcon m-b-20">
+              <mat-card-title>Deep Dive {{currentSubject?.title}}</mat-card-title>
+              <p class="m-t-10 font-14">CodeMerit offers plenty of conceptual and interactive assessments to level up your knowledge.</p>
             </mat-card-content>
             <mat-card-footer>
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">trending_up</i>
-                Compete with Peers.
+              <hr class="dim-divider">
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">fast_forward</i>
+                Begin Your Learning Journey.
+              </p>
+              <hr class="dim-divider">
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">donut_small</i>
+                Continuosly assess where You Stand.
+              </p>
+               <hr class="dim-divider">
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">track_changes</i>
+                Practice the Weak Areas
+              </p>
+               <hr class="dim-divider">
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">verified_user</i>
+                Unlock Badges and Priviledges
               </p>
               <div class="text-center p-t-20 p-b-20">
-                <button mat-stroked-button color="primary" (click)="launchSubjectQuiz(currentSubject)">Start Skill
-                  Assessment</button>
+                <button mat-stroked-button color="primary" class="image-pulse" (click)="launchSubjectQuiz(currentSubject)">
+                 <!-- Test {{currentSubject?.title}} Skills -->
+                 {{nextAction}}
+                </button>
               </div>
             </mat-card-footer>
           </mat-card>
@@ -66,44 +88,15 @@
       </div>
 
       @if(currentSubject && (subjectTopics$|async)?.length > 0){
-      <div class="row">
+      <div class="row m-t-20 m-b-20 clearfix">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
           <app-goal-path [title]="currentSubject.title+' Progress Tracker'" [color]="currentSubject.color"
             [topics]="subjectTopics$"></app-goal-path>
         </div>
       </div>
       }
-    </ng-template>
 
-    <ng-template #subjectTopics>
-      @if((subjectTopics$ | async)?.length > 0){
-      <h4 class="text-center m-t-20 m-b-10">{{ currentSubject?.title }} Topics ({{ (subjectTopics$|async)?.length }})
-      </h4>
-      <app-topics-list [subjectTopics]="subjectTopics$"></app-topics-list>
-      }@else{
-      <mat-card class="card no-results text-center" appearance="outlined">
-        <mat-card-header>
-          <mat-card-title><span [ngStyle]="{'background-color':currentSubject.color}"></span>{{ currentSubject?.title }}
-            Practice Path</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <h6 class="font-15 m-t-0 col-grey">The Curriculum for {{currentSubject?.title}} is not available at this
-            moment.</h6>
-        </mat-card-content>
-        <mat-card-actions align="end">
-          <button mat-button class="icon-button">
-            <mat-icon>thumb_up</mat-icon> Vote for {{currentSubject?.title}}</button>
-        </mat-card-actions>
-      </mat-card>
-      }
-    </ng-template>
-
-    <ng-template #subjectGoals>
-      <div class="row m-t-10 clearfix">
-        <!-- <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-        </div> -->
+      <div class="row m-t-20">
         @if(subjectData?.popularTopics){
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
           <mat-card>
@@ -125,6 +118,96 @@
           </mat-card>
         </div>
         }
+      </div>
+    </ng-template>
+
+    <ng-template #subjectTopics>
+      @if((subjectTopics$ | async)?.length > 0){
+      <div class="text-center">
+        <h4 class="text-center m-t-20 m-b-10">
+        Challenge Yourself in {{ currentSubject?.title }}
+      </h4>
+      <small> ({{ (subjectTopics$|async)?.length }}) Topics to assess your {{ currentSubject?.title }} skill</small>
+      </div>
+      <app-topics-list [subjectTopics]="subjectTopics$" (topicExplore)="onTopicExplore($event)" (topicQuiz)="onTopicQuiz($event)"></app-topics-list>
+      }@else{
+      <mat-card class="card text-center m-t-20 m-b-20" appearance="outlined">
+        <mat-card-content class="text-center no-results">
+          <mat-card-title><span [ngStyle]="{'background-color':currentSubject.color}"></span>{{ currentSubject?.title }}
+            Practice Path</mat-card-title>
+          <h6 class="font-15 m-t-0 col-grey">The Curriculum for {{currentSubject?.title}} is not available at this
+            moment.</h6>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button class="icon-button">
+            <mat-icon>thumb_up</mat-icon> Vote for {{currentSubject?.title}}</button>
+        </mat-card-actions>
+      </mat-card>
+      }
+    </ng-template>
+
+    <ng-template #subjectGoals>
+      <div class="row m-t-10 clearfix">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+           <mat-card>
+          <mat-card-header class="header-style">
+            <mat-card-title>Achievements & Badges</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-scrollbar style="height: 400px" visibility="hover">
+              <app-recent-comments [achievements]="achievements"></app-recent-comments>
+            </ng-scrollbar>
+          </mat-card-content>
+        </mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          <mat-card>
+            <mat-card-header class="header-style">
+              <!-- <img mat-card-avatar src="{{topic.image}}"> -->
+              <mat-card-title>Who’s Leading in {{currentSubject?.title}}?</mat-card-title>
+              <a mat-button color="primary" (click)="viewMeritList()">
+                <i class="material-icons col-green psr-2">trending_up</i>
+              </a>
+            </mat-card-header>
+            <mat-card-content>
+              <app-merit-list-widget [meritList]="subjectData?.meritList"></app-merit-list-widget>
+            </mat-card-content>
+            <mat-card-footer>
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">trending_up</i>
+                Top Performers in {{currentSubject?.title}}
+              </p>
+              <hr class="dim-divider">
+              <div class="text-center p-t-20 p-b-20">
+                <button mat-stroked-button color="primary" (click)="launchSubjectQuiz(currentSubject)">
+                  Take {{currentSubject?.title}} Quiz
+                </button>
+              </div>
+            </mat-card-footer>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-content>
+              <h4 class="text-center m-b-10">Challenge Yourself</h4>
+              <hr class="dim-divider">
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">extension</i>
+                Explore Subject Mastery
+              </p>
+              <hr class="dim-divider">
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">extension</i>
+                Explore Subject Mastery
+              </p>
+               <hr class="dim-divider">
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">extension</i>
+                Explore Subject Mastery
+              </p>
+              <div class="text-center p-t-20 p-b-20">
+                <button mat-stroked-button color="primary" (click)="launchSubjectQuiz(currentSubject)">
+                  My {{currentSubject?.title}} Certificate
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     </ng-template>
   </div>

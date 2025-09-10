@@ -34,7 +34,8 @@ export interface Quiz {
     correct: number;
     wrong: number;
     unanswered: number;
-    timeSpent: number;
+    accuracy?: number;
+    timeSpent?: number;
     score: number;
     createdAt?: string;
     remarks?: string;

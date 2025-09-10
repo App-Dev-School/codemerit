@@ -1,10 +1,4 @@
-@if(!meritList){
-  <div class="text-center">
-    <img src="assets/images/icons/hinting.gif" class="user-img" />
-    <h6 class="col-grey">No Merit Found</h6>
-  </div>
-  }
-  @if(meritList){
+@if(meritList && meritList.length > 0){
     <ul class="list-unstyled list-unstyled-border list-unstyled-noborder">
       @for (merit of meritList; track merit) {
         <li class="merit-list">
@@ -22,4 +16,10 @@
         </li>
       }
     </ul>
+    }@else {
+    <div class="no-data-container text-center">
+    <img src="assets/images/icons/hinting.gif" class="loadingIcon" />
+    <h6 class="col-grey">No Talent found here</h6>
+    <small>Be the first to appear in the Leaderboard</small>
+  </div>
     }

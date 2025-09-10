@@ -32,13 +32,15 @@ import { QuizService } from 'src/app/quiz/quiz.service';
 })
 export class TopicsListComponent {
   @Input() subjectTopics: Observable<any[]>;
-  @Output() subjectSelected = new EventEmitter<string>();
+  @Output() topicExplore = new EventEmitter<any>();
+  @Output() topicQuiz = new EventEmitter<any>();
   generatingQuiz = false;
   loadingText = "Looking for a Quiz";
 
   constructor(private authService: AuthService, public router: Router, private quizService: QuizService) {
   }
 
+  //AAAdelete
   async launchTopicQuiz(topic: TopicItem) {
     console.log('QuizManager Invoked with Topic:', topic);
     this.generatingQuiz = true;
@@ -57,7 +59,6 @@ export class TopicsListComponent {
           const slug = response?.slug;
           if(slug && slug !== ''){
           setTimeout(() => {
-            //this.quizService.
             this.router.navigate(['quiz/take', slug]);
             this.generatingQuiz = false;
           }, 4000);
@@ -70,12 +71,16 @@ export class TopicsListComponent {
         },
       });
   }
+    async launchTopicExplorer(slug: string) {
+    this.router.navigate(["learn/topic/angular17"]);
+  }
+  //
 
-  switchSubject(subjectName: string) {
-    this.subjectSelected.emit(subjectName);
+  onTopicExplore(topic: any) {
+    this.topicExplore.emit(topic);
   }
 
-  async launchTopicExplorer(slug: string) {
-    this.router.navigate(["learn/topic/angular17"]);
+  onTopicQuiz(topic: any) {
+    this.topicQuiz.emit(topic);
   }
 }

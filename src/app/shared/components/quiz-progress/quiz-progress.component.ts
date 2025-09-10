@@ -42,6 +42,8 @@ export class QuizProgressComponent {
 
   constructor() {
     this.cardChart();
+    console.log("Quiz Progress Score: ", this.score());
+    
   }
 
   private cardChart() {

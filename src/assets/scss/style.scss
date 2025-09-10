@@ -91,6 +91,18 @@
 .no-results{
     padding: 3rem 2rem 2rem 2rem;
 }
+no-data-container.no-data-container {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.no-data-container img {
+  max-height: 120px; /* optional, to control image size */
+  margin-bottom: 10px;
+}
 
 /* Dimmed background */
 .overlay {

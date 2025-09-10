@@ -86,7 +86,7 @@ export class CourseDashboardComponent implements OnInit {
     this.takeRouteParams();
     setTimeout(() => {
       this.loading = false;
-    }, 2200);
+    }, 3333);
   }
 
   takeRouteParams() {
@@ -95,6 +95,12 @@ export class CourseDashboardComponent implements OnInit {
     if (course) {
       this.course = course;
       this.onCourseChange(course);
+    }else{
+      if(this.authService.currentUserValue && this.authService.currentUserValue?.userDesignation){
+      this.course = this.authService.currentUserValue?.userDesignation?.slug;
+      }else{
+        this.goToCourses();
+      }
     }
     // this.route.paramMap.subscribe(params => {
     //   console.log("CourseDash @RouteParam change detected =>", params.get("course"));
@@ -180,7 +186,6 @@ export class CourseDashboardComponent implements OnInit {
                 this.loading = false;
                 this.generatingQuiz = false;
                 this.router.navigate(['quiz/take', slug]);
-                //this.generatingQuiz = false;
               }, 4000);
             }
           }
