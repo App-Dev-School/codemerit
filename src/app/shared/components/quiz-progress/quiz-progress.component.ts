@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, Input, input, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -31,24 +31,21 @@ export interface ChartConfig {
     templateUrl: './quiz-progress.component.html',
     styleUrl: './quiz-progress.component.scss'
 })
-export class QuizProgressComponent {
+export class QuizProgressComponent implements OnInit{
   public cardChartOptions!: Partial<ChartOptions>;
-  readonly score = input<number>(0);
-
-  readonly config = input<ChartConfig>({
-  showTitle: true,
-  showLegend: true
-});
+  @Input() score : number = 0;
 
   constructor() {
+    console.log("Quiz Progress Score: ", this.score);
+  }
+
+  ngOnInit(): void {
     this.cardChart();
-    console.log("Quiz Progress Score: ", this.score());
-    
   }
 
   private cardChart() {
     this.cardChartOptions = {
-      series: [this.score()],
+      series: [this.score],
       chart: {
         type: 'radialBar',
         height: 180,
@@ -56,7 +53,7 @@ export class QuizProgressComponent {
       plotOptions: {
         radialBar: {
           hollow: {
-            size: '50%',
+            size: '64%',
           },
           track: {
             show: true,

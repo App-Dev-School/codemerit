@@ -40,7 +40,7 @@ export class MySubjectsComponent implements OnInit {
     this.subjects = of(this.master.subjects);
     this.isLoading = false;
     if(!this.master.subjects){
-     alert("Handle No Masterdata");
+     alert("Required details could not be available to launch the app. Please refresh to continue.");
     }
   }
 

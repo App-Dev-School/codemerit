@@ -1,89 +1,79 @@
 .center-header {
   justify-content: center;
 }
+
 .totalScore {
   text-align: center;
   padding: 6px;
   color: #ff9800;
   font-size: 2rem;
 }
+
 .earningProgress .progress {
   height: 9px;
 }
- .result-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: auto;
-      flex-wrap: wrap;
-    }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex: 1 1 60%;
-    }
+.cardPadding {
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 1rem;
+}
 
-    .user-info img {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
+@media (max-width: 480px) {}
 
-    .user-details {
-      display: flex;
-      flex-direction: column;
-    }
+.quizUserImg {
+  width: 118px;
+  height: 118px;
+  border-radius: 8%;
+  object-fit: cover;
+}
 
-    .user-details .name {
-      font-weight: 500;
-      font-size: 1.2em;
-      color: #333;
-    }
+/* Parent wrapper (optional, for scoping) */
+.cm-result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
 
-    .user-details .exam {
-      font-size: 1.2em;
-      color: #666;
-      margin-top: 4px;
-    }
+/* Avatar stays small */
+.cm-avatar {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
-    .score-circle {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 5px;
-    }
-    .cardMargin{
-      margin-left: 2rem;
-      margin-right: 2rem;
-      margin-bottom: 1rem;
-    }
+/* Text expands to take maximum space */
+.cm-result-text {
+  flex: 1 1 auto;
+  /* allow it to grow */
+  min-width: 0;
+  /* prevents overflow */
+}
 
-        .cardPadding{
-      padding-left: 2rem;
-      padding-right: 2rem;
-      padding-bottom: 1rem;
-    }
+/* Progress block stays tight */
+.cm-result-progress {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
 
-    @media (max-width: 480px) {
-      .result-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
+/* Mobile: stack everything */
+@media (max-width: 575.98px) {
+  .cm-result-row {
+    flex-direction: column;
+    text-align: center;
+  }
 
-      .score-circle {
-        margin-top: 10px;
-      }
+  .cm-result-text {
+    width: 100%;
+    margin-top: 12px;
+  }
 
-      .user-info img {
-      width: 48px;
-      height: 48px;
-    }
-    .user-details .name {
-      font-size: 1.1em;
-    }
-    }
+  .cm-result-progress {
+    margin-top: 16px;
+  }
+}

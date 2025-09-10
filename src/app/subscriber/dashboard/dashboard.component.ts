@@ -253,22 +253,17 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  async launchQuiz(subject: any, topic: any) {
+  async launchQuiz(subject: number, topic: number) {
     console.log('QuizManager Invoked in SubjectDashboard:', subject, topic);
     const payload = new QuizCreateModel();
-    payload.userId = this.authService.currentUserValue.id
-    payload.subjectIds = (subject && subject.id) ? '' + subject.id : null;
-    payload.topicIds = (topic && topic.id) ? '' + topic.id : null;
+    payload.userId = this.authService.currentUserValue.id;
+    payload.subjectIds = subject > 0 ? ''+subject : null;
+    payload.topicIds = topic > 0 ? ''+topic : null;
     let quizTitle = '';
-    if (subject && subject.id > 0) {
-      quizTitle = subject.title;
-    } else {
-      if (topic && topic.id > 0) {
-        quizTitle = topic.title;
+    if (subject > 0 || topic > 0) {
       } else {
         this.snackService.display('snackbar-dark', 'Invalid Quiz Request. Please try again.', 'bottom', 'center');
         return;
-      }
     }
     payload.title = quizTitle;
     console.log('QuizManager Payload:', payload);

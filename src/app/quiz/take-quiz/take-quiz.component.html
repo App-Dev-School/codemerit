@@ -15,7 +15,9 @@
       @if (!loading && quiz) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
         <div class="d-flex align-items-center">
-          <img [src]="quiz.image" alt="icon" class="subject-icon me-2">
+          @if (quiz.image) {
+            <img [src]="quiz.image" alt="icon" class="subject-icon me-2">
+          }
           <span class="quiz-title">{{ quiz.title }}</span>
         </div>
 
@@ -33,7 +35,6 @@
       @if (showWarningToast) {
       <div class="overlay"></div>
       <div class="animToast warning">
-        <img src="assets/images/icons/hinting.gif" class="hint-icon text-center" alt="hint">
         <h5>⚠️ 1 Minute Left!</h5>
       </div>
       }

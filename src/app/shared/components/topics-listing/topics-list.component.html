@@ -1,14 +1,5 @@
 <div class="row topicList">
-  @if (generatingQuiz) {
-    <div class="overlay"></div>
-      <div class="animToast text-center loading" style="max-width:400px;">
-        <img src="assets/images/icons/cube.gif" class="loadingIcon">
-        <h6>Generating Quiz for</h6>
-        <h4>{{loadingText}}</h4>
-        <h5>Please wait ...</h5>
-      </div>
-  }
-  @if (!generatingQuiz) {
+  @if ((subjectTopics|async)?.length > 0) {
   @for (group of subjectTopics|async; track group) {
   <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
     <mat-card class="card hoverCard">
@@ -38,10 +29,10 @@
         }
       </mat-card-content>
       <mat-card-actions align="end">
-        <button mat-button class="icon-button" (click)="launchTopicQuiz(group)"><mat-icon>code</mat-icon> Take
+        <button mat-button class="icon-button" (click)="onTopicQuiz(group)"><mat-icon>code</mat-icon> Take
           Test</button>
         <button mat-button class="icon-button" matTooltip="{{group.coverage <= 0 ? '' : (group.coverage>= 100
-          ? 'Revise' : 'Learn')}}" (click)="launchTopicExplorer(group.slug)">
+          ? 'Revise' : 'Learn')}}" (click)="onTopicExplore(group)">
           <mat-icon>{{group.coverage <= 0 ? 'lock_outline' : (group.coverage>= 100
             ? 'history' : 'play_arrow')}}</mat-icon> {{group.coverage <= 0 ? 'Start Now' : (group.coverage>= 100
             ? 'Revise' : 'Learn')}}</button>
