@@ -1,11 +1,12 @@
 export interface Subject {
   id: number;
   title: string;
+  slug: string;
   description: string;
   image: string;
 }
 
-export interface JobRole {
+export interface Course {
   id: number;
   title: string;
   description: string;
@@ -19,4 +20,7 @@ export interface JobRole {
   coverage: number;
   score: number;
   subjects: Subject[];
+}
+export interface CourseDashboard {
+  
 }

@@ -15,3 +15,13 @@
 .topicList{
     padding: 10px;
 }
+.topic-status {
+  position: absolute;
+  top: 0;
+  right: 30px;
+  height: 36px;
+   @media (max-width: 575px) {
+      right: 20px;
+      height: 45px;
+    }
+}

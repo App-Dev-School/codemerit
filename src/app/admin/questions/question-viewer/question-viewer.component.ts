@@ -12,6 +12,8 @@ import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { FullQuestion } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
+import { UtilsService } from '@core/service/utils.service';
+import { SafePipe } from '@shared/pipes/safehtml.pipe';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -29,6 +31,7 @@ interface Quiz {
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    SafePipe,
     MatChip
   ]
 })
@@ -42,7 +45,10 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
-  constructor(private sanitizer: DomSanitizer, private router: Router, private questionService: QuestionService) {
+  constructor(private sanitizer: DomSanitizer,
+    private utility: UtilsService,
+    private router: Router,
+    private questionService: QuestionService) {
     register(); // Register Swiper web components
   }
 
@@ -62,9 +68,12 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
         this.loadingText = 'Question View is Ready';
         this.loading = false;
         data.sort((a, b) => b.id - a.id);
+        console.log("QuestionViewer queestions", data);
         this.questions = (data || []).map(q => ({
           ...q,
-        rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
+          //rawQuestion:'Here.. '+q.question,
+          //rawQuestion: this.sanitizer.bypassSecurityTrustHtml(q.question)
+          //rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
         }));
       });
   }
@@ -99,12 +108,16 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     this.currentQuestionId = this.swiperEx.nativeElement.swiper.activeIndex;
   }
 
-  exitViewer(){
+  exitViewer() {
     this.router.navigate(['/admin/dashboard/main']);
   }
 
-  editQuestion(slug:string){
+  editQuestion(slug: string) {
     //const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
     this.router.navigate(['/admin/questions/update', slug]);
+  }
+
+  isCodeQuestion(text: string): boolean {
+    return this.utility.isCodeQuestion(text);
   }
 }

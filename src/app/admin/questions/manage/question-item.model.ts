@@ -44,6 +44,7 @@ export class QuestionItemDetail extends QuestionItem {
   topics: {id:number;title:string}[];
   rawQuestion?:SafeHtml;
   //Auth details
+  //rawQuestion?:string;
   hasAnswered?: boolean;
   usedHint?: boolean;
   selectedChoice?: number;
@@ -53,6 +54,7 @@ export class FullQuestion extends QuestionItem{
   tag: string | null;
   //optional - unused
   rawQuestion?:SafeHtml;
+  //rawQuestion?:string;
   //Auth details
   hasAnswered?: boolean;
   usedHint?: boolean;

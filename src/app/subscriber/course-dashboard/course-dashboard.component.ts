@@ -22,7 +22,7 @@ import { Observable } from 'rxjs';
 import { Subject } from '@core/models/subject';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { QuizService } from 'src/app/quiz/quiz.service';
-import { JobRole } from '@core/models/subject-role';
+import { Course } from '@core/models/subject-role';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 
 @Component({
@@ -45,13 +45,15 @@ import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-
   ]
 })
 export class CourseDashboardComponent implements OnInit {
+  pageTitle = 'MainDashboard';
   loading = true;
   loadingText = 'Loading your Dashboard';
   generatingQuiz = false;
   userData: Observable<User>;
   showContent = true;
   course = "";
-  courseData: JobRole;
+  courseItem: Course;
+  courseData: any[];
   showSubjectAction = false;
   courseChartConfig = {
     showTitle: false,
@@ -69,7 +71,7 @@ export class CourseDashboardComponent implements OnInit {
     private quizService: QuizService,
     private snackService: SnackbarService
   ) {
-    console.log("CourseDash User ", this.authService.currentUser);
+    console.log(this.pageTitle, "User ", this.authService.currentUser);
     this.userData = this.authService.currentUser;
     //this.userData.profile = localStorage.getItem(AuthConstants.CACHE_FULL_PROFILE);
   }
@@ -84,24 +86,26 @@ export class CourseDashboardComponent implements OnInit {
       }
     });
     this.takeRouteParams();
-    setTimeout(() => {
-      this.loading = false;
-    }, 3333);
+    // setTimeout(() => {
+    //   this.loading = false;
+    // }, 3333);
   }
 
   takeRouteParams() {
     const course = this.route.snapshot.paramMap.get('course');
-    console.log("CourseDash ParamMap course", course);
+    console.log(this.pageTitle, "RouteSnap course", course);
     if (course) {
       this.course = course;
-      this.onCourseChange(course);
     }else{
-      if(this.authService.currentUserValue && this.authService.currentUserValue?.userDesignation){
+      if(this.authService.currentUserValue && this.authService.currentUserValue?.userDesignation != null){
       this.course = this.authService.currentUserValue?.userDesignation?.slug;
+      console.log(this.pageTitle, "RouteSnap course defaulted", this.course);
       }else{
         this.goToCourses();
       }
     }
+    if(this.course)
+    this.onCourseChange(this.course);
     // this.route.paramMap.subscribe(params => {
     //   console.log("CourseDash @RouteParam change detected =>", params.get("course"));
     //   if (params.get("course")) {
@@ -117,13 +121,13 @@ export class CourseDashboardComponent implements OnInit {
 
   filterCourse(allJobRoles: any) {
     //Display the job role map
-    this.courseData = allJobRoles.find(role => role.slug === this.course);
-    console.log("CourseDash Filter ****", this.courseData);
+    this.courseItem = allJobRoles.find(role => role.slug === this.course);
+    console.log(this.pageTitle, "@CourseItem", this.courseItem);
   }
 
   onCourseChange(course: string) {
     this.course = course ? course : "";
-    console.log("CourseDash @1", course);
+    console.log(this.pageTitle, "onCourseChange", course);
     if (this.course) {
       //get this from a service first
       const allJobs = this.master.jobRoles;
@@ -139,6 +143,28 @@ export class CourseDashboardComponent implements OnInit {
           }
         });
       }
+
+      //we need list of all subjects in a course along with course details
+      this.master.fetchCourseDashboard().subscribe((data: any) => {
+          console.log(this.pageTitle, "@courseData #####", data);
+          // if (data && !data.error && data.data) {
+          //   const allJobRoles = data.data;
+          //   //Nothing to filter its one course
+          //   this.courseData = data.data;
+          //   //this.filterCourse(allJobRoles);
+          // }
+          if (data) {
+            this.courseData = data;
+            setTimeout(() => {
+            this.loading = false;
+          }, 5000);
+            //this.filterCourse(allJobRoles);
+          }
+ 
+        }, (err:any)=>{
+            this.loading = false;
+            this.snackService.display('snackbar-dark','Error loading Course Dashboard! '+err, 'bottom', 'center');
+        });
     }
   }
 

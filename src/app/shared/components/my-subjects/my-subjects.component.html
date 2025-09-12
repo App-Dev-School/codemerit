@@ -22,7 +22,7 @@
             <mat-card-title class="text">{{subject.title}}</mat-card-title>
           </div>
           <p class="font-12">{{subject.description}}</p>
-          <p class="font-12">{{subject.numTrivia}} Trivia</p>
+          <!-- <p class="font-12">{{subject.goal}} Trivia</p> -->
           @if(!minimal){
           @if(subject?.isSubscribed){
             <ul class="list-unstyled">
@@ -40,15 +40,14 @@
           }@else{
             <!-- <p class="m-b-0 font-12 d-flex"><i class="material-icons col-green psr-2">trending_up</i> Continue Practice
             </p> -->
-            <mat-card-footer class="example-card-footer">
+            <!-- <mat-card-footer class="example-card-footer">
               <mat-chip-set aria-label="Tags">
                 <mat-chip>12 Lessons</mat-chip>
                 <mat-chip>{{subject?.numQuestions}} Questions</mat-chip>
               </mat-chip-set>
-            </mat-card-footer>
+            </mat-card-footer> -->
             <mat-card-actions align="end">
-              <!-- <button mat-button mat-ripple>View</button> -->
-              <button (click)="subscribeSubject(subject.slug)" mat-button>Explore</button>
+              <button (click)="subscribeSubject(subject.slug)" mat-button mat-ripple>Explore</button>
             </mat-card-actions>
           }
         }

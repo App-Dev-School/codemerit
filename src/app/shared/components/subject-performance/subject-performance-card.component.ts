@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { Subject } from '@core/models/subject';
 import {
   ApexChart,
   ApexFill,
@@ -57,19 +58,24 @@ interface MeritIndicators {
   templateUrl: './subject-performance-card.component.html',
   styleUrl: './subject-performance-card.component.scss'
 })
-export class SubjectPerformanceCardComponent {
+export class SubjectPerformanceCardComponent implements OnInit {
   //@Input() subject: string = "";
   @Input() subject: any;
   @Input() indicators: MeritIndicators[] = [];
+  @Output() exploreSubject = new EventEmitter<Subject>();
+  @Output() enrollSubject = new EventEmitter<Subject>();
   public cardChartOptions!: Partial<ChartOptions>;
 
   constructor() {
+  }
+
+  ngOnInit(): void {
     this.cardChart();
   }
 
   private cardChart() {
     this.cardChartOptions = {
-      series: [this.subject?.score ?? 0],
+      series: [this.subject.score ?? 0],
       chart: {
         type: 'radialBar',
         height: 180,
@@ -111,7 +117,11 @@ export class SubjectPerformanceCardComponent {
     };
   }
 
-  goToSubjects() {
-  
+  onExploreSubject(subject: Subject) {
+  this.exploreSubject.next(subject);
+  }
+
+  onEnrollSubject(subject: Subject) {
+  this.enrollSubject.next(subject);
   }
 }

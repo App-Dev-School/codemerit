@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardSubtitle } from '@angular/material/card';
@@ -6,12 +6,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Observable } from 'rxjs';
 @Component({
   selector: 'app-topics-list',
   imports: [
     NgClass,
-    AsyncPipe,
     MatCard,
     MatCardHeader, MatCardContent,
     MatCardSubtitle,
@@ -26,7 +24,7 @@ import { Observable } from 'rxjs';
   styleUrl: './topics-list.component.scss'
 })
 export class TopicsListComponent {
-  @Input() subjectTopics: Observable<any[]>;
+  @Input() subjectTopics: any[];
   @Output() topicExplore = new EventEmitter<any>();
   @Output() topicQuiz = new EventEmitter<any>();
 

@@ -48,6 +48,7 @@ export class SelectSubjectComponent implements OnInit {
   }
 
   onSubscribe(subject: string) {
+    alert("callpaihere");
     console.log("SelectSubject @onSubscribe", subject);
     //this.snackService.display('snackbar-success',subject+' added to learning list!','bottom','center');
   }

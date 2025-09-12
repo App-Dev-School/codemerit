@@ -33,24 +33,24 @@
   <!-- Right Column -->
   <div class="col-12 col-sm-6 text-center text-sm-end">
     <div class="d-flex flex-column align-items-center align-items-sm-end">
-      <app-course-progress [score]="item.id"></app-course-progress>
+      <app-course-progress [score]="item.score"></app-course-progress>
       <small class="miniTxt">Score</small>
     </div>
   </div>
 </div>
 
-
+<p class="font-12">Accuracy: {{item.coverage}}%</p>
     <hr class="dim-divider">
     <mat-card-footer>
       <ul class="list-unstyled m-b-10 m-t-10">
         <li>
           <div class="mb-2 d-flex justify-content-between">
             <span class="progress-label">Coverage</span>
-            <span class="progress-percent label label-success">{{item.id}}%</span>
+            <span class="progress-percent label label-success">{{item.coverage}}%</span>
           </div>
           <div class="progress skill-progress w-100">
-            <div class="progress-bar progress-bar-success" [style.width]="item.id + '%'" role="progressbar"
-              [attr.aria-valuenow]="item.id" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-success" [style.width]="item.coverage + '%'" role="progressbar"
+              [attr.aria-valuenow]="item.coverage" aria-valuemin="0" aria-valuemax="100">
             </div>
           </div>
         </li>

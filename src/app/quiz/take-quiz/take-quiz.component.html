@@ -16,7 +16,7 @@
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
         <div class="d-flex align-items-center">
           @if (quiz.image) {
-            <img [src]="quiz.image" alt="icon" class="subject-icon me-2">
+          <img [src]="quiz.image" alt="icon" class="subject-icon me-2">
           }
           <span class="quiz-title">{{ quiz.title }}</span>
         </div>
@@ -59,12 +59,19 @@
 
           @for (question of questions; track question.id) {
           <swiper-slide>
-            <p class="col-grey text-center m-t-16 m-b-10">{{$index+1}} of {{questions?.length}}</p>
+            <p class="col-grey text-center m-t-20 m-b-10">{{$index+1}} of {{questions?.length}}</p>
             <div class="question-card">
               @if (question.title) {
               <h5 class="mb-3">{{ question.title }}</h5>
               }
-              <div class="mb-3 font-20">{{ question.question }}</div>
+              @if (isCodeQuestion(question.question)) {
+              <small>Read the question carefully and answer.</small>
+              <div class="question m-b-20">
+                <pre><code>{{question.question}}</code></pre>
+              </div>
+              }@else {
+              <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
+              }
               @for (choice of question.options; track choice) {
               <mat-card (click)="optionSelected(choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedOption === choice.id,

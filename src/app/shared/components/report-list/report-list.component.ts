@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { JobRole, Subject } from '@core/models/subject-role';
+import { Course, Subject } from '@core/models/subject-role';
 
 @Component({
   selector: 'app-subject-role-map',
@@ -21,7 +21,7 @@ import { JobRole, Subject } from '@core/models/subject-role';
   ],
 })
 export class ReportListComponent implements OnInit {
-  @Input() data: JobRole[] = []; // direct JobRole array from API
+  @Input() data: Course[] = []; // direct JobRole array from API
   selected = new UntypedFormControl(0);
 
   @Output() subjectSelected = new EventEmitter<string>();
@@ -30,7 +30,7 @@ export class ReportListComponent implements OnInit {
     console.log('JobRoles loaded:', this.data);
   }
 
-  get roles(): JobRole[] {
+  get roles(): Course[] {
     return this.data;
   }
 

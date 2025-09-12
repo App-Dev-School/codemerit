@@ -27,3 +27,62 @@
 .miniTxt {
   font-size: 0.7rem;
 }
+
+.courseLoader{
+  min-width: min(40%, 380px);
+}
+
+.image-group img {
+  display: inline-block;
+  width: 48px;
+  margin: 4px;
+  //animation: fadeScale 1.5s infinite;
+  //animation: bounce 2.1s infinite;
+  animation: fadeBounce 2s ease-in-out forwards;
+}
+
+.image-group img:nth-child(1) { animation-delay: 0s; }
+.image-group img:nth-child(2) { animation-delay: 0.4s; }
+.image-group img:nth-child(3) { animation-delay: 0.8s; }
+.image-group img:nth-child(4) { animation-delay: 1.2s; }
+.image-group img:nth-child(5) { animation-delay: 1.2s; }
+.image-group img:nth-child(6) { animation-delay: 1.8s; }
+.image-group img:nth-child(7) { animation-delay: 2.2s; }
+.image-group img:nth-child(8) { animation-delay: 2.5s; }
+
+@keyframes fadeBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);   /* start slightly below */
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(0);      /* fade into place */
+  }
+  60% {
+    transform: translateY(-15px);  /* bounce up */
+  }
+  80% {
+    transform: translateY(5px);    /* small rebound */
+  }
+  100% {
+    transform: translateY(0);      /* settle in place */
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+//fade together
+@keyframes fadeScale {
+  from {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}

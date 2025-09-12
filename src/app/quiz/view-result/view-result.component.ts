@@ -79,10 +79,11 @@ export class ViewResultComponent implements OnInit {
   }
 
   onContinue(): void {
-    console.log('Back to my dashboard');
-    let designationSlug = '';
-    //this.userData
-    this.router.navigate(['/dashboard/start', designationSlug]);
+    //let designationSlug = '';
+    //if subject quiz go to subject dashboard
+    //this.router.navigate(['/dashboard/start', designationSlug]);
+    //.subjects[0].slug
+    this.router.navigate(['/dashboard/select-subject']);
   }
   //add methods for sharing options, invite etc.
 }

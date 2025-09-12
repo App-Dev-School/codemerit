@@ -7,7 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { AuthService, User } from '@core';
-import { JobRole } from '@core/models/subject-role';
+import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
@@ -38,13 +38,13 @@ import { SnackbarService } from '@core/service/snackbar.service';
   //   ]
 })
 export class WelcomeComponent implements OnInit {
-  public subjectRoleMap: JobRole[] = [];
+  public subjectRoleMap: Course[] = [];
   userName = "";
   userMessage = "";
   nextAction = "login";
   //clean up
   subjectData: any;
-  subjectsByRole: { [role: string]: JobRole[] } = {};
+  subjectsByRole: { [role: string]: Course[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
   engagements = [
     {

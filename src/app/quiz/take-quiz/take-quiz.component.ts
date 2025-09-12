@@ -14,6 +14,8 @@ import { AuthService } from '@core/service/auth.service';
 import { CreateQuizResponse, QuizEntity } from '@core/models/dtos/GenerateQuizDto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UtilsService } from '@core/service/utils.service';
+import { SafePipe } from '@shared/pipes/safehtml.pipe';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -27,6 +29,7 @@ interface Quiz {
   imports: [
     CommonModule,
     NgClass,
+    SafePipe,
     CdTimerModule,
     MatToolbarModule,
     MatButtonModule,
@@ -56,6 +59,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   constructor(private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
+    private utility: UtilsService,
     private snackBar: MatSnackBar,
     private quizService: QuizService) {
     register(); // Register Swiper web components
@@ -188,6 +192,10 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         );
       }
     );
+  }
+
+  isCodeQuestion(text: string): boolean {
+    return this.utility.isCodeQuestion(text);
   }
 
   showNotification(colorName, text, placementFrom, placementAlign) {

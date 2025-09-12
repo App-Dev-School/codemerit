@@ -234,3 +234,13 @@ no-data-container.no-data-container {
     transform: scale(1);
   }
 }
+
+pre {
+  white-space: pre-wrap;   /* Wrap text when needed */
+  word-wrap: break-word;   /* Break long words if necessary */
+  overflow-x: auto;        /* Horizontal scrollbar only if really needed */
+}
+
+code {
+  font-family: "Roboto", sans-serif !important;
+}

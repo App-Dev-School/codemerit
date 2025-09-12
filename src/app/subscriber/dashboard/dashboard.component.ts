@@ -134,7 +134,7 @@ export class DashboardComponent implements OnInit {
       this.nextAction = 'Challenge Yourself';
     } else {
       if (Math.random() > 0.7) {
-        this.nextAction = 'Explore ' + this.currentSubject.title + ' Mastery';
+        this.nextAction = 'Explore ' + this.currentSubject?.title + ' Mastery';
       } else {
         this.nextAction = 'Test Your Skills';
       }
@@ -185,9 +185,11 @@ export class DashboardComponent implements OnInit {
           .fetchSubjectDashboard(this.currentSubject.slug)
           .subscribe({
             next: (response) => {
-              console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
+              //console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
               if (response) {
                 this.subjectData = response.data;
+                console.log(this.pageTitle, '@subjectData:', this.subjectData);
+                console.log(this.pageTitle, '@syllabus:', this.subjectData?.syllabus);
               }
               setTimeout(() => {
                 this.loading = false;
@@ -204,17 +206,52 @@ export class DashboardComponent implements OnInit {
 
   onSubscribe(subject: string) {
     console.log("LearnerDashoard onSubscribe", subject);
-    this.snackService.display('snackbar-dark', subject + ' added to learning list!', 'bottom', 'center');
+    this.snackService.display('snackbar-dark', subject + ' changeNAME', 'bottom', 'center');
   }
 
   viewMeritList() {
     this.snackService.display('snackbar-dark', 'Top Performers appear in the Merit List.', 'bottom', 'center');
   }
 
+  exploreSubject(subject:any){
+alert("exploreSubject full");
+  }
+
+  async enrollSubject(subject:any) {
+    this.loadingText = "Adding " + this.currentSubject.title + " to your learning profile.";
+    this.loading = true;
+    this.master
+      .enrollSubjects([this.currentSubject.id])
+      .subscribe({
+        next: (response) => {
+          console.log(this.pageTitle, 'enrollSubject response:', response);
+          //this.submitted = false;
+          if (response && !response.error) {
+            const enrollResult = response?.data;
+            if (enrollResult && enrollResult !== '') {
+              setTimeout(() => {
+                this.snackService.display('snackbar-success', 'Congrats for the beginning. Start Deep Diving ' + this.currentSubject.title + '!', 'bottom', 'center');
+                this.loading = false;
+              }, 2000);
+            }
+          } else {
+            this.loading = false;
+            this.snackService.display('snackbar-dark', this.currentSubject.title + ' added.' + response.message, 'bottom', 'center');
+          }
+        },
+        error: (error) => {
+          this.loading = false;
+          this.snackService.display('snackbar-dark', 'Error enrolling subject. Please try again.', 'bottom', 'center');
+          console.error('Enroll Subject API Error:', error);
+        },
+      });
+  }
+
   goToSubjects() {
     this.router.navigate(['/dashboard', this.subject]);
   }
 
+  //keep any one
   async launchSubjectQuiz(subject: Subject) {
     console.log('QuizManager Invoked with Subject:', subject);
     this.generatingQuiz = true;
@@ -252,18 +289,17 @@ export class DashboardComponent implements OnInit {
         },
       });
   }
-
   async launchQuiz(subject: number, topic: number) {
     console.log('QuizManager Invoked in SubjectDashboard:', subject, topic);
     const payload = new QuizCreateModel();
     payload.userId = this.authService.currentUserValue.id;
-    payload.subjectIds = subject > 0 ? ''+subject : null;
-    payload.topicIds = topic > 0 ? ''+topic : null;
+    payload.subjectIds = subject > 0 ? '' + subject : null;
+    payload.topicIds = topic > 0 ? '' + topic : null;
     let quizTitle = '';
     if (subject > 0 || topic > 0) {
-      } else {
-        this.snackService.display('snackbar-dark', 'Invalid Quiz Request. Please try again.', 'bottom', 'center');
-        return;
+    } else {
+      this.snackService.display('snackbar-dark', 'Invalid Quiz Request. Please try again.', 'bottom', 'center');
+      return;
     }
     payload.title = quizTitle;
     console.log('QuizManager Payload:', payload);

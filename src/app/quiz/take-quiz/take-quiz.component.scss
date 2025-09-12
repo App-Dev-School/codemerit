@@ -44,18 +44,25 @@
     font-size: 1.1rem;
     font-weight: 500;
   }
+
   @media (max-width: 480px) {
-  .quiz-title {
-    font-size: 0.9rem;
-  }
-  cd-timer {
-    font-size: 0.9rem;
-  }
+    .quiz-title {
+      font-size: 0.9rem;
+    }
+
+    cd-timer {
+      font-size: 0.9rem;
+    }
   }
 
   .question-card {
     padding: 1rem;
     margin: 1rem;
+  }
+
+  .question {
+    font-size: 1.3rem;
+    font-weight: 500;
   }
 
   .choice {

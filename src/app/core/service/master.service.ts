@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Country } from '@core/models/country.data';
 import { Subject } from '@core/models/subject';
-import { JobRole } from '@core/models/subject-role';
+import { Course } from '@core/models/subject-role';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
@@ -28,7 +28,7 @@ export class MasterService {
   private dataLoaded = new BehaviorSubject<boolean>(false);
   readonly dataLoaded$ = this.dataLoaded.asObservable();
   private storageKey = 'masterData';
-  jobRoleSubjectMap: JobRole[];
+  jobRoleSubjectMap: Course[];
 
 
   constructor(private router: Router, private httpService: HttpService,
@@ -88,13 +88,14 @@ export class MasterService {
     this.dataLoaded.next(false);
   }
 
-  fetchJobRoleSubjectMapping(): Observable<JobRole[]> {
+  //Not needed then clean
+  fetchJobRoleSubjectMapping(): Observable<Course[]> {
   console.log('MasterDataFlow Invoking JobMap API');
 
   return this.httpService
     .get('apis/master/jobRoles', this.authService.currentUserValue?.token)
     .pipe(
-      map((res: { error: boolean; message: string; data: JobRole[] }) => {
+      map((res: { error: boolean; message: string; data: Course[] }) => {
         if (!res.error) {
           console.log('MasterDataFlow JobMap API SUCCESS>>>', res.data);
           this.setJobRoleMap(res.data);
@@ -105,6 +106,50 @@ export class MasterService {
       catchError((err) => {
         console.error('MasterDataFlow Failed to fetch job map', err);
         return of([]); // ✅ return empty array instead of null
+      })
+    );
+}
+
+fetchCourseDashboard(): Observable<any> {
+  console.log('Calling fetchCourseDashboard API');
+  return this.httpService
+    .get('apis/master/myJobDashboard', this.authService.currentUserValue?.token)
+    .pipe(
+      map((res: { error: boolean; message: string; data: any }) => {
+        if (!res.error) {
+          console.log('CourseAPI success', res.data);
+          //this.setJobRoleMap(res.data);
+          return res.data; // make sure to return it
+        }
+        return {}; // fallback return to satisfy type
+      }),
+      catchError((err) => {
+        console.error('CourseAPI Failed :', err);
+        return of({}); // return empty array instead of null
+      })
+    );
+}
+
+enrollSubjects(subjectIds: number[]): Observable<any> {
+  const payload = {
+    subjectIds: subjectIds
+  }
+  console.log('Calling enrollSubjects API', payload);
+  return this.httpService
+    .postData('apis/master/userSubjects', payload,this.authService.currentUserValue?.token)
+    .pipe(
+      map((res: { error: boolean; message: string; data: any }) => {
+        if (!res.error) {
+          console.log('MasterDataFlow JobMap API SUCCESS>>>', res.data);
+          //this.setJobRoleMap(res.data);
+          //return res.data;
+          return res;
+        }
+        return {};
+      }),
+      catchError((err) => {
+        console.error('enrollSubjects Failed', err);
+        return of({});
       })
     );
 }
