@@ -24,9 +24,8 @@ export interface Quiz {
   }
 
   export interface QuizResult {
-    //id:number
     userId: number;
-    quizId: number;
+    quizId?: number;
     resultCode?: string;
     userFullName?: string;
     quizName ?: string;
@@ -52,9 +51,17 @@ export interface Quiz {
       title: string;
       description: string;
       quizType: string
-    }
+    },
+     topics?: QuizResultTopic[];
   }
 
+  export interface QuizResultTopic{
+      id: number,
+      title: string;
+      score?: string;
+      coverage?: string;
+      accuracy?: string;
+  }
 //Do - Inherit well
   export interface InterviewQuestionAttempts extends QuestionAttempt {
     //id:number

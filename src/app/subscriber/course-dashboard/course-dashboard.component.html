@@ -4,16 +4,16 @@
   <div class="overlay"></div>
   <div class="animToast courseLoader loading">
     <!-- <img src="assets/images/icons/loading.gif" class="smallLoadingIcon"> -->
+     <h5>{{loadingText}}</h5>
     <!-- Stacked subject image loading effect -->
     @if (courseItem && courseItem?.subjects) {
     <div class="image-group">
       @for (item of courseItem?.subjects; track item) {
-      <img [src]="item.image ?? 'assets/images/tech/placeholder.png'" [alt]="item.title">
+      <img [src]="item.image ?? 'assets/images/tech/placeholder.png'" class="floating" [alt]="item.title">
       }
     </div>
     }
     <hr class="dim-divider">
-    <h5>{{loadingText}}</h5>
     @if (generatingQuiz) {
     <h6 class="col-grey">Please wait</h6>
     }@else {
@@ -108,7 +108,6 @@
           }
           }
         </div>
-
       </div>
     </div>
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +20,7 @@ export class HttpService {
   }
 
   //make this default
-  postData(serviceName: string, data: any, apiKey: string = '') {
+  postData<T>(serviceName: string, data: any, apiKey: string = '') : Observable<T> {
     const url = environment.apiUrl + serviceName;
     const httpOptions = {
       headers: new HttpHeaders({
@@ -28,7 +29,7 @@ export class HttpService {
         'Authorization': apiKey
       })
     };
-    return this.http.post(url, data, httpOptions);
+    return this.http.post<T>(url, data, httpOptions);
   }
 
   get(serviceName: string, apiKey: string = '') {

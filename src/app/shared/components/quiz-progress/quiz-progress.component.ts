@@ -48,12 +48,12 @@ export class QuizProgressComponent implements OnInit{
       series: [this.score],
       chart: {
         type: 'radialBar',
-        height: 180,
+        height: 164,
       },
       plotOptions: {
         radialBar: {
           hollow: {
-            size: '64%',
+            size: '60%',
           },
           track: {
             show: true,
@@ -66,7 +66,7 @@ export class QuizProgressComponent implements OnInit{
               show: false,
             },
             value: {
-              fontSize: '32px',
+              fontSize: '30px',
               show: true,
               fontWeight: 600,
               offsetY: 16,

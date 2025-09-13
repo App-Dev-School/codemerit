@@ -235,6 +235,10 @@ no-data-container.no-data-container {
   }
 }
 
+.animEntry {
+  display: inline-block;
+  animation: bigEntrance 4s;
+}
 pre {
   white-space: pre-wrap;   /* Wrap text when needed */
   word-wrap: break-word;   /* Break long words if necessary */

@@ -1,14 +1,25 @@
 <ul class="list-unstyled">
-  @for (source of topicScores(); track source) {
-    <li>
+  @for (source of topicScores; track source) {
+    <!-- <li>
       <div class="mb-2">
-        <span class="progress-label">{{ source.label }}</span>
-        <span class="float-end progress-percent label m-b-5" [ngClass]="source.labelClass">{{ source.percentage
+        <span class="progress-label">{{ source.title }}</span>
+        <span class="float-end progress-percent label m-b-5" [ngClass]="'label-primary'">{{ source.score
         }}%</span>
       </div>
       <div class="progress skill-progress m-b-20 w-100">
-        <div class="progress-bar" [ngClass]="source.class" [style.width]="source.percentage + '%'"
-        role="progressbar" [attr.aria-valuenow]="source.percentage" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar" [ngClass]="'label-primary'" [style.width]="source.score + '%'"
+        role="progressbar" [attr.aria-valuenow]="source.score" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </li> -->
+        <li>
+      <div class="mb-2">
+        <span class="progress-label">{{ source.title }}</span>
+        <span class="float-end progress-percent label m-b-5" [ngClass]="'label-primary'">{{ source.coverage
+        }}%</span>
+      </div>
+      <div class="progress skill-progress m-b-20 w-100">
+        <div class="progress-bar" [ngClass]="'label-primary'" [style.width]="source.coverage + '%'"
+        role="progressbar" [attr.aria-valuenow]="source.coverage" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </li>
   }

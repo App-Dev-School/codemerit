@@ -66,12 +66,21 @@
               }
               @if (isCodeQuestion(question.question)) {
               <small>Read the question carefully and answer.</small>
-              <div class="question m-b-20">
+              <div class="question m-b-10">
                 <pre><code>{{question.question}}</code></pre>
               </div>
               }@else {
               <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
               }
+
+               @if (question?.topicsArr && question?.topicsArr.length > 0) {
+                <div class="list-group-item m-b-20">
+                  @for (topic of question?.topicsArr; track topic) {
+                    <!-- bg-pink col-indigo -->
+                  <span class="badge col-indigo">{{topic}}</span>
+                }
+                </div>
+               }
               @for (choice of question.options; track choice) {
               <mat-card (click)="optionSelected(choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedOption === choice.id,
@@ -116,7 +125,7 @@
             </div>
             <div class="col-4 text-end">
               <button mat-flat-button color="primary" (click)="onSlideNext()">
-                <mat-icon>keyboard_arrow_right</mat-icon> {{ currentQuestionId === questions.length - 1 ? 'Complete' :
+                <mat-icon>keyboard_arrow_right</mat-icon> {{ currentQuestionId === questions.length - 1 ? 'Finish' :
                 'Next' }}
               </button>
             </div>

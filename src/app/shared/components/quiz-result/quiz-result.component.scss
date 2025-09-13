@@ -14,8 +14,8 @@
 }
 
 .cardPadding {
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: 10px;
+  padding-right: 10px;
   padding-bottom: 1rem;
 }
 
@@ -33,7 +33,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px;
   flex-wrap: nowrap;
 }
 
@@ -62,7 +62,7 @@
 }
 
 /* Mobile: stack everything */
-@media (max-width: 575.98px) {
+@media (max-width: 575px) {
   .cm-result-row {
     flex-direction: column;
     text-align: center;
@@ -70,10 +70,10 @@
 
   .cm-result-text {
     width: 100%;
-    margin-top: 12px;
+    margin-top: 2px;
   }
 
   .cm-result-progress {
-    margin-top: 16px;
+    margin-top: 2px;
   }
 }

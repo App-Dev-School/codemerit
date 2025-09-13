@@ -15,13 +15,15 @@
 .topicList{
     padding: 10px;
 }
-.topic-status {
-  position: absolute;
-  top: 0;
-  right: 30px;
-  height: 36px;
-   @media (max-width: 575px) {
-      right: 20px;
-      height: 45px;
-    }
+.statusStarted{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 20px;
+}
+.statusCompleted{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 20px;
 }

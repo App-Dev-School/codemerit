@@ -43,14 +43,11 @@ export class SelectSubjectComponent implements OnInit {
 
   onSubjectChange(subject: string) {
     this.subject = subject ? subject : "";
-    console.log("SelectSubject @onSubjectChange", subject);
     this.router.navigate(['/dashboard/learn', this.subject]);
   }
 
   onSubscribe(subject: string) {
-    alert("callpaihere");
     console.log("SelectSubject @onSubscribe", subject);
     //this.snackService.display('snackbar-success',subject+' added to learning list!','bottom','center');
   }
-
 }

@@ -3,7 +3,9 @@
     <ng-container *ngTemplateOutlet="scoreChart"></ng-container>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
-    <ng-container *ngTemplateOutlet="topicWiseChart"></ng-container>
+    @if (result?.topics) {
+   <ng-container *ngTemplateOutlet="topicWiseChart"></ng-container>
+    }
   </div>
 </div>
 
@@ -27,7 +29,7 @@
           <p class="small mb-0 col-grey">{{ result?.createdAt | date:'dd/MM/yyyy' }}</p>
         </div>
       </div>
-      <hr class="dim-divider">
+      <!-- <hr class="dim-divider"> -->
       <div class="cm-result-row">
         <img src="/assets/images/users/user.jpg" alt="User avatar" class="cm-avatar" />
         <div class="cm-result-text">
@@ -72,11 +74,13 @@
       </div>
     </mat-card-content>
     <mat-card-footer class="footer">
-      <ul class="list-unstyled m-b-10 m-t-10">
+      <ul class="list-unstyled m-b-10 m-t-10 m-l-10 m-r-10">
         <li>
           <div class="mb-2 d-flex justify-content-between">
             <span class="progress-label">Accuracy</span>
-            <span class="progress-percent label bg-dark">{{(result.correct / (result.correct+result.wrong))*100}}%</span>
+            <span class="progress-percent label bg-dark">
+              {{ ((result.correct / (result.correct + result.wrong)) * 100) | number:'1.0-0' }}%
+            </span>
           </div>
           <div class="progress skill-progress w-100">
             <div class="progress-bar bg-dark" [style.width]="result.score + '%'" role="progressbar"
@@ -103,11 +107,11 @@
 <ng-template #topicWiseChart>
   <mat-card>
     <mat-card-header>
-      <mat-card-title class="text-center">Topic Wise Score</mat-card-title>
+      <mat-card-title class="text-center">Performance Detail</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <ng-scrollbar style="height: auto;" visibility="hover">
-        <app-topics-score [topicScores]="topicWiseScore"></app-topics-score>
+        <app-topics-score [topicScores]="result?.topics"></app-topics-score>
       </ng-scrollbar>
     </mat-card-content>
   </mat-card>

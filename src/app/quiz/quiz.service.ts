@@ -107,13 +107,7 @@ export class QuizService {
     }
     const url = 'apis/quiz/submit';
     console.log('QuizPlayer Submitted Quiz => ', item);
-    return this.httpService.postData(url, item, api_key).pipe(
-      map((response: QuizResult) => {
-        //console.log("QuizPlayer SubmitQuiz API response", response);
-        return response;
-      }),
-      catchError(this.handleError)
-    );
+    return this.httpService.postData<QuizResult>(url, item, api_key);
   }
 
   updateQuiz(topic: any, topicId: any): Observable<any> {
@@ -168,7 +162,7 @@ export class QuizService {
     );
   }
 
-  processAndSaveResults(questions: QuizQuestion[], quizId: number): Observable<QuizResult> {
+  processAndSaveResults(questions: QuizQuestion[], quizId: number): QuizResult {
     const total = questions.length;
     //const correct = questions.filter(q => q.selectedOption === q.correctAnswer).length;
     const correct = questions.filter(q => {
@@ -210,7 +204,7 @@ export class QuizService {
     analytics['attempts'] = attempts;
 
     console.log('Quiz Result => ', analytics);
-    return this.submitQuiz(analytics);
+    return analytics;
   }
 
   setCurrentQuiz(quiz: QuizEntity) {

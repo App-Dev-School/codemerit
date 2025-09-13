@@ -36,9 +36,9 @@
   display: inline-block;
   width: 48px;
   margin: 4px;
-  //animation: fadeScale 1.5s infinite;
+  animation: fadeScale 1.5s infinite;
   //animation: bounce 2.1s infinite;
-  animation: fadeBounce 2s ease-in-out forwards;
+  //animation: fadeBounce 2s ease-in-out forwards;
 }
 
 .image-group img:nth-child(1) { animation-delay: 0s; }

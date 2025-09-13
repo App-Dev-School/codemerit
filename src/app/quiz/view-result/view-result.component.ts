@@ -83,7 +83,14 @@ export class ViewResultComponent implements OnInit {
     //if subject quiz go to subject dashboard
     //this.router.navigate(['/dashboard/start', designationSlug]);
     //.subjects[0].slug
-    this.router.navigate(['/dashboard/select-subject']);
+    try {
+      if(this.quizResult && this.quizResult.subjects){
+      const firstSubjectSlug = this.quizResult.subjects[0]?.slug;
+      this.router.navigate(['/dashboard/learn', firstSubjectSlug]);
+    }
+    } catch (error) {
+      this.router.navigate(['/dashboard/select-subject']);
+    }
   }
   //add methods for sharing options, invite etc.
 }

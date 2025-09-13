@@ -90,7 +90,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         this.questions = (data.questions || []).map(q => ({
           ...q,
           options: q.options || [],
-          selectedChoice: ''
+          selectedChoice: '',
+          topicsArr : q.topics ? q.topics.map(object => object.title) : []
         }));
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
       });
@@ -160,6 +161,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     console.log('Timer finished!');
     this.warningActive = false;
     this.showWarningToast = false;
+    console.log('Quiz Timed Out!', this.questions);
     this.submitQuiz();
   }
 
@@ -173,9 +175,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   submitQuiz() {
+    console.log("QuizPlayer submitQuiz() called", this.questions);
     this.loading = true;
     this.loadingText = 'Submitting Quiz';
-    this.quizService.processAndSaveResults(this.questions, this.quiz.id).subscribe(
+    const analytics = this.quizService.processAndSaveResults(this.questions, this.quiz.id);
+    this.quizService.submitQuiz(analytics).subscribe(
       (data: any) => {
         console.log("QuizPlayer Quiz", data);
         this.quizResult = data.data;

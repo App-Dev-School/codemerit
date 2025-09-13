@@ -7,42 +7,43 @@
         <mat-card-subtitle>{{ group.title }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        @if (group.started) {
-        <img src="assets/images/icons/badge.svg" class="topic-status" />
+        @if (group.isCompleted) {
+        <img src="assets/images/icons/ic_correct.png" class="statusCompleted" alt="Completed" />
+        }@else {
+        @if (group.isStarted) {
+        <img src="assets/images/icons/badge.svg" class="statusStarted" alt="Started" />
+        }
         }
         <p class="font-12 m-t-0">{{ group.description }}</p>
-        @if (group.attempted > 0) {
-        <p class="font-12 m-t-0">Topic Score : {{ (group.correct / group.attempted)*100 }} % </p>
-        }
-        @if (group.attempted > 0) {
-        <p class="font-12 m-t-0">Completed : {{ group.coverage }} % </p>
-        }
-        <!-- Coverage Progress -->
-        @if(group.coverage > 0){
-        <div class="mb-2">
-          <span class="progress-label">Score</span>
-          <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{ group.score
-            }}%</span>
-        </div>
-        <div class="progress skill-progress m-b-20 w-100">
-          <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="group.score + '%'"
-            role="progressbar" [attr.aria-valuenow]="group.score" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <hr class="dim-divider">
-        <div class="mb-2">
-          <span class="progress-label">{{group.coverage >= 100 ? 'Completed' : 'Coverage'}}</span>
-          <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{ group.coverage
-            }}%</span>
-        </div>
-        <div class="progress skill-progress m-b-20 w-100">
-          <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="group.coverage + '%'"
-            role="progressbar" [attr.aria-valuenow]="group.coverage" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        }
+        @if (group.attempted <= 0 && group.goal) { 
+          <p class="font-12 m-t-0"><span class="font-14 bold">Goal</span>: {{ group.goal }}</p>
+          }
+          <!-- Coverage Progress -->
+          @if (group.attempted > 0) {
+          <div class="mb-2">
+            <span class="progress-label">Score</span>
+            <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{ group.score
+              }}%</span>
+          </div>
+          <div class="progress skill-progress m-b-20 w-100">
+            <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="group.score + '%'"
+              role="progressbar" [attr.aria-valuenow]="group.score" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <hr class="dim-divider">
+          <div class="mb-2">
+            <span class="progress-label">{{group.isCompleted ? 'Completed' : 'Coverage'}}</span>
+            <span class="float-end progress-percent label m-b-5" [ngClass]="'label-primary'">{{ group.coverage
+              }}%</span>
+          </div>
+          <div class="progress skill-progress m-b-20 w-100">
+            <div class="progress-bar" [ngClass]="'progress-bar-primary'" [style.width]="group.coverage + '%'"
+              role="progressbar" [attr.aria-valuenow]="group.coverage" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          }
       </mat-card-content>
       <mat-card-actions align="end">
         @if (group.numTrivia > 0) {
-        <button mat-button class="icon-button" (click)="onTopicQuiz(group)"><mat-icon>code</mat-icon> Take
+        <button mat-button class="icon-button" (click)="onTopicQuiz(group)"><mat-icon>card_membership</mat-icon> Take
           Quiz</button>
         }
         @if (group.numLessons > 0) {

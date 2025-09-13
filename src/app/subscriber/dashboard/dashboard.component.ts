@@ -111,7 +111,6 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.generateRandomLabels();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         // Animation trigger can be based on route change
@@ -173,6 +172,7 @@ export class DashboardComponent implements OnInit {
       this.currentSubject = this.master.subjects.find(subjectItem => subjectItem.slug === this.subject);
       console.log(this.pageTitle, "#1 @currentSubject", this.currentSubject);
       if (this.currentSubject && this.currentSubject.id) {
+        this.generateRandomLabels();
         //fetch this subject topics from topics master
         let subjectTopics = this.master.topics;
         subjectTopics = subjectTopics.filter(topic => topic.subjectId == this.currentSubject.id);
