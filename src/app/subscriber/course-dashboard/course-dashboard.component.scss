@@ -29,14 +29,14 @@
 }
 
 .courseLoader{
-  min-width: min(40%, 380px);
+  min-width: min(95%, 360px);
 }
 
 .image-group img {
   display: inline-block;
-  width: 48px;
+  width: 40px;
   margin: 4px;
-  animation: fadeScale 1.5s infinite;
+  //animation: fadeScale 1.5s infinite;
   //animation: bounce 2.1s infinite;
   //animation: fadeBounce 2s ease-in-out forwards;
 }

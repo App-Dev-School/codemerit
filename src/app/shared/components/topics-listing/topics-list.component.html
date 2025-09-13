@@ -15,11 +15,13 @@
         }
         }
         <p class="font-12 m-t-0">{{ group.description }}</p>
-        @if (group.attempted <= 0 && group.goal) { 
-          <p class="font-12 m-t-0"><span class="font-14 bold">Goal</span>: {{ group.goal }}</p>
+        <p>Repeation : {{ group.myAllAttempts - group.myUniqueAttempts }}</p>
+        <p>Avg. Accuracy : {{ group.avgAccuracy }}%</p>
+        @if (group.myAllAttempts <= 0 && group.goal) { <p class="font-12 m-t-0"><span class="font-14 bold">Goal</span>: {{
+          group.goal }}</p>
           }
           <!-- Coverage Progress -->
-          @if (group.attempted > 0) {
+          @if (group.myAllAttempts > 0) {
           <div class="mb-2">
             <span class="progress-label">Score</span>
             <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{ group.score
