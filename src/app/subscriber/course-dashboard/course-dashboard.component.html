@@ -78,14 +78,13 @@
               <button mat-stroked-button (click)="openCourseLauncher('default')" class="btn" rippleEffect>
                 <i class="material-icons">autorenew</i> &nbsp;Select Designation</button>
               }
-              <small (click)="openCourseLauncher('default')">Launch as a dialog</small>
               <hr>
               @if (!((userData| async)?.designation)) {
               <button mat-flat-button (click)="goToCourses()" color="primary">
-                <i class="material-icons">autorenew</i> &nbsp;Explore Other Tech Roles</button>
+                <i class="material-icons">autorenew</i> &nbsp;Explore Other Roles</button>
               }@else{
               <button mat-flat-button (click)="goToCourses()" color="primary">
-                <i class="material-icons">autorenew</i> Switch Role</button>
+                <i class="material-icons">autorenew</i> Select Designation</button>
               }
             </div>
           </div>

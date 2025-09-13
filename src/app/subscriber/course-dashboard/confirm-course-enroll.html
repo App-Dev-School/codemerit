@@ -1,0 +1,62 @@
+<div class="card-block">
+  @if (loading) {
+  <div class="overlay"></div>
+  <div class="animToast courseLoader loading">
+    <h5>{{loadingTxt}}</h5>
+    <h6 class="col-grey">Enrolling as {{courseItem.title}}</h6>
+  </div>
+  }@else {
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+      <div class="text-center">
+        <img src="assets/images/users/user.jpg" class="loadingIcon" />
+        <h5>{{courseItem.title}}</h5>
+        <!-- <h6>{{courseItem | json}} </h6> -->
+        <p class="font-12">Enroll into {{courseItem.title}} to start your systematic skill assessment journey.</p>
+        <hr class="dim-divider">
+        <!-- Stacked subject image loading effect -->
+        @if (courseItem && courseItem?.subjects) {
+        <div class="subject-image-group">
+          @for (item of courseItem?.subjects; track item) {
+          <img [src]="item.image ?? 'assets/images/tech/placeholder.png'" class="floating" [alt]="item.title">
+          }
+        </div>
+        }
+        <hr class="dim-divider">
+      </div>
+    </div>
+  </div>
+  }
+
+  <div class="text-center">
+    <a (click)="dismiss($event)" class="b-b-primary text-primary font-12">Remind me later</a>
+  </div>
+  <div class="text-center">
+    <!-- <a mat-button color="primary" (click)="doSetUserDesignation()">
+      <i class="material-icons psr-2">cancel</i>Cancel Now</a> -->
+
+      <button (click)="dismiss($event)" mat-flat-button color="danger" [class.auth-spinner]="loading"
+      class="auth-form-btn"><i class="material-icons psr-2">cancel</i> Confirm Enrollment</button>
+
+    <button (click)="doSetUserDesignation()" mat-flat-button color="danger" [class.auth-spinner]="loading"
+      class="auth-form-btn"><i class="material-icons psr-2">check</i> Confirm Enrollment</button>
+  </div>
+</div>
+
+<!-- <div class="card-block">
+<div class="row m-b-20">
+      <div class="col-auto p-r-0">
+        <img [src]="'/assets/images/users/user1.jpg'" alt="Course Subscription" class="latest-posts-img">
+      </div>
+      <div class="col">
+        <p class="font-16 font-b-500">Set Designation</p>
+        <p class="text-muted">Are you sure you want to switch your role?</p>
+      </div>
+    </div>
+  <div class="text-center">
+    <a href="#!" class="b-b-primary text-primary">Confirm Enrollment</a>
+  </div>
+  <div class="text-center">
+    <a href="#!" class="b-b-primary text-primary">Confirm Enrollment</a>
+  </div>
+</div> -->
