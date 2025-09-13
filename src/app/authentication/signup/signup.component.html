@@ -104,13 +104,13 @@
               </div>
             </div>
 
-            <div class="flex-sb-m w-full  p-b-20">
+            <!-- <div class="flex-sb-m w-full  p-b-20">
               <div>
                 <span>Already Registered? <a routerLink="/authentication/signin">
                     Login
                   </a></span>
               </div>
-            </div>
+            </div> -->
             <div class="container-auth-form-btn">
               <button mat-flat-button color="accent" class="auth-form-btn" [disabled]="!authForm.valid || submitted" type="submit">
                 Register
@@ -119,8 +119,11 @@
           </form>
           <h6 class="social-login-title">OR</h6>
           <div style="text-align:center">
-                <button (click)="navigateToLogin()" mat-flat-button color="danger" 
-                   class="auth-form-btn"><i class="fab fa-google"></i> Already Registered? Login</button>
+                <!-- <button (click)="navigateToLogin()" mat-flat-button color="danger" 
+                   class="auth-form-btn"><i class="fab fa-google"></i> Already Registered? Login</button> -->
+                   <h6 class="welcome-msg"> Already Registered? <a routerLink="/authentication/signin">
+                    Login
+                  </a></h6>
               </div>
         </div>
         }@else{

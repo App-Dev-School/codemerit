@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { FeatherIconsComponent } from '../feather-icons/feather-icons.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-congratulations-card',
@@ -16,13 +17,13 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class CongratulationsCardComponent {
   @Input() userName: string = "User";
-  @Input() message: string = "You are successfully registered with CodeMerit. Start the Onboarding Steps to get started.";
-  @Input() action: string = "Start Skill Rating";
-  constructor() {
+  @Input() message: string = "You are successfully registered with CodeMerit. Select your Designation to get started.";
+  @Input() action: string = "Pick Job Designation";
+  constructor(private router: Router) {
    
   }
 
   handleAction(){
-  //handle actions like Start Self Rating, Start a Quiz
+  this.router.navigate(['/dashboard/select-job-role']);
   }
 }

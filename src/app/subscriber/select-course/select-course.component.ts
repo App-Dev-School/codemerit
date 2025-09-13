@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -7,6 +8,7 @@ import { AuthService } from '@core';
 import { MasterService } from '@core/service/master.service';
 import { slideInOutAnimation, topToBottomAnimation } from '@shared/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
+import { SetDesignationBottomSheetComponent } from '../course-dashboard/confirm-course-enroll.component';
 
 @Component({
   selector: 'app-select-course',
@@ -27,7 +29,9 @@ export class SelectCourseComponent implements OnInit {
   loading = false;
   loadingTxt = "";
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(private router: Router, 
+    private _bottomSheet: MatBottomSheet,
+    private authService: AuthService) {
     // constructor code
   }
 
@@ -53,8 +57,18 @@ export class SelectCourseComponent implements OnInit {
   }
 
   onSubscribe(subject: any) {
+    //take a confirmation
+    //
+    this._bottomSheet.open(SetDesignationBottomSheetComponent, {
+          data: subject
+        });
+    //this.doSetUserDesignation(subject);
+  }
+
+  //delete me here.
+  doSetUserDesignation(subject: any) {
     this.loading = true;
-    console.log("CoursePickTest @onSubscribe", subject);
+    console.log("SelectCourse @onSubscribe", subject);
     if (this.authService.currentUserValue) {
       const authData = this.authService.currentUserValue;
       const postData = {

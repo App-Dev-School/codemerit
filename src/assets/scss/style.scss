@@ -239,12 +239,21 @@ no-data-container.no-data-container {
 
 .animEntry {
   display: inline-block;
-  animation: bigEntrance 4s;
+  animation: bigEntrance 7s;
 }
 pre {
   white-space: pre-wrap;   /* Wrap text when needed */
   word-wrap: break-word;   /* Break long words if necessary */
   overflow-x: auto;        /* Horizontal scrollbar only if really needed */
+}
+
+.subject-image-group img {
+  display: inline-block;
+  width: 40px;
+  margin: 4px;
+  //animation: fadeScale 1.5s infinite;
+  //animation: bounce 2.1s infinite;
+  //animation: fadeBounce 2s ease-in-out forwards;
 }
 
 code {

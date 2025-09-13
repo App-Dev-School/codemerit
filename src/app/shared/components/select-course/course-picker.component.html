@@ -75,13 +75,12 @@
         }
         @if(minimal){
         <mat-card-footer>
-          <!-- <div class="text-center">
-            <button type="button" (click)="pickJobRole(job)" class="btn btn-outline-default" rippleEffect>Select
-              Role</button>
-          </div> -->
-           <div class="text-center p-b-10">
+          <div class="text-center">
+            <button mat-flat-button color="primary" (click)="switchJobRole(job)" rippleEffect>Explore</button>
+          </div>
+          <div class="text-center p-b-10">
                 <button mat-stroked-button color="primary" (click)="pickJobRole(job)">Select & Continue</button>
-              </div>
+          </div>
         </mat-card-footer>
         }
       </mat-card-content>

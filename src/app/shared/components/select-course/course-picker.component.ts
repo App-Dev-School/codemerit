@@ -4,15 +4,10 @@ import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatLineModule, MatRippleModule } from '@angular/material/core';
+import { MatRippleModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import {
-  MatBottomSheet,
-  MatBottomSheetModule,
-  MatBottomSheetRef,
-} from '@angular/material/bottom-sheet';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MasterService } from '@core/service/master.service';
 import { Observable, of } from 'rxjs';
@@ -27,8 +22,7 @@ import { Observable, of } from 'rxjs';
     MatButtonModule,
     MatChipsModule,
     MatRippleModule,
-    MatIconModule,
-    MatBottomSheetModule
+    MatIconModule
   ],
   templateUrl: './course-picker.component.html',
   styleUrls: ['./course-picker.component.scss']
@@ -45,7 +39,7 @@ export class CoursePickerComponent implements OnInit {
 
   constructor(private master: MasterService, private router: Router,
     private route: ActivatedRoute,
-    private _bottomSheet: MatBottomSheet,
+    //private _bottomSheet: MatBottomSheet,
     @Optional() public dialogRef?: MatDialogRef<CoursePickerComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: any) {
     if (this.dialogRef) {
@@ -87,16 +81,19 @@ export class CoursePickerComponent implements OnInit {
   }
 
   pickJobRole(course: any) {
-    this.onSubscribe.emit(course);
-    console.log("", course);
-    if (this.mode === 'dialog' && this.dialogRef) {
+    console.log("pickJobRole", course);
+     if (this.mode === 'dialog' && this.dialogRef) {
       this.dialogRef.close(course.slug);
-      console.log("CoursePickTest #1");
-      //alert("Set Designation as "+course.title);
-      this._bottomSheet.open(SetDesignationBottomSheetComponent);
-    }else{
-      this.router.navigate(['/dashboard/start', course.slug]);
-    }
+     }
+    this.onSubscribe.emit(course);
+     //refresh the component
+    //   this.dialogRef.close(course.slug);
+    //   console.log("CoursePickTest #1");
+    //   //alert("Set Designation as "+course.title);
+    //   this._bottomSheet.open(SetDesignationBottomSheetComponent);
+    // }else{
+    //   this.router.navigate(['/dashboard/start', course.slug]);
+    // }
   }
 
   close() {
@@ -105,20 +102,5 @@ export class CoursePickerComponent implements OnInit {
     } else {
       this.router.navigate(['/dashboard/start']);
     }
-  }
-}
-@Component({
-    selector: 'app-enroll-course-bottom-sheet',
-    templateUrl: 'confirm-course-enroll.html',
-    imports: [MatLineModule]
-})
-export class SetDesignationBottomSheetComponent {
-  constructor(
-    private _bottomSheetRef: MatBottomSheetRef<SetDesignationBottomSheetComponent>
-  ) { }
-
-  openLink(event: MouseEvent): void {
-    this._bottomSheetRef.dismiss();
-    event.preventDefault();
   }
 }

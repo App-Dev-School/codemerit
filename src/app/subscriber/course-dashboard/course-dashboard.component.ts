@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -24,6 +24,9 @@ import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { QuizService } from 'src/app/quiz/quiz.service';
 import { Course } from '@core/models/subject-role';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetModule, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MatLineModule } from '@angular/material/core';
+import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -41,7 +44,8 @@ import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-
     MedalCardComponent,
     SubjectTrackerCardComponent,
     CoursePickerComponent,
-    CourseProgressComponent
+    CourseProgressComponent,
+    //MatBottomSheetModule
   ]
 })
 export class CourseDashboardComponent implements OnInit {
@@ -67,6 +71,7 @@ export class CourseDashboardComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog,
+    private _bottomSheet: MatBottomSheet,
     public authService: AuthService,
     private quizService: QuizService,
     private snackService: SnackbarService
@@ -146,31 +151,32 @@ export class CourseDashboardComponent implements OnInit {
 
       //we need list of all subjects in a course along with course details
       this.master.fetchCourseDashboard().subscribe((data: any) => {
-          console.log(this.pageTitle, "@courseData #####", data);
-          // if (data && !data.error && data.data) {
-          //   const allJobRoles = data.data;
-          //   //Nothing to filter its one course
-          //   this.courseData = data.data;
-          //   //this.filterCourse(allJobRoles);
-          // }
           if (data) {
             this.courseData = data;
             setTimeout(() => {
             this.loading = false;
-          }, 5000);
-            //this.filterCourse(allJobRoles);
+          }, 3000);
           }
- 
         }, (err:any)=>{
             this.loading = false;
-            this.snackService.display('snackbar-dark','Error loading Course Dashboard! '+err, 'bottom', 'center');
+            this.snackService.display('snackbar-dark','Error loading Course Dashboard.', 'bottom', 'center');
         });
     }
   }
 
-  onSubscribe(subject: string) {
+  onSubscribeAAA(subject: string) {
     console.log("CourseDash onSubscribe", subject);
+    
     this.snackService.display('snackbar-dark', subject + ' added to learning list!', 'bottom', 'center');
+  }
+
+  onSubscribe(course: any) {
+    alert("REMOVE ME");
+    //this.onSubscribe.emit(course);
+    console.log("onSubscribe Course", course);
+    this._bottomSheet.open(SetDesignationBottomSheetComponent, {
+      data: this.courseItem
+    });
   }
 
   viewMeritList() {
