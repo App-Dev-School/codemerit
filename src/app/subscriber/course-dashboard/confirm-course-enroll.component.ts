@@ -47,11 +47,17 @@ export class SetDesignationBottomSheetComponent {
         setDesignation.subscribe((res) => {
           if (res) {
             if (!res.error && res.data) {
+              const updatedUser = {
+                ...this.authService.currentUserValue,            // spread old fields
+                designation: res.data?.designation
+              };
+              this.authService.setLocalData(updatedUser);
+
               setTimeout(() => {
                 this.loading = false;
                 this._bottomSheetRef.dismiss(null);
                 this.router.navigate(['/dashboard/start', this.courseItem?.slug]).then(() => {
-                  this.snackService.display('snackbar-dark', 'Welcome as a '+this.courseItem?.title, 'bottom', 'center');
+                  this.snackService.display('snackbar-dark', 'Welcome as a ' + this.courseItem?.title, 'bottom', 'center');
                 });
               }, 3000);
               //Route to new course dashboard

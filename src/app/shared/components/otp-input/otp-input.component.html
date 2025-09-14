@@ -1,0 +1,42 @@
+<!-- container -->
+<div class="otp-root" (click)="focusInput()">
+  <!-- floating label (material-like) -->
+  <label class="otp-label" [class.shrink]="isFocused || value.length > 0">Enter OTP</label>
+
+  <!-- outline box (Material-like) -->
+  <div class="otp-outline" [class.focused]="isFocused">
+    <!-- actual input (invisible but fully overlaying the outline) -->
+    <input
+      #nativeInput
+      class="otp-native-input"
+      type="text"
+      inputmode="numeric"
+      maxlength="6"
+      [disabled]="disabled"
+      [value]="value"
+      (input)="onNativeInput($event)"
+      (keydown)="onNativeKeyDown($event)"
+      (focus)="onNativeFocus()"
+      (blur)="onNativeBlur()"
+      autocomplete="one-time-code"
+      aria-label="OTP"
+    />
+
+    <!-- visual boxes (pointer-events: none so the input receives clicks directly) -->
+    <div class="otp-boxes" aria-hidden="true">
+      <div
+        class="otp-box"
+        *ngFor="let d of digits; let i = index"
+        [class.filled]="value[i]"
+        [class.active]="slotIsActive(i)"
+      >
+        {{ value[i] || '' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- small inline error hint (optional) -->
+  <div class="otp-hint" *ngIf="value.length > 0 && value.length < 6 && !isFocused">
+    OTP incomplete
+  </div>
+</div>

@@ -18,7 +18,7 @@ import { CongratulationsCardComponent } from '@shared/components/congratulations
 import { CourseProgressComponent } from '@shared/components/course-progress/course-progress.component';
 import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Subject } from '@core/models/subject';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { QuizService } from 'src/app/quiz/quiz.service';
@@ -82,6 +82,12 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.authService.currentUser.subscribe((localUser: User) => {
+      if(localUser && localUser.email && localUser.token){
+        this.userData = of(localUser);
+        this.snackService.display('snackbar-dark','Course Dashboard user changed.', 'bottom', 'center');
+      }
+    });
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.showContent = false; // Hide content when navigation starts
