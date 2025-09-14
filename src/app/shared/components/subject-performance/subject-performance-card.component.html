@@ -5,7 +5,7 @@
   </mat-card-header> -->
   <mat-card-header class="header-style">
     @if (subject?.image) {
-    <img mat-card-avatar [src]="subject?.image" class="m-b-10">
+    <img mat-card-avatar [src]="subject?.image" class="m-b-10 subjectImg">
     }
     <mat-card-title>{{subject.title}} Performance</mat-card-title>
     <!-- <a mat-button color="primary">
@@ -30,7 +30,7 @@
           <li>
             <div class="mb-2">
               <span class="progress-label">Score</span>
-              <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success text-white'">{{
+              <span class="float-end progress-percent label m-b-5 text-white" [style.backgroundColor]="subject.color">{{
                 subject.score
                 }}%</span>
             </div>
@@ -68,7 +68,8 @@
       }@else {
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
         <div class="text-center">
-          <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" />
+          <!-- <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" /> -->
+          <img src="{{subject.image}}" class="subjectImg" alt="{{subject.title}}" />
           <h5>{{subject.title}}</h5>
           <mat-card-title>Learn {{subject.description}}</mat-card-title>
           <p>Enroll into {{subject.title}} to start levelling up your skills.</p>
@@ -76,20 +77,22 @@
       </div>
       }
     </div>
+    <div class="row text-center">
+      <div class="col-12">
+        <hr class="dim-divider">
+        <p class="m-b-0 font-12 text-center"><i class="material-icons col-green psr-2">trending_up</i>
+      You are levelling up your {{subject.title}} skills progressively.
+    </p>
+      </div>
+    </div>
   </mat-card-content>
   <mat-card-footer class="text-center m-t-0">
     @if (subject?.isSubscribed) {
-    <!-- <p class="text-center m-b-0 font-12 d-flex justifyCenter flex-center"><i class="material-icons col-green psr-2">trending_up</i>
-        Take more {{subject}} quizzes to improve your score.
-      </p> -->
     <!-- <hr class="dim-divider"> -->
     <p class="d-flex justify-content-center align-items-center m-b-20 m-t-0 font-12 text-center">
-      <i class="material-icons col-green me-2">trending_up</i>
+      <i class="material-icons col-green me-2">lightbulb_outline</i>
       Take more {{subject.title}} quizzes to improve your score.
     </p>
-    <!-- <div class="text-center p-t-20 p-b-20">
-        <button mat-stroked-button color="primary" class="image-pulse" (click)="onExploreSubject(subject)">Just Explore</button>
-      </div> -->
     }@else{
     <p class="m-b-0 font-12 d-flex flex-center justifyCenter"><i class="material-icons col-green psr-2">trending_up</i>
       Level up your {{subject.title}} skills.

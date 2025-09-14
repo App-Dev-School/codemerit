@@ -1,18 +1,23 @@
 import { NgClass, NgStyle } from '@angular/common';
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { TopicItemBasic } from '@core/models/dtos/TopicDtos';
+import { Subscription } from 'rxjs';
 import { QuestionService } from 'src/app/admin/questions/manage/questions.service';
+import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
 import Swiper from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { SwiperOptions } from 'swiper/types';
 @Component({
   selector: 'app-goal-path',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [MatProgressBarModule,
+  imports: [
+    MatProgressBarModule,
     MatCardModule,
+    MatButtonModule,
     NgClass, NgStyle],
   templateUrl: './goal-path.component.html',
   styleUrl: './goal-path.component.scss'
@@ -20,13 +25,13 @@ import { SwiperOptions } from 'swiper/types';
 export class GoalPathComponent implements AfterViewInit {
   @ViewChild("swiperEx") swiperComponent ?: ElementRef<{ swiper: Swiper }>
   @Input() title: string = 'Progress Tracker';
-  @Input() topics!: Observable<any[]>;
+  @Input() topics: any[] = [];
   @Input() color: string = '#000000';
-  topicsList: any[] = [];
+  @Output() nextGoal = new EventEmitter<TopicItem>();
 
   private subscription!: Subscription;
   currentSlideIndex = this.getFirstIncompleteIndex();
-
+  currentTopic : TopicItem;
   navigation = {
         nextEl: '.swiper-button-next-custom',
         prevEl: '.swiper-button-prev-custom',
@@ -45,7 +50,7 @@ export class GoalPathComponent implements AfterViewInit {
   navigation: true,
   freeMode: true,
   watchSlidesProgress: true,
-  slidesPerView: 3,
+  slidesPerView: 1,
   breakpoints: {
     0: {
       slidesPerView: 1.1,
@@ -96,21 +101,27 @@ export class GoalPathComponent implements AfterViewInit {
 
   getFirstIncompleteIndex(): number {
     //return this.topics.findIndex(topic => topic.progress < 100) || 0;
-    const index = this.topicsList.findIndex(topic => topic.progress < 100);
+    //AAAAA
+    const index = this.topics.findIndex(topic => topic.coverage < 100);
     return index !== -1 ? index : 0;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['topics'] && this.topics) {
-      // Unsubscribe if there's a previous subscription
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if (changes['topics'] && this.topics) {
+  //     // Unsubscribe if there's a previous subscription
+  //     if (this.subscription) {
+  //       this.subscription.unsubscribe();
+  //     }
+  //   }
+  // }
 
-      this.subscription = this.topics.subscribe(data => {
-        this.topicsList = data;
+  ngAfterViewInit() {
+    // setTimeout(() => {
+    //   this.swiperComponent?.nativeElement.swiper.slideTo(this.currentSlideIndex, 500);
+    // }, 5000);
+        //this.topics = this.topics.filter(topic => topic.id > 0);
         this.currentSlideIndex = this.getFirstIncompleteIndex();
-        console.log("GoalPath ngOnChange ", this.currentSlideIndex, data);
+        console.log("GoalPath ngAfterViewInit ", this.currentSlideIndex, this.topics);
 
         // Move to correct slide after data is received
         setTimeout(() => {
@@ -118,18 +129,10 @@ export class GoalPathComponent implements AfterViewInit {
             this.swiperComponent.nativeElement.swiper.slideTo(this.currentSlideIndex, 500);
           }
         }, 0);
-      });
-    }
-  }
-
-  ngAfterViewInit() {
-    // setTimeout(() => {
-    //   this.swiperComponent?.nativeElement.swiper.slideTo(this.currentSlideIndex, 500);
-    // }, 5000);
   }
 
   onSlideNext(): void {
-    if (this.currentSlideIndex < this.topicsList.length - 1) {
+    if (this.currentSlideIndex < this.topics.length - 1) {
       this.swiperComponent.nativeElement.swiper.slideNext();
       this.updateCurrentIndex();
     } else {
@@ -146,6 +149,15 @@ export class GoalPathComponent implements AfterViewInit {
 
   private updateCurrentIndex(): void {
     this.currentSlideIndex = this.swiperComponent.nativeElement.swiper.activeIndex;
+  }
+
+  onTakeNextQuiz(topic: TopicItem){
+    //this.onSlideNext();
+    if(topic){
+      this.nextGoal.next(topic);
+    }else{
+      this.nextGoal.next(null);
+    }
   }
 
   ngOnDestroy(): void {

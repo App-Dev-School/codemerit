@@ -21,6 +21,13 @@ export class TopicItem implements TopicItemBasic {
   numQuizzes?: number;
   isPublished: boolean;
 
+  //more detailed fields
+  isStarted ?:boolean;
+  isCompleted ?:boolean;
+  score?: number;
+  accuracy?: number;
+  coverage?: number;
+
   constructor(topic: Partial<TopicItem> = {}) {
     this.id = topic.id || Number.parseInt(this.getRandomID());
     this.image = topic.image || 'assets/images/icons/ic_correct.png';

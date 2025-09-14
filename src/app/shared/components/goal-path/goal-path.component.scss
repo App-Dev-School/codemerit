@@ -1,8 +1,3 @@
-.goalPath {
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
-
 .swiper-container {
   position: relative;
   /* Essential for positioning child elements */
@@ -61,21 +56,8 @@
 }
 
 .goalCard {
-  //width: auto;
-  width: min-content;
-  min-width: 160px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 0px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  will-change: transform;
-  margin-bottom: 50px;
-}
-
-.goalCard:hover {
-  transform: scale(1.02);
-  box-shadow: 0 12px 21px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
+  min-width: 200px;
+  padding: 1rem;
 }
 
 /* course goal tracker pagination nav */

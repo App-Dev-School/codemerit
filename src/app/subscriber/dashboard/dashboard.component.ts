@@ -213,11 +213,11 @@ export class DashboardComponent implements OnInit {
     this.snackService.display('snackbar-dark', 'Top Performers appear in the Merit List.', 'bottom', 'center');
   }
 
-  exploreSubject(subject:any){
-alert("exploreSubject full");
+  exploreSubject(subject: any) {
+    alert("exploreSubject full");
   }
 
-  async enrollSubject(subject:any) {
+  async enrollSubject(subject: any) {
     this.loadingText = "Adding " + this.currentSubject.title + " to your learning profile.";
     this.loading = true;
     this.master
@@ -228,8 +228,15 @@ alert("exploreSubject full");
           //this.submitted = false;
           if (response && !response.error) {
             const enrollResult = response?.data;
+            console.log(this.pageTitle, "Subject Enrolled Response", enrollResult);
+            //this.subjectData.isSubscribed = true;
             if (enrollResult && enrollResult !== '') {
               setTimeout(() => {
+                this.subjectData = {
+                  ...this.subjectData,
+                  isSubscribed: true
+                };
+                //this.cdRef.markForCheck();
                 this.snackService.display('snackbar-success', 'Congrats for the beginning. Start Deep Diving ' + this.currentSubject.title + '!', 'bottom', 'center');
                 this.loading = false;
               }, 2000);
@@ -340,7 +347,11 @@ alert("exploreSubject full");
     this.router.navigate(["learn/topic/angular17"]);
   }
 
-  onTopicQuiz(topic: any) {
-    this.launchQuiz(0, topic.id);
+  onTopicQuiz(topic: TopicItem) {
+    if(topic && topic.id){
+      this.launchQuiz(null, topic.id);
+    }else{
+      this.launchQuiz(this.currentSubject.id, null);
+    }
   }
 }

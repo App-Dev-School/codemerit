@@ -14,6 +14,7 @@ import { AuthConstants } from '@config/AuthConstants';
 import { User } from '@core';
 import { Country } from '@core/models/country.data';
 import { InitialRole } from '@core/models/initial-role.data';
+import { Status } from '@core/models/status.enum';
 import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -62,10 +63,23 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.authData = this.authService.currentUserValue;
+          this.authService.currentUser.subscribe((res) => {
+        if (res) {
+          console.log("SignUp OnCurrentUseChange", res);
+          console.log("OnCurrentUseChange old ::authData::", this.authData);
+          //this.router.navigate(['/authentication/signin']);
+          if (res && res.token && res.accountStatus === Status.Active) {
+          //this.authService.redirectToDashboard();  
+          this.snackbar.display("snackbar-danger", "Taking to your Dashboard.", "bottom", "center");
+          }
+        }
+      });
+
     if (this.authData.token && this.authData.firstName && this.authData.id) {
       this.authService.logout("Sign Up").subscribe((res) => {
         if (res) {
-          this.router.navigate(['/authentication/signin']);
+          console.log("Logged out :: authData", this.authData);
+          //this.router.navigate(['/authentication/signin']);
           this.snackbar.display("snackbar-danger", "Logged you out! Please login again.", "bottom", "center");
         }
       });

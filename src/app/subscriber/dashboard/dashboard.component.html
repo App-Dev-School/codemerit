@@ -30,11 +30,6 @@
       </mat-tab>
     </mat-tab-group>
 
-    <!-- <div class="row clearfix">
-      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-      </div>
-    </div> -->
-
     <ng-template #subjectDashboard>
       <div class="row m-t-10">
         <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
@@ -44,17 +39,27 @@
         </div>
 
         <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
+           @if(subjectData && subjectData?.syllabus?.length > 0){
+          <!-- <p>{{ subjectData?.syllabus | json}}</p> -->
+          <app-goal-path [title]="currentSubject.title+' Progress Tracker'" [color]="currentSubject.color"
+            [topics]="subjectData?.syllabus" (nextGoal)="onTopicQuiz($event)"></app-goal-path>
+           }
+        </div>
+      </div>
+
+      <div class="row m-t-20">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
           <mat-card>
-            <!-- <mat-card-header class="header-style">
+            <mat-card-header class="header-style">
               <img mat-card-avatar src="'assets/images/icons/badges/genius.png'">
                @if (currentSubject?.image) {
                 <img mat-card-avatar [src]="currentSubject?.image" class="m-b-10">
                }
-              <mat-card-title>Example Card Header with left icon and right icon</mat-card-title>
+              <!-- <mat-card-title>Example Card Header with left icon and right icon</mat-card-title>
               <a mat-button color="primary" (click)="viewMeritList()">
                 <i class="material-icons psr-2">trending_up</i>
-              </a>
-            </mat-card-header> -->
+              </a> -->
+            </mat-card-header>
             <mat-card-content class="text-center">
               <!-- <img [src]="currentSubject?.image" class="text-center loadingIcon m-b-20"> -->
               <mat-card-title class="cmSubHeading">Master {{currentSubject?.title}}</mat-card-title>
@@ -87,18 +92,6 @@
             </mat-card-footer>
           </mat-card>
         </div>
-      </div>
-
-      @if(subjectData && subjectData?.syllabus?.length > 0){
-      <div class="row m-t-20 m-b-20 clearfix">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-          <app-goal-path [title]="currentSubject.title+' Progress Tracker'" [color]="currentSubject.color"
-            [topics]="subjectData?.syllabus"></app-goal-path>
-        </div>
-      </div>
-      }
-
-      <div class="row m-t-20">
         @if(subjectData?.popularTopics){
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
           <mat-card>
