@@ -64,9 +64,9 @@ export class SignupComponent implements OnInit, OnDestroy {
     this.authData = this.authService.currentUserValue;
     if (this.authData.token && this.authData.firstName && this.authData.id) {
       this.authService.logout("Sign Up").subscribe((res) => {
-        this.snackbar.display("snackbar-danger", "Logging you out! Please login again.", "bottom", "center");
-        if (!res.success) {
+        if (res) {
           this.router.navigate(['/authentication/signin']);
+          this.snackbar.display("snackbar-danger", "Logged you out! Please login again.", "bottom", "center");
         }
       });
     }

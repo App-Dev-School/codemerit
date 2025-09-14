@@ -15,11 +15,14 @@
         }
         }
         <p class="font-12 m-t-0">{{ group.description }}</p>
+        @if (group.myAllAttempts > 0) {
         <p class="font-12 m-t-0">
-          <span class="text-start">Uniqueness : {{ (group.myUniqueAttempts / group.myAllAttempts)*100 | number:'1.1-1' }}</span></p>
-        <span class="text-end">Accuracy : {{ group.avgAccuracy }}%</span>
-        @if (group.myAllAttempts <= 0 && group.goal) { <p class="font-12 m-t-0"><span class="font-14 bold">Goal</span>: {{
-          group.goal }}</p>
+          <span class="text-start">Uniqueness : {{ (group.myUniqueAttempts / group.myAllAttempts)*100 | number:'1.1-1'
+            }}</span>
+        </p>
+        }
+        @if (group.myAllAttempts <= 0 && group.goal) { <p class="font-12 m-t-0"><span class="font-14 bold">Goal</span>:
+          {{ group.goal }}</p>
           }
           <!-- Coverage Progress -->
           @if (group.myAllAttempts > 0) {
@@ -32,7 +35,18 @@
             <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="group.score + '%'"
               role="progressbar" [attr.aria-valuenow]="group.score" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
-          <hr class="dim-divider">
+
+          <div class="mb-2">
+            <span class="progress-label">Accuracy</span>
+            <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{ group.avgAccuracy
+              }}%</span>
+          </div>
+          <div class="progress skill-progress m-b-20 w-100">
+            <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="group.avgAccuracy + '%'"
+              role="progressbar" [attr.aria-valuenow]="group.avgAccuracy" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+
+          <!-- <hr class="dim-divider"> -->
           <div class="mb-2">
             <span class="progress-label">{{group.isCompleted ? 'Completed' : 'Coverage'}}</span>
             <span class="float-end progress-percent label m-b-5" [ngClass]="'label-primary'">{{ group.coverage
