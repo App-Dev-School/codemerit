@@ -130,6 +130,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (currentQuestion?.hint) {
       this.currentHint = currentQuestion?.hint;
       currentQuestion.hintUsed = true;
+      //remove this and implement in interactive mode
+      if (currentQuestion?.answer) {
+      this.currentHint = 'ANSWER : '+currentQuestion?.answer;
+      currentQuestion.hintUsed = true;
+    }
     } else {
       this.currentHint = 'Hint not available';
     }

@@ -18,11 +18,8 @@ import { SwiperOptions } from 'swiper/types';
   styleUrl: './goal-path.component.scss'
 })
 export class GoalPathComponent implements AfterViewInit {
-  //swiper?: Swiper;
   @ViewChild("swiperEx") swiperComponent ?: ElementRef<{ swiper: Swiper }>
- 
   @Input() title: string = 'Progress Tracker';
-  //Ask:@Input() topics : Observable<any>;
   @Input() topics!: Observable<any[]>;
   @Input() color: string = '#000000';
   topicsList: any[] = [];

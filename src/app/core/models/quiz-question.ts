@@ -8,6 +8,7 @@ export interface QuizQuestion {
   //remove below
   correctAnswer?: string;
   hint?: string;
+  answer?: string;
   //local
   hasAnswered?: boolean;
   selectedOption?: number;

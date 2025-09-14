@@ -18,29 +18,32 @@
     </div>
     <hr class="dim-divider"> -->
     <div class="row align-items-center">
-  <!-- Left Column -->
-  <div class="col-12 col-sm-6 text-center text-sm-start mb-2 mb-sm-0">
-    <div class="d-flex align-items-center justify-content-center justify-content-sm-start">
-      <img 
-        [src]="item?.image || 'assets/images/tech/placeholder.png'" 
-        alt="Subject Icon"
-        class="subject-icon me-2" 
-      />
-      <span class="font-20">{{ item?.title }}</span>
-    </div>
-  </div>
+      <!-- Left Column -->
+      <div class="col-12 col-sm-6 text-center text-sm-start mb-2 mb-sm-0">
+        <div class="d-flex align-items-center justify-content-center justify-content-sm-start">
+          <img [src]="item?.image || 'assets/images/tech/placeholder.png'" alt="Subject Icon"
+            class="subject-icon me-2" />
+          <span class="font-20">{{ item?.title }}</span>
+        </div>
+      </div>
 
-  <!-- Right Column -->
-  <div class="col-12 col-sm-6 text-center text-sm-end">
-    <div class="d-flex flex-column align-items-center align-items-sm-end">
-      <app-course-progress [score]="item.score"></app-course-progress>
-      <small class="miniTxt">Score</small>
+      <!-- Right Column -->
+      <div class="col-12 col-sm-6 text-center text-sm-end">
+        <div class="d-flex flex-column align-items-center align-items-sm-end">
+          <app-course-progress [score]="item.score"></app-course-progress>
+          <small class="miniTxt">Score</small>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<p class="font-12">Accuracy: {{item.coverage}}%</p>
-    <hr class="dim-divider">
+    @if (item.myAllAttempts > 0) {
+    <p class="font-12">Obtained {{item.score}}% score with an accuracy of {{item.accuracy}}%. {{100 - item.coverage}}%
+      more to complete.</p>
+    }@else{
+    <p class="font-12">{{item.description}}</p>
+    }
+
+    <!-- <hr class="dim-divider"> -->
     <mat-card-footer>
       <ul class="list-unstyled m-b-10 m-t-10">
         <li>
@@ -57,21 +60,14 @@
       </ul>
       <hr class="dim-divider">
       <div class="d-flex flex-column flex-sm-row justify-content-center text-center">
-  <button 
-    (click)="onViewPath()" 
-    mat-stroked-button 
-    color="primary" 
-    class="mb-2 mb-sm-0 me-sm-2">
-    Explore 
-  </button>
+        <button (click)="onViewPath()" mat-stroked-button color="primary" class="mb-2 mb-sm-0 me-sm-2">
+          Explore
+        </button>
 
-  <button 
-    (click)="onTakeQuiz()" 
-    mat-flat-button 
-    color="accent">
-    Take Quiz
-  </button>
-</div>
+        <button (click)="onTakeQuiz()" mat-flat-button color="accent">
+          Take Quiz
+        </button>
+      </div>
 
     </mat-card-footer>
   </mat-card-content>

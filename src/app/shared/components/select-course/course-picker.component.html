@@ -74,14 +74,25 @@
         </ul>
         }
         @if(minimal){
-        <mat-card-footer>
-          <div class="text-center">
-            <button mat-flat-button color="primary" (click)="switchJobRole(job)" rippleEffect>Explore</button>
-          </div>
-          <div class="text-center p-b-10">
-                <button mat-stroked-button color="primary" (click)="pickJobRole(job)">Select & Continue</button>
-          </div>
-        </mat-card-footer>
+<mat-card-footer>
+  <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 w-100">
+    <button mat-flat-button 
+            color="primary" 
+            (click)="switchJobRole(job)" 
+            rippleEffect
+            class="w-100 w-md-auto">
+      View
+    </button>
+    <button mat-stroked-button 
+            color="primary" 
+            (click)="pickJobRole(job)" 
+            class="w-100 w-md-auto">
+      Select
+    </button>
+  </div>
+</mat-card-footer>
+
+
         }
       </mat-card-content>
     </mat-card>

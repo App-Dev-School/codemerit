@@ -171,7 +171,6 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   onSubscribe(course: any) {
-    alert("REMOVE ME");
     //this.onSubscribe.emit(course);
     console.log("onSubscribe Course", course);
     this._bottomSheet.open(SetDesignationBottomSheetComponent, {

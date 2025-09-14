@@ -15,8 +15,9 @@
         }
         }
         <p class="font-12 m-t-0">{{ group.description }}</p>
-        <p>Repeation : {{ group.myAllAttempts - group.myUniqueAttempts }}</p>
-        <p>Avg. Accuracy : {{ group.avgAccuracy }}%</p>
+        <p class="font-12 m-t-0">
+          <span class="text-start">Uniqueness : {{ (group.myUniqueAttempts / group.myAllAttempts)*100 | number:'1.1-1' }}</span></p>
+        <span class="text-end">Accuracy : {{ group.avgAccuracy }}%</span>
         @if (group.myAllAttempts <= 0 && group.goal) { <p class="font-12 m-t-0"><span class="font-14 bold">Goal</span>: {{
           group.goal }}</p>
           }

@@ -8,19 +8,19 @@ import { AuthService } from "@core/service/auth.service";
 import { SnackbarService } from "@core/service/snackbar.service";
 
 @Component({
-    selector: 'app-enroll-course-bottom-sheet',
-    templateUrl: 'confirm-course-enroll.html',
-    imports: [
-        CommonModule,
-        MatLineModule,
-        MatButtonModule,
-        JsonPipe
-    ]
+  selector: 'app-enroll-course-bottom-sheet',
+  templateUrl: 'confirm-course-enroll.html',
+  imports: [
+    CommonModule,
+    MatLineModule,
+    MatButtonModule,
+    JsonPipe
+  ]
 })
 export class SetDesignationBottomSheetComponent {
   loading = false;
   loadingTxt = "";
-  courseItem:any;
+  courseItem: any;
   constructor(
     public authService: AuthService,
     private snackService: SnackbarService,
@@ -33,7 +33,7 @@ export class SetDesignationBottomSheetComponent {
   }
 
   //remove duplicate
-    doSetUserDesignation() {
+  doSetUserDesignation() {
     this.loading = true;
     console.log("SelectCourse @onSubscribe", this.courseItem);
     if (this.authService.currentUserValue) {
@@ -45,16 +45,22 @@ export class SetDesignationBottomSheetComponent {
         this.loadingTxt = "Enrollment In Progress";
         let setDesignation = this.authService.updateUserAccount(authData.token, authData.id, postData);
         setDesignation.subscribe((res) => {
-          this.loading = false;
-          this._bottomSheetRef.dismiss(null);
           if (res) {
             if (!res.error && res.data) {
-                this.snackService.display('snackbar-dark', res.message, 'bottom', 'center');
-               //Route to new course dashboard
+              setTimeout(() => {
+                this.loading = false;
+                this._bottomSheetRef.dismiss(null);
+                this.router.navigate(['/dashboard/start', this.courseItem?.slug]).then(() => {
+                  this.snackService.display('snackbar-dark', 'Welcome as a '+this.courseItem?.title, 'bottom', 'center');
+                });
+              }, 3000);
+              //Route to new course dashboard
               this.router.navigate(['/dashboard/start', this.courseItem?.slug]);
-              
+
             } else {
               console.log("Error Enrolling Course");
+              this.loading = false;
+              this._bottomSheetRef.dismiss(null);
               this.snackService.display('snackbar-dark', 'Error Enrolling Course!', 'bottom', 'center');
             }
           }
@@ -72,7 +78,6 @@ export class SetDesignationBottomSheetComponent {
 
   dismiss(event: MouseEvent): void {
     this._bottomSheetRef.dismiss(null);
-    this.snackService.display('snackbar-dark', ' added to learning list!', 'bottom', 'center');
     event.preventDefault();
   }
 }

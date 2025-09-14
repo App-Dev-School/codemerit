@@ -57,25 +57,24 @@
             </mat-card-header> -->
             <mat-card-content class="text-center">
               <!-- <img [src]="currentSubject?.image" class="text-center loadingIcon m-b-20"> -->
-              <mat-card-title>Deep Dive {{currentSubject?.title}}</mat-card-title>
-              <p class="m-t-10 font-14">CodeMerit offers plenty of conceptual and interactive assessments to level up
-                your knowledge.</p>
+              <mat-card-title class="cmSubHeading">Master {{currentSubject?.title}}</mat-card-title>
+              <p class="m-t-10 font-12">Level up your knowledge through CodeMerit’s engaging conceptual and interactive assessments.</p>
             </mat-card-content>
             <mat-card-footer>
               <hr class="dim-divider">
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">fast_forward</i>
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-blue psr-2">fast_forward</i>
                 Begin Your Learning Journey.
               </p>
               <hr class="dim-divider">
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">donut_small</i>
-                Continuosly assess where You Stand.
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-blue psr-2">donut_small</i>
+                Follow the sequential assessment.
               </p>
               <hr class="dim-divider">
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">track_changes</i>
-                Practice the Weak Areas
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-blue psr-2">track_changes</i>
+                Maintain good score and accuracy
               </p>
               <hr class="dim-divider">
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">verified_user</i>
+              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-blue psr-2">verified_user</i>
                 Unlock Badges and Priviledges
               </p>
               <div class="text-center p-t-20 p-b-20">
@@ -90,11 +89,11 @@
         </div>
       </div>
 
-      @if(currentSubject && (subjectTopics$|async)?.length > 0){
+      @if(subjectData && subjectData?.syllabus?.length > 0){
       <div class="row m-t-20 m-b-20 clearfix">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
           <app-goal-path [title]="currentSubject.title+' Progress Tracker'" [color]="currentSubject.color"
-            [topics]="subjectTopics$"></app-goal-path>
+            [topics]="subjectData?.syllabus"></app-goal-path>
         </div>
       </div>
       }
