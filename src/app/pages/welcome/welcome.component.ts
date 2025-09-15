@@ -54,7 +54,7 @@ export class WelcomeComponent implements OnInit {
       "topic": "ECMAScript",
       "type": "Ask",
       "imageUrl": "assets/images/tech/javascript.png",
-      "style":"right",
+      "style": "right",
     },
     {
       "id": 2,
@@ -62,7 +62,7 @@ export class WelcomeComponent implements OnInit {
       "subject": "JavaScript",
       "topic": "DOM",
       "type": "Ask",
-      "style":"right",
+      "style": "right",
       "imageUrl": "assets/images/tech/javascript.png"
     },
     {
@@ -71,7 +71,7 @@ export class WelcomeComponent implements OnInit {
       "subject": "Angular",
       "topic": "SSR",
       "type": "Ask",
-      "style":"left",
+      "style": "left",
       "imageUrl": "assets/images/tech/angular.png"
     },
     {
@@ -80,7 +80,7 @@ export class WelcomeComponent implements OnInit {
       "subject": "Java",
       "topic": "Thread",
       "type": "Ask",
-      "style":"right",
+      "style": "right",
       "imageUrl": "assets/images/tech/java.png"
     },
     {
@@ -89,7 +89,7 @@ export class WelcomeComponent implements OnInit {
       "subject": "RxJS",
       "topic": "Selectors",
       "type": "Ask",
-      "style":"left",
+      "style": "left",
       "imageUrl": "assets/images/tech/rxjs.png"
     },
     {
@@ -98,12 +98,12 @@ export class WelcomeComponent implements OnInit {
       "subject": "CSS",
       "topic": "Selectors",
       "type": "Ask",
-      "style":"left",
+      "style": "left",
       "imageUrl": "assets/images/tech/css.png"
     }
   ];
 
-   userTasks = [
+  userTasks = [
     {
       "id": 1,
       "task": "Complete Project KT",
@@ -146,22 +146,22 @@ export class WelcomeComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router, 
-    private master: MasterService, 
+  constructor(private router: Router,
+    private master: MasterService,
     private snackService: SnackbarService,
     private authService: AuthService) {
-    this.authService.currentUser.subscribe((sub:User) =>{
+    this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
-      if(sub && sub.firstName){
-      this.userName = sub.firstName;
-      if(sub.designation){
-        this.nextAction = "selfRating";
-        this.userMessage = "Tell us what you already know. Rate your skills, and we’ll personalize your learning path just for you.";
-      }else{
-      this.nextAction = "takeQuiz";
-      this.userMessage = "Unlock a customized roadmap to level up faster. Generate a mock exam to assess your skills.";
-      }
-      }else{
+      if (sub && sub.firstName) {
+        this.userName = sub.firstName;
+        if (sub.designation) {
+          this.nextAction = "selfRating";
+          this.userMessage = "Tell us what you already know. Rate your skills, and we’ll personalize your learning path just for you.";
+        } else {
+          this.nextAction = "takeQuiz";
+          this.userMessage = "Unlock a customized roadmap to level up faster. Generate a mock exam to assess your skills.";
+        }
+      } else {
         this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
         this.nextAction = "login";
       }
@@ -179,13 +179,12 @@ export class WelcomeComponent implements OnInit {
         // });
       });
     });
-    setTimeout(() => {
-      //After 5 secons ore more display the next user task
-      //AAA destroy 
-      if(!this.authService.currentUserValue.email){
-      this.snackService.display('snackbar-dark', 'Sign up to start up-skilling and transforming your tech path.', 'bottom', 'center');
-      }
-    }, 10000);
+    //After 5 secons ore more display the next user task
+    // setTimeout(() => {
+    //   if(!this.authService.currentUserValue.email){
+    //   this.snackService.display('snackbar-dark', 'Sign up to start up-skilling and transforming your tech path.', 'bottom', 'center');
+    //   }
+    // }, 10000);
   }
 
   ngOnInit(): void {
@@ -230,17 +229,17 @@ export class WelcomeComponent implements OnInit {
   }
 
   //separate component and then implement
-  handleAction(action:String){
+  handleAction(action: String) {
     console.log("Welcome Action", action);
     switch (action) {
       case "login":
-         this.router.navigate(['/authentication/signin']).then(() => {
-      });
+        this.router.navigate(['/authentication/signin']).then(() => {
+        });
         break;
-    
-        case "takeQuiz":
-         this.router.navigate(['/take-quiz/explore']).then(() => {
-      });
+
+      case "takeQuiz":
+        this.router.navigate(['/take-quiz/explore']).then(() => {
+        });
         break;
       default:
         break;

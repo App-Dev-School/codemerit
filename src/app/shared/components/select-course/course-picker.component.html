@@ -14,91 +14,92 @@
 }
 @if(!isLoading){
 <div class="text-center" [ngClass]="{ 'outerPadding': mode === 'dialog' }">
-@if (pickerTheme === 'Merit') {
-<div class="row full-width clearfix">
-  @for(job of courses|async;track job){
-  <div class="col-lg-4 col-md-6 col-sm-12">
-    <div class="card">
-      <div class="card-body">
-        <h5>{{job.title}}</h5>
-        <p class="card-text font-small-3">Aspiring to become {{job.description}}? Enroll for this course to set your designation and start your journey.</p>
-        <button type="button" (click)="pickJobRole(job)" class="btn btn-outline-default" rippleEffect>Set My Designation</button>
-        <img src="assets/images/icons/badge.svg" class="job-badge" alt="Medal Pic" />
+  @if (pickerTheme === 'Merit') {
+  <div class="row full-width clearfix">
+    @for(job of courses|async;track job){
+    <div class="col-lg-4 col-md-6 col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <h5>{{job.title}}</h5>
+          <p class="card-text font-small-3">Aspiring to become {{job.description}}? Enroll for this course to set your
+            designation and start your journey.</p>
+          <button type="button" (click)="pickJobRole(job)" class="btn btn-outline-default" rippleEffect>Set My
+            Designation</button>
+          <img src="assets/images/icons/badge.svg" class="job-badge" alt="Medal Pic" />
+        </div>
       </div>
     </div>
+    }
   </div>
   }
-</div>
-}
 
-@if (pickerTheme === 'Default') {
-<div class="row clearfix">
-  @for(job of courses|async;track job){
-  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-    <mat-card class="hoverCard">
-      <mat-card-content>
-        @if(job.isSubscribed){
+  @if (pickerTheme === 'Default') {
+  <div class="row clearfix">
+    @for(job of courses|async;track job){
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+      <mat-card class="hoverCard">
+        <mat-card-content>
+          <!-- @if(job.isSubscribed){
         <img src="assets/images/icons/badge.svg" class="job-badge" alt="Medal Pic" />
-        }
-        <div class="subjectHeader">
+        } -->
+          <!-- <h6>{{ job.id }} = {{ currentCourse}}</h6> -->
+          @if(job.id == currentCourse){
+          <img src="assets/images/icons/badge.svg" class="job-badge" alt="Medal Pic" />
+          }
+          <div class="subjectHeader">
+            @if(job.isSubscribed){
+            <small>Current Role</small>
+            }
+            <mat-card-title class="text">{{job.title}}</mat-card-title>
+          </div>
+          <p class="font-12">{{job.description}}</p>
           @if(job.isSubscribed){
-          <small>Current Role</small>
-          }
-          <mat-card-title class="text">{{job.title}}</mat-card-title>
-        </div>
-        <p class="font-12">{{job.description}}</p>
-        @if(job.isSubscribed){
-        <ul class="list-unstyled">
-          @if (job.coverage > 0) {
+          <ul class="list-unstyled">
+            @if (job.coverage > 0) {
             <li>
-            <div class="mb-2">
-              <span class="progress-label text-start">Score</span>
-              <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{job.score}}%</span>
-            </div>
-            <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="job.score + '%'"
-                role="progressbar" [attr.aria-valuenow]="job.score" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-          </li>
+              <div class="mb-2">
+                <span class="progress-label text-start">Score</span>
+                <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{job.score}}%</span>
+              </div>
+              <div class="progress skill-progress m-b-20 w-100">
+                <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="job.score + '%'"
+                  role="progressbar" [attr.aria-valuenow]="job.score" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </li>
+            }
+            <li>
+              <div class="mb-2">
+                <span class="progress-label text-start">Coverage</span>
+                <span class="float-end progress-percent label m-b-5"
+                  [ngClass]="'label-success'">{{job.coverage}}%</span>
+              </div>
+              <div class="progress skill-progress m-b-20 w-100">
+                <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="job.coverage + '%'"
+                  role="progressbar" [attr.aria-valuenow]="job.coverage" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </li>
+          </ul>
           }
-          <li>
-            <div class="mb-2">
-              <span class="progress-label text-start">Coverage</span>
-              <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{job.coverage}}%</span>
+          @if(minimal){
+          <mat-card-footer>
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 w-100">
+              @if (currentCourse > 0) {
+              <button mat-flat-button color="primary" (click)="switchJobRole(job)" rippleEffect class="w-100 w-md-auto">
+                View
+              </button>
+              }@else{
+              <button mat-stroked-button color="primary" (click)="pickJobRole(job)" class="w-100 w-md-auto">
+                Select
+              </button>
+              }
             </div>
-            <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="job.coverage + '%'"
-                role="progressbar" [attr.aria-valuenow]="job.coverage" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-          </li>
-        </ul>
-        }
-        @if(minimal){
-<mat-card-footer>
-  <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 w-100">
-    <button mat-flat-button 
-            color="primary" 
-            (click)="switchJobRole(job)" 
-            rippleEffect
-            class="w-100 w-md-auto">
-      View
-    </button>
-    <button mat-stroked-button 
-            color="primary" 
-            (click)="pickJobRole(job)" 
-            class="w-100 w-md-auto">
-      Select
-    </button>
-  </div>
-</mat-card-footer>
-
-
-        }
-      </mat-card-content>
-    </mat-card>
+          </mat-card-footer>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+    }
   </div>
   }
-</div>
-}
 </div>
 }

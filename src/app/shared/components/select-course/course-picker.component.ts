@@ -29,6 +29,7 @@ import { Observable, of } from 'rxjs';
 })
 export class CoursePickerComponent implements OnInit {
   @Input() minimal = true;
+  @Input() currentCourse : number;
   courses: Observable<any>;
   @Output() subjectSelected = new EventEmitter<string>();
   @Output() onSubscribe = new EventEmitter<string>();
@@ -56,6 +57,7 @@ export class CoursePickerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log("CoursePicker currentCourse", this.currentCourse);
     const allJobRoles = this.master.jobRoles;
     console.log("CoursePicker allJobRoles", allJobRoles);
     if(allJobRoles && allJobRoles.length > 0){

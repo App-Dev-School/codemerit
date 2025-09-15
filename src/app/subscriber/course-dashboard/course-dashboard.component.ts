@@ -85,7 +85,8 @@ export class CourseDashboardComponent implements OnInit {
     this.authService.currentUser.subscribe((localUser: User) => {
       if(localUser && localUser.email && localUser.token){
         this.userData = of(localUser);
-        this.snackService.display('snackbar-dark','Course Dashboard user changed.', 'bottom', 'center');
+        console.log('Course Dashboard user changed.', localUser);
+        //this.snackService.display('snackbar-dark','Course Dashboard user changed.', 'bottom', 'center');
       }
     });
     this.router.events.subscribe(event => {

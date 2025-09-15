@@ -77,29 +77,40 @@
       </div>
       }
     </div>
-    <div class="row text-center">
-      <div class="col-12">
-        <hr class="dim-divider">
-        <p class="m-b-0 font-12 text-center"><i class="material-icons col-green psr-2">trending_up</i>
-      You are levelling up your {{subject.title}} skills progressively.
-    </p>
-      </div>
-    </div>
   </mat-card-content>
   <mat-card-footer class="text-center m-t-0">
     @if (subject?.isSubscribed) {
-    <!-- <hr class="dim-divider"> -->
-    <p class="d-flex justify-content-center align-items-center m-b-20 m-t-0 font-12 text-center">
+    <hr class="dim-divider">
+    <p class="m-b-10 font-12 d-flex align-items-center justify-content-center">
       <i class="material-icons col-green me-2">lightbulb_outline</i>
-      Take more {{subject.title}} quizzes to improve your score.
+      Take more quizzes to improve your score.
     </p>
     }@else{
-    <p class="m-b-0 font-12 d-flex flex-center justifyCenter"><i class="material-icons col-green psr-2">trending_up</i>
+    <hr class="dim-divider">
+    <p class="m-b-10 font-12 d-flex align-items-center justify-content-center"><i
+        class="material-icons col-green psr-2">trending_up</i>
       Level up your {{subject.title}} skills.
     </p>
     <div class="text-center p-t-20 p-b-20">
       <button mat-stroked-button color="primary" (click)="onEnrollSubject(subject)">Start Learning</button>
     </div>
+    }
+
+    @if (subject?.isSubscribed) {
+    <p class="m-b-0 m-t-0 font-12 d-flex align-items-center justify-content-center">
+      @if (subject.score > 70) {
+      <i class="material-icons col-green me-2">trending_up</i>
+      Great! You are levelling up your {{subject.title}} skills progressively.
+      }@else {
+      @if (subject.coverage > 5 && subject.score < 40) { <i class="material-icons col-green me-2">trending_down</i>
+        Need to improve your {{subject.title}} score.
+        }@else {
+        @if (subject.coverage > 5 && subject.accuracy < 40) { <i class="material-icons col-green me-2">pan_tool</i>
+          Oh! Your {{subject.title}} accuracy is falling down. Avoid wrong attempts.
+          }
+          }
+          }
+    </p>
     }
   </mat-card-footer>
 </mat-card>

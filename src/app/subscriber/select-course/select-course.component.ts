@@ -31,7 +31,7 @@ export class SelectCourseComponent implements OnInit {
 
   constructor(private router: Router, 
     private _bottomSheet: MatBottomSheet,
-    private authService: AuthService) {
+    public authService: AuthService) {
     // constructor code
   }
 

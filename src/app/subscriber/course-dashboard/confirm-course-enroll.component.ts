@@ -42,7 +42,7 @@ export class SetDesignationBottomSheetComponent {
         designation: this.courseItem?.id
       }
       if (this.courseItem && this.authService.currentUserValue.id) {
-        this.loadingTxt = "Enrollment In Progress";
+        this.loadingTxt = "Enrolling as "+this.courseItem.title;
         let setDesignation = this.authService.updateUserAccount(authData.token, authData.id, postData);
         setDesignation.subscribe((res) => {
           if (res) {
