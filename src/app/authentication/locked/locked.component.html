@@ -13,14 +13,11 @@
                 <img src={{userImg}} alt="User">
               </div>
             </div>
-            <span class="auth-locked-title p-b-34 p-t-27">
-              Hi {{userFullName}}!
-            </span>
             <div class="text-center">
-              <h4 class="txt1 p-b-2 m-t-20">
-                Verify Account
+              <h4 class="cmSubHeading txt1 p-b-2 m-t-0">
+                Hi {{userFullName}}! Please verify your account
               </h4>
-               <p class="txt1 p-b-20">
+              <p class="txt1 p-b-20">
                 We have sent an OTP to your registered e-mail address.
               </p>
             </div>
@@ -29,7 +26,7 @@
                 <span class="error-subheader2 p-t-20 p-b-15">
                   Enter your OTP and click Verify.
                 </span>
-                <mat-form-field class="example-full-width pwd-toggle" appearance="outline">
+                <!-- <mat-form-field class="example-full-width pwd-toggle" appearance="outline">
                   <mat-label>OTP</mat-label>
                   <input matInput formControlName="password" maxlength="6" [type]="hide ? 'password' : 'text'" required>
                   <mat-icon matSuffix (click)="hide = !hide">
@@ -39,8 +36,13 @@
                     OTP is required
                   </mat-error>
                   }
-                </mat-form-field>
+                </mat-form-field> -->
+
+                <!-- bind to the same form control -->
+                <app-otp-input formControlName="password" (otpComplete)="onOtpCompleted($event)"></app-otp-input>
+
               </div>
+
             </div>
             <div class="container-auth-form-btn mt-5">
               <button mat-flat-button color="primary" class="auth-form-btn" [disabled]="!authForm.valid" type="submit">

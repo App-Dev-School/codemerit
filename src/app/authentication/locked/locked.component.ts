@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { OtpInputComponent } from '@shared/components/otp-input/otp-input.component';
 @Component({
   selector: 'app-locked',
   templateUrl: './locked.component.html',
@@ -21,15 +22,17 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatButtonModule,
     MatProgressSpinnerModule,
     RouterLink,
+    OtpInputComponent
   ]
 })
 export class LockedComponent extends UnsubscribeOnDestroyAdapter implements OnInit {
   authForm!: UntypedFormGroup;
   submitted = false;
   error = '';
-  userImg!: string;
+  userImg: string = 'assets/images/users/user.jpg';
   userFullName!: string;
   hide = true;
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     private router: Router,
@@ -39,25 +42,25 @@ export class LockedComponent extends UnsubscribeOnDestroyAdapter implements OnIn
   }
   ngOnInit() {
     console.log("Verify Comp :: currentUserValue", this.authService.currentUserValue);
-    if (this.authService.currentUserValue && this.authService.currentUserValue?.accountStatus == "PENDING") {
-      this.authForm = this.formBuilder.group({
-        password: ['', [Validators.required, Validators.maxLength(6)]],
+    this.authForm = this.formBuilder.group({
+        password: ['', [Validators.required, Validators.minLength(6)]],
       });
-      this.userImg = this.authService.currentUserValue.userImage;
-      if (!this.userImg) {
-        this.userImg = 'assets/images/users/user.jpg';
+    if (this.authService.currentUserValue && this.authService.currentUserValue?.accountStatus == "PENDING") {
+      if (this.authService.currentUserValue.userImage) {
+        this.userImg = this.authService.currentUserValue.userImage;
       }
       this.userFullName =
         this.authService.currentUserValue.firstName +
         ' ' +
         this.authService.currentUserValue.lastName;
     } else {
-      this.authService.redirectToLogin();
+      //this.authService.redirectToLogin();
     }
   }
   get f() {
     return this.authForm.controls;
   }
+
   onSubmit() {
     if (this.authForm.invalid) {
       return;
@@ -90,6 +93,8 @@ export class LockedComponent extends UnsubscribeOnDestroyAdapter implements OnIn
     }
   }
 
+  onOtpCompleted(otp: string) { this.authForm.patchValue({ password: otp }); }
+  
   navigate() {
     const role = this.authService.currentUserValue.role;
     if (role === Role.All || role === Role.Admin) {

@@ -36,8 +36,8 @@ export class OtpInputComponent implements ControlValueAccessor {
   disabled = false;
 
   // ControlValueAccessor callbacks
-  private onChange: (v: string) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (v: string) => void = () => { };
+  private onTouched: () => void = () => { };
 
   // --- CVA interface ---
   writeValue(v: string | null): void {
@@ -48,13 +48,6 @@ export class OtpInputComponent implements ControlValueAccessor {
   registerOnChange(fn: any): void { this.onChange = fn; }
   registerOnTouched(fn: any): void { this.onTouched = fn; }
   setDisabledState(isDisabled: boolean): void { this.disabled = isDisabled; }
-
-  // --- DOM / events ---
-  focusInput() {
-    if (this.disabled) return;
-    this.nativeInput.nativeElement.focus();
-    this.setCaretToEnd();
-  }
 
   onNativeInput(e: Event) {
     const raw = (e.target as HTMLInputElement).value || '';
@@ -91,6 +84,7 @@ export class OtpInputComponent implements ControlValueAccessor {
   }
 
   onNativeFocus() {
+    console.log("OTPInput onNativeFocus");
     this.isFocused = true;
   }
   onNativeBlur() {
@@ -115,5 +109,26 @@ export class OtpInputComponent implements ControlValueAccessor {
     // when OTP full (6) we don't show an active slot
     if (this.value.length === 6) return false;
     return this.value.length === index;
+  }
+
+  onNativePaste(event: ClipboardEvent) {
+    console.log("OTPInput onNativePaste");
+    const pasted = event.clipboardData?.getData('text') ?? '';
+    const digits = pasted.replace(/\D/g, '').slice(0, 6);
+    console.log("OTPInput onNativePaste", digits);
+    if (digits) {
+      this.value = digits;
+      this.onChange(this.value);
+      this.setCaretToEnd();
+
+      if (this.value.length === 6) {
+        this.otpComplete.emit(this.value);
+      }
+    }
+    event.preventDefault(); // stop raw paste
+  }
+
+  focusInput() {
+    this.nativeInput.nativeElement.focus();
   }
 }
