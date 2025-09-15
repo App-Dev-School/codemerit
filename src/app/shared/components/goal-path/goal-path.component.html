@@ -4,15 +4,14 @@
   <swiper-slide class="stepper-slide">
     <mat-card class="card">
       <mat-card-content>
-        <h4 class="cmSubHeading text-center" [ngStyle]="{'color':color}">{{title}}</h4>
+        <h6 class="cmSubHeading text-center m-t-10" [ngStyle]="{'color':color}">{{title}} Progress Tracker</h6>
         <!-- Step Circle -->
         <div class="step-circle mb-2 d-flex justify-content-center align-items-center"
           [ngStyle]="{'background-color':color}">
           {{ i + 1 }}
         </div>
-
         <!-- Topic Info -->
-        <h6 class="text-center text-truncate m-t-0">{{ topic.title }}</h6>
+        <h4 class="text-center cmSubHeading m-t-0">{{ topic.title }}</h4>
         <h5 class="text-center font-12 col-grey">Milestone - {{ i+1 }} / {{topics.length}}</h5>
         <hr class="dim-divider">
 
@@ -54,13 +53,13 @@
             </div>
           </li>
         </ul>
-
-        <div class="text-center container-auth-form-btn">
-          <button mat-flat-button color="primary" class="m-b-5" (click)="onTakeNextQuiz(topic)">
-            Take Next Quiz
+        <hr class="dim-divider">
+        <div class="text-center container-auth-form-btn m-b-10">
+          <button mat-stroked-button color="primary" class="m-b-0" (click)="onTakeNextQuiz(topic)">
+            Take Next Challenge
           </button>
-          <h6 class="text-center col-grey">OR</h6>
-          <button mat-stroked-button color="primary" class="m-t-5" (click)="onTakeNextQuiz(null)">
+          <p class="text-center font-12 col-grey m-t-5 m-b-5">OR</p>
+          <button mat-flat-button color="primary" class="m-t-0" (click)="onTakeNextQuiz(null)">
             Test {{title}} Mastery
           </button>
         </div>

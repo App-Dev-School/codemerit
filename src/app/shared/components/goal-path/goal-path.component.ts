@@ -24,7 +24,7 @@ import { SwiperOptions } from 'swiper/types';
 })
 export class GoalPathComponent implements AfterViewInit {
   @ViewChild("swiperEx") swiperComponent ?: ElementRef<{ swiper: Swiper }>
-  @Input() title: string = 'Progress Tracker';
+  @Input() title: string = '';
   @Input() topics: any[] = [];
   @Input() color: string = '#000000';
   @Output() nextGoal = new EventEmitter<TopicItem>();
