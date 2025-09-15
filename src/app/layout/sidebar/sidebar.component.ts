@@ -21,20 +21,19 @@ import { NgScrollbar } from 'ngx-scrollbar';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { SidebarService } from './sidebar.service';
 @Component({
-    selector: 'app-sidebar',
-    templateUrl: './sidebar.component.html',
-    styleUrls: ['./sidebar.component.scss'],
-    imports: [
-        NgScrollbar,
-        RouterLinkActive,
-        RouterLink,
-        NgClass
-    ]
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.scss'],
+  imports: [
+    NgScrollbar,
+    RouterLinkActive,
+    RouterLink,
+    NgClass
+  ]
 })
 export class SidebarComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   public sidebarItems!: RouteInfo[];
   public innerHeight?: number;
   public bodyTag!: HTMLElement;
@@ -92,56 +91,63 @@ export class SidebarComponent
     }
   }
   ngOnInit() {
-    // this.authService.currentUser.subscribe(user =>{
-    //   if(user){
-    //     console.log("SidebarWatchUser==> "+JSON.stringify(user));
-    //   }
-    // });
+    this.subs.sink = this.sidebarService
+      .getRouteInfo()
+      .subscribe((routes: RouteInfo[]) => {
+        this.sidebarItems = routes;
+        this.authService.log("#1 sidebarItems", this.sidebarItems);
+        this.authService.currentUser.subscribe(user => {
+          if (user) {
+            this.authService.log("#2 sidebar user", user);
+            if (this.authService.currentUserValue && this.authService.currentUserValue.email) {
+              const userRole = this.authService.currentUserValue.role;
+              this.userFullName =
+                this.authService.currentUserValue.firstName +
+                ' ' +
+                this.authService.currentUserValue.lastName;
+              this.userDesignation = "New Joiner";
+              if (this.authService.currentUserValue?.userDesignation?.title) {
+                this.userDesignation = this.authService.currentUserValue?.userDesignation?.title;
+              }
+              if (this.authService.currentUserValue.userImage) {
+                this.userImg = this.authService.currentUserValue.userImage;
+              }
+              this.sidebarItems = routes.filter(
+                (x) =>
+                  x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
+              );
+              this.authService.log("#3 sidebarItems for " + userRole, this.sidebarItems);
 
-      if (this.authService.currentUserValue && this.authService.currentUserValue.email) {
-      const userRole = this.authService.currentUserValue.role;
-      this.userFullName =
-        this.authService.currentUserValue.firstName +
-        ' ' +
-      this.authService.currentUserValue.lastName;
-      this.userDesignation = "New Joiner";
-      if(this.authService.currentUserValue?.userDesignation?.title){
-        this.userDesignation = this.authService.currentUserValue?.userDesignation?.title;
-      }
-      if(this.authService.currentUserValue.userImage){
-        this.userImg = this.authService.currentUserValue.userImage;
-      }
-
-      // this.sidebarItems = ROUTES.filter(
-      //   (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
-      // );
-
-      this.subs.sink = this.sidebarService
-        .getRouteInfo()
-        .subscribe((routes: RouteInfo[]) => {
-          //console.log("AppFLow Get Sidebar => ", userRole, routes);
-          this.sidebarItems = routes.filter(
-            (x) =>
-              x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
-          );
+              if (userRole === Role.Admin) {
+                this.userType = Role.Admin;
+              } else if (userRole === Role.Subscriber) {
+                this.userType = Role.Subscriber;
+              } else if (userRole === Role.Manager) {
+                this.userType = Role.Manager;
+              }
+            } else {
+              this.sidebarItems = routes.filter(
+                (x) =>
+                  x.role.indexOf('All') !== -1
+              );
+              this.authService.log("#3 sidebarItems for Guest", this.sidebarItems);
+              this.userFullName = "Guest";
+              this.userImg = "assets/images/users/user.jpg";
+            }
+          }
         });
-      if (userRole === Role.Admin) {
-        this.userType = Role.Admin;
-      } else if (userRole === Role.Subscriber) {
-        this.userType = Role.Subscriber;
-      } else if (userRole === Role.Manager) {
-        this.userType = Role.Manager;
-      }
-    }else{
-      //Allow default visitor placeholder
-      this.userFullName = "Guest";
-      this.userImg = "assets/images/users/user.jpg";
-    }
 
-    // this.sidebarItems = ROUTES.filter((sidebarItem) => sidebarItem);
+        //this.filterUserMenu();
+      });
+
     this.initLeftSidebar();
     this.bodyTag = this.document.body;
   }
+
+  filterUserMenu() {
+
+  }
+
   initLeftSidebar() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _this = this;
@@ -180,7 +186,7 @@ export class SidebarComponent
       this.renderer.addClass(this.document.body, 'submenu-closed');
     }
   }
-  
+
   logout() {
     this.subs.sink = this.authService.logout().subscribe((res) => {
       if (!res.success) {

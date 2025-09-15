@@ -240,7 +240,7 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   goToCourses() {
-    this.router.navigate(['/dashboard/select-job-role']);
+    this.router.navigate(['/app/select-job-role']);
   }
 
   openCourseLauncher(action: 'default' | 'custom', data?: any) {

@@ -36,7 +36,6 @@ export class CoursePickerComponent implements OnInit {
   isLoading = true;
   mode: 'dialog' | 'route' = 'route';
   userId?: string;
-  pickerTheme = 'Default';//Default or Merit
 
   constructor(private master: MasterService, private router: Router,
     private route: ActivatedRoute,
@@ -62,7 +61,7 @@ export class CoursePickerComponent implements OnInit {
     console.log("CoursePicker allJobRoles", allJobRoles);
     if(allJobRoles && allJobRoles.length > 0){
     const liveJobRoles = allJobRoles.filter(item => item.isPublished);
-    console.log("CoursePicker liveJobRoles", liveJobRoles);
+    console.log("CoursePicker liveJobRoles", liveJobRoles, this.userId);
     // const myJobRoles = liveJobRoles.map(q => ({
     //   ...q,
     //   isSubscribed: q.id < 3 ? true : false,

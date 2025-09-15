@@ -1,18 +1,27 @@
 @if(showContent){
-  <section class="content" [@slideInOut]>
-    <div class="content-block">
-      <div class="row m-t-20 clearfix">
+@if(isLoading){
+<div class="overlay"></div>
+<div class="animToast loading">
+  <img src="assets/images/icons/loading.gif" class="miniLoadingIcon">
+  <h4 class="cmSubHeading">Loading Subjects</h4>
+  <h5 class="font-14">Please wait</h5>
+</div>
+}@else {
+<section class="content" [@slideInOut]>
+  <div class="content-block">
+    <div class="row m-t-0 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h6 class="text-center font-20 m-t-10">Select a subject to start up-skilling</h6>
-           <hr class="dim-divider">
+        <h6 class="text-center cmSubHeading m-t-10">Select a subject to start up-skilling</h6>
       </div>
     </div>
 
-      <div class="row m-t-10 clearfix">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-      <app-my-subjects [minimal]="false" (subjectSelected)="onSubjectChange($event)" (onSubscribe)="onSubscribe($event)"></app-my-subjects>
+    <div class="row m-t-10 clearfix">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <app-my-subjects [subjects]="subjects" (subjectSelected)="onSubjectChange($event)"
+          (onSubscribe)="onSubscribe($event)"></app-my-subjects>
+      </div>
     </div>
-    </div>
-    </div>
-  </section>
+  </div>
+</section>
+}
 }

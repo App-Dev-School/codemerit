@@ -89,7 +89,7 @@ export class ViewResultComponent implements OnInit {
       this.router.navigate(['/dashboard/learn', firstSubjectSlug]);
     }
     } catch (error) {
-      this.router.navigate(['/dashboard/select-subject']);
+      this.router.navigate(['/app/select-subject']);
     }
   }
   //add methods for sharing options, invite etc.

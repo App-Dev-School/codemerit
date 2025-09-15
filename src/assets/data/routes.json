@@ -15,6 +15,34 @@
       "submenu": []
     },
     {
+      "path": "/app/select-job-role",
+      "title": "Browse Tech Roles",
+      "iconType": "material-icons-outlined",
+      "icon": "library_books",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "All"
+      ],
+      "submenu": []
+    },
+    {
+      "path": "/app/select-subject",
+      "title": "Subject Explorer",
+      "iconType": "material-icons-outlined",
+      "icon": "school",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "All"
+      ],
+      "submenu": []
+    },
+    {
       "path": "",
       "title": "Dashboard",
       "iconType": "material-icons-outlined",
@@ -24,23 +52,10 @@
       "badge": "",
       "badgeClass": "",
       "role": [
-        "Admin", "Manager"
+        "Admin",
+        "Manager"
       ],
       "submenu": [
-        {
-      "path": "/dashboard/select-subject",
-      "title": "User Dashboard",
-      "iconType": "material-icons-outlined",
-      "icon": "school",
-      "class": "ml-menu",
-      "groupTitle": false,
-      "badge": "",
-      "badgeClass": "",
-      "role": [
-        "Admin", "Manager"
-      ],
-      "submenu": []
-    },
         {
           "path": "/admin/dashboard/main",
           "title": "LMS Dashboard",
@@ -72,22 +87,8 @@
       ]
     },
     {
-      "path": "/dashboard/select-subject",
+      "path": "/dashboard/start",
       "title": "My Dashboard",
-      "iconType": "material-icons-outlined",
-      "icon": "school",
-      "class": "",
-      "groupTitle": false,
-      "badge": "",
-      "badgeClass": "",
-      "role": [
-        "User", "Admin", "Manager", "All"
-      ],
-      "submenu": []
-    },
-    {
-      "path": "/dashboard/select-job-role",
-      "title": "Job Roles",
       "iconType": "material-icons-outlined",
       "icon": "space_dashboard",
       "class": "",
@@ -95,7 +96,8 @@
       "badge": "",
       "badgeClass": "",
       "role": [
-        "User", "All"
+        "User",
+        "All"
       ],
       "submenu": []
     },
@@ -123,7 +125,8 @@
       "badge": "",
       "badgeClass": "",
       "role": [
-        "Admin", "Manager"
+        "Admin",
+        "Manager"
       ],
       "submenu": []
     },
@@ -197,7 +200,7 @@
           ],
           "submenu": []
         },
-       {
+        {
           "path": "/authentication/signin",
           "title": "Sign In",
           "iconType": "",
@@ -329,13 +332,16 @@
       "path": "/users/profile",
       "title": "My Profile",
       "iconType": "material-icons-outlined",
-      "icon": "star",
+      "icon": "person",
       "class": "",
       "groupTitle": false,
       "badge": "",
       "badgeClass": "",
       "role": [
-        "User", "Admin", "Manager", "All"
+        "User",
+        "Admin",
+        "Manager",
+        "All"
       ],
       "submenu": []
     }

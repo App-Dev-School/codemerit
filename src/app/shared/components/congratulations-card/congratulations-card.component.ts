@@ -24,6 +24,6 @@ export class CongratulationsCardComponent {
   }
 
   handleAction(){
-  this.router.navigate(['/dashboard/select-job-role']);
+  this.router.navigate(['/app/select-job-role']);
   }
 }

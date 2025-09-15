@@ -81,7 +81,7 @@ export class SigninComponent
                     if(this.authService.currentUserValue?.userDesignation?.slug){
                       this.router.navigate(['/dashboard/start', this.authService.currentUserValue?.userDesignation?.slug]);
                     }else{
-                      this.router.navigate(['/dashboard/select-job-role']);
+                      this.router.navigate(['/app/select-job-role']);
                     }
                   }
                 }

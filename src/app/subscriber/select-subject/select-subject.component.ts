@@ -6,6 +6,7 @@ import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angul
 import { MasterService } from '@core/service/master.service';
 import { slideInOutAnimation } from '@shared/animations';
 import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-select-subject',
@@ -24,11 +25,14 @@ export class SelectSubjectComponent implements OnInit {
   subject = "";
   subjectData: any;
 
+  subjects: Observable<any>;
+  isLoading = false;
+
   constructor(private router: Router, private master: MasterService) {
     // constructor code
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         // Animation trigger can be based on route change
@@ -39,7 +43,29 @@ export class SelectSubjectComponent implements OnInit {
         this.showContent = true;
       }
     });
+
+    if (!this.master.subjects) {
+      this.isLoading = true;
+      //alert("Required details could not be available to launch the app. Please refresh to continue.");
+      this.master.fetchMasterDataFromAPI().subscribe({
+        next: (masterData: any) => {
+          console.log('Mysubjects fetched masterData:', masterData);
+          if(!masterData.error && masterData.data && masterData.data.subjects){
+          this.subjects = of(masterData.data.subjects);
+          this.isLoading = false;
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Select Subject Get API Error:', error);
+        },
+      });
+    } else {
+      this.subjects = of(this.master.subjects);
+      this.isLoading = false;
+    }
   }
+
 
   onSubjectChange(subject: string) {
     this.subject = subject ? subject : "";

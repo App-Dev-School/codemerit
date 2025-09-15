@@ -12,14 +12,14 @@ export const SUBSCRIBER_ROUTE: Route[] = [
     path: "learn/:subject",
     component: DashboardComponent,
   },
-  {
-    path: 'select-subject',
-    component: SelectSubjectComponent,
-  },
-  {
-    path: 'select-job-role',
-    component: SelectCourseComponent,
-  },
+  // {
+  //   path: 'select-subject',
+  //   component: SelectSubjectComponent,
+  // },
+  // {
+  //   path: 'select-job-role',
+  //   component: SelectCourseComponent,
+  // },
   //{ path: '**', component: SelectSubjectComponent }
   //
   { path: '**', component: SelectCourseComponent }
