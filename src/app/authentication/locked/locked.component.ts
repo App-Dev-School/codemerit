@@ -54,7 +54,7 @@ export class LockedComponent extends UnsubscribeOnDestroyAdapter implements OnIn
         ' ' +
         this.authService.currentUserValue.lastName;
     } else {
-      //this.authService.redirectToLogin();
+      this.authService.redirectToLogin();
     }
   }
   get f() {

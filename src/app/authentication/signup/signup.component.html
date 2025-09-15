@@ -2,20 +2,26 @@
   <div class="row auth-main">
     <div class="col-sm-6 px-0 d-none d-sm-block">
       <div class="left-img" style="background-image: url(assets/images/pages/bg-signup.jpg);">
-         <div class="d-flex justify-content-between lbl-alert mb-3" routerLink="/app/welcome">
-          </div>
+        <!-- <div class="d-flex justify-content-between lbl-alert mb-3" routerLink="/app/welcome">
+        </div> -->
       </div>
     </div>
     <div class="col-sm-6 auth-form-section">
       <div class="form-section">
         @if(!submitted){
-<div class="auth-wrapper">
-          <h6 class="welcome-msg"> Sign Up </h6>
-          <p class="auth-signup-text text-muted">Enter details to create your account</p>
+        <div class="auth-wrapper">
+          <div class="loginHeader text-center">
+            <div class="text-center mb-3" routerLink="/app/welcome">
+            <img src="./../../../assets/images/logo.png" alt="codemerit" class="logo animEntry" />
+          </div>
+         <h6 class="welcome-msg text-center"> Create CodeMerit Account </h6>
+          <p class="auth-signup-text text-center text-muted1">Quick Register to get Started</p>
+          </div>
+  
           <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
             <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="outline">
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <mat-form-field class="example-full-width" appearance="fill">
                   <mat-label>First Name</mat-label>
                   <input matInput formControlName="firstName" required>
                   @if (authForm.get('firstName')!.hasError('required')) {
@@ -25,8 +31,8 @@
                   }
                 </mat-form-field>
               </div>
-              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="outline">
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <mat-form-field class="example-full-width" appearance="fill">
                   <mat-label>Last Name</mat-label>
                   <input matInput formControlName="lastName">
                   @if (authForm.get('lastName')!.hasError('required')) {
@@ -38,8 +44,8 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="outline">
+              <div class="col-xl-12col-lg-12 col-md-12 col-sm-12">
+                <mat-form-field class="example-full-width" appearance="fill">
                   <mat-label>Email</mat-label>
                   <input matInput formControlName="email" required>
                   <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>mail</mat-icon>
@@ -53,8 +59,8 @@
             </div>
 
             <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="outline">
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <mat-form-field class="example-full-width" appearance="fill">
                   <mat-label>City</mat-label>
                   <input matInput formControlName="city" required>
                   <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>location_city</mat-icon>
@@ -66,15 +72,15 @@
                 </mat-form-field>
               </div>
 
-              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="outline">
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <mat-form-field class="example-full-width" appearance="fill">
                   <mat-label>Country</mat-label>
                   <input matInput formControlName="country" type="text" [matAutocomplete]="autoCountry" required>
                   <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>globe</mat-icon>
                   <mat-autocomplete #autoCountry="matAutocomplete" [displayWith]="displayCountry">
                     @for (country of filteredCountries | async; track country) {
                     <mat-option [value]="country.name">
-                     {{country.name}}
+                      {{country.name}}
                     </mat-option>
                     }
                   </mat-autocomplete>
@@ -89,7 +95,7 @@
             </div>
 
             <div class="row">
-              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                 <mat-form-field class="example-full-width">
                   <mat-label>What describes you best?</mat-label>
                   <input type="text" matInput formControlName="about" [matAutocomplete]="auto">
@@ -112,25 +118,26 @@
               </div>
             </div> -->
             <div class="container-auth-form-btn">
-              <button mat-flat-button color="accent" class="auth-form-btn" [disabled]="!authForm.valid || submitted" type="submit">
+              <button mat-flat-button color="accent" class="auth-form-btn" [disabled]="!authForm.valid || submitted"
+                type="submit">
                 Register
               </button>
             </div>
           </form>
           <h6 class="social-login-title">OR</h6>
           <div style="text-align:center">
-                <!-- <button (click)="navigateToLogin()" mat-flat-button color="danger" 
+            <!-- <button (click)="navigateToLogin()" mat-flat-button color="danger" 
                    class="auth-form-btn"><i class="fab fa-google"></i> Already Registered? Login</button> -->
-                   <h6 class="welcome-msg"> Already Registered? <a routerLink="/authentication/signin">
-                    Login
-                  </a></h6>
-              </div>
+            <h6 class="welcome-msg"> Already Registered? <a routerLink="/authentication/signin">
+                Login
+              </a></h6>
+          </div>
         </div>
         }@else{
-          <div class="tbl-spinner">
-                <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
-                </mat-progress-spinner>
-            </div>
+        <div class="tbl-spinner">
+          <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
+          </mat-progress-spinner>
+        </div>
         }
       </div>
     </div>
