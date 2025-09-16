@@ -1,19 +1,11 @@
-// .subject-card {
-//   border-radius: 1rem;
-//   overflow: hidden;
-//   transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-//   &:hover {
-//     transform: translateY(-4px);
-//     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-//   }
-// }
-.subject-card {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  align-items: flex-start;
-  flex-wrap: wrap;
+.subjectCard {
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .subject-icon {
@@ -21,7 +13,7 @@
   height: 40px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid #e0e0e0;
+  //border: 2px solid #e0e0e0;
 }
 
 .score-box {

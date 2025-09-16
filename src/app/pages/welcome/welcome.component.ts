@@ -40,6 +40,7 @@ import { SnackbarService } from '@core/service/snackbar.service';
 export class WelcomeComponent implements OnInit {
   public subjectRoleMap: Course[] = [];
   userName = "";
+  authUser : User;
   userMessage = "";
   nextAction = "login";
   //clean up
@@ -149,10 +150,11 @@ export class WelcomeComponent implements OnInit {
   constructor(private router: Router,
     private master: MasterService,
     private snackService: SnackbarService,
-    private authService: AuthService) {
+    public authService: AuthService) {
     this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
       if (sub && sub.firstName) {
+        this.authUser = sub;
         this.userName = sub.firstName;
         if (sub.designation) {
           this.nextAction = "selfRating";
@@ -163,7 +165,7 @@ export class WelcomeComponent implements OnInit {
         }
       } else {
         this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
-        this.nextAction = "login";
+        this.nextAction = "selfRating";
       }
     });
     // Implement Master Data Relationship
@@ -238,6 +240,11 @@ export class WelcomeComponent implements OnInit {
         break;
 
       case "takeQuiz":
+        this.router.navigate(['/take-quiz/explore']).then(() => {
+        });
+        break;
+
+        case "takeQuiz":
         this.router.navigate(['/take-quiz/explore']).then(() => {
         });
         break;

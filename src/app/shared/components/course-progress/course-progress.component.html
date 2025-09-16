@@ -1,4 +1,7 @@
-<canvas #c></canvas>
-@if (showLabel) {
-<div class="label">{{ current }}%</div>
-}
+<div class="text-center">
+    <canvas #c></canvas>
+    <small class="miniTxt">Score</small>
+    @if (showLabel) {
+    <div class="label">{{ current }}%</div>
+    }
+</div>

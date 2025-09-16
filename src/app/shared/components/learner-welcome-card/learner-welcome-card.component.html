@@ -2,27 +2,30 @@
     <div class="body">
         <div class="row align-items-center">
             <div class="col-md-8 mb-0">
-                <div class="font-b-500 font-25 col-blue mb-2">Welcome {{ isVisitor ? 'Guest' : authData.firstName}}</div>
-                <p class="font-b-500 mb-4">Lets start by adding your existing skills. This will help us to customize your experience. </p>
+                <div class="font-b-500 font-25 col-blue mb-2">{{ isVisitor ? 'Onboard. Upskill. Achieve' : 'Upskill & Achieve'}}
+                </div>
+                <p class="font-b-500 mb-4">Kickstart your journey 🚀 Rate your skills, take a quick test, and start leveling up toward your full-stack career. </p>
                 <div class="row justify-content-center">
                     <div class="col-lg-4 col-sm-4">
-                        <div class="p-15 m-20 card-1"><span class="font-b-500">Start with rating yourself</span>
-                            <h5 class="mb-0 text-primary">Skill Rating </h5>
+                        <div class="p-15 m-20 card-1"><span class="font-b-500">What you want to become?</span>
+                            <h5 class="mb-0 text-primary">Select Program </h5>
                         </div>
                     </div>
                     <div class="col-lg-4 col-sm-4">
-                        <div class="p-15 m-20 card-2"><span class="font-b-500">Take Initial Assessment</span>
-                            <h5 class="mb-0 text-danger">Mock Test </h5>
+                        <div class="p-15 m-20 card-2"><span class="font-b-500">Let us analyze your skills</span>
+                            <h5 class="mb-0 text-danger">Initial Assessment </h5>
                         </div>
                     </div>
                     <div class="col-lg-4 col-sm-4">
-                        <div class="p-15 m-20 card-3"><span class="font-b-500">UpSkill for a Career</span>
-                            <h5 class="mb-0 text-success">Start Achieving </h5>
+                        <div class="p-15 m-20 card-3"><span class="font-b-500">Prepare for aspiring job</span>
+                            <h5 class="mb-0 text-success">Achieve Goals</h5>
                         </div>
                     </div>
-                     <div>
-          <button mat-flat-button class="adminBtn" (click)="startSkillRating()">Start Self Skill Rating</button>
-        </div>
+                    <div>
+                        <button mat-flat-button class="adminBtn" (click)="login()">
+                           Start Your Free Onboarding <mat-icon>keyboard_arrow_right</mat-icon>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 mb-0">

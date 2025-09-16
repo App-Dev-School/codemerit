@@ -50,40 +50,34 @@
       <div class="row m-t-20">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
           <mat-card>
-            <!-- <mat-card-header class="header-style">
+            <mat-card-header class="header-style">
               @if (currentSubject?.image) {
                 <img mat-card-avatar [src]="currentSubject?.image" class="m-b-10">
                }
-              <mat-card-title>Example Card Header with left icon and right icon</mat-card-title>
-              <a mat-button color="primary" (click)="viewMeritList()">
-                <i class="material-icons psr-2">trending_up</i>
-              </a>
-              @if (currentSubject?.image) {
-                <img mat-card-avatar [src]="currentSubject?.image" class="m-b-10">
-               }
-            </mat-card-header> -->
-            <mat-card-content class="text-center">
-              <img [src]="currentSubject?.image" class="text-center loadingIcon m-b-20">
-              <h5 class="cmSubHeading">Master {{currentSubject?.title}}</h5>
-              <p class="m-t-10 font-12">Level up your knowledge through CodeMerit’s engaging conceptual and interactive assessments.</p>
-            </mat-card-content>
-            <mat-card-footer>
+              <mat-card-title>Learning Guidelines</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="p-l-5">
+              <!-- <img [src]="currentSubject?.image" class="text-center smallLoadingIcon m-b-20">
+              <h5 class="cmSubHeading">Master {{currentSubject?.title}}</h5> -->
+              <p class="m-t-10 font-12 m-t-10">Level up your knowledge through CodeMerit’s engaging conceptual and interactive assessments.</p>
               <hr class="dim-divider">
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-blue psr-2">fast_forward</i>
-                Begin Your Learning Journey.
+              <p class="m-b-0 font-12 d-flex"><i class="material-icons col-blue psr-2">check</i>
+                Begin Your Learning Journey by reviewing practice contents and understanding your goals.
               </p>
-              <hr class="dim-divider">
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-blue psr-2">donut_small</i>
+              <!-- <hr class="dim-divider"> -->
+              <p class="m-b-0 font-12 d-flex"><i class="material-icons col-blue psr-2">check</i>
                 Follow the sequential assessment.
               </p>
-              <hr class="dim-divider">
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-blue psr-2">track_changes</i>
+              <!-- <hr class="dim-divider"> -->
+              <p class="m-b-0 font-12 d-flex"><i class="material-icons col-blue psr-2">track_changes</i>
                 Maintain good score and accuracy
               </p>
               <hr class="dim-divider">
-              <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-blue psr-2">verified_user</i>
+              <p class="m-b-0 font-12 d-flex"><i class="material-icons col-blue psr-2">verified_user</i>
                 Unlock Badges and Priviledges
               </p>
+            </mat-card-content>
+            <mat-card-footer>
               <div class="text-center p-t-20 p-b-20">
                 <button mat-stroked-button color="primary" class="waves-effect"
                   (click)="launchSubjectQuiz(currentSubject)">
@@ -97,14 +91,17 @@
         @if(subjectData?.popularTopics){
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
           <mat-card>
-            <mat-card-header>
-              <mat-card-title>Deep Dive {{currentSubject?.title}}</mat-card-title>
+            <mat-card-header class="header-style">
+              @if (currentSubject?.image) {
+                <img mat-card-avatar [src]="currentSubject?.image" class="m-b-10">
+               }
+             <mat-card-title>Deep Dive {{currentSubject?.title}}</mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <mat-chip-set aria-label="Tags">
                 @for(topic of subjectData.popularTopics;track topic){
                 <mat-chip>{{topic.title}}
-                  <!-- <span class="badge col-purple">{{topic.votes}}</span> -->
+                   <span class="badge col-purple">{{topic.votes}}</span>
                 </mat-chip>
                 }
               </mat-chip-set>

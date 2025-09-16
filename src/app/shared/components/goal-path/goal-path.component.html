@@ -4,10 +4,8 @@
   <swiper-slide class="stepper-slide">
     <mat-card class="card">
       <mat-card-content>
-        <!-- <h6 class="cmSubHeading text-center m-t-10" [ngStyle]="{'color':color}">
-          {{title}} Progress Tracker</h6> -->
         <!-- Step Circle -->
-        <div class="step-circle mb-2 d-flex justify-content-center align-items-center"
+        <div class="step-circle mb-2 m-t-10 d-flex justify-content-center align-items-center"
           [ngStyle]="{'background-color':color}">
           {{ i + 1 }}
         </div>
@@ -16,7 +14,7 @@
         <h5 class="text-center font-12 col-grey">Milestone - {{ i+1 }} / {{topics.length}}</h5>
         <hr class="dim-divider">
 
-        <ul class="list-unstyled">
+        <ul class="list-unstyled p-r-10 p-l-10">
           <li>
             <div class="mb-2">
               <span class="progress-label">Milestone Score</span>
@@ -57,12 +55,12 @@
         <hr class="dim-divider">
         <div class="text-center container-auth-form-btn m-b-10">
           <button mat-stroked-button color="primary" class="m-b-0" (click)="onTakeNextQuiz(topic)">
-            Take Next Challenge
+           🎯 Take Next Challenge
           </button>
-          <p class="text-center font-12 col-grey m-t-5 m-b-5">OR</p>
+          <!-- <p class="text-center font-12 col-grey m-t-5 m-b-5">OR</p>
           <button mat-flat-button color="primary" class="m-t-0" (click)="onTakeNextQuiz(null)">
             Test {{title}} Mastery
-          </button>
+          </button> -->
         </div>
 
       </mat-card-content>

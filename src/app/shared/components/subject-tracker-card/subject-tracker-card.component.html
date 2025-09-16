@@ -1,44 +1,26 @@
 <!--- Start Subject Tracker Card -->
-<mat-card class="hoverCard">
+<mat-card class="subjectCard hoverCard">
   <mat-card-content>
-    <!-- <div class="subject-card d-flex align-items-start">
-      <div class="avatar-section">
-        <img [src]="item?.image || 'assets/images/tech/placeholder.png'" alt="Avatar" class="avatar-img" />
-      </div>
-      <div class="subject-info flex-grow-1">
-        <div class="subjectHeader">
-          <mat-card-title class="text">{{item?.title}}</mat-card-title>
-        </div>
-        <p class="font-12">{{item?.description}}</p>
-      </div>
-      <div class="score-section text-center">
-        <app-course-progress [score]="0"></app-course-progress>
-        <small class="m-b-10 center-header miniTxt">Score</small>
-      </div>
-    </div>
-    <hr class="dim-divider"> -->
+
     <div class="row align-items-center">
-      <!-- Left Column -->
       <div class="col-12 col-sm-6 text-center text-sm-start mb-2 mb-sm-0">
         <div class="d-flex align-items-center justify-content-center justify-content-sm-start">
-          <img [src]="item?.image || 'assets/images/tech/placeholder.png'" alt="Subject Icon"
+          <img [src]="item?.image || 'assets/images/tech/placeholder.png'" alt="item?.title"
             class="subject-icon me-2" />
-          <span class="font-20">{{ item?.title }}</span>
+          <span class="cmSubHeading">{{ item?.title }}</span>
         </div>
       </div>
-
-      <!-- Right Column -->
       <div class="col-12 col-sm-6 text-center text-sm-end">
         <div class="d-flex flex-column align-items-center align-items-sm-end">
           <app-course-progress [score]="item.score"></app-course-progress>
-          <small class="miniTxt">Score</small>
         </div>
       </div>
     </div>
 
+    <hr class="dim-divider">
     @if (item.myAllAttempts > 0) {
     <p class="font-12">Obtained {{item.score}}% score with an accuracy of {{item.accuracy}}%. {{100 - item.coverage}}%
-      more to complete.</p>
+      assessment to complete.</p>
     }@else{
     <p class="font-12">{{item.description}}</p>
     }

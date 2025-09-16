@@ -10,8 +10,8 @@ export class CourseProgressComponent implements AfterViewInit, OnChanges {
   @Input() score = 0;           // 0–100
   @Input() size = 64;           // css pixels
   @Input() thickness = 6;       // px
-  @Input() duration = 900;      // ms
-  @Input() barColor = '#3f51b5';
+  @Input() duration = 2000;      // ms
+  @Input() barColor = '#2541e2ff';
   @Input() trackColor = '#e6e6e6';
   @Input() showLabel = true;
 

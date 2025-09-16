@@ -1,27 +1,45 @@
-import { Component, input, output } from '@angular/core';
+import { Component, Input, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-medal-card',
-  imports: [ 
+  imports: [
     FormsModule,
     MatIconModule,
     MatButton
   ],
   templateUrl: './medal-card.component.html',
-  styleUrl: './medal-card.component.scss'
+  styleUrls: ['./medal-card.component.scss',
+    './star-rating-effect.scss'
+  ]
 })
 export class MedalCardComponent {
-  readonly userName = input<string>('Guest');
-  readonly message = input<string>('You have won the Explorer badge for completing the self skill rating.');
-  readonly action = input<string>('takeQuiz');
+  @Input() userName = 'Guest';
+  title = 'Upskill to Stay Ahead!';
+  @Input() message = 'You have won the Explorer badge for completing the self skill rating.';
+  @Input() action = 'selfRating';
   medalAction = output<string>();
+  messages = [
+    "Begin Your Full-Stack Journey 🚀",
+    "Start Building Your Skills",
+    "Keep Growing Every Day",
+    "Level Up Your Coding Skills",
+    "Upskill to Stay Ahead",
+    "Turn Skills Into a Career",
+    "Take the Next Step in Tech"
+  ];
+
   constructor() {
+    this.title = this.getRandomMessage();
+  }
+
+  getRandomMessage() {
+    return this.messages[Math.floor(Math.random() * this.messages.length)];
   }
 
   handleAction() {
-    this.medalAction.emit(this.action());
+    this.medalAction.emit(this.action);
   }
 }

@@ -6,6 +6,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AuthService, User, Role } from '@core';
 @Component({
   selector: 'app-topics-list',
   imports: [
@@ -25,11 +26,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './topics-list.component.scss'
 })
 export class TopicsListComponent {
+  userData : User;
+  userRole : Role;
   @Input() subjectTopics: any[];
   @Output() topicExplore = new EventEmitter<any>();
   @Output() topicQuiz = new EventEmitter<any>();
 
-  constructor() {
+  constructor(private authService: AuthService) {
+    this.userData = this.authService?.currentUserValue;
+    this.userRole = this.userData.role;
   }
 
   onTopicExplore(topic: any) {

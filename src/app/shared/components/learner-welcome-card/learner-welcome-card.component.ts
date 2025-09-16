@@ -5,9 +5,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService, User } from '@core';
 import { SkillRatingComponent } from '../skill-rating/skill-rating.component';
 import { Router } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
 @Component({
     selector: 'app-learner-welcome-card',
-    imports: [MatButtonModule],
+    imports: [MatButtonModule, MatIcon],
     templateUrl: './learner-welcome-card.component.html',
     styleUrl: './learner-welcome-card.component.scss'
 })
@@ -26,9 +27,11 @@ export class LearnerWelcomeCardComponent implements OnInit {
         }
     }
     
-
     startSkillRating() {
         this.router.navigate(['/app/self-skill-rating']);
     }
 
+    login() {
+        this.router.navigate(['/authentication/signin']);
+    }
 }

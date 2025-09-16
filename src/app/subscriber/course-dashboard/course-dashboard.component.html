@@ -32,7 +32,7 @@
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
         @if (!(userData | async)?.userDesignation?.title) {
         <app-congratulations-card
-          [userName]="(userData| async)?.firstName+' '+(userData| async)?.lastName"></app-congratulations-card>
+          [user]="(userData| async)"></app-congratulations-card>
         }
         @if (!(userData | async)?.userDesignation?.title) {
         <app-medal-card [userName]="'Hi '+(userData| async)?.firstName +'!'"
@@ -42,10 +42,10 @@
     </div>
 
     <div class="row m-t-0 match-height clearfix">
-      <div class="col-12">
+      <!-- <div class="col-12">
         <h4 class="text-center font-20 m-b-20"><span class="bold">{{courseItem?.title}} Skill Assessment</span>
         </h4>
-      </div>
+      </div> -->
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
         <div class="card">
           <div class="m-b-20">

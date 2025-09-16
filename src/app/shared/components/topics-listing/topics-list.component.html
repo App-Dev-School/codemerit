@@ -14,10 +14,9 @@
         <img src="assets/images/icons/badge.svg" class="statusStarted" alt="Started" />
         }
         }
-        <p class="font-12 m-t-0">{{ group.description }}</p>
+        <p class="font-12 m-t-0"><span class="cmSmallTitle">Content </span>:{{ group.description }}</p>
         @if (group.myAllAttempts <= 0 && group.goal) { 
-          <h6 class="col-grey">Goal </h6>
-          <p class="font-12 m-t-0"><span class="font-14 col-grey">Goal </span>:
+          <p class="font-12 m-t-0"><span class="cmSmallTitle">Goal </span>:
           {{ group.goal }}</p>
           }
           <!-- Coverage Progress -->
@@ -56,18 +55,21 @@
       </mat-card-content>
       @if (group.numTrivia > 0 && group.myAllAttempts > 0) {
       <mat-card-actions class="d-flex justify-content-between">
-        <span class="icon-button font-12">
-          <!-- <mat-icon>quiz</mat-icon>-->
-          📝 {{ (group.myUniqueAttempts / group.myAllAttempts)*100 | number:'1.1-1'
-            }}% Unique</span>
-
+      
+@if (userData && userRole === 'Admin') {
 <button mat-button class="icon-button" (click)="onTopicQuiz(group)">
           <mat-icon>quiz</mat-icon>
            {{ group.numTrivia }}</button>
+}
 
         <button mat-button class="icon-button" (click)="onTopicQuiz(group)">
-          <!-- <mat-icon>quiz</mat-icon>-->
           🏆 Take Quiz </button>
+
+          <span class="icon-button col-grey font-12">
+           {{ (group.myUniqueAttempts / group.myAllAttempts)*100 | number:'1.0-0'
+            }}% Unique Attempts &nbsp;</span>
+
+
   
         @if (group.numLessons > 0) {
         <button mat-button class="icon-button" matTooltip="{{group.coverage <= 0 ? '' : (group.coverage>= 100
