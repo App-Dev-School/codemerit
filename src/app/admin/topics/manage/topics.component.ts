@@ -79,27 +79,25 @@ export class TopicsComponent implements OnInit, OnDestroy {
     { def: 'select', label: 'Checkbox', type: 'check', class: 'col-default', visible: true },
     { def: 'title', label: 'Name', type: 'text', class: 'col-title', visible: true },
     { def: 'subjectName', label: 'Subject', type: 'text', class: 'col-default', visible: true },
-    {
-      def: 'label',
-      label: 'Level',
-      type: 'text',
-      class: 'col-default',
-      visible: true,
-    },
-    { def: 'numQuestions', label: 'Questions', type: 'text', class: 'col-default', visible: true },
+    // {
+    //   def: 'label',
+    //   label: 'Level',
+    //   type: 'text',
+    //   class: 'col-default',
+    //   visible: true,
+    // },
+    { def: 'numTrivia', label: 'Trivia Count', type: 'text', class: 'col-default', visible: true },
     { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-default', visible: true },
   ];
 
   dataSource = new MatTableDataSource<TopicItem>([]);
   selection = new SelectionModel<TopicItem>(true, []);
-  contextMenuPosition = { x: '0px', y: '0px' };
   isLoading = true;
   private destroy$ = new Subject<void>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('filter') filter!: ElementRef;
-  @ViewChild(MatMenuTrigger) contextMenu?: MatMenuTrigger;
 
   constructor(
     public httpClient: HttpClient,
@@ -273,17 +271,5 @@ export class TopicsComponent implements OnInit, OnDestroy {
       'bottom',
       'center'
     );
-  }
-  onContextMenu(event: MouseEvent, item: TopicItem) {
-    event.preventDefault();
-    this.contextMenuPosition = {
-      x: `${event.clientX}px`,
-      y: `${event.clientY}px`,
-    };
-    if (this.contextMenu) {
-      this.contextMenu.menuData = { item };
-      this.contextMenu.menu?.focusFirstItem('mouse');
-      this.contextMenu.openMenu();
-    }
   }
 }

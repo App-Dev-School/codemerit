@@ -21,12 +21,14 @@ export class TopicItem implements TopicItemBasic {
   numQuizzes?: number;
   isPublished: boolean;
 
-  //more detailed fields
+  //user attempt related fields
   isStarted ?:boolean;
   isCompleted ?:boolean;
   score?: number;
   accuracy?: number;
   coverage?: number;
+  correct?:number;
+  wrong?:number;
 
   constructor(topic: Partial<TopicItem> = {}) {
     this.id = topic.id || Number.parseInt(this.getRandomID());

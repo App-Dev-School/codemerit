@@ -354,4 +354,12 @@ export class DashboardComponent implements OnInit {
       this.launchQuiz(this.currentSubject.id, null);
     }
   }
+
+  onCertificateDownload() {
+    this.snackService.display('snackbar-dark', 'Please complete your milestones to unlock the digital certificate.', 'bottom', 'center');
+  }
+
+   onScheduleMockInt() {
+    this.snackService.display('snackbar-dark', 'Feature coming soon.', 'bottom', 'center');
+  }
 }

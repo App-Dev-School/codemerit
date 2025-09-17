@@ -28,7 +28,7 @@ export class TopicService {
     if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/topics/all';
+    const url = 'apis/master/subjectTopicsDashboard';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " via Token " + api_key);
     }
