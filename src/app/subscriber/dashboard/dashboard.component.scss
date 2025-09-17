@@ -1,3 +1,10 @@
 .flex-center{
     justify-content: center;
 }
+.matChipSmall{
+    height: 24px!important;
+}
+::ng-deep .mat-mdc-tab-body-content {
+    height: max-content;
+    overflow: hidden!important;
+}
