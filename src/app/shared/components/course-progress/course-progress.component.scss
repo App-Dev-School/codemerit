@@ -13,10 +13,11 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 11px;
-  line-height: 1;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 17px;
   color: #333;
   pointer-events: none;
   user-select: none;
+  bottom: 16px;
 }

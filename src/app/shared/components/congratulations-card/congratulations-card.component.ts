@@ -18,7 +18,7 @@ import { User } from '@core/models/user';
 })
 export class CongratulationsCardComponent {
   @Input() user: User;
-  @Input() message: string = "Welcome Guest! CodeMerit offers a workplace to progressively up-skilling and gaining Work Experience in software solution development.";
+  @Input() message: string = "Grow your skills and gain real-world experience in software development.";
   @Input() action: string = "Explore Tech Roles";
   constructor(private router: Router) {
     console.log("Congratulations Component", this.user);

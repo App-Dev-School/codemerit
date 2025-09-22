@@ -70,24 +70,38 @@
         <mat-card-content class="p-l-5">
           <!-- <img [src]="currentSubject?.image" class="text-center smallLoadingIcon m-b-20">
               <h5 class="cmSubHeading">Master {{currentSubject?.title}}</h5> -->
-          <p class="m-t-10 font-12 m-t-0">Level up your knowledge through CodeMerit’s engaging conceptual and
-            interactive assessments.</p>
+          <p class="m-t-10 font-12 m-t-0">Boost your knowledge with interactive and concept-driven assessments.</p>
           <hr class="dim-divider">
-          <p class="m-b-8 font-12 d-flex"><i class="material-icons col-blue psr-2">check_circle</i>
-            Begin Your Learning Journey by reviewing practice contents and understanding your goals.
+          <p class="m-b-8 font-12 d-flex">
+            <i class="material-icons col-blue psr-2">check_circle</i>
+            <span class="step-title">Set Your Goals </span> Begin by exploring the practice materials and defining your
+            learning objectives.
           </p>
-          <p class="m-b-8 font-12 d-flex"><i class="material-icons col-blue psr-2">check_circle</i>
-            Follow the comprehensive assessment through the Subject Progress Tracker.
+
+          <p class="m-b-8 font-12 d-flex">
+            <i class="material-icons col-blue psr-2">check_circle</i>
+            <span class="step-title">Track Your Progress </span> Use the Subject Progress Tracker to follow structured
+            assessments and measure your growth.
           </p>
-          <p class="m-b-8 font-12 d-flex"><i class="material-icons col-blue psr-2">check_circle</i>
-            Revise a topic well before attending an assessment.
+
+          <p class="m-b-8 font-12 d-flex">
+            <i class="material-icons col-blue psr-2">check_circle</i>
+            <span class="step-title">Revise Before You Test </span> Review topics thoroughly to ensure better
+            performance in assessments.
           </p>
-          <p class="m-b-8 font-12 d-flex"><i class="material-icons col-blue psr-2">check_circle</i>
-            Take interactive assessments and avoid wrong answers. Wrong attempts may affect your overall score.
+
+          <p class="m-b-8 font-12 d-flex">
+            <i class="material-icons col-blue psr-2">check_circle</i>
+            <span class="step-title">Take Smart Assessments </span> Attempt interactive quizzes with focus; minimize
+            wrong answers, as they impact your overall score.
           </p>
-          <p class="m-b-8 font-12 d-flex"><i class="material-icons col-blue psr-2">check_circle</i>
-            Maintain good score and accuracy to get into the Leaderboard and unlock badges and other priviledges.
+
+          <p class="m-b-8 font-12 d-flex">
+            <i class="material-icons col-blue psr-2">check_circle</i>
+            <span class="step-title">Climb the Leaderboard </span> Maintain high accuracy and consistent scores to earn
+            badges, rewards, and a top leaderboard spot.
           </p>
+
           <hr class="dim-divider">
         </mat-card-content>
         <mat-card-footer>
@@ -179,10 +193,12 @@
           <app-merit-list-widget [meritList]="subjectData?.meritList"></app-merit-list-widget>
         </mat-card-content>
         <mat-card-footer>
+          @if (subjectData?.meritList.length > 0) {
           <p class="m-b-0 font-12 d-flex flex-center"><i class="material-icons col-green psr-2">trending_up</i>
             Top Performers in {{currentSubject?.title}}
           </p>
           <hr class="dim-divider">
+          }
           <div class="text-center p-t-20 p-b-20">
             <button mat-stroked-button color="primary" (click)="launchSubjectQuiz(currentSubject)">
               Take {{currentSubject?.title}} Quiz
@@ -193,16 +209,15 @@
 
       <mat-card>
         <mat-card-content>
-          <h4 class="text-center m-b-10">Schedule Mock Interview</h4>
+          <h4 class="cmSubHeading text-center m-b-0">Schedule Mock Interviews</h4>
           <hr class="dim-divider">
           <p class="m-b-0 font-12 d-flex flex-center">
-            Feel free to unlock Mock Interview with AI & Human once you complete the Basic and Intermediate Levels of
-            assessment.
+           Advance through Basic and Intermediate levels to experience AI and Human-led Mock Interviews.
           </p>
           <hr class="dim-divider">
           <div class="text-center p-t-20 p-b-20">
             <button mat-stroked-button color="primary" (click)="onScheduleMockInt()">
-             <mat-icon>schedule</mat-icon> Schedule Mock Interview
+              <mat-icon>schedule</mat-icon> Schedule Mock Interview
             </button>
           </div>
         </mat-card-content>
@@ -210,9 +225,8 @@
 
       <mat-card>
         <mat-card-content class="text-center">
-          <img [src]="'assets/images/icons/certificate.png'"
-            class="image-pulse smallLoadingIcon m-b-20">
-          <h4 class="text-center m-b-10">{{currentSubject?.title}} Certification</h4>
+          <img [src]="'assets/images/icons/certificate.png'" class="image-pulse smallLoadingIcon m-b-20">
+          <h4 class="cmSubHeading text-center m-b-0">{{currentSubject?.title}} Certification</h4>
           <hr class="dim-divider">
           <p class="m-b-0 font-12 d-flex flex-center">
             Complete your {{currentSubject?.title}} milestones to generate your digital certicate.

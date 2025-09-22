@@ -70,9 +70,9 @@
         <div class="text-center">
           <!-- <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" /> -->
           <img src="{{subject.image}}" class="subjectImg" alt="{{subject.title}}" />
-          <h5>{{subject.title}}</h5>
-          <mat-card-title>Learn {{subject.description}}</mat-card-title>
-          <p>Enroll into {{subject.title}} to start levelling up your skills.</p>
+          <h5 class="m-t-10">{{subject.title}}</h5>
+          <mat-card-title class="cmSubHeading">Learn {{subject.description}}</mat-card-title>
+          <p class="m-t-10">Enroll into {{subject.title}} to start levelling up your skills.</p>
         </div>
       </div>
       }
@@ -83,12 +83,12 @@
     <hr class="dim-divider">
     }@else{
     <hr class="dim-divider">
-    <p class="m-b-10 font-12 d-flex align-items-center justify-content-center"><i
-        class="material-icons col-green psr-2">trending_up</i>
-      Level up 📈 your {{subject.title}} skills. 🏆
+    <p class="m-b-10 font-12 d-flex align-items-center justify-content-center">
+      🏆 Level up your {{subject.title}} skills.
     </p>
     <div class="text-center p-t-20 p-b-20">
-      <button mat-stroked-button color="primary" (click)="onEnrollSubject(subject)">Start Learning</button>
+      <button mat-stroked-button color="primary" (click)="onEnrollSubject(subject)"><i
+        class="material-icons psr-2">trending_up</i> Start Learning</button>
     </div>
     }
 
