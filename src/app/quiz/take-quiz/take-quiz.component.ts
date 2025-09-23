@@ -16,6 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UtilsService } from '@core/service/utils.service';
 import { SafePipe } from '@shared/pipes/safehtml.pipe';
+import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -34,7 +35,8 @@ interface Quiz {
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    CelebrationComponent
   ]
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
@@ -53,6 +55,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   currentHint = '';
   showWarningToast = false;
   userData: User;
+  celebrationTrigger: { x: number; y: number } | null = null;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
@@ -91,19 +94,29 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           ...q,
           options: q.options || [],
           selectedChoice: '',
-          topicsArr : q.topics ? q.topics.map(object => object.title) : []
+          topicsArr: q.topics ? q.topics.map(object => object.title) : []
         }));
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
       });
   }
 
   /** Record selected answer */
-  optionSelected(choice: number, question: QuizQuestion): void {
+  optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
     this.authService.log('Quiz optionSelected', choice, question);
     if (!question.hasAnswered) {
       question.selectedOption = choice;
       question.hasAnswered = true;
     }
+    //console.log("optionSelected() =>", choice, question);
+    const isCorrect = question.options.some(
+      opt => opt.id === question.selectedOption && (opt.correct === true)
+    );
+    if (isCorrect) {
+      this.triggerCelebration($event);
+    }
+    setTimeout(() => {
+        this.onSlideNext();
+    }, isCorrect ? 2200 : 1200);
   }
 
   /** Navigate to next question */
@@ -132,9 +145,9 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       currentQuestion.hintUsed = true;
       //remove this and implement in interactive mode
       if (currentQuestion?.answer) {
-      this.currentHint = 'ANSWER : '+currentQuestion?.answer;
-      currentQuestion.hintUsed = true;
-    }
+        this.currentHint = 'ANSWER : ' + currentQuestion?.answer;
+        currentQuestion.hintUsed = true;
+      }
     } else {
       this.currentHint = 'Hint not available';
     }
@@ -219,4 +232,22 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   navigateToResult(resultCode: string) {
     this.router.navigate(['quiz/result', resultCode]);
   }
+
+  triggerCelebration(event: MouseEvent) {
+    try {
+      const rect = (event.target as HTMLElement).getBoundingClientRect();
+      this.celebrationTrigger = {
+        x: event.clientX,
+        y: event.clientY - rect.height / 2 // slightly above click
+      };
+    } catch (error) {
+      console.log("optionSelected() triggerCelebration error", error);
+    }
+  }
+
+  onCelebrationFinished() {
+    console.log('🎉 Celebration animation completed!');
+    //this.onSlideNext();
+  }
+
 }

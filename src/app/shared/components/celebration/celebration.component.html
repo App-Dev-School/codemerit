@@ -1,0 +1,13 @@
+<div class="celebration-container">
+    @for (item of items; track $index) {
+        <span
+        class="celebration-item"
+        [style.left.px]="item.x"
+        [style.top.px]="item.y"
+        [style.fontSize.px]="item.size"
+        [style.animationDuration.s]="item.duration"
+        [style.--drift]="item.drift">
+    {{ item.emoji }}
+  </span>
+    }
+</div>

@@ -73,16 +73,16 @@
               <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
               }
 
-               @if (question?.topicsArr && question?.topicsArr.length > 0) {
-                <div class="list-group-item m-b-20">
-                  @for (topic of question?.topicsArr; track topic) {
-                    <!-- bg-pink col-indigo -->
-                  <span class="badge col-indigo">{{topic}}</span>
+              @if (question?.topicsArr && question?.topicsArr.length > 0) {
+              <div class="list-group-item m-b-20">
+                @for (topic of question?.topicsArr; track topic) {
+                <!-- bg-pink col-indigo -->
+                <span class="badge col-indigo">{{topic}}</span>
                 }
-                </div>
-               }
+              </div>
+              }
               @for (choice of question.options; track choice) {
-              <mat-card (click)="optionSelected(choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
+              <mat-card (click)="optionSelected($event, choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
          'selected': question.selectedOption === choice.id,
          'correct': question.selectedOption === choice.id && choice.correct,
          'wrong': question.selectedOption === choice.id && !choice.correct
@@ -99,6 +99,9 @@
                 </div>
               </mat-card>
               }
+
+              <!-- Celebration container -->
+              <app-celebration [trigger]="celebrationTrigger" (animationDone)="onCelebrationFinished()"></app-celebration>
 
             </div>
           </swiper-slide>

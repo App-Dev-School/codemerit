@@ -1,0 +1,35 @@
+.celebration-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.celebration-item {
+  position: absolute;
+  animation: floatUp ease-in-out forwards;
+  opacity: 0.9;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  30% {
+    transform: translate(var(--drift), -30vh) scale(1.6);
+    opacity: 1;
+  }
+  70% {
+    transform: translate(calc(var(--drift) * 1.5), -70vh) scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(calc(var(--drift) * 2), -100vh) scale(0.5);
+    opacity: 0;
+  }
+}
