@@ -1,0 +1,19 @@
+<div class="quiz-loader">
+  <canvas #matrixCanvas class="matrix-canvas"></canvas>
+
+  <div class="content-box">
+    <div class="content">
+      <h2 class="glow-text">{{ currentMessage }}</h2>
+    </div>
+  </div>
+
+   @if (finished) {
+      <div class="action-box">
+    <div class="action-btn">
+      <button mat-raised-button color="primary" (click)="startQuiz({})">
+        Start Quiz
+      </button>
+    </div>
+  </div>
+  }
+</div>

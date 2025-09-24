@@ -103,7 +103,7 @@ export class CoursesComponent implements OnInit, OnDestroy {
   constructor(
     public httpClient: HttpClient,
     public dialog: MatDialog,
-    public topicService: CourseService,
+    public courseService: CourseService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -127,9 +127,9 @@ export class CoursesComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    this.topicService.getAllTopics().subscribe({
+    this.courseService.getDummyCourses().subscribe({
       next: (data) => {
-        console.log("TopicManager data", data);
+        console.log("Courses data", data);
         
         this.dataSource.data = data;
         this.isLoading = false;

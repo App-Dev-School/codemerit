@@ -54,7 +54,7 @@ export class CourseFormComponent {
   action: string;
   dialogTitle: string;
   topicImage = 'assets/images/icons/topic.png';
-  topicForm: UntypedFormGroup;
+  courseForm: UntypedFormGroup;
   initialFormValue: any;
   topicItems: CourseItem;
   subjects: Subject[] = [];
@@ -70,10 +70,10 @@ export class CourseFormComponent {
     this.dialogTitle =
       this.action === 'edit' ? 'Edit '+data.topicItem.title : 'Create New Topic';
     this.topicItems = this.action === 'edit' ? data.topicItem : new CourseItem({}); // Create a blank object
-    this.topicForm = this.createContactForm();
+    this.courseForm = this.createContactForm();
     const allTopicGroups = this.masterSrv.topics;
     console.log('TopicManager all topic', allTopicGroups);
-    this.topicForm.get('subjectId')?.valueChanges.subscribe(subject => {
+    this.courseForm.get('subjectId')?.valueChanges.subscribe(subject => {
       if (subject > 0) {
         this.topicGroups = allTopicGroups.filter(topic => topic.subjectId == subject);
         console.log('TopicManager filtered topic', this.topicGroups);
@@ -83,14 +83,14 @@ export class CourseFormComponent {
     if (this.action === 'edit') {
       console.log('TopicManager ###Update Form in Edit Mode:', data.topicItem);
       //populate topic
-      this.topicForm.patchValue({
+      this.courseForm.patchValue({
         title: data.topicItem.title,
         description: data.topicItem.description,
         color: data.topicItem.color,
         isPublished: data.topicItem.isPublished
       });
       // Save initial value for later comparison
-      this.initialFormValue = this.topicForm.getRawValue();
+      this.initialFormValue = this.courseForm.getRawValue();
 
       /**
        * Form should not be closed on click outside
@@ -107,6 +107,8 @@ export class CourseFormComponent {
       id: [this.topicItems.id],
       title: [this.topicItems.title, [Validators.required, Validators.minLength(3)]],
       description: [this.topicItems.description],
+      subjectIds: [[], [Validators.required]],
+      label: [''],
       isPublished: [true]
     });
   }
@@ -121,8 +123,8 @@ export class CourseFormComponent {
   }
 
   submit() {
-    if (this.topicForm.valid) {
-      const formData = this.topicForm.getRawValue();
+    if (this.courseForm.valid) {
+      const formData = this.courseForm.getRawValue();
       if (this.action === 'edit') {
         const changedFields: any = {};
         // Compare each field

@@ -1,0 +1,984 @@
+[
+    {
+        "id": 1,
+        "title": "AI/ML Engineer",
+        "description": "Develops intelligent systems using machine learning.",
+        "slug": "ai-ml-engineer",
+        "image": "",
+        "color": "#1abc9c",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 21,
+                "title": "Python",
+                "slug": "python",
+                "image": "assets/images/tech/python.png"
+            },
+            {
+                "id": 22,
+                "title": "AI Fundamentals",
+                "slug": "ai-fundamentals",
+                "image": "assets/images/tech/ai.png"
+            },
+            {
+                "id": 23,
+                "title": "Machine Learning",
+                "slug": "machine-learning",
+                "image": "assets/images/tech/analytics.png"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "All Developer Roles",
+        "description": "Applies to all development-related positions.",
+        "slug": "all-devs",
+        "image": "",
+        "color": "#2980b9",
+        "isPublished": false,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 24,
+                "title": "Git",
+                "slug": "git",
+                "image": "assets/images/tech/git.png"
+            },
+            {
+                "id": 25,
+                "title": "Jira",
+                "slug": "jira",
+                "image": "assets/images/tech/jira.png"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Android Developer",
+        "description": "Builds Android applications using Java/Kotlin.",
+        "slug": "android-developer",
+        "image": "",
+        "color": "#c0392b",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 29,
+                "title": "Android Development (Kotlin/Java)",
+                "slug": null,
+                "image": "assets/images/tech/android.png"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Angular Developer",
+        "description": "Builds SPAs using Angular framework.",
+        "slug": "angular-developer",
+        "image": "",
+        "color": "#f39c12",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 4,
+                "title": "TypeScript",
+                "slug": "typescript",
+                "image": "assets/images/tech/typescript.png"
+            },
+            {
+                "id": 5,
+                "title": "Angular",
+                "slug": "angular",
+                "image": "assets/images/tech/angular.png"
+            },
+            {
+                "id": 32,
+                "title": "RxJS",
+                "slug": null,
+                "image": "assets/images/tech/rxjs.png"
+            },
+            {
+                "id": 34,
+                "title": "Ionic",
+                "slug": null,
+                "image": "assets/images/tech/ionic.png"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "title": "Back‑End Developer",
+        "description": "Handles server-side logic and databases.",
+        "slug": "backend-developer",
+        "image": "",
+        "color": "#d35400",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 7,
+                "title": "Express.js",
+                "slug": "express.js",
+                "image": "assets/images/tech/rest-api.png"
+            },
+            {
+                "id": 8,
+                "title": "NestJS",
+                "slug": "nest-js",
+                "image": "assets/images/tech/nest.png"
+            },
+            {
+                "id": 9,
+                "title": "Java",
+                "slug": "java",
+                "image": "assets/images/tech/java.png"
+            },
+            {
+                "id": 10,
+                "title": "Spring Boot",
+                "slug": "java-sspring-boot",
+                "image": "assets/images/tech/spring.png"
+            },
+            {
+                "id": 12,
+                "title": "Docker",
+                "slug": "docker",
+                "image": "assets/images/tech/docker.png"
+            },
+            {
+                "id": 14,
+                "title": "CI/CD",
+                "slug": "ci-cd",
+                "image": "assets/images/tech/cicd.png"
+            },
+            {
+                "id": 15,
+                "title": "Relational Databases",
+                "slug": "postgres",
+                "image": "assets/images/tech/rdbms.png"
+            },
+            {
+                "id": 16,
+                "title": "MongoDB",
+                "slug": "mongodb",
+                "image": "assets/images/tech/mongodb.png"
+            },
+            {
+                "id": 17,
+                "title": "GraphQL",
+                "slug": "graphql",
+                "image": ""
+            },
+            {
+                "id": 20,
+                "title": "REST APIs",
+                "slug": "rest-apis",
+                "image": "assets/images/tech/server.png"
+            },
+            {
+                "id": 21,
+                "title": "Python",
+                "slug": "python",
+                "image": "assets/images/tech/python.png"
+            },
+            {
+                "id": 33,
+                "title": "Node.js",
+                "slug": null,
+                "image": "assets/images/tech/node.png"
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "title": "Cloud Engineer",
+        "description": "Manages cloud infrastructure and services.",
+        "slug": "cloud-engineer",
+        "image": "",
+        "color": "#9b59b6",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 31,
+                "title": "Cloud Basics (AWS/GCP/Azure)",
+                "slug": null,
+                "image": "assets/images/tech/cloud.png"
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "title": "Data Engineer",
+        "description": "Builds and maintains data pipelines and storage systems.",
+        "slug": "data-engineer",
+        "image": "",
+        "color": "#e74c3c",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 15,
+                "title": "Relational Databases",
+                "slug": "postgres",
+                "image": "assets/images/tech/rdbms.png"
+            },
+            {
+                "id": 16,
+                "title": "MongoDB",
+                "slug": "mongodb",
+                "image": "assets/images/tech/mongodb.png"
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "title": "DevOps Engineer",
+        "description": "Ensures smooth CI/CD and infrastructure automation.",
+        "slug": "devops-engineer",
+        "image": "",
+        "color": "#2ecc71",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 11,
+                "title": "DevOps",
+                "slug": "devops",
+                "image": "assets/images/tech/devops.png"
+            },
+            {
+                "id": 12,
+                "title": "Docker",
+                "slug": "docker",
+                "image": "assets/images/tech/docker.png"
+            },
+            {
+                "id": 13,
+                "title": "Kubernetes",
+                "slug": "kubernetes",
+                "image": "assets/images/tech/kubernetes.png"
+            },
+            {
+                "id": 14,
+                "title": "CI/CD",
+                "slug": "ci-cd",
+                "image": "assets/images/tech/cicd.png"
+            },
+            {
+                "id": 26,
+                "title": "Jenkins",
+                "slug": null,
+                "image": "assets/images/tech/jenkins.png"
+            },
+            {
+                "id": 31,
+                "title": "Cloud Basics (AWS/GCP/Azure)",
+                "slug": null,
+                "image": "assets/images/tech/cloud.png"
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "title": "Front‑End Developer",
+        "description": "Focuses on UI/UX and client-side logic for web apps.",
+        "slug": "frontend-developer",
+        "image": "",
+        "color": "#16a085",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 1,
+                "title": "HTML",
+                "slug": "html",
+                "image": "assets/images/tech/html.png"
+            },
+            {
+                "id": 2,
+                "title": "CSS",
+                "slug": "css",
+                "image": "assets/images/tech/css.png"
+            },
+            {
+                "id": 3,
+                "title": "JavaScript",
+                "slug": "javascript",
+                "image": "assets/images/tech/javascript.png"
+            },
+            {
+                "id": 4,
+                "title": "TypeScript",
+                "slug": "typescript",
+                "image": "assets/images/tech/typescript.png"
+            },
+            {
+                "id": 5,
+                "title": "Angular",
+                "slug": "angular",
+                "image": "assets/images/tech/angular.png"
+            },
+            {
+                "id": 6,
+                "title": "React",
+                "slug": "react",
+                "image": "assets/images/tech/react.png"
+            },
+            {
+                "id": 19,
+                "title": "Redux",
+                "slug": "redux",
+                "image": "assets/images/tech/redux.png"
+            },
+            {
+                "id": 32,
+                "title": "RxJS",
+                "slug": null,
+                "image": "assets/images/tech/rxjs.png"
+            },
+            {
+                "id": 34,
+                "title": "Ionic",
+                "slug": null,
+                "image": "assets/images/tech/ionic.png"
+            },
+            {
+                "id": 36,
+                "title": "Cypress",
+                "slug": null,
+                "image": "assets/images/tech/cypress.png"
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "title": "Full Stack Developer",
+        "description": "Works on both front-end and back-end of applications.",
+        "slug": "full-stack-developer",
+        "image": "",
+        "color": "#8e44ad",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 1,
+                "title": "HTML",
+                "slug": "html",
+                "image": "assets/images/tech/html.png"
+            },
+            {
+                "id": 2,
+                "title": "CSS",
+                "slug": "css",
+                "image": "assets/images/tech/css.png"
+            },
+            {
+                "id": 3,
+                "title": "JavaScript",
+                "slug": "javascript",
+                "image": "assets/images/tech/javascript.png"
+            },
+            {
+                "id": 4,
+                "title": "TypeScript",
+                "slug": "typescript",
+                "image": "assets/images/tech/typescript.png"
+            },
+            {
+                "id": 5,
+                "title": "Angular",
+                "slug": "angular",
+                "image": "assets/images/tech/angular.png"
+            },
+            {
+                "id": 6,
+                "title": "React",
+                "slug": "react",
+                "image": "assets/images/tech/react.png"
+            },
+            {
+                "id": 7,
+                "title": "Express.js",
+                "slug": "express.js",
+                "image": "assets/images/tech/rest-api.png"
+            },
+            {
+                "id": 8,
+                "title": "NestJS",
+                "slug": "nest-js",
+                "image": "assets/images/tech/nest.png"
+            },
+            {
+                "id": 11,
+                "title": "DevOps",
+                "slug": "devops",
+                "image": "assets/images/tech/devops.png"
+            },
+            {
+                "id": 12,
+                "title": "Docker",
+                "slug": "docker",
+                "image": "assets/images/tech/docker.png"
+            },
+            {
+                "id": 14,
+                "title": "CI/CD",
+                "slug": "ci-cd",
+                "image": "assets/images/tech/cicd.png"
+            },
+            {
+                "id": 15,
+                "title": "Relational Databases",
+                "slug": "postgres",
+                "image": "assets/images/tech/rdbms.png"
+            },
+            {
+                "id": 16,
+                "title": "MongoDB",
+                "slug": "mongodb",
+                "image": "assets/images/tech/mongodb.png"
+            },
+            {
+                "id": 17,
+                "title": "GraphQL",
+                "slug": "graphql",
+                "image": ""
+            },
+            {
+                "id": 18,
+                "title": "Next.js",
+                "slug": "nextjs",
+                "image": ""
+            },
+            {
+                "id": 19,
+                "title": "Redux",
+                "slug": "redux",
+                "image": "assets/images/tech/redux.png"
+            },
+            {
+                "id": 20,
+                "title": "REST APIs",
+                "slug": "rest-apis",
+                "image": "assets/images/tech/server.png"
+            },
+            {
+                "id": 26,
+                "title": "Jenkins",
+                "slug": null,
+                "image": "assets/images/tech/jenkins.png"
+            },
+            {
+                "id": 27,
+                "title": "Software Testing",
+                "slug": null,
+                "image": "assets/images/tech/tester.png"
+            },
+            {
+                "id": 31,
+                "title": "Cloud Basics (AWS/GCP/Azure)",
+                "slug": null,
+                "image": "assets/images/tech/cloud.png"
+            },
+            {
+                "id": 32,
+                "title": "RxJS",
+                "slug": null,
+                "image": "assets/images/tech/rxjs.png"
+            },
+            {
+                "id": 33,
+                "title": "Node.js",
+                "slug": null,
+                "image": "assets/images/tech/node.png"
+            },
+            {
+                "id": 35,
+                "title": "Capacitor",
+                "slug": null,
+                "image": "assets/images/tech/capacitor.png"
+            }
+        ]
+    },
+    {
+        "id": 11,
+        "title": "Full Stack Developer (AI‑enabled Apps)",
+        "description": "Handles both front-end and AI-integrated backend tasks.",
+        "slug": "full-stack-dev-ai",
+        "image": "",
+        "color": "#27ae60",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 22,
+                "title": "AI Fundamentals",
+                "slug": "ai-fundamentals",
+                "image": "assets/images/tech/ai.png"
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "title": "iOS Developer",
+        "description": "Develops iOS apps using Swift.",
+        "slug": "ios-developer",
+        "image": "",
+        "color": "#7f8c8d",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 30,
+                "title": "iOS Development (Swift)",
+                "slug": null,
+                "image": ""
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "title": "Java SpringBoot Developer",
+        "description": "Develops Java applications using Spring Boot.",
+        "slug": "java-springboot-developer",
+        "image": "",
+        "color": "#34495e",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 9,
+                "title": "Java",
+                "slug": "java",
+                "image": "assets/images/tech/java.png"
+            },
+            {
+                "id": 10,
+                "title": "Spring Boot",
+                "slug": "java-sspring-boot",
+                "image": "assets/images/tech/spring.png"
+            }
+        ]
+    },
+    {
+        "id": 14,
+        "title": "ML Engineer",
+        "description": "Designs algorithms and models to learn from data.",
+        "slug": "ml-engineer",
+        "image": "",
+        "color": "#3498db",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 23,
+                "title": "Machine Learning",
+                "slug": "machine-learning",
+                "image": "assets/images/tech/analytics.png"
+            }
+        ]
+    },
+    {
+        "id": 15,
+        "title": "Mobile App Developer",
+        "description": "Creates apps for mobile platforms.",
+        "slug": "mobile-app-developer",
+        "image": "",
+        "color": "#2c3e50",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 34,
+                "title": "Ionic",
+                "slug": null,
+                "image": "assets/images/tech/ionic.png"
+            },
+            {
+                "id": 35,
+                "title": "Capacitor",
+                "slug": null,
+                "image": "assets/images/tech/capacitor.png"
+            }
+        ]
+    },
+    {
+        "id": 16,
+        "title": "Program Manager",
+        "description": "Oversees planning and execution of projects.",
+        "slug": "program-manager",
+        "image": "",
+        "color": "#27ae60",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 25,
+                "title": "Jira",
+                "slug": "jira",
+                "image": "assets/images/tech/jira.png"
+            }
+        ]
+    },
+    {
+        "id": 17,
+        "title": "Programmer Level 1",
+        "description": "Entry-level programmer writing basic code and scripts.",
+        "slug": "programmer-1",
+        "image": "",
+        "color": "#2980b9",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 1,
+                "title": "HTML",
+                "slug": "html",
+                "image": "assets/images/tech/html.png"
+            },
+            {
+                "id": 2,
+                "title": "CSS",
+                "slug": "css",
+                "image": "assets/images/tech/css.png"
+            },
+            {
+                "id": 3,
+                "title": "JavaScript",
+                "slug": "javascript",
+                "image": "assets/images/tech/javascript.png"
+            },
+            {
+                "id": 24,
+                "title": "Git",
+                "slug": "git",
+                "image": "assets/images/tech/git.png"
+            },
+            {
+                "id": 29,
+                "title": "Android Development (Kotlin/Java)",
+                "slug": null,
+                "image": "assets/images/tech/android.png"
+            },
+            {
+                "id": 30,
+                "title": "iOS Development (Swift)",
+                "slug": null,
+                "image": ""
+            }
+        ]
+    },
+    {
+        "id": 18,
+        "title": "Python Developer",
+        "description": "Programs using Python for backend or automation.",
+        "slug": "python-developer",
+        "image": "",
+        "color": "#f39c12",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 21,
+                "title": "Python",
+                "slug": "python",
+                "image": "assets/images/tech/python.png"
+            },
+            {
+                "id": 22,
+                "title": "AI Fundamentals",
+                "slug": "ai-fundamentals",
+                "image": "assets/images/tech/ai.png"
+            },
+            {
+                "id": 23,
+                "title": "Machine Learning",
+                "slug": "machine-learning",
+                "image": "assets/images/tech/analytics.png"
+            }
+        ]
+    },
+    {
+        "id": 19,
+        "title": "QA Engineer",
+        "description": "Ensures software quality through testing and validation.",
+        "slug": "qa-engineer",
+        "image": "",
+        "color": "#c0392b",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 25,
+                "title": "Jira",
+                "slug": "jira",
+                "image": "assets/images/tech/jira.png"
+            },
+            {
+                "id": 27,
+                "title": "Software Testing",
+                "slug": null,
+                "image": "assets/images/tech/tester.png"
+            },
+            {
+                "id": 28,
+                "title": "Java Selenium",
+                "slug": null,
+                "image": "assets/images/tech/placeholder.png"
+            },
+            {
+                "id": 36,
+                "title": "Cypress",
+                "slug": null,
+                "image": "assets/images/tech/cypress.png"
+            }
+        ]
+    },
+    {
+        "id": 20,
+        "title": "Software Tester",
+        "description": "Performs manual and automated testing.",
+        "slug": "software-tester",
+        "image": "",
+        "color": "#8e44ad",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 27,
+                "title": "Software Testing",
+                "slug": null,
+                "image": "assets/images/tech/tester.png"
+            },
+            {
+                "id": 28,
+                "title": "Java Selenium",
+                "slug": null,
+                "image": "assets/images/tech/placeholder.png"
+            },
+            {
+                "id": 36,
+                "title": "Cypress",
+                "slug": null,
+                "image": "assets/images/tech/cypress.png"
+            }
+        ]
+    },
+    {
+        "id": 21,
+        "title": "Trainee Software Engineer",
+        "description": "Learning and contributing to software under supervision.",
+        "slug": "trainee-software-engineer",
+        "image": "",
+        "color": "#d35400",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 3,
+                "title": "JavaScript",
+                "slug": "javascript",
+                "image": "assets/images/tech/javascript.png"
+            },
+            {
+                "id": 4,
+                "title": "TypeScript",
+                "slug": "typescript",
+                "image": "assets/images/tech/typescript.png"
+            },
+            {
+                "id": 8,
+                "title": "NestJS",
+                "slug": "nest-js",
+                "image": "assets/images/tech/nest.png"
+            },
+            {
+                "id": 9,
+                "title": "Java",
+                "slug": "java",
+                "image": "assets/images/tech/java.png"
+            },
+            {
+                "id": 11,
+                "title": "DevOps",
+                "slug": "devops",
+                "image": "assets/images/tech/devops.png"
+            },
+            {
+                "id": 21,
+                "title": "Python",
+                "slug": "python",
+                "image": "assets/images/tech/python.png"
+            },
+            {
+                "id": 24,
+                "title": "Git",
+                "slug": "git",
+                "image": "assets/images/tech/git.png"
+            },
+            {
+                "id": 27,
+                "title": "Software Testing",
+                "slug": null,
+                "image": "assets/images/tech/tester.png"
+            },
+            {
+                "id": 29,
+                "title": "Android Development (Kotlin/Java)",
+                "slug": null,
+                "image": "assets/images/tech/android.png"
+            },
+            {
+                "id": 30,
+                "title": "iOS Development (Swift)",
+                "slug": null,
+                "image": ""
+            }
+        ]
+    },
+    {
+        "id": 22,
+        "title": "Web Developer",
+        "description": "Builds and maintains websites and web applications.",
+        "slug": "web-developer",
+        "image": "",
+        "color": "#1abc9c",
+        "isPublished": true,
+        "numQuestions": 0,
+        "numusers": 0,
+        "isSubscribed": false,
+        "coverage": 0,
+        "score": 0,
+        "subjects": [
+            {
+                "id": 1,
+                "title": "HTML",
+                "slug": "html",
+                "image": "assets/images/tech/html.png"
+            },
+            {
+                "id": 2,
+                "title": "CSS",
+                "slug": "css",
+                "image": "assets/images/tech/css.png"
+            },
+            {
+                "id": 3,
+                "title": "JavaScript",
+                "slug": "javascript",
+                "image": "assets/images/tech/javascript.png"
+            },
+            {
+                "id": 6,
+                "title": "React",
+                "slug": "react",
+                "image": "assets/images/tech/react.png"
+            },
+            {
+                "id": 17,
+                "title": "GraphQL",
+                "slug": "graphql",
+                "image": ""
+            },
+            {
+                "id": 18,
+                "title": "Next.js",
+                "slug": "nextjs",
+                "image": ""
+            },
+            {
+                "id": 19,
+                "title": "Redux",
+                "slug": "redux",
+                "image": "assets/images/tech/redux.png"
+            }
+        ]
+    }
+]

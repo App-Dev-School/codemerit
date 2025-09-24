@@ -13,12 +13,12 @@ import { CourseItem } from './course-item.model';
   providedIn: 'root',
 })
 export class CourseService {
-  private readonly API_URL = 'assets/data/topics.json';
+  private readonly API_URL = 'assets/data/coursesMock.json';
   dataChange: BehaviorSubject<CourseItem[]> = new BehaviorSubject<CourseItem[]>([]);
 
   constructor(private authService: AuthService, private httpService: HttpService, private httpClient: HttpClient) { }
 
-  getDummyTopics(): Observable<CourseItem[]> {
+  getDummyCourses(): Observable<CourseItem[]> {
     return this.httpClient
       .get<CourseItem[]>(this.API_URL)
       .pipe(catchError(this.handleError));
@@ -100,7 +100,7 @@ export class CourseService {
         return id;
       }),
       catchError(this.handleError)
-    );;
+    );
   }
 
   /** Handle Http operation that failed */
