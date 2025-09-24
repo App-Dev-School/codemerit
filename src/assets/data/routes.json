@@ -145,6 +145,20 @@
       "submenu": []
     },
     {
+      "path": "/admin/courses/list",
+      "title": "Manage Courses",
+      "iconType": "material-icons-outlined",
+      "icon": "grain",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "Admin", "User"
+      ],
+      "submenu": []
+    },
+    {
       "path": "",
       "title": "Quiz Player",
       "iconType": "material-icons-outlined",
