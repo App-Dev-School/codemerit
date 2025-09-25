@@ -48,7 +48,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   quizSlug = '';
   completed = false;
   quizResult: any;
-  quizDuration = 180;
+  quizDuration = 300;
   @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
   warningActive = false;
   hintActive = false;
@@ -96,6 +96,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           selectedChoice: '',
           topicsArr: q.topics ? q.topics.map(object => object.title) : []
         }));
+
+        this.quizDuration = this.questions.reduce((sum, q) => sum + (q.timeAllowed || 0), 0);
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
       });
   }
