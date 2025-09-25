@@ -55,6 +55,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   currentHint = '';
   showWarningToast = false;
   userData: User;
+  scheduledAutoNext : any;
   celebrationTrigger: { x: number; y: number } | null = null;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
@@ -97,6 +98,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           topicsArr: q.topics ? q.topics.map(object => object.title) : []
         }));
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
+         //#Task2: Once all quiz questions are loaded , calculate the sum of timeAllowed for each question
+         //set that time as the quiz time
       });
   }
 
@@ -106,17 +109,18 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (!question.hasAnswered) {
       question.selectedOption = choice;
       question.hasAnswered = true;
-    }
-    //console.log("optionSelected() =>", choice, question);
-    const isCorrect = question.options.some(
-      opt => opt.id === question.selectedOption && (opt.correct === true)
-    );
-    if (isCorrect) {
-      this.triggerCelebration($event);
-    }
-    setTimeout(() => {
+
+      //console.log("optionSelected() =>", choice, question);
+      const isCorrect = question.options.some(
+        opt => opt.id === question.selectedOption && (opt.correct === true)
+      );
+      if (isCorrect) {
+        this.triggerCelebration($event);
+      }
+      this.scheduledAutoNext = setTimeout(() => {
         this.onSlideNext();
-    }, isCorrect ? 2200 : 1200);
+      }, isCorrect ? 2200 : 1200);
+    }
   }
 
   /** Navigate to next question */
@@ -127,6 +131,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     } else {
       this.completeQuiz();
     }
+    //clear any previous scheduled task
+    clearTimeout(this.scheduledAutoNext);
   }
 
   /** Navigate to previous question */
@@ -134,22 +140,26 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.currentQuestionId > 0) {
       this.swiperEx.nativeElement.swiper.slidePrev();
       this.updateCurrentIndex();
+      //clear any previous scheduled task
+      clearTimeout(this.scheduledAutoNext);
     }
   }
 
   /** Called when a hint is requested */
   showHint(): void {
     const currentQuestion = this.questions[this.currentQuestionId];
-    if (currentQuestion?.hint) {
-      this.currentHint = currentQuestion?.hint;
+    //currently show naswer
+    //if (currentQuestion?.hint) {
+    if (currentQuestion?.answer) {
+      this.currentHint = currentQuestion?.answer;
       currentQuestion.hintUsed = true;
       //remove this and implement in interactive mode
-      if (currentQuestion?.answer) {
-        this.currentHint = 'ANSWER : ' + currentQuestion?.answer;
-        currentQuestion.hintUsed = true;
-      }
+      // if (currentQuestion?.hint) {
+      //   this.currentHint = currentQuestion?.hint;
+      //   currentQuestion.hintUsed = true;
+      // }
     } else {
-      this.currentHint = 'Hint not available';
+      this.currentHint = 'Answer not available';
     }
     this.hintActive = true;
     // setTimeout(() => {
@@ -197,6 +207,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.loadingText = 'Submitting Quiz';
     const analytics = this.quizService.processAndSaveResults(this.questions, this.quiz.id);
+    if(!this.authService.currentUserValue){
+      //#Task1: Display Signup/login option as dialog
+      //A non logged in user can take the quiz but to save details we require a userId
+      //Use existing signin / signup component and display them as a dialog
+      return;
+    }
     this.quizService.submitQuiz(analytics).subscribe(
       (data: any) => {
         console.log("QuizPlayer Quiz", data);

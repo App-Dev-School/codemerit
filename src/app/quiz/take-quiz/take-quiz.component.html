@@ -10,7 +10,6 @@
         <h5>Please wait</h5>
       </div>
       }
-
       <!-- HEADER -->
       @if (!loading && quiz) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
@@ -28,6 +27,7 @@
             [autoStart]="true" [callTick]="true" format="ms" (onTick)="onTick($event)" (onComplete)="onTimerComplete()">
           </cd-timer>
         </div>
+        <!-- #Task3: Display Progressbar here that shows time left in each question -->
       </mat-toolbar>
       }
 
@@ -52,6 +52,7 @@
       }
 
       <!-- MAIN SWIPER CONTENT -->
+       <!-- #Task4: Display topic and level of question inside quiz window -->
       @if (!loading) {
       <div class="flex-grow-1 overflow-hidden">
         @if (questions?.length > 0) {
@@ -123,13 +124,15 @@
               }
             </div>
             <div class="col-4 text-center">
-              <button mat-raised-button color="accent" (click)="showHint()">
-                <mat-icon>live_help</mat-icon> Hint</button>
+              <!-- <button mat-raised-button color="accent" (click)="showHint()">
+                <mat-icon>live_help</mat-icon> Hint</button> -->
+                <button mat-raised-button color="accent" (click)="showHint()">
+                <mat-icon>live_help</mat-icon> Answer</button>
             </div>
             <div class="col-4 text-end">
               <button mat-flat-button color="primary" (click)="onSlideNext()">
                 <mat-icon>keyboard_arrow_right</mat-icon> {{ currentQuestionId === questions.length - 1 ? 'Finish' :
-                'Next' }}
+                'Skip' }}
               </button>
             </div>
           </div>

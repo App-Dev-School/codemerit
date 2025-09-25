@@ -24,6 +24,9 @@ import { QuizService } from 'src/app/quiz/quiz.service';
 import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
+import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Direction } from '@angular/cdk/bidi';
 
 @Component({
   selector: 'app-dashboard',
@@ -47,6 +50,7 @@ import { RecentCommentsComponent } from '@shared/components/recent-comments/rece
     RecentCommentsComponent,
     SubjectPerformanceCardComponent,
     GoalPathComponent,
+    QuizCreateComponent,
     NgStyle
   ]
 })
@@ -103,6 +107,7 @@ export class DashboardComponent implements OnInit {
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
+    public dialog: MatDialog,
     private authService: AuthService,
     private quizService: QuizService,
     private snackService: SnackbarService
@@ -273,7 +278,7 @@ export class DashboardComponent implements OnInit {
       .subscribe({
         next: (response) => {
           console.log('QuizManager CreateAPI response:', response);
-          this.loadingText = 'Almost There';
+          this.loadingText = 'Loading Your Assessment Panel';
           //this.submitted = false;
           if (response && response?.slug) {
             const slug = response?.slug;
@@ -296,7 +301,42 @@ export class DashboardComponent implements OnInit {
         },
       });
   }
-  async launchQuiz(subject: number, topic: number) {
+
+   async launchQuiz(subject: number, topic: number) {
+    console.log("Dashboard launchQuiz", subject, topic);
+    let varDirection: Direction;
+    if (localStorage.getItem('isRtl') === 'true') {
+      varDirection = 'rtl';
+    } else {
+      varDirection = 'ltr';
+    }
+    const dialogRef = this.dialog.open(QuizCreateComponent, {
+       width: '100vw',
+       height: '100vh',
+      maxWidth: '100vw',
+      panelClass: 'test',
+      data: { data: this.subjectData },
+      direction: varDirection,
+      autoFocus: false,
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log("QuizCreateScreen close result", result);
+        const action = 'add';
+        this.generateQuiz(subject, topic);
+        // this.showNotification(
+        //   action === 'add' ? 'snackbar-success' : 'black',
+        //   `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
+        //   'bottom',
+        //   'center'
+        // );
+      }
+    });
+  }
+  
+  async generateQuiz(subject: number, topic: number) {
     console.log('QuizManager Invoked in SubjectDashboard:', subject, topic);
     const payload = new QuizCreateModel();
     payload.userId = this.authService.currentUserValue.id;
@@ -347,6 +387,7 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(["learn/topic/angular17"]);
   }
 
+  //AAA
   onTopicQuiz(topic: TopicItem) {
     if(topic && topic.id){
       this.launchQuiz(null, topic.id);

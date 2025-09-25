@@ -27,6 +27,7 @@ import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetModule, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatLineModule } from '@angular/material/core';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
+import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -203,14 +204,52 @@ export class CourseDashboardComponent implements OnInit {
     }
   }
 
-  async generateSubjectQuiz(topic: any) {
-    console.log('QuizManager generateSubjectQuiz:', topic);
+   openQuizLauncher(action: 'default' | 'custom', data?: any) {
+    console.log("QuizStartScreen openDialog", action, data);
+    let varDirection: Direction;
+    if (localStorage.getItem('isRtl') === 'true') {
+      varDirection = 'rtl';
+    } else {
+      varDirection = 'ltr';
+    }
+    const dialogRef = this.dialog.open(QuizCreateComponent, {
+       width: '100vw',
+       height: '100vh',
+      // maxWidth: '100vw',
+      // panelClass: 'full-screen-dialog',
+      //width: '90vw',
+      //height: 'max-content',
+      maxWidth: '100vw',
+      panelClass: 'test',
+      data: { data: data, action },
+      direction: varDirection,
+      autoFocus: false,
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log("QuizCreateScreen close result", result);
+        const action = 'add';
+        this.generateSubjectQuiz(result);
+        // this.showNotification(
+        //   action === 'add' ? 'snackbar-success' : 'black',
+        //   `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
+        //   'bottom',
+        //   'center'
+        // );
+      }
+    });
+  }
+
+  async generateSubjectQuiz(subject: any) {
+    console.log('QuizManager generateSubjectQuiz:', subject);
     this.loading = true;
     this.generatingQuiz = true;
     this.loadingText = "Generating Quiz";
     const payload = new QuizCreateModel();
     payload.userId = this.authService.currentUserValue.id
-    payload.subjectIds = '' + topic.id;
+    payload.subjectIds = '' + subject.id;
     console.log('QuizManager Invoked with Subject:', payload);
     this.quizService
       .addQuiz(payload)

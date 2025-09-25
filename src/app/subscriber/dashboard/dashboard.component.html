@@ -7,7 +7,7 @@
     <img [src]="currentSubject ? currentSubject?.image : 'assets/images/icons/cube.gif'"
       class="image-pulse loadingIcon m-b-20">
     @if(generatingQuiz){
-    <h6>Generating Quiz for {{currentSubject?.title}}</h6>
+    <h6>Loading {{currentSubject?.title}} Quiz</h6>
     }@else{
     <h5>{{loadingText}}</h5>
     }

@@ -107,7 +107,7 @@
           @for (item of courseData; track item) {
           <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
             <app-subject-tracker-card [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
-              (takeQuiz)="generateSubjectQuiz($event)"></app-subject-tracker-card>
+              (takeQuiz)="openQuizLauncher($event)"></app-subject-tracker-card>
           </div>
           }
           }
