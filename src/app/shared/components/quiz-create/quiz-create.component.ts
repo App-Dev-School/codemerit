@@ -92,7 +92,7 @@ export class QuizCreateComponent implements OnInit {
 
   close() {
     if (this.mode === 'dialog' && this.dialogRef) {
-      this.dialogRef.close('Dialog Closed');
+      this.dialogRef.close(this.data);
     } else {
       this.router.navigate(['/dashboard/start']);
     }
@@ -110,7 +110,7 @@ export class QuizCreateComponent implements OnInit {
         this.finished = true;
         this.onFinish();
       }
-    }, 2000);
+    }, 1000);
   }
 
   onFinish() {

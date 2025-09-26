@@ -1,0 +1,149 @@
+@if(!submitted){
+<div class="form-section">
+    <div class="auth-wrapper">
+        <div class="loginHeader text-center">
+            <div class="text-center mb-3" routerLink="/app/welcome">
+                <img src="./../../../assets/images/logo.png" alt="codemerit" class="logo animEntry" />
+            </div>
+            @if (data && data?.title) {
+            <h6 class="welcome-msg text-center"> {{data?.title}} </h6>
+            }@else {
+            <h6 class="welcome-msg text-center"> Create CodeMerit Account </h6>
+            }
+
+            @if (data && data?.message) {
+            <p class="auth-signup-text text-center">{{data?.message}}</p>
+            }@else {
+            <p class="auth-signup-text text-center">Quick Register to get Started</p>
+            }
+        </div>
+
+        <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>First Name</mat-label>
+                        <input matInput formControlName="firstName" required>
+                        @if (authForm.get('firstName')!.hasError('required')) {
+                        <mat-error>
+                            First name is required
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>Last Name</mat-label>
+                        <input matInput formControlName="lastName">
+                        @if (authForm.get('lastName')!.hasError('required')) {
+                        <mat-error>
+                            Last name is required
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12col-lg-12 col-md-12 col-sm-12">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="email" required>
+                        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>mail</mat-icon>
+                        @if (authForm.get('email')!.hasError('required') || authForm.get('email')!.touched) {
+                        <mat-error>
+                            Please enter a valid email address
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            </div>
+
+            @if (!data) {
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>City</mat-label>
+                        <input matInput formControlName="city" required>
+                        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>location_city</mat-icon>
+                        @if (authForm.get('city')!.hasError('required')) {
+                        <mat-error>
+                            Please let us know your city.
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>Country</mat-label>
+                        <input matInput formControlName="country" type="text" [matAutocomplete]="autoCountry" required>
+                        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>globe</mat-icon>
+                        <mat-autocomplete #autoCountry="matAutocomplete" [displayWith]="displayCountry">
+                            @for (country of filteredCountries | async; track country) {
+                            <mat-option [value]="country.name">
+                                {{country.name}}
+                            </mat-option>
+                            }
+                        </mat-autocomplete>
+
+                        @if (authForm.get('country')!.hasError('required')) {
+                        <mat-error>
+                            Please let us know your country.
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <mat-form-field class="example-full-width">
+                        <mat-label>What describes you best?</mat-label>
+                        <input type="text" matInput formControlName="about" [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayRole">
+                            @for (option of filteredOptions | async; track option) {
+                            <mat-option [value]="option.label">
+                                {{option.label}}
+                            </mat-option>
+                            }
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+            </div>
+            }
+
+
+            <div class="container-auth-form-btn">
+                <button mat-flat-button color="accent" class="auth-form-btn" [disabled]="!authForm.valid || submitted"
+                    type="submit">
+                    Register
+                </button>
+            </div>
+        </form>
+        <h6 class="social-login-title">OR</h6>
+        <div class="text-center m-b-10">
+            <!-- 
+                <button (click)="navigateToLogin()" mat-flat-button color="danger" 
+                   class="auth-form-btn"><i class="fab fa-google"></i> Already Registered? Come In</button> 
+                   -->
+            <h6 class="welcome-msg"> Already Registered? <span routerLink="/authentication/signin">
+                    Login here
+                </span></h6>
+        </div>
+
+        @if (data && data.action) {
+        <div class="text-center m-t-20">
+            <button (click)="dismiss(null)" mat-flat-button color="accent" style="background-color:#e91e63;">
+                {{data.action}}</button>
+        </div>
+        }
+    </div>
+</div>
+}@else{
+<div class="tbl-spinner text-center">
+    <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
+    </mat-progress-spinner>
+    <!-- <hr>
+    <h6>Please wait...</h6> -->
+</div>
+}

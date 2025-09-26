@@ -175,7 +175,7 @@ export class CourseDashboardComponent implements OnInit {
   onSubscribeAAA(subject: string) {
     console.log("CourseDash onSubscribe", subject);
     
-    this.snackService.display('snackbar-dark', subject + ' added to learning list!', 'bottom', 'center');
+    this.snackService.display('snackbar-dark', subject + ' added to learning list ++', 'bottom', 'center');
   }
 
   onSubscribe(course: any) {
@@ -204,8 +204,8 @@ export class CourseDashboardComponent implements OnInit {
     }
   }
 
-   openQuizLauncher(action: 'default' | 'custom', data?: any) {
-    console.log("QuizStartScreen openDialog", action, data);
+   openQuizLauncher(data?: any) {
+    console.log("QuizStartScreen openDialog", data);
     let varDirection: Direction;
     if (localStorage.getItem('isRtl') === 'true') {
       varDirection = 'rtl';
@@ -213,15 +213,10 @@ export class CourseDashboardComponent implements OnInit {
       varDirection = 'ltr';
     }
     const dialogRef = this.dialog.open(QuizCreateComponent, {
-       width: '100vw',
-       height: '100vh',
-      // maxWidth: '100vw',
-      // panelClass: 'full-screen-dialog',
-      //width: '90vw',
-      //height: 'max-content',
-      maxWidth: '100vw',
-      panelClass: 'test',
-      data: { data: data, action },
+      width: '80vw',
+      height: '70vh',
+      maxWidth: '600px',
+      data: { data: data },
       direction: varDirection,
       autoFocus: false,
       disableClose: true
@@ -231,7 +226,7 @@ export class CourseDashboardComponent implements OnInit {
       if (result) {
         console.log("QuizCreateScreen close result", result);
         const action = 'add';
-        this.generateSubjectQuiz(result);
+        this.generateSubjectQuiz(data);
         // this.showNotification(
         //   action === 'add' ? 'snackbar-success' : 'black',
         //   `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,

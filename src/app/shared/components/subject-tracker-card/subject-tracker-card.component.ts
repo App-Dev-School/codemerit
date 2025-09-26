@@ -25,6 +25,7 @@ export class SubjectTrackerCardComponent {
   }
 
   onTakeQuiz() {
+    console.log("Emotting ", this.item);
     this.takeQuiz.emit(this.item);
   }
 }

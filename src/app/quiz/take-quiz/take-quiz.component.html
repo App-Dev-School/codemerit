@@ -60,6 +60,7 @@
 
           @for (question of questions; track question.id) {
           <swiper-slide>
+            
             <p class="col-grey text-center m-t-20 m-b-10">{{$index+1}} of {{questions?.length}}</p>
             <div class="question-card">
               @if (question.title) {
@@ -132,7 +133,7 @@
             <div class="col-4 text-end">
               <button mat-flat-button color="primary" (click)="onSlideNext()">
                 <mat-icon>keyboard_arrow_right</mat-icon> {{ currentQuestionId === questions.length - 1 ? 'Finish' :
-                'Skip' }}
+                'Next' }}
               </button>
             </div>
           </div>

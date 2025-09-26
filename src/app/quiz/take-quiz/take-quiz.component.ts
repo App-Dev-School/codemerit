@@ -17,6 +17,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UtilsService } from '@core/service/utils.service';
 import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
+import { MatDialog } from '@angular/material/dialog';
+import { SignupComponent } from 'src/app/authentication/signup/signup.component';
+import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -48,21 +51,23 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   quizSlug = '';
   completed = false;
   quizResult: any;
-  quizDuration = 180;
+  quizDuration = 30; //180
   @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
   warningActive = false;
   hintActive = false;
   currentHint = '';
   showWarningToast = false;
   userData: User;
-  scheduledAutoNext : any;
+  scheduledAutoNext: any;
   celebrationTrigger: { x: number; y: number } | null = null;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
+  displayingAuthDialog = false;
 
   constructor(private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
+    public dialog: MatDialog,
     private utility: UtilsService,
     private snackBar: MatSnackBar,
     private quizService: QuizService) {
@@ -98,8 +103,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           topicsArr: q.topics ? q.topics.map(object => object.title) : []
         }));
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
-         //#Task2: Once all quiz questions are loaded , calculate the sum of timeAllowed for each question
-         //set that time as the quiz time
+        //#Task2: Done Once all quiz questions are loaded , calculate the sum of timeAllowed for each question
+        //set that time as the quiz time
       });
   }
 
@@ -114,6 +119,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       const isCorrect = question.options.some(
         opt => opt.id === question.selectedOption && (opt.correct === true)
       );
+      //#Task5: Show celebration only for special questions
       if (isCorrect) {
         this.triggerCelebration($event);
       }
@@ -203,16 +209,18 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   submitQuiz() {
-    console.log("QuizPlayer submitQuiz() called", this.questions);
+    console.log("QuizPlayer submitQuiz() with user", this.authService.currentUserValue);
+    if (!(this.authService.currentUserValue && this.authService.currentUserValue.email)) {
+      //#Task1: Display Signup/login option as dialog
+      //Use existing signin / signup component and display them as a dialog
+      if (!this.displayingAuthDialog) {
+        this.quickRegister();
+      }
+      return;
+    }
     this.loading = true;
     this.loadingText = 'Submitting Quiz';
     const analytics = this.quizService.processAndSaveResults(this.questions, this.quiz.id);
-    if(!this.authService.currentUserValue){
-      //#Task1: Display Signup/login option as dialog
-      //A non logged in user can take the quiz but to save details we require a userId
-      //Use existing signin / signup component and display them as a dialog
-      return;
-    }
     this.quizService.submitQuiz(analytics).subscribe(
       (data: any) => {
         console.log("QuizPlayer Quiz", data);
@@ -234,6 +242,39 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   isCodeQuestion(text: string): boolean {
     return this.utility.isCodeQuestion(text);
+  }
+
+  quickRegister() {
+    console.log("quickRegister called");
+    this.displayingAuthDialog = true;
+    const dialogRef = this.dialog.open(LoginFormComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '480px',
+      data: {
+        title: 'Your Attempts will be submitted',
+        message: 'Quick register with your name and e-mail to generate your assessment report.',
+        action: 'Exit this Assessment'
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log("Take Quiz should receive userID", result);
+      this.displayingAuthDialog = false;
+      if (result && result?.id) {
+        this.showNotification(
+          'snackbar-danger',
+          'Quick Registration Complete.',
+          'bottom',
+          'center'
+        );
+        //if userID received submit the Quiz
+        if (!this.quizResult) {
+          console.log("Submitted again", this.authService.currentUserValue);
+          this.submitQuiz();
+        }
+      }
+    });
   }
 
   showNotification(colorName, text, placementFrom, placementAlign) {
