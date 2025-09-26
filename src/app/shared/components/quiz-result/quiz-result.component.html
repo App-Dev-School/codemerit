@@ -34,8 +34,8 @@
         <img src="/assets/images/users/user.jpg" alt="User avatar" class="cm-avatar" />
         <div class="cm-result-text">
           <h5>
-            Well done, {{ result?.user?.firstName + ' ' + result?.user?.lastName }}!
-            You just completed the {{ result?.quiz?.title ?? 'CodeMerit Assessment' }}
+            {{ result?.user?.firstName + ' ' + result?.user?.lastName }}
+             completed the {{ result?.quiz?.title ?? 'CodeMerit Assessment' }}
             with {{ result?.score }}% score.
           </h5>
         </div>

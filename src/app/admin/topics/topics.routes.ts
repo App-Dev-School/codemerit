@@ -6,9 +6,5 @@ export const TOPICS_ROUTE: Route[] = [
     path: 'list',
     component: TopicsComponent,
   },
-  // {
-  //   path: 'skill-profile',
-  //   component: SkillProfileComponent,
-  // },
   { path: '**', component: Page404Component },
 ];

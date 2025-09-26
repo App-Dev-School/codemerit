@@ -30,7 +30,7 @@ export class CelebrationComponent {
 private launch(x: number, y: number) {
   this.items = [];
 
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 5; i++) {
     const drift = Math.random() * 100 - 50; // -50px to +50px drift
     this.items.push({
       //emoji: '👏',

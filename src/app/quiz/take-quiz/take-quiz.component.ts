@@ -17,6 +17,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UtilsService } from '@core/service/utils.service';
 import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
+import { MatDialog } from '@angular/material/dialog';
+import { SignupComponent } from 'src/app/authentication/signup/signup.component';
+import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -55,13 +58,16 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   currentHint = '';
   showWarningToast = false;
   userData: User;
+  scheduledAutoNext: any;
   celebrationTrigger: { x: number; y: number } | null = null;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
+  displayingAuthDialog = false;
 
   constructor(private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
+    public dialog: MatDialog,
     private utility: UtilsService,
     private snackBar: MatSnackBar,
     private quizService: QuizService) {
@@ -99,6 +105,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
         this.quizDuration = this.questions.reduce((sum, q) => sum + (q.timeAllowed || 0), 0);
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
+        //#Task2: Done Once all quiz questions are loaded , calculate the sum of timeAllowed for each question
+        //set that time as the quiz time
       });
   }
 
@@ -108,17 +116,19 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (!question.hasAnswered) {
       question.selectedOption = choice;
       question.hasAnswered = true;
-    }
-    //console.log("optionSelected() =>", choice, question);
-    const isCorrect = question.options.some(
-      opt => opt.id === question.selectedOption && (opt.correct === true)
-    );
-    if (isCorrect) {
-      this.triggerCelebration($event);
-    }
-    setTimeout(() => {
+
+      //console.log("optionSelected() =>", choice, question);
+      const isCorrect = question.options.some(
+        opt => opt.id === question.selectedOption && (opt.correct === true)
+      );
+      //#Task5: Show celebration only for special questions
+      if (isCorrect) {
+        this.triggerCelebration($event);
+      }
+      this.scheduledAutoNext = setTimeout(() => {
         this.onSlideNext();
-    }, isCorrect ? 2200 : 1200);
+      }, isCorrect ? 2200 : 1200);
+    }
   }
 
   /** Navigate to next question */
@@ -129,6 +139,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     } else {
       this.completeQuiz();
     }
+    //clear any previous scheduled task
+    clearTimeout(this.scheduledAutoNext);
   }
 
   /** Navigate to previous question */
@@ -136,22 +148,26 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.currentQuestionId > 0) {
       this.swiperEx.nativeElement.swiper.slidePrev();
       this.updateCurrentIndex();
+      //clear any previous scheduled task
+      clearTimeout(this.scheduledAutoNext);
     }
   }
 
   /** Called when a hint is requested */
   showHint(): void {
     const currentQuestion = this.questions[this.currentQuestionId];
-    if (currentQuestion?.hint) {
-      this.currentHint = currentQuestion?.hint;
+    //currently show naswer
+    //if (currentQuestion?.hint) {
+    if (currentQuestion?.answer) {
+      this.currentHint = currentQuestion?.answer;
       currentQuestion.hintUsed = true;
       //remove this and implement in interactive mode
-      if (currentQuestion?.answer) {
-        this.currentHint = 'ANSWER : ' + currentQuestion?.answer;
-        currentQuestion.hintUsed = true;
-      }
+      // if (currentQuestion?.hint) {
+      //   this.currentHint = currentQuestion?.hint;
+      //   currentQuestion.hintUsed = true;
+      // }
     } else {
-      this.currentHint = 'Hint not available';
+      this.currentHint = 'Answer not available';
     }
     this.hintActive = true;
     // setTimeout(() => {
@@ -195,7 +211,15 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   submitQuiz() {
-    console.log("QuizPlayer submitQuiz() called", this.questions);
+    console.log("QuizPlayer submitQuiz() with user", this.authService.currentUserValue);
+    if (!(this.authService.currentUserValue && this.authService.currentUserValue.email)) {
+      //#Task1: Display Signup/login option as dialog
+      //Use existing signin / signup component and display them as a dialog
+      if (!this.displayingAuthDialog) {
+        this.quickRegister();
+      }
+      return;
+    }
     this.loading = true;
     this.loadingText = 'Submitting Quiz';
     const analytics = this.quizService.processAndSaveResults(this.questions, this.quiz.id);
@@ -220,6 +244,39 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   isCodeQuestion(text: string): boolean {
     return this.utility.isCodeQuestion(text);
+  }
+
+  quickRegister() {
+    console.log("quickRegister called");
+    this.displayingAuthDialog = true;
+    const dialogRef = this.dialog.open(LoginFormComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '480px',
+      data: {
+        title: 'Your Attempts will be submitted',
+        message: 'Quick register with your name and e-mail to generate your assessment report.',
+        action: 'Exit this Assessment'
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log("Take Quiz should receive userID", result);
+      this.displayingAuthDialog = false;
+      if (result && result?.id) {
+        this.showNotification(
+          'snackbar-danger',
+          'Quick Registration Complete.',
+          'bottom',
+          'center'
+        );
+        //if userID received submit the Quiz
+        if (!this.quizResult) {
+          console.log("Submitted again", this.authService.currentUserValue);
+          this.submitQuiz();
+        }
+      }
+    });
   }
 
   showNotification(colorName, text, placementFrom, placementAlign) {
