@@ -20,12 +20,25 @@ export class SubjectTrackerCardComponent {
   @Output() launchSubjectExplorer = new EventEmitter<any>();
   @Output() takeQuiz = new EventEmitter<any>();
 
+  getPercentage(count: number): number {
+    const total = Number(this.item.numEasyTrivia) +
+      Number(this.item.numIntTrivia) +
+      Number(this.item.numAdvTrivia);
+    return total > 0 ? (count / total) * 100 : 0;
+  }
+
+  getAttemptPercentage(count: number): number {
+    const total = Number(this.item.attemptedEasy) +
+      Number(this.item.attemptedMedium) +
+      Number(this.item.attemptedHard);
+    return total > 0 ? (count / total) * 100 : 0;
+  }
+
   onViewPath() {
     this.launchSubjectExplorer.emit(this.item);
   }
 
   onTakeQuiz() {
-    console.log("Emotting ", this.item);
     this.takeQuiz.emit(this.item);
   }
 }

@@ -17,38 +17,93 @@
       </div>
     </div>
 
-    <hr class="dim-divider">
-    @if (item.myAllAttempts > 0) {
-    <p class="font-12">Obtained {{item.score}}% score with an accuracy of {{item.accuracy}}%. {{100 - item.coverage}}%
-      assessment to complete.</p>
-    }@else{
-    <p class="font-12">{{item.description}}</p>
-    }
+    <div class="row">
+      <div class="col-12">
+        @if (item.numTrivia > 0) {
+        <hr class="dim-divider">
+        <p class="font-12 m-b-0">Total Basic, Intermediate and Advanced Questions</p> 
+        <div class="progress" style="height: 20px;width: 100%;margin-top:2px;">
+          <!-- Easy -->
+          <div class="progress-bar progress-bar-blue" [style.width]="getPercentage(item.numEasyTrivia) + '%'"
+            role="progressbar" [attr.aria-valuenow]="item.numEasyTrivia" aria-valuemin="0" aria-valuemax="100">
+            {{ item.numEasyTrivia }}
+          </div>
 
-    <!-- <hr class="dim-divider"> -->
+          <!-- Intermediate -->
+          <div class="progress-bar progress-bar-danger" [style.width]="getPercentage(item.numIntTrivia) + '%'"
+            role="progressbar" [attr.aria-valuenow]="item.numIntTrivia" aria-valuemin="0" aria-valuemax="100">
+            {{ item.numIntTrivia }}
+          </div>
+
+          <!-- Advanced -->
+          <div class="progress-bar progress-bar-success" [style.width]="getPercentage(item.numAdvTrivia) + '%'"
+            role="progressbar" [attr.aria-valuenow]="item.numAdvTrivia" aria-valuemin="0" aria-valuemax="100">
+            {{ item.numAdvTrivia }}
+          </div>
+        </div>
+        }@else {
+          <p class="font-12">{{item.description}}</p>
+        }
+      </div>
+      @if (item.attempted > 0) {
+      <div class="col-12">
+        <hr class="dim-divider">
+        <p class="font-12 m-b-0">Level Wise Practice Summary</p>
+        <div class="progress" style="height: 20px;width: 100%;margin-top:2px;">
+          <!-- Easy -->
+          <div class="progress-bar progress-bar-blue" [style.width]="getAttemptPercentage(item.attemptedEasy) + '%'"
+            role="progressbar" [attr.aria-valuenow]="item.attemptedEasy" aria-valuemin="0" aria-valuemax="100">
+            {{ item.attemptedEasy }}
+          </div>
+
+          <!-- Intermediate -->
+          <div class="progress-bar progress-bar-danger" [style.width]="getAttemptPercentage(item.attemptedMedium) + '%'"
+            role="progressbar" [attr.aria-valuenow]="item.attemptedMedium" aria-valuemin="0" aria-valuemax="100">
+            {{ item.attemptedMedium }}
+          </div>
+
+          <!-- Advanced -->
+          <div class="progress-bar progress-bar-success" [style.width]="getAttemptPercentage(item.attemptedHard) + '%'"
+            role="progressbar" [attr.aria-valuenow]="item.attemptedHard" aria-valuemin="0" aria-valuemax="100">
+            {{ item.attemptedHard }}
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+
     <mat-card-footer>
+      @if (item.coverage > 0) {
+      <hr class="dim-divider">
       <ul class="list-unstyled m-b-10 m-t-10">
         <li>
           <div class="mb-2 d-flex justify-content-between">
-            <span class="progress-label">Coverage</span>
+            <span class="progress-label">Completed</span>
             <span class="progress-percent label label-success">{{item.coverage}}%</span>
           </div>
           <div class="progress skill-progress w-100">
             <div class="progress-bar progress-bar-success" [style.width]="item.coverage + '%'" role="progressbar"
               [attr.aria-valuenow]="item.coverage" aria-valuemin="0" aria-valuemax="100">
             </div>
+
+            <div class="progress-bar progress-bar-success" [style.width]="item.coverage + '%'" role="progressbar"
+              [attr.aria-valuenow]="item.coverage" aria-valuemin="0" aria-valuemax="100">
+            </div>
           </div>
         </li>
       </ul>
+      }
       <hr class="dim-divider">
       <div class="d-flex flex-column flex-sm-row justify-content-center text-center">
         <button (click)="onViewPath()" mat-stroked-button color="primary" class="mb-2 mb-sm-0 me-sm-2">
           Explore
         </button>
-
+@if (item.numTrivia > 0) {
         <button (click)="onTakeQuiz()" mat-flat-button color="accent">
-          Take Quiz
+          {{ item.attempted > 0 ? 'Take Quiz' : 'Start Assessment'}}
         </button>
+      }
       </div>
 
     </mat-card-footer>

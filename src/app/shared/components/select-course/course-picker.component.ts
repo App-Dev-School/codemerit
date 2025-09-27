@@ -78,7 +78,9 @@ export class CoursePickerComponent implements OnInit {
 
   switchJobRole(course: any) {
     this.subjectSelected.emit(course.slug);
+    if (this.mode === 'dialog' && this.dialogRef) {
     this.dialogRef.close(course.slug);
+    }
   }
 
   pickJobRole(course: any) {

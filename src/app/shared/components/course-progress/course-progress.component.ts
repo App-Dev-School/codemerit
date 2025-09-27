@@ -8,7 +8,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, 
 })
 export class CourseProgressComponent implements AfterViewInit, OnChanges {
   @Input() score = 0;           // 0–100
-  @Input() size = 82;           // css pixels
+  @Input() size = 72;           // css pixels
   @Input() thickness = 6;       // px
   @Input() duration = 2000;      // ms
   @Input() barColor = '#2541e2ff';
