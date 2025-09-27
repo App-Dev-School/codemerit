@@ -1,22 +1,18 @@
 @if(showContent){
 <!-- <section class="content" [@slideInOut]> -->
 <section class="content" [@fadeIn]>
-  @if (loading || generatingQuiz) {
+  @if (loading) {
   <div class="overlay"></div>
-  <div class="animToast loading">
+  <div class="animToast subjectLoader loading">
     <img [src]="currentSubject ? currentSubject?.image : 'assets/images/icons/cube.gif'"
       class="image-pulse loadingIcon m-b-20">
-    @if(generatingQuiz){
-    <h6>Loading {{currentSubject?.title}} Quiz</h6>
-    }@else{
-    <h5>{{loadingText}}</h5>
-    }
+     <h5>{{loadingText}}</h5>
     <h6>Please wait</h6>
     <!-- <p>display image once available: {{subjectData.image}} | {{subjectData.color}}</p> -->
   </div>
   }
 
-  @if (!loading && !generatingQuiz && currentSubject) {
+  @if (!loading && currentSubject) {
   <div class="content-block">
     <mat-tab-group mat-align-tabs="start" class="m-t-20">
       <mat-tab label="{{ currentSubject?.title }} Dashboard">

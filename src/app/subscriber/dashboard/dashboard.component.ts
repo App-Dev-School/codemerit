@@ -6,27 +6,25 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
 
+import { Direction } from '@angular/cdk/bidi';
 import { AsyncPipe, JsonPipe, NgStyle, NgTemplateOutlet } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from '@core';
+import { Subject } from '@core/models/subject';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
 import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
-import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
-import { Observable, of } from 'rxjs';
-import { Subject } from '@core/models/subject';
-import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
-import { QuizService } from 'src/app/quiz/quiz.service';
-import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
-import { NgScrollbar } from 'ngx-scrollbar';
-import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
-import { MatDialog } from '@angular/material/dialog';
-import { Direction } from '@angular/cdk/bidi';
+import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
+import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
+import { NgScrollbar } from 'ngx-scrollbar';
+import { Observable, of } from 'rxjs';
+import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -57,7 +55,6 @@ import { Direction } from '@angular/cdk/bidi';
 export class DashboardComponent implements OnInit {
   pageTitle = 'SubjectDashboard';
   loading = true;
-  generatingQuiz = false;
   loadingText = 'Loading Subject Dashboard';
   showContent = true;
   subject = "";
@@ -109,7 +106,6 @@ export class DashboardComponent implements OnInit {
     private router: Router,
     public dialog: MatDialog,
     private authService: AuthService,
-    private quizService: QuizService,
     private snackService: SnackbarService
   ) {
     console.log(this.pageTitle, "User", this.authService.currentUserValue);
@@ -265,45 +261,10 @@ export class DashboardComponent implements OnInit {
 
   //keep any one
   async launchSubjectQuiz(subject: Subject) {
-    console.log('QuizManager Invoked with Subject:', subject);
-    this.generatingQuiz = true;
-    this.loading = true;
-    this.loadingText = 'Generating ' + subject.title + ' Quiz';
-    const payload = new QuizCreateModel();
-    payload.userId = this.authService.currentUserValue.id
-    payload.subjectIds = '' + subject.id;
-    console.log('QuizManager Invoked with Topic:', payload);
-    this.quizService
-      .addQuiz(payload)
-      .subscribe({
-        next: (response) => {
-          console.log('QuizManager CreateAPI response:', response);
-          this.loadingText = 'Loading Your Assessment Panel';
-          //this.submitted = false;
-          if (response && response?.slug) {
-            const slug = response?.slug;
-            if (slug && slug !== '') {
-              setTimeout(() => {
-                this.router.navigate(['quiz/take', slug]);
-                this.generatingQuiz = false;
-                this.loading = false;
-              }, 2000);
-            }
-          } else {
-            this.snackService.display('snackbar-dark', 'We could not generate a Quiz at this moment. Please try again later.', 'bottom', 'center');
-          }
-        },
-        error: (error) => {
-          this.generatingQuiz = false;
-          this.loading = false;
-          this.snackService.display('snackbar-dark', 'Error generating Quiz. Please try again.', 'bottom', 'center');
-          console.error('QuizManager CreateAPI Error:', error);
-        },
-      });
+    this.launchQuiz(subject.title+' Quiz', subject.id, null);
   }
 
-   async launchQuiz(subject: number, topic: number) {
-    console.log("Dashboard launchQuiz", subject, topic);
+   async launchQuiz(title: string, subject: number, topic: number) {
     let varDirection: Direction;
     if (localStorage.getItem('isRtl') === 'true') {
       varDirection = 'rtl';
@@ -311,75 +272,26 @@ export class DashboardComponent implements OnInit {
       varDirection = 'ltr';
     }
     const dialogRef = this.dialog.open(QuizCreateComponent, {
-       width: '100vw',
-       height: '100vh',
-      maxWidth: '100vw',
-      panelClass: 'test',
-      data: { data: this.subjectData },
+      width: '60vw',
+      height: 'auto',
+      maxWidth: '600px',
+      data: {
+        title: title,
+        subject: subject,
+        topic: topic,
+        source: 'Subject'
+       },
       direction: varDirection,
       autoFocus: false,
       disableClose: true
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log("QuizCreateScreen close result", result);
-        const action = 'add';
-        this.generateQuiz(subject, topic);
-        // this.showNotification(
-        //   action === 'add' ? 'snackbar-success' : 'black',
-        //   `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
-        //   'bottom',
-        //   'center'
-        // );
+    dialogRef.afterClosed().subscribe((quizUniqueSlug) => {
+      if (quizUniqueSlug) {
+        console.log("QuizCreateScreen quizUniqueSlug", quizUniqueSlug);
+        this.router.navigate(['quiz/take', quizUniqueSlug]);
       }
     });
-  }
-  
-  async generateQuiz(subject: number, topic: number) {
-    console.log('QuizManager Invoked in SubjectDashboard:', subject, topic);
-    const payload = new QuizCreateModel();
-    payload.userId = this.authService.currentUserValue.id;
-    payload.subjectIds = subject > 0 ? '' + subject : null;
-    payload.topicIds = topic > 0 ? '' + topic : null;
-    let quizTitle = '';
-    if (subject > 0 || topic > 0) {
-    } else {
-      this.snackService.display('snackbar-dark', 'Invalid Quiz Request. Please try again.', 'bottom', 'center');
-      return;
-    }
-    payload.title = quizTitle;
-    console.log('QuizManager Payload:', payload);
-    this.generatingQuiz = true;
-    this.loading = true;
-    this.loadingText = 'Generating ' + quizTitle + ' Quiz';
-    this.quizService
-      .addQuiz(payload)
-      .subscribe({
-        next: (response) => {
-          console.log('QuizManager CreateAPI response:', response);
-          this.loadingText = 'Almost Ready';
-          //this.submitted = false;
-          if (response && response?.slug) {
-            const slug = response?.slug;
-            if (slug && slug !== '') {
-              setTimeout(() => {
-                this.router.navigate(['quiz/take', slug]);
-                this.generatingQuiz = false;
-                this.loading = false;
-              }, 2000);
-            }
-          } else {
-            this.snackService.display('snackbar-dark', 'We could not generate a Quiz at this moment. Please try again later.', 'bottom', 'center');
-          }
-        },
-        error: (error) => {
-          this.generatingQuiz = false;
-          this.loading = false;
-          this.snackService.display('snackbar-dark', 'Error generating Quiz. Please try again.', 'bottom', 'center');
-          console.error('QuizManager CreateAPI Error:', error);
-        },
-      });
   }
 
   onTopicExplore(subjectName: string) {
@@ -387,12 +299,11 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(["learn/topic/angular17"]);
   }
 
-  //AAA
   onTopicQuiz(topic: TopicItem) {
     if(topic && topic.id){
-      this.launchQuiz(null, topic.id);
+      this.launchQuiz(topic.title+' Quiz', null, topic.id);
     }else{
-      this.launchQuiz(this.currentSubject.id, null);
+      this.launchSubjectQuiz(this.currentSubject);
     }
   }
 

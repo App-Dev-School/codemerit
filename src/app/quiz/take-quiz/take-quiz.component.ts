@@ -93,8 +93,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.quizService.getQuiz(this.quizSlug)
       .subscribe(data => {
         this.quiz = data;
-        this.loadingText = 'Almost Ready';
-        this.loading = false;
+        this.loadingText = 'Loading Assessment Panel';
         console.log("QuizPlayer Loaded Quiz", data);
         this.questions = (data.questions || []).map(q => ({
           ...q,
@@ -107,6 +106,9 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
         //#Task2: Done Once all quiz questions are loaded , calculate the sum of timeAllowed for each question
         //set that time as the quiz time
+        setTimeout(() => {
+          this.loading = false;
+        }, 3000);
       });
   }
 
@@ -127,7 +129,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }
       this.scheduledAutoNext = setTimeout(() => {
         this.onSlideNext();
-      }, isCorrect ? 2200 : 1200);
+      }, isCorrect ? 2000 : 1200);
     }
   }
 
