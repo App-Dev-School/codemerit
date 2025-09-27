@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, Inject } from "@angular/core";
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetModule, MatBottomSheetRef } from "@angular/material/bottom-sheet";
-import { MatLineModule } from "@angular/material/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from '@angular/material/list';
 import { Router } from "@angular/router";
@@ -14,7 +13,6 @@ import { SnackbarService } from "@core/service/snackbar.service";
     styleUrls: ['./share-bottom-sheet.scss'],
     imports: [
         CommonModule,
-        MatLineModule,
         MatBottomSheetModule,
         MatListModule,
         MatIconModule

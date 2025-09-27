@@ -30,7 +30,7 @@ export class ShareService {
       console.warn(`Element with id '${elementId}' not found`);
       return;
     }
-
+    text = '<b>'+title+'</b>'+text+'\n'+url;
     const canvas = await html2canvas(element);
     const blob = await new Promise<Blob | null>(resolve =>
       canvas.toBlob(b => resolve(b), 'image/png')
@@ -88,7 +88,7 @@ async shareCardWithLink(elementId: string, text: string, quizUrl: string) {
   ctx.drawImage(img, 0, 0);
   ctx.fillStyle = '#000';
   ctx.font = '16px Arial';
-  ctx.fillText(`View full result: ${quizUrl}`, 20, img.height + 30);
+  ctx.fillText(`View Full Report: ${quizUrl}`, 20, img.height + 30);
 
   const finalBlob = await new Promise<Blob | null>(resolve =>
     canvas.toBlob(b => resolve(b), 'image/png')

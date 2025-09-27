@@ -8,6 +8,7 @@ import { QuizResult } from '@core/models/quiz';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
 import { TopicsScore } from '../topic-wise-score/topics-score.component';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-quiz-result',
@@ -18,6 +19,7 @@ import { TopicsScore } from '../topic-wise-score/topics-score.component';
     MatCardModule,
     MatProgressBarModule,
     MatButton,
+    MatIcon,
     NgScrollbar,
     NgTemplateOutlet,
     TopicsScore,

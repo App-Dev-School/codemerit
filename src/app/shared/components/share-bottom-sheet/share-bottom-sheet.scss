@@ -1,6 +1,7 @@
-mat-nav-list {
+.social-share-container{
   padding: 20px;
-
+  background-color: white;
+  mat-nav-list {
   mat-list-item {
     padding: 8px;
     cursor: pointer;
@@ -14,4 +15,5 @@ mat-nav-list {
       background-color: rgba(0, 0, 0, 0.04);
     }
   }
+}
 }

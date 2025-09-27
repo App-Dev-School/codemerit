@@ -86,12 +86,16 @@ export class ViewResultComponent implements OnInit {
   }
 
   openBottomSheet(): void {
+    let who = this.quizResult?.user?.firstName+''+(this.quizResult.user.lastName ? ' '+this.quizResult.user.lastName : '');
+    if(this.authService.currentUserValue && this.quizResult.user?.id === this.authService.currentUserValue?.id){
+    who = 'I';
+    }
     this._bottomSheet.open(ShareBottomSheetComponent, {
     data: {
       elementId: 'quizResultCard',
-      title: 'My Quiz Result',
+      title: this.authService.currentUserValue ? 'My Tech Assessment Report' : 'Tech Assessment Report',
       url: environment.appUrl+''+this.router.url,
-      text: `I just scored ${this.quizResult.score}% on the quiz! 🎉`
+      text: `${who} attended ${this.quizResult?.quiz.title} and scored ${this.quizResult.score}% with an accuracy of ${this.quizResult?.accuracy}%! 🎉`
     }
   });
   }
