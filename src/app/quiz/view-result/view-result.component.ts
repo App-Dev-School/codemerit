@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,10 +10,9 @@ import { QuizQuestion } from '@core/models/quiz-question';
 import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
 import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
-import { QuizService } from '../quiz.service';
-import { ShareService } from '@core/service/share.service';
-import domtoimage from 'dom-to-image-more';
+import { ShareBottomSheetComponent } from '@shared/components/share-bottom-sheet/share-bottom-sheet.component';
 import { environment } from 'src/environments/environment';
+import { QuizService } from '../quiz.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -45,7 +45,7 @@ export class ViewResultComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private quizService: QuizService,
-    private shareService: ShareService) {
+    private _bottomSheet: MatBottomSheet) {
     this.userData = this.authService.currentUserValue;
   }
 
@@ -82,29 +82,18 @@ export class ViewResultComponent implements OnInit {
 
   onShareResult(): void {
     console.log('Quiz Result Share!');
-    //this.shareWithHtml2Canvas();
-     this.shareService.shareText(
-      'My Quiz Result',
-      `I just scored ${this.quizResult.score}% on the quiz! 🎉`,
-      environment.appUrl+''+this.router.url
-    );
+    this.openBottomSheet();
   }
 
-  shareWithHtml2Canvas() {
-    this.shareService.shareCardAsImage(
-      'quizResultCard',
-      'My Quiz Result',
-      `I just scored ${this.quizResult.score}% on the quiz! 🎉`,
-      environment.appUrl+''+this.router.url
-    );
-  }
-
-  shareWithDomToImage() {
-    this.shareService.shareCardWithLink(
-      'quizResultCard',
-      this.quizResult.score,
-      environment.appUrl+''+this.router.url
-    );
+  openBottomSheet(): void {
+    this._bottomSheet.open(ShareBottomSheetComponent, {
+    data: {
+      elementId: 'quizResultCard',
+      title: 'My Quiz Result',
+      url: environment.appUrl+''+this.router.url,
+      text: `I just scored ${this.quizResult.score}% on the quiz! 🎉`
+    }
+  });
   }
 
   onContinue(): void {

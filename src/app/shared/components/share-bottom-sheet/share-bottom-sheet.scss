@@ -1,0 +1,17 @@
+mat-nav-list {
+  padding: 20px;
+
+  mat-list-item {
+    padding: 8px;
+    cursor: pointer;
+
+    .secondary {
+      font-size: 0.85rem;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+}

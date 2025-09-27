@@ -70,8 +70,8 @@ export class ShareService {
     window.open(twitterUrl, '_blank');
   }
 
-  //Try dom-to-image-more
-async shareCardWithLink(elementId: string, score: number, quizUrl: string) {
+  //Try dom-to-image-more to create image + custom text in image
+async shareCardWithLink(elementId: string, text: string, quizUrl: string) {
   const element = document.getElementById(elementId);
   if (!element) return;
 
