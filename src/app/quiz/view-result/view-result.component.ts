@@ -10,6 +10,9 @@ import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
 import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
 import { QuizService } from '../quiz.service';
+import { ShareService } from '@core/service/share.service';
+import domtoimage from 'dom-to-image-more';
+import { environment } from 'src/environments/environment';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -38,8 +41,11 @@ export class ViewResultComponent implements OnInit {
   quizResult: any;
   userData: User;
 
-  constructor( private route: ActivatedRoute, private router: Router, private authService: AuthService, 
-    private quizService: QuizService) {
+  constructor(private route: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService,
+    private quizService: QuizService,
+    private shareService: ShareService) {
     this.userData = this.authService.currentUserValue;
   }
 
@@ -47,7 +53,7 @@ export class ViewResultComponent implements OnInit {
     this.takeRouteParams();
   }
 
-    takeRouteParams() {
+  takeRouteParams() {
     const course = this.route.snapshot.paramMap.get('qcode');
     console.log("QuizResult ParamMap qcode", course);
     this.route.paramMap.subscribe(params => {
@@ -76,6 +82,29 @@ export class ViewResultComponent implements OnInit {
 
   onShareResult(): void {
     console.log('Quiz Result Share!');
+    //this.shareWithHtml2Canvas();
+     this.shareService.shareText(
+      'My Quiz Result',
+      `I just scored ${this.quizResult.score}% on the quiz! 🎉`,
+      environment.appUrl+''+this.router.url
+    );
+  }
+
+  shareWithHtml2Canvas() {
+    this.shareService.shareCardAsImage(
+      'quizResultCard',
+      'My Quiz Result',
+      `I just scored ${this.quizResult.score}% on the quiz! 🎉`,
+      environment.appUrl+''+this.router.url
+    );
+  }
+
+  shareWithDomToImage() {
+    this.shareService.shareCardWithLink(
+      'quizResultCard',
+      this.quizResult.score,
+      environment.appUrl+''+this.router.url
+    );
   }
 
   onContinue(): void {
@@ -84,10 +113,10 @@ export class ViewResultComponent implements OnInit {
     //this.router.navigate(['/dashboard/start', designationSlug]);
     //.subjects[0].slug
     try {
-      if(this.quizResult && this.quizResult.subjects){
-      const firstSubjectSlug = this.quizResult.subjects[0]?.slug;
-      this.router.navigate(['/dashboard/learn', firstSubjectSlug]);
-    }
+      if (this.quizResult && this.quizResult.subjects) {
+        const firstSubjectSlug = this.quizResult.subjects[0]?.slug;
+        this.router.navigate(['/dashboard/learn', firstSubjectSlug]);
+      }
     } catch (error) {
       this.router.navigate(['/app/select-subject']);
     }
