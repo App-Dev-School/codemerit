@@ -122,7 +122,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         opt => opt.id === question.selectedOption && (opt.correct === true)
       );
       //#Task5: Show celebration only for special questions
-      if (isCorrect) {
+      if (isCorrect && question.marks > 1) {
         this.triggerCelebration($event);
       }
       this.scheduledAutoNext = setTimeout(() => {

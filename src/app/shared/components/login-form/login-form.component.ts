@@ -68,13 +68,13 @@ export class LoginFormComponent {
         [Validators.required, Validators.email, Validators.minLength(5)],
       ],
       mobile: [''],
-      city: ['', Validators.required],
+      city: [''],
       country: ['', Validators.required],
       about: ['', Validators.required],
       stars: [''],
     });
-    if (!environment.production) {
-      this.authForm.get('city')?.setValue('Bengaluru');
+    if (environment) {
+      //this.authForm.get('city')?.setValue('Bengaluru');
       this.authForm.get('country')?.setValue('India');
       this.authForm.get('about')?.setValue('IT Fresher (Graduate)');
     }

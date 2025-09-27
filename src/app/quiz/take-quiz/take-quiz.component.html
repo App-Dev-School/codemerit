@@ -103,8 +103,7 @@
               }
 
               <!-- Celebration container -->
-              <app-celebration [trigger]="celebrationTrigger" (animationDone)="onCelebrationFinished()"></app-celebration>
-
+              <app-celebration [trigger]="celebrationTrigger" [marks]="question.marks" (animationDone)="onCelebrationFinished()"></app-celebration>
             </div>
           </swiper-slide>
           }

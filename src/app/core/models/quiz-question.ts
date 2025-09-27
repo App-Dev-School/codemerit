@@ -4,6 +4,7 @@ export interface QuizQuestion {
   id?: number | string;
   title?: string;
   question:string;
+  marks ?: number;
   timeAllowed ?: number;
   options: QuestionOption[];
   //remove below
