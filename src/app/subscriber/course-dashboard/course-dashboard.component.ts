@@ -24,7 +24,7 @@ import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { QuizService } from 'src/app/quiz/quiz.service';
 import { Course } from '@core/models/subject-role';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetModule, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatLineModule } from '@angular/material/core';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
