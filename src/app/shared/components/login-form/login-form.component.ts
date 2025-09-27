@@ -8,7 +8,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService, User } from '@core';
@@ -32,8 +31,7 @@ import { environment } from 'src/environments/environment';
     MatOptionModule,
     MatSelectModule,
     MatButton,
-    MatAutocompleteModule,
-    MatProgressSpinnerModule,
+    MatAutocompleteModule
   ],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.css'
