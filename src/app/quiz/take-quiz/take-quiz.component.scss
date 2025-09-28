@@ -6,8 +6,8 @@
   /* Question area scrolls */
   .flex-grow-1 {
     flex: 1;
-    overflow-y: auto;
-    padding-bottom: 80px;
+    overflow-y: scroll;
+    //padding-bottom: 80px;
   }
 
   /* Sticky Header */
@@ -84,7 +84,9 @@
     }
 
     &.selected {
-      background-color: #e3f2fd;
+      padding: 1rem 1.1rem;
+      background-color: #005cbb;
+      color: #ffffff;
       border-color: #2196f3;
       box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
       animation: pulseSelect 0.3s ease;
@@ -169,12 +171,9 @@
   }
 }
 
-// .quiz-result-container{
-//   margin: 30px 25px 0 30px;
-//   .content-block {
-//       padding: 0px 0px 0px 0px;
-//   }
-// }
+.quizLoader {
+  min-width: min(90%, 360px);
+}
 
 .toolbar.warning {
   animation: flashWarning 1s infinite;

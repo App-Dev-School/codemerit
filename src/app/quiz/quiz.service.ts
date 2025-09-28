@@ -17,6 +17,7 @@ import { CreateQuizResponse } from '@core/models/dtos/GenerateQuizDto';
 export class QuizService {
   private readonly API_URL = 'assets/data/quizzes/quiz-angular.json';
   dataChange: BehaviorSubject<Quiz[]> = new BehaviorSubject<Quiz[]>([]);
+  quizConfig: QuizConfig;
   currentQuiz: QuizEntity;
 
   constructor(private authService: AuthService,
@@ -43,7 +44,7 @@ export class QuizService {
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/quiz/result/'+resultCode;
+    const url = 'apis/quiz/result/' + resultCode;
     return this.httpService.get(url, api_key).pipe(
       map((response: any) => {
         return response.data;
@@ -215,4 +216,32 @@ export class QuizService {
     return this.currentQuiz;
   }
 
+  setQuizConfig(quizConfig: QuizConfig) {
+    this.quizConfig = quizConfig;
+    console.log("setQuizConfig", quizConfig);
+  }
+
+  getQuizConfig(): QuizConfig {
+    if(!this.quizConfig){
+     this.quizConfig = new QuizConfig();
+    }
+    return this.quizConfig;
+  }
+}
+export class QuizConfig {
+  numQuestions: number = 5;
+  level: string;
+  mode: string;
+  showHint: boolean;
+  showAnswers: boolean;
+  enableNavigation: boolean = true;
+
+  constructor(topic: Partial<QuizConfig> = {}) {
+      this.mode = topic.mode || 'Interactive';
+      this.level = topic.level || 'Basic';
+      this.numQuestions = topic.numQuestions || 7;
+      this.showHint = topic.showHint || true;
+      this.showAnswers = topic.showAnswers || true;
+      this.enableNavigation = topic.enableNavigation || true;
+    }
 }

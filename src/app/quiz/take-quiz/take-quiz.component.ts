@@ -2,24 +2,23 @@ import { CommonModule, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { QuizEntity } from '@core/models/dtos/GenerateQuizDto';
 import { QuizQuestion } from '@core/models/quiz-question';
+import { User } from '@core/models/user';
+import { AuthService } from '@core/service/auth.service';
+import { UtilsService } from '@core/service/utils.service';
+import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
+import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
+import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
-import { QuizService } from '../quiz.service';
-import { User } from '@core/models/user';
-import { AuthService } from '@core/service/auth.service';
-import { CreateQuizResponse, QuizEntity } from '@core/models/dtos/GenerateQuizDto';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { UtilsService } from '@core/service/utils.service';
-import { SafePipe } from '@shared/pipes/safehtml.pipe';
-import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
-import { MatDialog } from '@angular/material/dialog';
-import { SignupComponent } from 'src/app/authentication/signup/signup.component';
-import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
+import { QuizConfig, QuizService } from '../quiz.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -63,6 +62,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
   displayingAuthDialog = false;
+  quizConfig: QuizConfig;
 
   constructor(private authService: AuthService,
     private route: ActivatedRoute,
@@ -77,6 +77,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.userData = this.authService.currentUserValue;
     this.quizSlug = this.route.snapshot.paramMap.get('qcode');
+    this.quizConfig = this.quizService.getQuizConfig();
+    console.log("QuizPlayer Loaded QuizConfig", this.quizConfig);
     if (this.quizSlug) {
       this.loadQuiz();
     } else {

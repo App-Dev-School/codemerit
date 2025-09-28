@@ -274,7 +274,7 @@ export class DashboardComponent implements OnInit {
     const dialogRef = this.dialog.open(QuizCreateComponent, {
       width: '60vw',
       height: 'auto',
-      maxWidth: '600px',
+      minWidth: '344px',
       data: {
         title: title,
         subject: subject,

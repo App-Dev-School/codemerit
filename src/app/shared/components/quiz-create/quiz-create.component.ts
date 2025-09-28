@@ -2,7 +2,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
@@ -12,11 +14,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { MasterService } from '@core/service/master.service';
-import { QuizService } from 'src/app/quiz/quiz.service';
+import { NgScrollbar } from 'ngx-scrollbar';
+import { QuizConfig, QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
   selector: 'app-course-picker',
@@ -28,6 +32,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
     MatInputModule,
     MatIconModule,
     MatOptionModule,
+    MatAutocompleteModule,
     MatSelectModule,
     MatButton,
     MatCardModule,
@@ -35,7 +40,9 @@ import { QuizService } from 'src/app/quiz/quiz.service';
     MatButtonModule,
     MatChipsModule,
     MatRippleModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonToggleModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './quiz-create.component.html',
   styleUrls: ['./quiz-create.component.scss']
@@ -52,6 +59,20 @@ export class QuizCreateComponent implements OnInit {
     'Finding Questions…',
     'Applying Configuration',
     'Generating Quiz…'
+  ];
+  levels = [
+    {
+      name: "Basic",
+      value: 0
+    },
+    {
+      name: "Intermediate",
+      value: 1
+    },
+    {
+      name: "Advanced",
+      value: 2
+    }
   ];
 
   currentMessage = this.messages[0];
@@ -82,9 +103,14 @@ export class QuizCreateComponent implements OnInit {
   ngOnInit(): void {
     console.log("QuizCreate ngOnInit", this.data);
     this.requestConfirmed = false;
+    const quizConfig = new QuizConfig();
     this.quizConfigForm = this.formBuilder.group({
-      numQuestions: ['10', [Validators.required, Validators.maxLength(2)]],
-      level: ['Easy'],
+      numQuestions: [quizConfig.numQuestions, [Validators.required, Validators.maxLength(2)]],
+      level: [quizConfig.level],
+      mode: [quizConfig.mode],
+      showHint: [quizConfig.showHint],
+      showAnswers: [quizConfig.showAnswers],
+      enableNavigation: [quizConfig.enableNavigation],
     });
   }
 
@@ -93,6 +119,7 @@ export class QuizCreateComponent implements OnInit {
       //this.submitted = false;
       return;
     } else {
+      this.quizService.setQuizConfig(this.quizConfigForm.value);
       this.requestConfirmed = true;
       this.startMessageCycle();
       this.generateQuiz(this.data.subject, this.data.topic);
@@ -115,7 +142,7 @@ export class QuizCreateComponent implements OnInit {
         this.currentMessage = "Saving Your Quiz";
         this.onFinish();
       }
-    }, 3000);
+    }, 2000);
   }
 
   onFinish() {
@@ -154,7 +181,7 @@ export class QuizCreateComponent implements OnInit {
                 this.generatedQuizCode = slug;
                 //this.launchQuiz(this.generatedQuizCode);
                 this.loading = false;
-              }, 20000);
+              }, 8000);
             }
           } else {
             //#Task: handle error well. Determine eligibilty etc
