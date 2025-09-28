@@ -111,6 +111,7 @@ export class QuizCreateComponent implements OnInit {
       showHint: [quizConfig.showHint ? '1' : '0'],
       showAnswers: [quizConfig.showAnswers ? '1' : '0'],
       enableNavigation: [quizConfig.enableNavigation ? '1' : '0'],
+      enableAudio : [quizConfig.enableAudio ? '1' : '0'],
     });
   }
 

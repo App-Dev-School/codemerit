@@ -1,15 +1,13 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { catchError, delay, map } from 'rxjs/operators';
-import { HttpService } from '@core/service/http.service';
-import { environment } from 'src/environments/environment';
+import { Injectable } from '@angular/core';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
+import { CreateQuizResponse, QuizCreateModel, QuizEntity, SubmitQuizResponse } from '@core/models/dtos/GenerateQuizDto';
 import { Quiz, QuizResult } from '@core/models/quiz';
 import { QuizQuestion } from '@core/models/quiz-question';
-import { QuizCreateModel, QuizEntity, SubmitQuizResponse } from '@core/models/dtos/GenerateQuizDto';
-import { CreateQuizResponse } from '@core/models/dtos/GenerateQuizDto';
+import { HttpService } from '@core/service/http.service';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -235,6 +233,7 @@ export class QuizConfig {
   showHint: boolean;
   showAnswers: boolean;
   enableNavigation: boolean = true;
+  enableAudio: boolean;
 
   constructor(topic: Partial<QuizConfig> = {}) {
       this.mode = topic.mode || 'Interactive';
@@ -243,5 +242,6 @@ export class QuizConfig {
       this.showHint = topic.showHint || true;
       this.showAnswers = topic.showAnswers || true;
       this.enableNavigation = topic.enableNavigation || false;
+      this.enableAudio = topic.enableAudio || false;
     }
 }

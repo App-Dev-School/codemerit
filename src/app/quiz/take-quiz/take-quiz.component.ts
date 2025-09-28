@@ -19,6 +19,7 @@ import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuizConfig, QuizService } from '../quiz.service';
+import { QuizHelperService } from '../quiz-helper.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -72,7 +73,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     private utility: UtilsService,
     private snackBar: MatSnackBar,
-    private quizService: QuizService) {
+    private quizService: QuizService,
+    private quizHelper: QuizHelperService) {
     register(); // Register Swiper web components
   }
 
@@ -128,12 +130,20 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         opt => opt.id === question.selectedOption && (opt.correct === true)
       );
       //#Task5: Show celebration only for special questions
-      if (isCorrect && question.marks > 1) {
+      if (this.quizConfig.mode === 'Interactive' && isCorrect && question.marks > 1) {
         this.triggerCelebration($event);
       }
       this.scheduledAutoNext = setTimeout(() => {
         this.onSlideNext();
-      }, isCorrect ? 2000 : 1200);
+      }, isCorrect ? 1600 : 1200);
+      //playsound
+      if(this.quizConfig.enableAudio){
+        if(isCorrect)
+        this.quizHelper.playSound('success');
+        else
+        this.quizHelper.playSound('error');
+        //this.quizHelper.playSound('click');
+      }
     }
   }
 
