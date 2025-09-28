@@ -34,7 +34,6 @@ interface Quiz {
     CommonModule,
     NgClass,
     SafePipe,
-    JsonPipe,
     CdTimerModule,
     MatToolbarModule,
     MatButtonModule,
@@ -108,7 +107,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           selectedChoice: '',
           topicsArr: q.topics ? q.topics.map(object => object.title) : []
         }));
-
+        this.currentQuestion = this.questions[this.currentQuestionId];
         this.quizDuration = this.questions.reduce((sum, q) => sum + (q.timeAllowed || 0), 0);
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
         //#Task2: Done Once all quiz questions are loaded , calculate the sum of timeAllowed for each question
@@ -171,9 +170,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   showHint(): void {
-    // const currentQuestion = this.questions[this.currentQuestionId];
-    // this.currentQuestion = currentQuestion;
-    //currently show naswer
     if (this.currentQuestion?.hint) {
       this.currentHint = this.currentQuestion?.hint;
       this.currentQuestion.hintUsed = true;
@@ -184,7 +180,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   showAnswers(): void {
-    //this.currentQuestion = this.questions[this.currentQuestionId];
     if (this.currentQuestion?.answer) {
       this.currentQuestion.answerSeen = true;
     }

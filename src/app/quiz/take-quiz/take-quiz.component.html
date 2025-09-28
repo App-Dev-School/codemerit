@@ -55,11 +55,12 @@
       <!-- Screen Overlay -->
       @if (answerActive) {
       <div class="overlay"></div>
-      <div class="animToast quizLoader hint">
-        <!-- <img src="assets/images/icons/hinting.gif" class="hint-icon" alt="hint"> -->
-        <h6 class="col-indigo">{{currentQuestion.question}}</h6>
-        <p class="cmSubHeading">{{currentQuestion.answer}}</p>
-        <!-- <p class="font-12">{{currentQuestion | json}}</p> -->
+      <div class="animToast text-start quizLoader hint">
+        <p class="font-12">Question:</p>
+        <h6 class="col-indigo">{{currentQuestion?.question}}</h6>
+        <hr class="dim-divider">
+        <p class="font-12">Answer:</p>
+        <p class="cmSubHeading">{{currentQuestion?.answer}}</p>
         <hr class="dim-divider">
         <button mat-raised-button color="accent" (click)="hideAnswer()">
           Got It
@@ -145,7 +146,7 @@
           }
 
           <!-- Hint -->
-          @if (quizConfig.showHint && this.currentQuestion.hint !== "") {
+          @if (quizConfig.showHint && currentQuestion?.hint !== "") {
           <ng-container>
             <button mat-raised-button color="accent" (click)="showHint()">
               <mat-icon>live_help</mat-icon> Hint
@@ -154,7 +155,7 @@
           }
 
           <!-- Answer -->
-          @if (quizConfig.showAnswers && this.currentQuestion.answer !== "") {
+          @if (quizConfig.showAnswers && currentQuestion?.answer !== "") {
           <ng-container>
             <button mat-raised-button color="accent" (click)="showAnswers()">
               Answer <mat-icon>lock</mat-icon>

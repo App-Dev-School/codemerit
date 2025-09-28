@@ -41,11 +41,10 @@
     width: 100%;
   }
 
-  button {
-    flex: 1;
-    min-width: 100px;
-    max-width: 200px;
-  }
+  // button {
+  //   flex: 1;
+  //   min-width: 100px;
+  // }
 }
 
   .subject-icon {
@@ -94,6 +93,7 @@
     position: relative;
     font-size: 1.2rem;
     font-weight: 500;
+    overflow-wrap: anywhere;
 
     &:hover {
       border-color: #2196f3;
