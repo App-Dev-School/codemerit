@@ -52,12 +52,14 @@
       </div>
       }
 
-       <!-- Screen Overlay -->
+      <!-- Screen Overlay -->
       @if (answerActive) {
       <div class="overlay"></div>
       <div class="animToast quizLoader hint">
         <!-- <img src="assets/images/icons/hinting.gif" class="hint-icon" alt="hint"> -->
-        <h6>{{currentQuestion.answer}}</h6>
+        <h6 class="col-indigo">{{currentQuestion.question}}</h6>
+        <p class="cmSubHeading">{{currentQuestion.answer}}</p>
+        <!-- <p class="font-12">{{currentQuestion | json}}</p> -->
         <hr class="dim-divider">
         <button mat-raised-button color="accent" (click)="hideAnswer()">
           Got It
@@ -66,7 +68,7 @@
       }
 
       <!-- MAIN SWIPER CONTENT -->
-       <!-- #Task4: Display topic and level of question inside quiz window -->
+      <!-- #Task4: Display topic and level of question inside quiz window -->
       @if (!loading) {
       <div class="flex-grow-1 overflow-hidden">
         @if (questions?.length > 0) {
@@ -74,7 +76,7 @@
 
           @for (question of questions; track question.id) {
           <swiper-slide>
-            
+
             <p class="col-grey text-center m-t-20 m-b-10">{{$index+1}} of {{questions?.length}}</p>
             <div class="question-card">
               @if (question.title) {
@@ -117,7 +119,8 @@
               }
 
               <!-- Celebration container -->
-              <app-celebration [trigger]="celebrationTrigger" [marks]="question.marks" (animationDone)="onCelebrationFinished()"></app-celebration>
+              <app-celebration [trigger]="celebrationTrigger" [marks]="question.marks"
+                (animationDone)="onCelebrationFinished()"></app-celebration>
             </div>
           </swiper-slide>
           }
@@ -129,38 +132,44 @@
       <!-- FOOTER -->
       @if (!loading) {
       <mat-toolbar color="accent" class="footer-toolbar">
-  <div class="footer-actions">
+        <div class="footer-actions">
 
-    <!-- Prev -->
-    <ng-container *ngIf="quizConfig.enableNavigation && currentQuestionId > 0">
-      <button mat-flat-button color="warn" (click)="onSlidePrev()">
-        <mat-icon>keyboard_arrow_left</mat-icon>
-        Prev
-      </button>
-    </ng-container>
+          <!-- Prev -->
+          @if (quizConfig.enableNavigation && currentQuestionId > 0) {
+          <ng-container>
+            <button mat-flat-button color="warn" (click)="onSlidePrev()">
+              <mat-icon>keyboard_arrow_left</mat-icon>
+              Prev
+            </button>
+          </ng-container>
+          }
 
-    <!-- Hint -->
-    <ng-container *ngIf="quizConfig.showHint">
-      <button mat-raised-button color="accent" (click)="showHint()">
-        <mat-icon>live_help</mat-icon> Hint
-      </button>
-    </ng-container>
+          <!-- Hint -->
+          @if (quizConfig.showHint && this.currentQuestion.hint !== "") {
+          <ng-container>
+            <button mat-raised-button color="accent" (click)="showHint()">
+              <mat-icon>live_help</mat-icon> Hint
+            </button>
+          </ng-container>
+          }
 
-    <!-- Answer -->
-    <ng-container *ngIf="quizConfig.showAnswers">
-      <button mat-raised-button color="accent" (click)="showAnswers()">
-        Answer <mat-icon>lock</mat-icon>
-      </button>
-    </ng-container>
+          <!-- Answer -->
+          @if (quizConfig.showAnswers && this.currentQuestion.answer !== "") {
+          <ng-container>
+            <button mat-raised-button color="accent" (click)="showAnswers()">
+              Answer <mat-icon>lock</mat-icon>
+            </button>
+          </ng-container>
+          }
 
-    <!-- Next / Finish -->
-    <button mat-flat-button color="primary" (click)="onSlideNext()">
-      <mat-icon>keyboard_arrow_right</mat-icon>
-      {{ currentQuestionId === questions.length - 1 ? 'Finish' : 'Next' }}
-    </button>
+          <!-- Next / Finish -->
+          <button mat-flat-button color="primary" (click)="onSlideNext()">
+            <mat-icon>keyboard_arrow_right</mat-icon>
+            {{ currentQuestionId === questions.length - 1 ? 'Finish' : 'Next' }}
+          </button>
 
-  </div>
-</mat-toolbar>
+        </div>
+      </mat-toolbar>
       }
     </div>
   </div>

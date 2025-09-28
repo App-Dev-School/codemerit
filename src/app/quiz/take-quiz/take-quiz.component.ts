@@ -1,4 +1,4 @@
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule, JsonPipe, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -34,6 +34,7 @@ interface Quiz {
     CommonModule,
     NgClass,
     SafePipe,
+    JsonPipe,
     CdTimerModule,
     MatToolbarModule,
     MatButtonModule,
@@ -170,12 +171,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   showHint(): void {
-    const currentQuestion = this.questions[this.currentQuestionId];
-    this.currentQuestion = currentQuestion;
+    // const currentQuestion = this.questions[this.currentQuestionId];
+    // this.currentQuestion = currentQuestion;
     //currently show naswer
-    if (currentQuestion?.hint) {
+    if (this.currentQuestion?.hint) {
       this.currentHint = this.currentQuestion?.hint;
-      currentQuestion.hintUsed = true;
+      this.currentQuestion.hintUsed = true;
     } else {
       this.currentHint = 'Hint not available';
     }
@@ -183,11 +184,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   showAnswers(): void {
-    this.currentQuestion = this.questions[this.currentQuestionId];
+    //this.currentQuestion = this.questions[this.currentQuestionId];
     if (this.currentQuestion?.answer) {
       this.currentQuestion.answerSeen = true;
-      this.answerActive = true;
     }
+    this.answerActive = true;
   }
 
   hideHint() {
@@ -228,6 +229,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   private updateCurrentIndex(): void {
     this.currentQuestionId = this.swiperEx.nativeElement.swiper.activeIndex;
+    const currentQuestion = this.questions[this.currentQuestionId];
+    this.currentQuestion = currentQuestion;
   }
 
   submitQuiz() {

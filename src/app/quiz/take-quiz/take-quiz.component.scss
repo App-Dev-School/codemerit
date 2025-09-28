@@ -30,6 +30,7 @@
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   }
 
+
   .footer-toolbar {
   .footer-actions {
     display: flex;
@@ -41,9 +42,9 @@
   }
 
   button {
-    flex: 1;               /* let buttons grow equally */
-    min-width: 100px;      /* avoid too tiny buttons */
-    max-width: 200px;      /* prevent too wide */
+    flex: 1;
+    min-width: 100px;
+    max-width: 200px;
   }
 }
 

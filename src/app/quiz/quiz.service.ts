@@ -197,7 +197,8 @@ export class QuizService {
         isCorrect: (q.selectedOption && q.selectedOption === correctOption.id) ?? false,
         isSkipped: q.isSkipped || false,
         timeTaken: q.timeTaken || 0,
-        hintUsed: q.hintUsed || false
+        hintUsed: q.hintUsed || false,
+        answerSeen: q.answerSeen || false,
       };
     });
     analytics['attempts'] = attempts;
