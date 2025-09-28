@@ -13,8 +13,7 @@ import { SnackbarService } from "@core/service/snackbar.service";
   imports: [
     CommonModule,
     MatLineModule,
-    MatButtonModule,
-    JsonPipe
+    MatButtonModule
   ]
 })
 export class SetDesignationBottomSheetComponent {

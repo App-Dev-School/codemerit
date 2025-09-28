@@ -21,7 +21,7 @@
   }
 
   /* Sticky Footer */
-  .footer-toolbar {
+  .footer-toolbarOLD {
     padding: 0.5rem 1rem;
     flex-shrink: 0;
     position: sticky;
@@ -29,6 +29,23 @@
     z-index: 100;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   }
+
+  .footer-toolbar {
+  .footer-actions {
+    display: flex;
+    justify-content: space-between; /* space items across */
+    align-items: center;
+    flex-wrap: wrap; /* stack on small screens */
+    gap: 8px; /* spacing between buttons */
+    width: 100%;
+  }
+
+  button {
+    flex: 1;               /* let buttons grow equally */
+    min-width: 100px;      /* avoid too tiny buttons */
+    max-width: 200px;      /* prevent too wide */
+  }
+}
 
   .subject-icon {
     height: 30px;

@@ -54,6 +54,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
   warningActive = false;
   hintActive = false;
+  answerActive = false;
+  currentQuestion : QuizQuestion;
   currentHint = '';
   showWarningToast = false;
   userData: User;
@@ -157,31 +159,35 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /** Called when a hint is requested */
   showHint(): void {
     const currentQuestion = this.questions[this.currentQuestionId];
+    this.currentQuestion = currentQuestion;
     //currently show naswer
-    //if (currentQuestion?.hint) {
-    if (currentQuestion?.answer) {
-      this.currentHint = currentQuestion?.answer;
+    if (currentQuestion?.hint) {
+      this.currentHint = this.currentQuestion?.hint;
       currentQuestion.hintUsed = true;
-      //remove this and implement in interactive mode
-      // if (currentQuestion?.hint) {
-      //   this.currentHint = currentQuestion?.hint;
-      //   currentQuestion.hintUsed = true;
-      // }
     } else {
-      this.currentHint = 'Answer not available';
+      this.currentHint = 'Hint not available';
     }
     this.hintActive = true;
-    // setTimeout(() => {
-    //   this.hintActive = false;
-    // }, 3000);
+  }
+
+  showAnswers(): void {
+    this.currentQuestion = this.questions[this.currentQuestionId];
+    if (this.currentQuestion?.answer) {
+      this.currentQuestion.answerSeen = true;
+      this.answerActive = true;
+    }
   }
 
   hideHint() {
     this.hintActive = false;
     this.currentHint = '';
+  }
+
+   hideAnswer() {
+    this.answerActive = false;
+    //this.currentHint = '';
   }
 
   onTick(event: any) {

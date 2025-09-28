@@ -108,9 +108,9 @@ export class QuizCreateComponent implements OnInit {
       numQuestions: [quizConfig.numQuestions, [Validators.required, Validators.maxLength(2)]],
       level: [quizConfig.level],
       mode: [quizConfig.mode],
-      showHint: [quizConfig.showHint],
-      showAnswers: [quizConfig.showAnswers],
-      enableNavigation: [quizConfig.enableNavigation],
+      showHint: [quizConfig.showHint ? '1' : '0'],
+      showAnswers: [quizConfig.showAnswers ? '1' : '0'],
+      enableNavigation: [quizConfig.enableNavigation ? '1' : '0'],
     });
   }
 

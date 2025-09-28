@@ -242,6 +242,6 @@ export class QuizConfig {
       this.numQuestions = topic.numQuestions || 7;
       this.showHint = topic.showHint || true;
       this.showAnswers = topic.showAnswers || true;
-      this.enableNavigation = topic.enableNavigation || true;
+      this.enableNavigation = topic.enableNavigation || false;
     }
 }

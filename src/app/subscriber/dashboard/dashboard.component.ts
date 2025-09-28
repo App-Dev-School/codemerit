@@ -32,8 +32,6 @@ import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
   styleUrls: ['./dashboard.component.scss'],
   animations: [slideInOutAnimation, fadeInAnimation],
   imports: [
-    JsonPipe,
-    AsyncPipe,
     NgTemplateOutlet,
     MatTabsModule,
     MatButtonModule,
@@ -48,7 +46,6 @@ import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
     RecentCommentsComponent,
     SubjectPerformanceCardComponent,
     GoalPathComponent,
-    QuizCreateComponent,
     NgStyle
   ]
 })

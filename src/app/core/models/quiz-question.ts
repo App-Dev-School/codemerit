@@ -17,6 +17,7 @@ export interface QuizQuestion {
   selectedOptionTxt?: string;
   isSkipped?:boolean;
   hintUsed?: boolean;
+  answerSeen?: boolean;
   timeTaken?: number;
   topics? : {
   id?: number | string;
