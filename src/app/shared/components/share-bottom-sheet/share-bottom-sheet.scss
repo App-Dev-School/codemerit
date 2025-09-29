@@ -1,19 +1,74 @@
-.social-share-container{
-  padding: 20px;
-  background-color: white;
-  mat-nav-list {
-  mat-list-item {
-    padding: 8px;
-    cursor: pointer;
+.share-preview {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: #fafafa;
+  max-width: 480px;
+  cursor: pointer;
+  transition: background 0.2s ease;
 
-    .secondary {
-      font-size: 0.85rem;
-      color: rgba(0, 0, 0, 0.6);
+  &:hover {
+    background: #f0f0f0;
+  }
+
+  .title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    margin: 4px 0;
+    color: #666;
+  }
+
+  .url-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+    gap: 8px;
+
+    .url {
+      flex: 1;
+      font-size: 12px;
+      color: #1976d2;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
+    .copy-icon {
+      font-size: 18px;
+      color: #666;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #1976d2;
+      }
     }
   }
 }
+
+
+.social-share-container {
+  padding: 10px;
+  mat-nav-list {
+    mat-list-item {
+      padding: 4px;
+      cursor: pointer;
+
+      .secondary {
+        font-size: 0.85rem;
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+    }
+  }
 }

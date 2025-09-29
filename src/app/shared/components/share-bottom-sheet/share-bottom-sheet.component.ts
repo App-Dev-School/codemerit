@@ -34,6 +34,14 @@ export class ShareBottomSheetComponent {
         this.courseItem = data;
     }
 
+    copyLink(url: string | null) {
+        if (!url) return;
+        navigator.clipboard.writeText(url).then(() => {
+            this.snackService.display('snackbar-dark', "Link Copied", 'bottom', 'center');
+        }).catch(err => {
+            this.snackService.display('snackbar-dark', "Error copying link", 'bottom', 'center');
+        });
+    }
 
     shareOnlyText() {
         this._bottomSheetRef.dismiss(null);
@@ -48,13 +56,13 @@ export class ShareBottomSheetComponent {
         this._bottomSheetRef.dismiss(null);
         try {
             this.shareService.shareCardAsImage(
-            this.data?.elementId,
-            this.data?.title,
-            this.data?.text,
-            this.data?.url,
-        );
+                this.data?.elementId,
+                this.data?.title,
+                this.data?.text,
+                this.data?.url,
+            );
         } catch (error) {
-             this.snackService.display('snackbar-dark', "Error Sharing "+error, 'bottom', 'center');
+            this.snackService.display('snackbar-dark', "Error Sharing " + error, 'bottom', 'center');
         }
     }
 
@@ -67,7 +75,7 @@ export class ShareBottomSheetComponent {
                 this.data?.url,
             );
         } catch (error) {
-            this.snackService.display('snackbar-dark', "Error Sharing "+error, 'bottom', 'center');
+            this.snackService.display('snackbar-dark', "Error Sharing " + error, 'bottom', 'center');
         }
     }
 
