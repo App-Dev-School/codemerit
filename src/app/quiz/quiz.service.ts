@@ -228,7 +228,7 @@ export class QuizService {
   }
 }
 export class QuizConfig {
-  numQuestions: number = 5;
+  numQuestions: number = 8;
   level: string;
   mode: string;
   showHint: boolean;
@@ -237,12 +237,12 @@ export class QuizConfig {
   enableAudio: boolean;
 
   constructor(topic: Partial<QuizConfig> = {}) {
-      this.mode = topic.mode || 'Interactive';
+      this.mode = topic.mode || 'Default'; //Interactive
       this.level = topic.level || 'Basic';
-      this.numQuestions = topic.numQuestions || 7;
+      this.numQuestions = topic.numQuestions || 8;
       this.showHint = topic.showHint || true;
-      this.showAnswers = topic.showAnswers || true;
+      this.showAnswers = topic.showAnswers || false;
       this.enableNavigation = topic.enableNavigation || false;
-      this.enableAudio = topic.enableAudio || false;
+      this.enableAudio = topic.enableAudio || true;
     }
 }

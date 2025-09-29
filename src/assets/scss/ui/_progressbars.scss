@@ -14,7 +14,7 @@
 
   .progress-bar {
     line-height: 16px;
-    background-color: #1f91f3;
+    background-color: #005cbb;
   }
 
   .progress-bar-success {
@@ -31,6 +31,10 @@
 
   .progress-bar-danger {
     background-color: #fb483a;
+  }
+
+  .progress-bar-dark {
+    background-color: #212529;
   }
 }
 .progress-list {

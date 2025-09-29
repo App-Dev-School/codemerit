@@ -16,10 +16,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthService, User } from '@core';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { MasterService } from '@core/service/master.service';
-import { NgScrollbar } from 'ngx-scrollbar';
 import { QuizConfig, QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
@@ -79,6 +78,7 @@ export class QuizCreateComponent implements OnInit {
   messageIndex = 0;
   finished = false;
   quizConfigForm!: UntypedFormGroup;
+  authData: User;
 
   constructor(private master: MasterService,
     private formBuilder: UntypedFormBuilder,
@@ -102,16 +102,17 @@ export class QuizCreateComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("QuizCreate ngOnInit", this.data);
+    this.authData = this.authService.currentUserValue;
     this.requestConfirmed = false;
-    const quizConfig = new QuizConfig();
+    const quizConfig = this.quizService.getQuizConfig();
     this.quizConfigForm = this.formBuilder.group({
       numQuestions: [quizConfig.numQuestions, [Validators.required, Validators.maxLength(2)]],
       level: [quizConfig.level],
       mode: [quizConfig.mode],
-      showHint: [quizConfig.showHint ? '1' : '0'],
-      showAnswers: [quizConfig.showAnswers ? '1' : '0'],
-      enableNavigation: [quizConfig.enableNavigation ? '1' : '0'],
-      enableAudio : [quizConfig.enableAudio ? '1' : '0'],
+      showHint: [quizConfig.showHint],
+      showAnswers: [quizConfig.showAnswers],
+      enableNavigation: [quizConfig.enableNavigation],
+      enableAudio : [quizConfig.enableAudio],
     });
   }
 
@@ -120,7 +121,17 @@ export class QuizCreateComponent implements OnInit {
       //this.submitted = false;
       return;
     } else {
-      this.quizService.setQuizConfig(this.quizConfigForm.value);
+
+      const payload = new QuizConfig();
+      payload.mode = this.quizConfigForm.get('mode')?.value;
+      payload.numQuestions = this.quizConfigForm.get('numQuestions')?.value;
+      payload.level = this.quizConfigForm.get('level')?.value;
+      payload.showHint = this.quizConfigForm.get('showHint')?.value;
+      payload.showAnswers = this.quizConfigForm.get('showAnswers')?.value;
+      payload.enableNavigation = this.quizConfigForm.get('enableNavigation')?.value;
+      payload.enableAudio = this.quizConfigForm.get('enableAudio')?.value;
+
+      this.quizService.setQuizConfig(payload);
       this.requestConfirmed = true;
       this.startMessageCycle();
       this.generateQuiz(this.data.subject, this.data.topic);

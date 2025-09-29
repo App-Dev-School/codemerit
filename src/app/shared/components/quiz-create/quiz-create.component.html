@@ -56,7 +56,8 @@
     </div>
 
     <form class="validate-form" [formGroup]="quizConfigForm" (ngSubmit)="onSubmit()">
-      <div class="row">
+      @if (authData && authData.role === 'Admin') {
+<div class="row">
         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Number of Questions</mat-label>
@@ -77,11 +78,12 @@
           </mat-form-field>
         </div>
       </div>
+      }
 
       <div class="container">
         <div class="row settingRow align-items-center">
           <div class="col-4 d-flex align-items-center text-start">
-            <h5 class="cmHeading2">Mode</h5>
+            <h5 class="cmHeading2">Test Mode</h5>
           </div>
           <div class="col-8 text-end">
             <mat-button-toggle-group class="mt-0 mb-0" formControlName="mode" appearance="legacy">
@@ -96,8 +98,8 @@
           </div>
           <div class="col-6 text-end">
             <mat-button-toggle-group class="mt-0 mb-0" formControlName="showHint" appearance="legacy">
-              <mat-button-toggle value="1">Yes</mat-button-toggle>
-              <mat-button-toggle value="0">No</mat-button-toggle>
+              <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+              <mat-button-toggle [value]="true">No</mat-button-toggle>
             </mat-button-toggle-group>
           </div>
         </div>
@@ -107,8 +109,8 @@
           </div>
           <div class="col-6 text-end">
             <mat-button-toggle-group class="mt-0 mb-0" formControlName="showAnswers" appearance="legacy">
-              <mat-button-toggle value="1">Yes</mat-button-toggle>
-              <mat-button-toggle value="0">No</mat-button-toggle>
+              <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+              <mat-button-toggle [value]="false">No</mat-button-toggle>
             </mat-button-toggle-group>
           </div>
         </div>
@@ -118,8 +120,8 @@
           </div>
           <div class="col-6 text-end">
             <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableNavigation" appearance="legacy">
-              <mat-button-toggle value="1">ON</mat-button-toggle>
-              <mat-button-toggle value="0">OFF</mat-button-toggle>
+              <mat-button-toggle [value]="true">ON</mat-button-toggle>
+              <mat-button-toggle [value]="false">OFF</mat-button-toggle>
             </mat-button-toggle-group>
           </div>
         </div>
@@ -129,8 +131,8 @@
           </div>
           <div class="col-6 text-end">
             <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableAudio" appearance="legacy">
-              <mat-button-toggle value="1">ON</mat-button-toggle>
-              <mat-button-toggle value="0">OFF</mat-button-toggle>
+              <mat-button-toggle [value]="true">ON</mat-button-toggle>
+              <mat-button-toggle [value]="false">OFF</mat-button-toggle>
             </mat-button-toggle-group>
           </div>
         </div>

@@ -33,6 +33,7 @@ interface Quiz {
   imports: [
     CommonModule,
     NgClass,
+
     SafePipe,
     CdTimerModule,
     MatToolbarModule,
@@ -139,9 +140,9 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       //playsound
       if (this.quizConfig.enableAudio) {
         if (isCorrect)
-          this.quizHelper.playSound('right');
+          this.quizHelper.playSound('right_answer');
         else
-          this.quizHelper.playSound('incorrect');
+          this.quizHelper.playSound('wrong_answer');
       }
     }
   }
@@ -155,8 +156,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         this.quizHelper.playSound('click');
     } else {
       if (this.quizConfig.enableAudio)
-        this.quizHelper.playSound('ping');
-      this.completeQuiz();
+        this.quizHelper.playSound('well-done');
+        this.completeQuiz();
     }
     //clear any previous scheduled task
     clearTimeout(this.scheduledAutoNext);
@@ -220,8 +221,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     console.log('Timer finished!');
     this.warningActive = false;
     this.showWarningToast = false;
-    if(this.quizConfig.enableAudio)
-    this.quizHelper.playSound('click');
+    if (this.quizConfig.enableAudio)
+      this.quizHelper.playSound('click');
     console.log('Quiz Timed Out!', this.questions);
     this.submitQuiz();
   }
