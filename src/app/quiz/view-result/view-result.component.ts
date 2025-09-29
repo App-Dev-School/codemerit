@@ -76,20 +76,20 @@ export class ViewResultComponent implements OnInit {
     this.quizService.getQuizResult(this.quizResultCode)
       .subscribe(data => {
         console.log("loadQuizResult API #####", data);
-        this.quizResult = data;
         setTimeout(() => {
+          this.quizResult = data;
           this.loadingText = '';
           this.loading = false;
         }, 3000);
         setTimeout(() => {
           this.createResultEffect();
-        }, 5000);
+        }, 4000);
       });
   }
 
   createResultEffect() {
     if (this.quizService.getQuizConfig().enableAudio) {
-      if (this.quizResult && this.quizResult.score > 50) {
+      if (this.quizResult && this.quizResult.score >= 50) {
         if (this.quizResult.accuracy < 90) {
           this.quizHelper.playSound(Math.random() < 0.7 ? 'well-done' : 'clap');
         } else {

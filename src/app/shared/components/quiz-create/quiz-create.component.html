@@ -40,7 +40,7 @@
   <div class="auth-wrapper">
     <div class="text-center m-t-0 m-b-10">
       @if (data && data?.title) {
-      <h5 class="welcome-msg text-center"> {{data?.title}} </h5>
+      <h3 class="welcome-msg text-center"> {{data?.title}} </h3>
       }@else {
       <h6 class="welcome-msg text-center"> Are you ready for an assessment? </h6>
       }
@@ -49,11 +49,11 @@
       <p class="font-12 text-center">{{data?.message}}</p>
       }
       <!-- <h6 class="social-login-title">Configure Your Assessment</h6> -->
-       <h6 class="font-12">Configure Your Assessment</h6>
+       <h6 class="font-12 m-b-0">Select your preferences and generate assessment</h6>
         <div class="text-center">
         <img src="assets/images/icons/creatingQuiz.gif" alt="codemerit" class="largerLoadingIcon animEntry" />
       </div>
-       <hr class="dim-divider">
+       <!-- <hr class="dim-divider"> -->
     </div>
 
     <form class="validate-form" [formGroup]="quizConfigForm" (ngSubmit)="onSubmit()">
@@ -87,7 +87,7 @@
             <h5 class="cmHeading2">Test Mode</h5>
           </div>
           <div class="col-8 text-end">
-            <mat-button-toggle-group class="mt-0 mb-0" formControlName="mode" appearance="legacy">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="mode" appearance="standard">
               <mat-button-toggle value="Default">Default</mat-button-toggle>
               <mat-button-toggle value="Interactive">Interactive</mat-button-toggle>
             </mat-button-toggle-group>
@@ -98,7 +98,7 @@
             <h5 class="cmHeading2">Enable Hints</h5>
           </div>
           <div class="col-6 text-end">
-            <mat-button-toggle-group class="mt-0 mb-0" formControlName="showHint" appearance="legacy">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="showHint" appearance="standard">
               <mat-button-toggle [value]="true">Yes</mat-button-toggle>
               <mat-button-toggle [value]="true">No</mat-button-toggle>
             </mat-button-toggle-group>
@@ -109,7 +109,7 @@
             <h5 class="cmHeading2">Show Answer</h5>
           </div>
           <div class="col-6 text-end">
-            <mat-button-toggle-group class="mt-0 mb-0" formControlName="showAnswers" appearance="legacy">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="showAnswers" appearance="standard">
               <mat-button-toggle [value]="true">Yes</mat-button-toggle>
               <mat-button-toggle [value]="false">No</mat-button-toggle>
             </mat-button-toggle-group>
@@ -120,7 +120,7 @@
             <h5 class="cmHeading2">Navigator</h5>
           </div>
           <div class="col-6 text-end">
-            <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableNavigation" appearance="legacy">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableNavigation" appearance="standard">
               <mat-button-toggle [value]="true">ON</mat-button-toggle>
               <mat-button-toggle [value]="false">OFF</mat-button-toggle>
             </mat-button-toggle-group>
@@ -131,7 +131,7 @@
             <h5 class="cmHeading2">Audio</h5>
           </div>
           <div class="col-6 text-end">
-            <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableAudio" appearance="legacy">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableAudio" appearance="standard">
               <mat-button-toggle [value]="true">ON</mat-button-toggle>
               <mat-button-toggle [value]="false">OFF</mat-button-toggle>
             </mat-button-toggle-group>
