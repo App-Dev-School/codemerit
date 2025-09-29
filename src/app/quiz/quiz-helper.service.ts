@@ -9,9 +9,12 @@ export class QuizHelperService {
 
   constructor() {
     // preload common quiz sounds
-    this.loadSound('click', 'assets/audio/click.mp3');
-    this.loadSound('success', 'assets/audio/pass.mp3');
-    this.loadSound('error', 'assets/audio/fail.mp3');
+    this.loadSound('click', 'assets/audio/click.wav');
+    this.loadSound('right', 'assets/audio/right.wav');
+    this.loadSound('incorrect', 'assets/audio/incorrect.wav');
+    this.loadSound('ping', 'assets/audio/ping.wav');
+    this.loadSound('well-done', 'assets/audio/well-done.wav');
+    this.loadSound('clap', 'assets/audio/clap.wav');
   }
 
   /** ---------- SOUND HELPERS ---------- **/

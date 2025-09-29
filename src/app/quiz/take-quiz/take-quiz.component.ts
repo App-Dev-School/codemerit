@@ -56,7 +56,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   warningActive = false;
   hintActive = false;
   answerActive = false;
-  currentQuestion : QuizQuestion;
+  currentQuestion: QuizQuestion;
   currentHint = '';
   showWarningToast = false;
   userData: User;
@@ -137,12 +137,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         this.onSlideNext();
       }, isCorrect ? 1600 : 1200);
       //playsound
-      if(this.quizConfig.enableAudio){
-        if(isCorrect)
-        this.quizHelper.playSound('success');
+      if (this.quizConfig.enableAudio) {
+        if (isCorrect)
+          this.quizHelper.playSound('right');
         else
-        this.quizHelper.playSound('error');
-        //this.quizHelper.playSound('click');
+          this.quizHelper.playSound('incorrect');
       }
     }
   }
@@ -152,7 +151,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.currentQuestionId < this.questions.length - 1) {
       this.swiperEx.nativeElement.swiper.slideNext();
       this.updateCurrentIndex();
+      if (this.quizConfig.enableAudio)
+        this.quizHelper.playSound('click');
     } else {
+      if (this.quizConfig.enableAudio)
+        this.quizHelper.playSound('ping');
       this.completeQuiz();
     }
     //clear any previous scheduled task
@@ -173,6 +176,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.currentQuestion?.hint) {
       this.currentHint = this.currentQuestion?.hint;
       this.currentQuestion.hintUsed = true;
+      if (this.quizConfig.enableAudio)
+        this.quizHelper.playSound('ping');
     } else {
       this.currentHint = 'Hint not available';
     }
@@ -182,6 +187,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showAnswers(): void {
     if (this.currentQuestion?.answer) {
       this.currentQuestion.answerSeen = true;
+      if (this.quizConfig.enableAudio)
+        this.quizHelper.playSound('ping');
     }
     this.answerActive = true;
   }
@@ -191,7 +198,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.currentHint = '';
   }
 
-   hideAnswer() {
+  hideAnswer() {
     this.answerActive = false;
     //this.currentHint = '';
   }
@@ -213,6 +220,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     console.log('Timer finished!');
     this.warningActive = false;
     this.showWarningToast = false;
+    if(this.quizConfig.enableAudio)
+    this.quizHelper.playSound('click');
     console.log('Quiz Timed Out!', this.questions);
     this.submitQuiz();
   }

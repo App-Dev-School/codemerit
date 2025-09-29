@@ -13,6 +13,7 @@ import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.
 import { ShareBottomSheetComponent } from '@shared/components/share-bottom-sheet/share-bottom-sheet.component';
 import { environment } from 'src/environments/environment';
 import { QuizService } from '../quiz.service';
+import { QuizHelperService } from '../quiz-helper.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -45,6 +46,7 @@ export class ViewResultComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private quizService: QuizService,
+    private quizHelper: QuizHelperService,
     private _bottomSheet: MatBottomSheet) {
     this.userData = this.authService.currentUserValue;
   }
@@ -75,9 +77,28 @@ export class ViewResultComponent implements OnInit {
       .subscribe(data => {
         console.log("loadQuizResult API #####", data);
         this.quizResult = data;
-        this.loadingText = '';
-        this.loading = false;
+        setTimeout(() => {
+          this.loadingText = '';
+          this.loading = false;
+        }, 3000);
+        setTimeout(() => {
+          this.createResultEffect();
+        }, 5000);
       });
+  }
+
+  createResultEffect() {
+    if (this.quizService.getQuizConfig().enableAudio) {
+      if (this.quizResult && this.quizResult.score > 80) {
+        if (Math.random() < 0.7) {
+          this.quizHelper.playSound('well-done');
+        } else {
+          this.quizHelper.playSound('clap');
+        }
+      } else {
+        this.quizHelper.playSound('incorrect');
+      }
+    }
   }
 
   onShareResult(): void {
@@ -86,18 +107,18 @@ export class ViewResultComponent implements OnInit {
   }
 
   openBottomSheet(): void {
-    let who = this.quizResult?.user?.firstName+''+(this.quizResult.user.lastName ? ' '+this.quizResult.user.lastName : '');
-    if(this.authService.currentUserValue && this.quizResult.user?.id === this.authService.currentUserValue?.id){
-    who = 'I';
+    let who = this.quizResult?.user?.firstName + '' + (this.quizResult.user.lastName ? ' ' + this.quizResult.user.lastName : '');
+    if (this.authService.currentUserValue && this.quizResult.user?.id === this.authService.currentUserValue?.id) {
+      who = 'I';
     }
     this._bottomSheet.open(ShareBottomSheetComponent, {
-    data: {
-      elementId: 'quizResultCard',
-      title: this.authService.currentUserValue ? 'My Tech Assessment Report' : 'Tech Assessment Report',
-      url: environment.appUrl+''+this.router.url,
-      text: `${who} attended ${this.quizResult?.quiz.title} and scored ${this.quizResult.score}% with an accuracy of ${this.quizResult?.accuracy}%! 🎉`
-    }
-  });
+      data: {
+        elementId: 'quizResultCard',
+        title: this.authService.currentUserValue ? 'My Tech Assessment Report' : 'Tech Assessment Report',
+        url: environment.appUrl + '' + this.router.url,
+        text: `${who} attended ${this.quizResult?.quiz.title} and scored ${this.quizResult.score}% with an accuracy of ${this.quizResult?.accuracy}%! 🎉`
+      }
+    });
   }
 
   onContinue(): void {
