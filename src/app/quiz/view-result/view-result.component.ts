@@ -89,14 +89,18 @@ export class ViewResultComponent implements OnInit {
 
   createResultEffect() {
     if (this.quizService.getQuizConfig().enableAudio) {
-      if (this.quizResult && this.quizResult.score > 80) {
-        if (Math.random() < 0.7) {
-          this.quizHelper.playSound('well-done');
+      if (this.quizResult && this.quizResult.score > 50) {
+        if (this.quizResult.accuracy < 90) {
+          this.quizHelper.playSound(Math.random() < 0.7 ? 'well-done' : 'clap');
         } else {
-          this.quizHelper.playSound('clap');
+          this.quizHelper.playSound('excellent');
         }
       } else {
-        this.quizHelper.playSound('incorrect');
+        if (this.quizResult.accuracy < 30) {
+          this.quizHelper.playSound('low_accuracy');
+        }else{
+          this.quizHelper.playSound('test_failed');
+        }
       }
     }
   }

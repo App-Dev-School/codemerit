@@ -12,11 +12,15 @@ export class QuizHelperService {
     this.loadSound('click', 'assets/audio/click.wav');
     this.loadSound('right', 'assets/audio/right.wav');
     this.loadSound('incorrect', 'assets/audio/incorrect.wav');
-    this.loadSound('well-done', 'assets/audio/well-done.wav');
+    this.loadSound('well_done', 'assets/audio/well_done.wav');
     this.loadSound('clap', 'assets/audio/clap.wav');
     this.loadSound('you-are-right', 'assets/audio/you-are-right.mp3');
     this.loadSound('right_answer', 'assets/audio/right_answer.mp3');
     this.loadSound('wrong_answer', 'assets/audio/wrong_answer.mp3');
+    //quiz result
+    this.loadSound('excellent', 'assets/audio/excellent.mp3');
+    this.loadSound('test_failed', 'assets/audio/test_failed.mp3');
+    this.loadSound('low_accuracy', 'assets/audio/low_accuracy.mp3');
   }
 
   /** ---------- SOUND HELPERS ---------- **/
