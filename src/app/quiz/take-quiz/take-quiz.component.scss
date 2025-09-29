@@ -21,31 +21,33 @@
   }
 
   /* Sticky Footer */
-  .footer-toolbarOLD {
+  .footer-toolbar {
     padding: 0.5rem 1rem;
     flex-shrink: 0;
     position: sticky;
     bottom: 0;
     z-index: 100;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      /* space items across */
+      align-items: center;
+      flex-wrap: wrap;
+      /* stack on small screens */
+      gap: 8px;
+      /* spacing between buttons */
+      width: 100%;
+    }
+
+    button {
+      min-width: 100px;
+      @media only screen and (max-width: 576px) {
+        flex: 1;
+      }
+    }
   }
-
-
-  .footer-toolbar {
-  .footer-actions {
-    display: flex;
-    justify-content: space-between; /* space items across */
-    align-items: center;
-    flex-wrap: wrap; /* stack on small screens */
-    gap: 8px; /* spacing between buttons */
-    width: 100%;
-  }
-
-  // button {
-  //   flex: 1;
-  //   min-width: 100px;
-  // }
-}
 
   .subject-icon {
     height: 30px;
