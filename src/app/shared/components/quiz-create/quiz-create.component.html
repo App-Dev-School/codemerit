@@ -39,9 +39,6 @@
 <div class="form-section">
   <div class="auth-wrapper">
     <div class="text-center m-t-0 m-b-10">
-      <div class="text-center">
-        <img src="assets/images/icons/creatingQuiz.gif" alt="codemerit" class="largerLoadingIcon animEntry" />
-      </div>
       @if (data && data?.title) {
       <h5 class="welcome-msg text-center"> {{data?.title}} </h5>
       }@else {
@@ -53,6 +50,10 @@
       }
       <!-- <h6 class="social-login-title">Configure Your Assessment</h6> -->
        <h6 class="font-12">Configure Your Assessment</h6>
+        <div class="text-center">
+        <img src="assets/images/icons/creatingQuiz.gif" alt="codemerit" class="largerLoadingIcon animEntry" />
+      </div>
+       <hr class="dim-divider">
     </div>
 
     <form class="validate-form" [formGroup]="quizConfigForm" (ngSubmit)="onSubmit()">
@@ -131,6 +132,17 @@
           </div>
           <div class="col-6 text-end">
             <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableAudio" appearance="legacy">
+              <mat-button-toggle [value]="true">ON</mat-button-toggle>
+              <mat-button-toggle [value]="false">OFF</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+        <div class="row settingRow align-items-center">
+          <div class="col-6 d-flex align-items-center text-start">
+            <h5 class="cmHeading2">Timer</h5>
+          </div>
+          <div class="col-6 text-end">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableAudio" appearance="standard">
               <mat-button-toggle [value]="true">ON</mat-button-toggle>
               <mat-button-toggle [value]="false">OFF</mat-button-toggle>
             </mat-button-toggle-group>

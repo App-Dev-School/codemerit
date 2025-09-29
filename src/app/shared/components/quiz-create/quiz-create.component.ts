@@ -19,6 +19,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, User } from '@core';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { MasterService } from '@core/service/master.service';
+import { SnackbarService } from '@core/service/snackbar.service';
 import { QuizConfig, QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
@@ -82,7 +83,7 @@ export class QuizCreateComponent implements OnInit {
 
   constructor(private master: MasterService,
     private formBuilder: UntypedFormBuilder,
-    private router: Router,
+    private snackService: SnackbarService,
     private route: ActivatedRoute,
     private authService: AuthService,
     private quizService: QuizService,
@@ -196,8 +197,10 @@ export class QuizCreateComponent implements OnInit {
               }, 8000);
             }
           } else {
+            this.loading = false;
             //#Task: handle error well. Determine eligibilty etc
-            //this.snackService.display('snackbar-dark', 'We could not generate a Quiz at this moment. Please try again later.', 'bottom', 'center');
+            this.requestConfirmed = false;
+            this.snackService.display('snackbar-dark', 'Please try again later.'+response, 'bottom', 'center');
           }
         },
         error: (error) => {
@@ -205,6 +208,7 @@ export class QuizCreateComponent implements OnInit {
           this.loading = false;
           this.error = 'Error generating Quiz. Please try again.';
           console.error('QuizManager CreateAPI Error:', error);
+          this.snackService.display('snackbar-dark', this.error, 'bottom', 'center');
         },
       });
   }
