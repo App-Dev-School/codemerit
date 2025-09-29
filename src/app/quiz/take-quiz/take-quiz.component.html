@@ -56,14 +56,13 @@
       @if (answerActive) {
       <div class="overlay"></div>
       <div class="animToast text-start quizLoader hint">
-        <p class="font-12">Question:</p>
-        <h6 class="col-indigo">{{currentQuestion?.question}}</h6>
+        <p class="font-14 col-indigo m-b-0">Question:</p>
+        <h6 class="col-indigo m-t-0">{{currentQuestion?.question}}</h6>
+        <p class="font-14">Answer:</p>
+        <p class="cmSubHeading m-t-0">{{currentQuestion?.answer}}</p>
         <hr class="dim-divider">
-        <p class="font-12">Answer:</p>
-        <p class="cmSubHeading">{{currentQuestion?.answer}}</p>
-        <hr class="dim-divider">
-        <button mat-raised-button color="accent" (click)="hideAnswer()">
-          Got It
+        <button mat-raised-button color="primary" class="text-center" (click)="hideAnswer()">
+          <mat-icon>keyboard_arrow_left</mat-icon> Got It
         </button>
       </div>
       }
