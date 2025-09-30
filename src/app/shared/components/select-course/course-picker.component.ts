@@ -46,7 +46,6 @@ export class CoursePickerComponent implements OnInit {
       this.mode = 'dialog';
       this.userId = data?.id;
       console.log("CoursePicker Dialog Data ", data);
-
     } else {
       this.mode = 'route';
       this.route.paramMap.subscribe(params => {

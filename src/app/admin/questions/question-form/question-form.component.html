@@ -1,6 +1,15 @@
-<section class="content">
+ @if (!data) {
+  <section class="content">
   <div class="content-block">
-    @if (!submitted) {
+    <ng-container *ngTemplateOutlet="formContainer"></ng-container>
+  </div>
+</section>
+ }@else{
+  <ng-container *ngTemplateOutlet="formContainer"></ng-container>
+ }
+
+<ng-template #formContainer>
+ @if (!submitted) {
       <div class="block-header">
       <h5 class="m-t-20">{{ action === 'edit' ? 'Update Question' : 'Add New Question'}}</h5>
     </div>
@@ -202,5 +211,4 @@
         }
       </div>
     </div>
-  </div>
-</section>
+</ng-template>

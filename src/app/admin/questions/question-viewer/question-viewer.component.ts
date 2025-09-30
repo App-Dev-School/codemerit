@@ -10,6 +10,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
+import { SnackbarService } from '@core/service/snackbar.service';
 import { UtilsService } from '@core/service/utils.service';
 import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { Swiper } from 'swiper';
@@ -17,8 +18,6 @@ import { register } from 'swiper/element/bundle';
 import { FullQuestion } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
 import { QuestionFormPage } from '../question-form/question-form.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SnackbarService } from '@core/service/snackbar.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -43,7 +42,7 @@ interface Quiz {
 export class QuestionViewerComponent implements OnInit, AfterViewInit {
   questions: FullQuestion[] = [];
   currentQuestionId = 0;
-  currentQuestion : FullQuestion;
+  currentQuestion: FullQuestion;
   loading = true;
   loadingText = 'Loading Questions';
   completed = false;
@@ -122,7 +121,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/admin/dashboard/main']);
   }
 
-    routeEditQuestionPage(slug: string) {
+  routeEditQuestionPage(slug: string) {
     //const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
     this.router.navigate(['/admin/questions/update', slug]);
   }
@@ -141,9 +140,9 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
       varDirection = 'ltr';
     }
     const dialogRef = this.dialog.open(QuestionFormPage, {
-      width: '80vw',
+      width: '100vw',
       height: '100vh',
-      minWidth: '360px',
+      minWidth: '100vw',
       //panelClass: 'full-screen-dialog',
       data: { questionItem: data, action },
       direction: varDirection,
@@ -153,10 +152,10 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         //console.log("QuestionViewer close result", result);
-        if(!result.error){
-          this.snackService.display('snackbar-dark', result.message?? "Question updated successfully.", 'bottom', 'center');
-        }else{
-          this.snackService.display('snackbar-dark', result.message?? "Failed to update question.", 'bottom', 'center');
+        if (!result.error) {
+          this.snackService.display('snackbar-dark', result.message ?? "Question updated successfully.", 'bottom', 'center');
+        } else {
+          this.snackService.display('snackbar-dark', result.message ?? "Failed to update question.", 'bottom', 'center');
         }
         //this.onQuestionChange(result.data);
       }

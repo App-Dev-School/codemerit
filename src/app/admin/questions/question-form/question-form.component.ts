@@ -27,6 +27,7 @@ import { CoursePickerComponent } from '@shared/components/select-course/course-p
 import { TopicItem } from '../../topics/manage/topic-item.model';
 import { QuestionItem, QuestionItemDetail } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
   selector: 'app-question-form',
@@ -37,6 +38,7 @@ import { QuestionService } from '../manage/questions.service';
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
+    NgTemplateOutlet,
     TextFieldModule,
     MatFormFieldModule,
     MatInputModule,
