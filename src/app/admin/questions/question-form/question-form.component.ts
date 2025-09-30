@@ -1,5 +1,5 @@
-import { JsonPipe } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -14,20 +14,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChip } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Status } from '@core/models/status.enum';
 import { Subject } from '@core/models/subject';
 import { MasterService } from '@core/service/master.service';
-import { QuestionService } from '../manage/questions.service';
-import { QuestionItem, QuestionItemDetail } from '../manage/question-item.model';
-import { ActivatedRoute, Router } from '@angular/router';
-import { M } from "../../../../../node_modules/@angular/material/line.d-C-QdueRc";
-import { Status } from '@core/models/status.enum';
-import { TextFieldModule } from '@angular/cdk/text-field';
+import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { TopicItem } from '../../topics/manage/topic-item.model';
-import { QuizQuestionComponent } from '@shared/components/quiz-question/quiz-question.component';
+import { QuestionItem, QuestionItemDetail } from '../manage/question-item.model';
+import { QuestionService } from '../manage/questions.service';
 
 @Component({
   selector: 'app-question-form',
@@ -57,7 +56,7 @@ export class QuestionFormPage implements OnInit {
   topicImage = 'assets/images/icons/topic.png';
   questionForm: UntypedFormGroup;
   initialFormValue: any;
-  questionItem: QuestionItem;
+  questionItem: QuestionItem | QuestionItemDetail;
   subjects: Subject[] = [];
   topics: TopicItem[] = [];
   constructor(
@@ -65,17 +64,24 @@ export class QuestionFormPage implements OnInit {
     private route: ActivatedRoute,
     private questionService: QuestionService,
     private masterSrv: MasterService,
-    private fb: UntypedFormBuilder
+    private fb: UntypedFormBuilder,
+    @Optional() public dialogRef?: MatDialogRef<CoursePickerComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: any
   ) {
-    this.questionItem = new QuestionItem();
+    this.questionItem = new QuestionItemDetail();
     this.questionForm = this.createQuestionForm();
     this.subjects = this.masterSrv.subjects;
     this.topics = this.masterSrv.topics;
+    if (this.dialogRef) {
+      //this.mode = 'dialog';
+      //this.userId = data?.id;
+      console.log("QuestionForm dialogRef exists ");
+    }
   }
 
   createQuestionForm(): UntypedFormGroup {
     return this.fb.group({
-      id: [''+this.questionItem?.id],
+      id: ['' + this.questionItem?.id],
       question: [this.questionItem.question, [Validators.required, Validators.minLength(3)]],
       subjectId: ['' + this.questionItem.subjectId, [Validators.required]],
       level: [this.questionItem.level, [Validators.required]],
@@ -93,12 +99,23 @@ export class QuestionFormPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log("QuestionForm Dialog Data ", this.data);
     this.questionSlug = this.route.snapshot.paramMap.get('question-slug');
-    if (this.questionSlug) {
+    console.log("QuestionForm  ", this.questionSlug);
+    if (this.questionSlug || (this.data.questionItem && this.data?.action === 'update')) {
       this.action = 'edit';
       this.actionText = 'Updating Question';
       this.dialogTitle = 'Update Question';
-      this.loadQuestion(this.questionSlug);
+      //Capture data from dialog
+      if (this.data && this.data?.questionItem) {
+        this.loading = false;
+        this.questionItem = this.data?.questionItem;
+        //Must be called after data populated
+        this.patchForm(this.questionItem);
+        this.initialFormValue = this.questionForm.getRawValue();
+      } else {
+        this.loadQuestion(this.questionSlug);
+      }
     } else {
       this.action = 'create';
       this.actionText = 'Creating Question';
@@ -166,6 +183,13 @@ export class QuestionFormPage implements OnInit {
     return topic ? topic.title : '';
   }
 
+  onCancel(){
+    this.questionForm.reset();
+    if(this.data && this.data.questionItem){
+    this.dialogRef.close(null);
+    }
+  }
+
   submit() {
     if (this.questionForm.valid) {
       this.submitted = true;
@@ -192,7 +216,7 @@ export class QuestionFormPage implements OnInit {
             next: (response) => {
               console.log('QuestionManager UpdateAPI response:', response);
               this.submitted = false;
-              this.navigateToQuestionList();
+              this.navigateToQuestionList(response);
             },
             error: (error) => {
               this.submitted = false;
@@ -226,7 +250,7 @@ export class QuestionFormPage implements OnInit {
             next: (response) => {
               console.log('QuestionManager CreateAPI response:', response);
               this.submitted = false;
-              this.navigateToQuestionList();
+              this.navigateToQuestionList(response);
             },
             error: (error) => {
               this.submitted = false;
@@ -258,7 +282,7 @@ export class QuestionFormPage implements OnInit {
             this.questionItem = response;
             //Must be called after data populated
             this.patchForm(response);
-            this.initialFormValue = this.questionForm.getRawValue(); // Store original
+            this.initialFormValue = this.questionForm.getRawValue();
           },
           error: (error) => {
             this.loading = false;
@@ -270,7 +294,7 @@ export class QuestionFormPage implements OnInit {
 
   patchForm(data: QuestionItemDetail): void {
     let topicIds = [];
-    if(data.topics && data.topics.length > 0){
+    if (data.topics && data.topics.length > 0) {
       topicIds = data.topics.map(topic => topic.id);
     }
     this.questionForm.patchValue({
@@ -304,8 +328,11 @@ export class QuestionFormPage implements OnInit {
     //console.log("QuestionEditor Patch Topics", data.topicIds);
   }
 
-  navigateToQuestionList() {
-    this.router.navigate(['/admin/questions/list']);
+  navigateToQuestionList(resultData:any) {
+    if(this.data){
+      this.dialogRef.close(resultData);
+    }else{
+      this.router.navigate(['/admin/questions/list']);
+    }
   }
-
 }
