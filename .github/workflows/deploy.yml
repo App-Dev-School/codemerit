@@ -17,7 +17,7 @@ jobs:
         env:
           MY_SECRET: ${{ secrets.FTP_REMOTE_DIR }}
         run: |
-          echo "The secret value for FTP_REMOTE_DIR is: $MY_SECRET"
+          echo "The secret value is: $MY_SECRET"
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
