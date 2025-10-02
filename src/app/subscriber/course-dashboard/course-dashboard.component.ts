@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { Direction } from '@angular/cdk/bidi';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
@@ -24,6 +24,7 @@ import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-
 import { Observable, of } from 'rxjs';
 import { QuizService } from 'src/app/quiz/quiz.service';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -31,12 +32,13 @@ import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.comp
   styleUrls: ['./course-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
-    AsyncPipe,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
     MatCheckboxModule,
     MatTooltipModule,
+    MatTabsModule,
+    NgTemplateOutlet,
     CongratulationsCardComponent,
     MedalCardComponent,
     SubjectTrackerCardComponent
@@ -47,7 +49,7 @@ export class CourseDashboardComponent implements OnInit {
   loading = true;
   loadingText = 'Loading your Dashboard';
   //generatingQuiz = false;
-  userData: Observable<User>;
+  userData: User;
   showContent = true;
   course = "";
   courseItem: Course;
@@ -71,14 +73,14 @@ export class CourseDashboardComponent implements OnInit {
     private snackService: SnackbarService
   ) {
     console.log(this.pageTitle, "User ", this.authService.currentUser);
-    this.userData = this.authService.currentUser;
+    this.userData = this.authService.currentUserValue;
     //this.userData.profile = localStorage.getItem(AuthConstants.CACHE_FULL_PROFILE);
   }
 
   ngOnInit() {
     this.authService.currentUser.subscribe((localUser: User) => {
       if (localUser && localUser.email && localUser.token) {
-        this.userData = of(localUser);
+        this.userData = localUser;
         console.log('Course Dashboard user changed.', localUser);
         //this.snackService.display('snackbar-dark','Course Dashboard user changed.', 'bottom', 'center');
       }
@@ -234,6 +236,10 @@ export class CourseDashboardComponent implements OnInit {
 
   goToCourses() {
     this.router.navigate(['/app/select-job-role']);
+  }
+
+   viewProfile() {
+    this.router.navigate(['/users/profile']);
   }
 
   openCourseLauncher(action: 'default' | 'custom', data?: any) {

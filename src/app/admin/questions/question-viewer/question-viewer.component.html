@@ -12,10 +12,9 @@
         <h5>Please wait...</h5>
       </div>
       }
-
       <!-- MAIN SWIPER CONTENT -->
       @if (!loading) {
-      <div class="viewerContainer flex-grow-1 overflow-hidden m-t-10">
+      <div class="m-t-10">
         @if (questions?.length > 0) {
         <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
 
@@ -134,7 +133,6 @@
         }
       </div>
       }
-
       <!-- FOOTER -->
       @if (!loading) {
       <mat-toolbar color="accent" class="footer-toolbar">

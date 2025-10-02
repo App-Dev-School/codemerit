@@ -17,72 +17,75 @@
       </div>
     </div>
 
-    @if (item.attempted > 0) {
-    <p class="m-b-0 m-t-0 font-12 d-flex align-items-center justify-content-center">
-      <!-- <i class="material-icons me-2 col-grey">flash_on</i>  -->
-      Beginner
-      <span class="col-grey m-l-10 m-r-10">  |  </span> 
-      Accuracy : {{item?.avgAccuracy}}%
-    </p>
-    }
-
     <div class="row">
-      <div class="col-12">
+      @if (user && user?.role === 'Admin') {
+        <div class="col-12">
         @if (item.numTrivia > 0) {
         <hr class="dim-divider">
-        <p class="m-b-5 m-t-0 font-12 d-flex align-items-center justify-content-center">
-          <i class="material-icons me-2">trending_up</i> Level up from the basics to advance
-        </p>
-
         <div class="progress" style="height: 20px;width: 100%;margin-top:2px;">
-          <!-- Easy -->
-          <div class="progress-bar" [style.width]="getPercentage(item.numEasyTrivia) + '%'"
-            role="progressbar" [attr.aria-valuenow]="item.numEasyTrivia" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" [style.width]="getPercentage(item.numEasyTrivia) + '%'" role="progressbar"
+            [attr.aria-valuenow]="item.numEasyTrivia" aria-valuemin="0" aria-valuemax="100">
             {{ item.numEasyTrivia }}
           </div>
-
-          <!-- Intermediate -->
           <div class="progress-bar progress-bar-success" [style.width]="getPercentage(item.numIntTrivia) + '%'"
             role="progressbar" [attr.aria-valuenow]="item.numIntTrivia" aria-valuemin="0" aria-valuemax="100">
             {{ item.numIntTrivia }}
           </div>
-
-          <!-- Advanced -->
           <div class="progress-bar progress-bar-dark" [style.width]="getPercentage(item.numAdvTrivia) + '%'"
             role="progressbar" [attr.aria-valuenow]="item.numAdvTrivia" aria-valuemin="0" aria-valuemax="100">
             {{ item.numAdvTrivia }}
           </div>
         </div>
-        }@else {
-        <p class="font-12">{{item.description}}</p>
         }
       </div>
+      }
       @if (item.attempted > 0) {
       <div class="col-12">
-        <hr class="dim-divider">
-         <p class="m-b-0 m-t-5 font-12 d-flex align-items-center justify-content-center">
-          <i class="material-icons me-2">pie_chart</i> Your Practice Summary
+        <!-- <p class="m-b-5 m-t-0 font-12 d-flex align-items-center justify-content-center">
+         {{item.description}}
         </p>
-        <div class="progress" style="height: 20px;width: 100%;margin-top:2px;">
-          <!-- Easy -->
-          <div class="progress-bar" [style.width]="getAttemptPercentage(item.attemptedEasy) + '%'"
-            role="progressbar" [attr.aria-valuenow]="item.attemptedEasy" aria-valuemin="0" aria-valuemax="100">
-            {{ item.attemptedEasy }}
+        <hr class="dim-divider"> -->
+        <p class="m-b-0 m-t-0 font-12 d-flex align-items-center justify-content-center">
+          Your Level Wise Attempts 
+        </p>
+        <!-- Level Wise Completetion Widget -->
+        <div class="row no-gutter text-center mt-3">
+          <!-- Beginner -->
+          <div class="col-12 col-md-4 mb-3">
+            <div class="p-2 rounded" style="background:#2b982b;">
+              <h6 class="mb-1 col-white font-12">Basic</h6>
+              <h6 class="mb-1 col-white text-center">
+                {{ ((item.attemptedEasy / item.numEasyTrivia) * 100) | number:'1.0-0' }}%
+              </h6>
+            </div>
           </div>
 
           <!-- Intermediate -->
-          <div class="progress-bar progress-bar-success"
-            [style.width]="getAttemptPercentage(item.attemptedMedium) + '%'" role="progressbar"
-            [attr.aria-valuenow]="item.attemptedMedium" aria-valuemin="0" aria-valuemax="100">
-            {{ item.attemptedMedium }}
+          <div class="col-12 col-md-4 mb-3">
+            <div class="p-2 rounded" style="background:#fb483a;">
+              <h6 class="mb-1 col-white font-12">Intermediate</h6>
+              
+              <h6 class="mb-1 col-white text-center">
+                {{ ((item.attemptedMedium / item.numIntTrivia) * 100) | number:'1.0-0' }}%</h6>
+            </div>
           </div>
 
           <!-- Advanced -->
-          <div class="progress-bar progress-bar-dark" [style.width]="getAttemptPercentage(item.attemptedHard) + '%'"
-            role="progressbar" [attr.aria-valuenow]="item.attemptedHard" aria-valuemin="0" aria-valuemax="100">
-            {{ item.attemptedHard }}
+          <div class="col-12 col-md-4 mb-3 progress-bar-dark">
+            <div class="p-2 rounded progress-bar" style="background:#212529;">
+              <h6 class="mb-1 col-white font-12">Advanced</h6>
+              <h6 class="mb-1 col-white text-center">
+                {{ ((item.attemptedHard / item.numAdvTrivia) * 100) | number:'1.0-0' }}%
+              </h6>
+            </div>
           </div>
         </div>
+<hr class="dim-divider">
+        <p class="m-b-5 m-t-0 font-12 d-flex align-items-center justify-content-center">
+          <i class="material-icons me-2">trending_up</i> 
+          Level: {{findUserLevel()}}
+      <span class="col-grey m-l-10 m-r-10"> | </span>Accuracy : {{item?.avgAccuracy}}%
+        </p>
       </div>
       }
     </div>

@@ -75,7 +75,6 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
         this.loadingText = 'Question View is Ready';
         this.loading = false;
         data.sort((a, b) => b.id - a.id);
-        console.log("QuestionViewer queestions", data);
         this.questions = (data || []).map(q => ({
           ...q,
           //rawQuestion:'Here.. '+q.question,
@@ -154,6 +153,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
         //console.log("QuestionViewer close result", result);
         if (!result.error) {
           this.snackService.display('snackbar-dark', result.message ?? "Question updated successfully.", 'bottom', 'center');
+          //update 
         } else {
           this.snackService.display('snackbar-dark', result.message ?? "Failed to update question.", 'bottom', 'center');
         }

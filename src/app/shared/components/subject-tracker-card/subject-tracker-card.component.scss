@@ -61,3 +61,7 @@
 .miniTxt {
   font-size: 0.7rem;
 }
+.no-gutter {
+  --bs-gutter-x: 4px;   /* horizontal gap */
+  --bs-gutter-y: 4px;   /* vertical gap */
+}
