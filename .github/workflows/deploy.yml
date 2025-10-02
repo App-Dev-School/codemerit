@@ -15,7 +15,7 @@ jobs:
 
       - name: Print Secret Value
         env:
-        MY_SECRET: ${{ secrets.FTP_REMOTE_DIR }}
+          MY_SECRET: ${{ secrets.FTP_REMOTE_DIR }}
         run: |
           echo "The secret value for FTP_REMOTE_DIR is: $MY_SECRET"
 
