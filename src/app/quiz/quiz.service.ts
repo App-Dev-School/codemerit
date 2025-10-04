@@ -75,25 +75,13 @@ export class QuizService {
     const url = 'apis/quiz/create';
     return this.httpService.postData(url, item, api_key).pipe(
       map((response: CreateQuizResponse) => {
-        this.currentQuiz = response.data;
+        console.log("QuizService ### Quiz Create Response", response);
+        if(response && response?.data){
+        this.currentQuiz = response?.data;
         this.setCurrentQuiz(this.currentQuiz);
-        return response.data; // return response from API
-      }),
-      catchError(this.handleError)
-    );
-  }
-
-  submitQuizAAAA(item: QuizResult): Observable<QuizResult> {
-    let api_key = '';
-    if (this.authService.currentUser && this.authService.currentUser) {
-      api_key = this.authService.currentUserValue.token;
-    }
-    const url = 'apis/quiz/submit';
-    console.log('QuizPlayer Submitted Quiz => ', item);
-    return this.httpService.postData(url, item, api_key).pipe(
-      map((response: SubmitQuizResponse) => {
-        //console.log("QuizPlayer SubmitQuiz API response", response);
-        return response.data;
+        return response?.data;
+        }
+        return null;
       }),
       catchError(this.handleError)
     );
@@ -151,10 +139,10 @@ export class QuizService {
 
   /** Handle Http operation that failed */
   private handleError(error: HttpErrorResponse) {
-    console.error('An error occurred:', error.message);
+    console.error('An error occurred:', error);
     let errorMsg = 'Something went wrong; please try again later.';
-    if (error.message) {
-      errorMsg = error.message;
+    if (error?.message) {
+      errorMsg = error?.message;
     }
     return throwError(
       () => new Error(errorMsg)

@@ -141,7 +141,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(QuestionFormPage, {
       width: '100vw',
       height: '100vh',
-      minWidth: '100vw',
+      maxWidth: '600px',
       //panelClass: 'full-screen-dialog',
       data: { questionItem: data, action },
       direction: varDirection,

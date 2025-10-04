@@ -45,8 +45,7 @@ import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
     MeritListWidgetComponent,
     RecentCommentsComponent,
     SubjectPerformanceCardComponent,
-    GoalPathComponent,
-    NgStyle
+    GoalPathComponent
   ]
 })
 export class DashboardComponent implements OnInit {
