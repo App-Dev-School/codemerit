@@ -20,6 +20,7 @@ import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuizConfig, QuizService } from '../quiz.service';
 import { QuizHelperService } from '../quiz-helper.service';
+import { NgScrollbar } from 'ngx-scrollbar';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -33,7 +34,7 @@ interface Quiz {
   imports: [
     CommonModule,
     NgClass,
-
+    NgScrollbar,
     SafePipe,
     CdTimerModule,
     MatToolbarModule,
@@ -160,7 +161,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     } else {
       if (this.quizConfig.enableAudio)
         this.quizHelper.playSound('well-done');
-        this.completeQuiz();
+      this.completeQuiz();
     }
     //clear any previous scheduled task
     clearTimeout(this.scheduledAutoNext);
@@ -278,15 +279,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   quickRegister() {
-    console.log("quickRegister called");
     this.displayingAuthDialog = true;
     const dialogRef = this.dialog.open(LoginFormComponent, {
       width: 'auto',
       height: 'auto',
       maxWidth: '480px',
       data: {
-        title: 'Your Attempts will be submitted',
-        message: 'Quick register with your name and e-mail to generate your assessment report.',
+        title: 'Your Attempts are saved',
+        message: 'Quick register to submit your assessment and generate report.',
         action: 'Exit this Assessment'
       },
       disableClose: true

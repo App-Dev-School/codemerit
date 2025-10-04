@@ -29,6 +29,7 @@ import { QuestionItem, QuestionItemDetail } from '../manage/question-item.model'
 import { QuestionService } from '../manage/questions.service';
 import { NgTemplateOutlet } from '@angular/common';
 import { SnackbarService } from '@core/service/snackbar.service';
+import { NgScrollbar } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-question-form',
@@ -40,6 +41,7 @@ import { SnackbarService } from '@core/service/snackbar.service';
     FormsModule,
     ReactiveFormsModule,
     NgTemplateOutlet,
+    NgScrollbar,
     TextFieldModule,
     MatFormFieldModule,
     MatInputModule,

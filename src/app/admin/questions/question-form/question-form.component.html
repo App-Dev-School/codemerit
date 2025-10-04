@@ -25,11 +25,12 @@
         </div>
         }@else {
         <form class="register-form m-4" [formGroup]="questionForm" (ngSubmit)="submit()">
+          <ng-scrollbar visibility="hover">
           <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Question</mat-label>
-                <textarea matInput formControlName="question" rows="1" cdkTextareaAutosize
+                <textarea matInput formControlName="question" rows="2" cdkTextareaAutosize
                   #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1"
                   style="resize: none; overflow: hidden;" placeholder="Enter the question" required></textarea>
                 @if (questionForm.get('question')?.hasError('minLength')) {
@@ -132,7 +133,7 @@
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Answer (Optional)</mat-label>
-                <textarea matInput formControlName="answer" placeholder="Enter an answer for the question" rows="1"
+                <textarea matInput formControlName="answer" placeholder="Enter an answer for the question" rows="3"
                   cdkTextareaAutosize #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1"
                   style="resize: none; overflow: hidden;"></textarea>
               </mat-form-field>
@@ -143,7 +144,7 @@
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Hint (Optional)</mat-label>
-                <textarea matInput formControlName="hint" placeholder="Enter a hint for the question" rows="1"
+                <textarea matInput formControlName="hint" placeholder="Enter a hint for the question" rows="3"
                   cdkTextareaAutosize #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1"
                   style="resize: none; overflow: hidden;"></textarea>
               </mat-form-field>
@@ -185,7 +186,7 @@
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Order Index</mat-label>
-                <input matInput formControlName="order" type="number" min="1" max="99" maxlength="2"
+                <input matInput formControlName="orderId" type="number" min="1" max="99" maxlength="2"
                   (keydown)="restrictInput($event)" placeholder="Serial no. for sequence">
               </mat-form-field>
             </div>
@@ -200,6 +201,7 @@
 
           </div>
           }
+          </ng-scrollbar>
 
           <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">

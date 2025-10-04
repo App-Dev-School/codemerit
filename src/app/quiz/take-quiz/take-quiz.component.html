@@ -79,8 +79,9 @@
           <swiper-slide>
             <p class="col-grey text-center m-t-20 m-b-10">{{$index+1}} of {{questions?.length}}</p>
             <div class="question-card">
-              <ng-scrollbar style="height: 400px" visibility="hover">
-              @if (question.title) {
+              <ng-scrollbar class="questionScroller" visibility="hover">
+              <div class="card-content">
+                @if (question.title) {
               <h5 class="mb-3">{{ question.title }}</h5>
               }
               @if (isCodeQuestion(question.question)) {
@@ -122,6 +123,7 @@
               <!-- Celebration container -->
               <app-celebration [trigger]="celebrationTrigger" [marks]="question.marks"
                 (animationDone)="onCelebrationFinished()"></app-celebration>
+              </div>
             </ng-scrollbar>
             </div>
           </swiper-slide>
