@@ -59,6 +59,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   answerActive = false;
   currentQuestion: QuizQuestion;
   currentHint = '';
+  onSelectionPhase = false;
   showWarningToast = false;
   userData: User;
   scheduledAutoNext: any;
@@ -123,6 +124,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
     this.authService.log('Quiz optionSelected', choice, question);
     if (!question.hasAnswered) {
+      this.onSelectionPhase = true;
       question.selectedOption = choice;
       question.hasAnswered = true;
 
@@ -136,6 +138,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }
       this.scheduledAutoNext = setTimeout(() => {
         this.onSlideNext();
+        this.onSelectionPhase = false;
       }, isCorrect ? 1600 : 1200);
       //playsound
       if (this.quizConfig.enableAudio) {

@@ -34,7 +34,7 @@
 
     <div class="row match-height m-t-20 clearfix">
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
-         <div class="card">
+        <div class="card">
           <div class="m-b-20">
             <div class="contact-grid">
               <div class="profile-header bg-dark">
@@ -64,7 +64,7 @@
               </ul>
               }
               <hr class="dim-divider">
-               <button mat-stroked-button (click)="viewProfile()" color="primary">
+              <button mat-stroked-button (click)="viewProfile()" color="primary">
                 <i class="material-icons">autorenew</i> &nbsp;View Profile</button>
             </div>
           </div>
@@ -75,52 +75,57 @@
       </div>
     </div>
 
-    <div class="row m-t-0 match-height clearfix">
+    <!-- <div class="row m-t-0 match-height clearfix">
       <div class="col-12">
         <h4 class="text-center font-20 m-b-20"><span class="bold">{{courseItem?.title}} Program</span>
         </h4>
       </div>
       <div class="col-12">
-        <mat-tab-group mat-align-tabs="start" class="m-t-20">
-          <mat-tab label="Initial Assessment">
-            <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
-          </mat-tab>
-          <mat-tab label="Mock Interviews">
-            <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
-          </mat-tab>
-          <mat-tab label="Recognitions">
-            <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
-          </mat-tab>
-        </mat-tab-group>
+        
       </div>
-    </div>
+    </div> -->
+
+    <hr class="dim-divider">
+    <h4 class="text-center font-20 m-t-20 m-b-20"><span class="bold">{{courseItem?.title}} Program</span>
+    </h4>
+    <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
+
+    <!-- <mat-tab-group mat-align-tabs="start" class="m-t-20">
+      <mat-tab label="Initial Assessment">
+        <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
+      </mat-tab>
+      <mat-tab label="Mock Interviews">
+        <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
+      </mat-tab>
+      <mat-tab label="Recognitions">
+        <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
+      </mat-tab>
+    </mat-tab-group> -->
 
     <div class="row m-t-0 match-height clearfix">
       <div class="col-12">
-        <div class="card hoverCard">
+          <hr class="dim-divider">
           <div class="text-center m-t-20 m-b-20">
             <h4 class="text-center font-20 m-b-10">
               <span class="col-dark m-t-10">How are you doing as {{userData?.userDesignation?.title}} ?</span>
-              </h4>
-              @if (!(userData?.designation)) {
-              <small class="font-12 m-b-10">Aspiring to become a {{courseItem.title}}?</small>
-              <!-- <button mat-stroked-button (click)="openCourseLauncher('default')" class="btn" rippleEffect>
-                <i class="material-icons">autorenew</i> &nbsp;Select Designation</button> -->
-              <button mat-stroked-button (click)="onSubscribe(courseItem)" class="btn" rippleEffect>
-                <i class="material-icons">autorenew</i> &nbsp;Select Designation</button>
-              }
+            </h4>
+            @if (!(userData?.designation)) {
+            <small class="font-12 m-b-10">Aspiring to become {{courseItem.title}}?</small>
+          
+            <button mat-stroked-button (click)="onSubscribe(courseItem)" class="btn" rippleEffect>
+              <i class="material-icons">autorenew</i> &nbsp;Enroll as Committed Learner</button>
+            }
 
-              <button mat-stroked-button (click)="goToCourses()" color="primary">
-                <i class="material-icons">autorenew</i> &nbsp;Explore Tech Stack</button>
+            <button mat-stroked-button (click)="goToCourses()" color="primary">
+              <i class="material-icons">autorenew</i> &nbsp;Explore Other Skill Bundles</button>
 
-              @if (userData?.designation && courseItem && userData?.designation !== courseItem?.id) {
-              <hr class="dim-divider">
-              <div class="font-12 m-b-10">Need to switch to {{courseItem.title}} role?</div>
-              <button mat-flat-button (click)="onSubscribe(courseItem)" color="primary">
-                <i class="material-icons">card_membership</i> Enroll as Student</button>
-              }
+            @if (userData?.designation && courseItem && userData?.designation !== courseItem?.id) {
+            <hr class="dim-divider">
+            <div class="font-12 m-b-10">Are you looking to switch your current designation to {{courseItem.title}}?</div>
+            <button mat-flat-button (click)="onSubscribe(courseItem)" color="primary">
+              <i class="material-icons">card_membership</i> Get Access</button>
+            }
           </div>
-        </div>
       </div>
     </div>
 
@@ -143,7 +148,7 @@
 </ng-template>
 
 <ng-template #courseEnroll>
-<div class="no-data-container text-center m-t-10 m-b-20" style="height: 100%;">
+  <div class="no-data-container text-center m-t-10 m-b-20">
     <img src="assets/images/icons/hinting.gif" class="loadingIcon m-t-20" />
     <h6 class="col-grey">Keep Exploring</h6>
     <small>Your timeline, goals and rewards will appear as you progress.</small>

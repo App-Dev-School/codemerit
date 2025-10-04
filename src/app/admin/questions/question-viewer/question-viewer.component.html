@@ -30,12 +30,19 @@
                   }
 
                   @if (isCodeQuestion(question.question)) {
-                  <small>Code Question</small>
+                  <small>Read the Question Carefully</small>
                   <div class="question">
                     <pre><code>{{question.question}}</code></pre>
                   </div>
                   }@else {
                   <div class="question" [innerHTML]="question?.question | safe:'html'"></div>
+                  }
+                  @if (question?.topics && question?.topics.length > 0) {
+                  <div class="list-group-item m-b-20">
+                    @for (topic of question?.topics; track topic) {
+                    <span class="badge col-indigo">{{topic.title}}</span>
+                    }
+                  </div>
                   }
                   <hr class="dim-divider">
                   @for (choice of question.options; track choice) {
@@ -77,12 +84,12 @@
               <div class="col-lg-4 col-md-4 col-sm-12">
                 <div class="question-card">
                   @if (question?.hint) {
-                  <hr class="dim-divider">
-                  <h5>Hint Available <span class="col-green">{{ question?.hint }}</span> </h5>
+                  <h5 class="cmSmallTitle">Hint</h5>
+                  <p class="m-b-20 font-normal">{{ question?.hint }}</p> 
                   }
                   @if (question?.answer) {
                   <hr class="dim-divider">
-                  <h5>Answer:</h5>
+                  <h5 class="cmSmallTitle">Answer:</h5>
                   <p class="m-b-20 font-normal">{{ question?.answer }}</p>
                   }
                   <div class="questionInfo">

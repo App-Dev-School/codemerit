@@ -28,6 +28,7 @@ import { TopicItem } from '../../topics/manage/topic-item.model';
 import { QuestionItem, QuestionItemDetail } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
 import { NgTemplateOutlet } from '@angular/common';
+import { SnackbarService } from '@core/service/snackbar.service';
 
 @Component({
   selector: 'app-question-form',
@@ -67,6 +68,7 @@ export class QuestionFormPage implements OnInit {
     private questionService: QuestionService,
     private masterSrv: MasterService,
     private fb: UntypedFormBuilder,
+    private snackService: SnackbarService,
     @Optional() public dialogRef?: MatDialogRef<CoursePickerComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: any
   ) {
@@ -104,7 +106,7 @@ export class QuestionFormPage implements OnInit {
     console.log("QuestionForm Dialog Data ", this.data);
     this.questionSlug = this.route.snapshot.paramMap.get('question-slug');
     console.log("QuestionForm  ", this.questionSlug);
-    if (this.questionSlug || (this.data.questionItem && this.data?.action === 'update')) {
+    if (this.questionSlug || this.data?.action === 'update') {
       this.action = 'edit';
       this.actionText = 'Updating Question';
       this.dialogTitle = 'Update Question';
@@ -223,7 +225,7 @@ export class QuestionFormPage implements OnInit {
             error: (error) => {
               this.submitted = false;
               console.error('QuestionManager ###Update Error:', error);
-              // Optionally display an error message to the user
+              this.snackService.display('snackbar-dark', "Error updating question.", 'bottom', 'center');
             },
           });
       } else {
@@ -334,6 +336,7 @@ export class QuestionFormPage implements OnInit {
     if(this.data){
       this.dialogRef.close(resultData);
     }else{
+      this.snackService.display('snackbar-dark', (resultData?.message) ?? "Question added.", 'bottom', 'center');
       this.router.navigate(['/admin/questions/list']);
     }
   }

@@ -3,7 +3,7 @@
     <ng-container *ngTemplateOutlet="scoreChart"></ng-container>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
-    @if (result?.topics) {
+    @if (result?.topics && result?.topics.length > 0) {
    <ng-container *ngTemplateOutlet="topicWiseChart"></ng-container>
     }
   </div>
@@ -113,7 +113,7 @@
 <ng-template #topicWiseChart>
   <mat-card>
     <mat-card-header>
-      <mat-card-title class="text-center">Performance Detail</mat-card-title>
+      <mat-card-title class="text-center">Covered Topics</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <ng-scrollbar style="height: auto;" visibility="hover">
