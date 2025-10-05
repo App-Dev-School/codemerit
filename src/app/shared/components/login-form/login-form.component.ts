@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Optional, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButton } from '@angular/material/button';
@@ -49,8 +49,8 @@ export class LoginFormComponent {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<LoginFormComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+    @Optional() private dialogRef: MatDialogRef<LoginFormComponent>,
     private snackbar: SnackbarService,
     public authService: AuthService,
     private masterService: MasterService
