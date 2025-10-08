@@ -2,6 +2,8 @@
 <div class="auth-container">
   <div class="auth-main">
     <div class="quiz-container d-flex flex-column vh-100">
+
+      <!-- LOADING SCREEN -->
       @if (loading) {
       <div class="overlay"></div>
       <div class="animToast loading">
@@ -21,25 +23,31 @@
           <span class="quiz-title">{{ quiz.title }}</span>
         </div>
 
+        <!-- QUESTION TIMER -->
         <div class="d-flex align-items-center">
           <img src="assets/images/icons/ic_watch.png" class="timerIcon" alt="timer">
 
-          <cd-timer #timerRef [countdown]="true" [startTime]="quizDuration" [omitZero]="true" maxTimeUnit="minute"
-            [autoStart]="true" [callTick]="true" format="ms" (onTick)="onTick($event)" (onComplete)="onTimerComplete()">
-          </cd-timer>
+          <div class="question-timer d-flex align-items-center">
+            <span>{{ questionTimeLeft }}s</span>
+            
+          </div>
         </div>
+
       </mat-toolbar>
+       <mat-progress-bar mode="determinate"
+              [value]="(questions[currentQuestionId]?.timeAllowed ? (questions[currentQuestionId].timeAllowed - questionTimeLeft)/questions[currentQuestionId].timeAllowed*100 : 0)">
+            </mat-progress-bar>
       }
 
-      <!-- Screen Overlay -->
+      <!-- WARNING OVERLAY -->
       @if (showWarningToast) {
       <div class="overlay"></div>
       <div class="animToast warning">
-        <h5>⚠️ 1 Minute Left!</h5>
+        <h5>⚠️ 10 Seconds Left!</h5>
       </div>
       }
 
-      <!-- Screen Overlay -->
+      <!-- HINT OVERLAY -->
       @if (hintActive) {
       <div class="overlay"></div>
       <div class="animToast hint">
@@ -51,7 +59,7 @@
       </div>
       }
 
-      <!-- MAIN SWIPER CONTENT -->
+      <!-- SWIPER QUESTIONS -->
       @if (!loading) {
       <div class="flex-grow-1 overflow-hidden">
         @if (questions?.length > 0) {
@@ -60,10 +68,17 @@
           @for (question of questions; track question.id) {
           <swiper-slide>
             <p class="col-grey text-center m-t-20 m-b-10">{{$index+1}} of {{questions?.length}}</p>
+
             <div class="question-card">
+              <!-- Question Title -->
               @if (question.title) {
               <h5 class="mb-3">{{ question.title }}</h5>
               }
+            <span class="badge level-badge position-absolute top-0 end-0 m-2"
+                    [ngClass]="getLevelClass(question.level)">
+                {{ getQuestionLevel(question.level) }}
+              </span>
+              <!-- Question Text -->
               @if (isCodeQuestion(question.question)) {
               <small>Read the question carefully and answer.</small>
               <div class="question m-b-10">
@@ -73,23 +88,24 @@
               <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
               }
 
+              <!-- Topics -->
               @if (question?.topicsArr && question?.topicsArr.length > 0) {
               <div class="list-group-item m-b-20">
                 @for (topic of question?.topicsArr; track topic) {
-                <!-- bg-pink col-indigo -->
                 <span class="badge col-indigo">{{topic}}</span>
                 }
               </div>
               }
+
+              <!-- Options -->
               @for (choice of question.options; track choice) {
               <mat-card (click)="optionSelected($event, choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
-         'selected': question.selectedOption === choice.id,
-         'correct': question.selectedOption === choice.id && choice.correct,
-         'wrong': question.selectedOption === choice.id && !choice.correct
-       }">
+                    'selected': question.selectedOption === choice.id,
+                    'correct': question.selectedOption === choice.id && choice.correct,
+                    'wrong': question.selectedOption === choice.id && !choice.correct
+                  }">
                 <div class="d-flex justify-content-between align-items-center">
                   <span>{{ choice.option }}</span>
-
                   @if (question.selectedOption === choice.id && choice.correct) {
                   <img src="assets/images/icons/ic_correct.png" class="icon-right">
                   }
@@ -100,7 +116,7 @@
               </mat-card>
               }
 
-              <!-- Celebration container -->
+              <!-- Celebration -->
               <app-celebration [trigger]="celebrationTrigger" (animationDone)="onCelebrationFinished()"></app-celebration>
 
             </div>
@@ -136,11 +152,13 @@
         </div>
       </mat-toolbar>
       }
+
     </div>
   </div>
 </div>
 }
 
+<!-- QUIZ COMPLETION SCREEN -->
 @if (completed) {
 <div class="quiz-result-container">
   <div class="content-block">

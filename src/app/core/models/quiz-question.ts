@@ -21,4 +21,7 @@ export interface QuizQuestion {
   title?: string;
   }[];
   topicsArr?:string[]
+
+  level?: number;  
+  timeAllowed: number;
 }

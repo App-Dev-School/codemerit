@@ -17,11 +17,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UtilsService } from '@core/service/utils.service';
 import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 interface Quiz {
   title: string;
   subject_icon: string;
   questions: QuizQuestion[];
 }
+
 @Component({
   selector: 'app-take-quiz',
   templateUrl: './take-quiz.component.html',
@@ -36,7 +39,9 @@ interface Quiz {
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    MatProgressBarModule,
     CelebrationComponent
+  
   ]
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
@@ -49,6 +54,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   completed = false;
   quizResult: any;
   quizDuration = 180;
+  
   @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
   warningActive = false;
   hintActive = false;
@@ -59,12 +65,18 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
-  constructor(private authService: AuthService,
+  // ---------------- Question Timer Variables ----------------
+  questionTimeLeft: number = 0;
+  questionTimerInterval: any;
+
+  constructor(
+    private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
     private utility: UtilsService,
     private snackBar: MatSnackBar,
-    private quizService: QuizService) {
+    private quizService: QuizService
+  ) {
     register(); // Register Swiper web components
   }
 
@@ -82,32 +94,80 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     // Swiper is automatically initialized via web component
   }
 
-  /** Load quiz from local JSON */
+  
+  getQuestionLevel(level: number): string {
+  switch(level) {
+    case 0: return 'Easy';
+    case 1: return 'Intermediate';
+    case 2: return 'Advanced';
+    default: return 'Unknown';
+  }
+}
+getLevelClass(level: number): string {
+    switch(level) {
+      case 0: return 'easy-level';
+      case 1: return 'intermediate-level';
+      case 2: return 'advanced-level';
+      default: return '';
+    }
+  }
+
+
   private loadQuiz(): void {
     this.quizService.getQuiz(this.quizSlug)
       .subscribe(data => {
         this.quiz = data;
         this.loadingText = 'Almost Ready';
         this.loading = false;
-        console.log("QuizPlayer Loaded Quiz", data);
         this.questions = (data.questions || []).map(q => ({
           ...q,
           options: q.options || [],
           selectedChoice: '',
           topicsArr: q.topics ? q.topics.map(object => object.title) : []
         }));
-        console.log("QuizPlayer Transformed Loaded Questions", this.questions);
+        if (this.questions.length) {
+          this.startQuestionTimer(this.questions[0]);
+        }
       });
   }
 
-  /** Record selected answer */
+  // ---------------- Question Timer Logic ----------------
+  startQuestionTimer(question: QuizQuestion) {
+    // Clear previous timer
+    if (this.questionTimerInterval) {
+      clearInterval(this.questionTimerInterval);
+    }
+
+    // Initialize time left for the current question
+    this.questionTimeLeft = question.timeAllowed || 30; // default 30s if not set
+
+    this.questionTimerInterval = setInterval(() => {
+      this.questionTimeLeft--;
+
+      // Show warning if 10s left
+      if (this.questionTimeLeft === 10) {
+        this.showWarningToast = true;
+        setTimeout(() => {
+          this.showWarningToast = false;
+          this.warningActive = true;
+        }, 1000);
+      }
+
+      // Auto move to next question if timer ends
+      if (this.questionTimeLeft <= 0) {
+        clearInterval(this.questionTimerInterval);
+        this.onSlideNext();
+      }
+    }, 1000);
+  }
+
+  // ---------------- Navigation ----------------
   optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
     this.authService.log('Quiz optionSelected', choice, question);
     if (!question.hasAnswered) {
       question.selectedOption = choice;
       question.hasAnswered = true;
     }
-    //console.log("optionSelected() =>", choice, question);
     const isCorrect = question.options.some(
       opt => opt.id === question.selectedOption && (opt.correct === true)
     );
@@ -115,76 +175,30 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       this.triggerCelebration($event);
     }
     setTimeout(() => {
-        this.onSlideNext();
+      this.onSlideNext();
     }, isCorrect ? 2200 : 1200);
   }
 
-  /** Navigate to next question */
   onSlideNext(): void {
     if (this.currentQuestionId < this.questions.length - 1) {
       this.swiperEx.nativeElement.swiper.slideNext();
       this.updateCurrentIndex();
+      this.startQuestionTimer(this.questions[this.currentQuestionId]);
     } else {
       this.completeQuiz();
     }
   }
 
-  /** Navigate to previous question */
   onSlidePrev(): void {
     if (this.currentQuestionId > 0) {
       this.swiperEx.nativeElement.swiper.slidePrev();
       this.updateCurrentIndex();
+      this.startQuestionTimer(this.questions[this.currentQuestionId]);
     }
-  }
-
-  /** Called when a hint is requested */
-  showHint(): void {
-    const currentQuestion = this.questions[this.currentQuestionId];
-    if (currentQuestion?.hint) {
-      this.currentHint = currentQuestion?.hint;
-      currentQuestion.hintUsed = true;
-      //remove this and implement in interactive mode
-      if (currentQuestion?.answer) {
-        this.currentHint = 'ANSWER : ' + currentQuestion?.answer;
-        currentQuestion.hintUsed = true;
-      }
-    } else {
-      this.currentHint = 'Hint not available';
-    }
-    this.hintActive = true;
-    // setTimeout(() => {
-    //   this.hintActive = false;
-    // }, 3000);
-  }
-
-  hideHint() {
-    this.hintActive = false;
-    this.currentHint = '';
-  }
-
-  onTick(event: any) {
-    if (event.minutes === 1 && event.seconds === 0) {
-      this.showWarningToast = true;
-      //this.timer.stop();
-      // Auto-hide toast after 3 seconds
-      setTimeout(() => {
-        this.warningActive = true;
-        this.showWarningToast = false;
-        //this.timer.start();
-      }, 3000);
-    }
-  }
-
-  onTimerComplete() {
-    console.log('Timer finished!');
-    this.warningActive = false;
-    this.showWarningToast = false;
-    console.log('Quiz Timed Out!', this.questions);
-    this.submitQuiz();
   }
 
   private completeQuiz(): void {
-    console.log('Quiz complete!', this.questions);
+    clearInterval(this.questionTimerInterval);
     this.submitQuiz();
   }
 
@@ -193,13 +207,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   submitQuiz() {
-    console.log("QuizPlayer submitQuiz() called", this.questions);
+    clearInterval(this.questionTimerInterval);
     this.loading = true;
     this.loadingText = 'Submitting Quiz';
     const analytics = this.quizService.processAndSaveResults(this.questions, this.quiz.id);
     this.quizService.submitQuiz(analytics).subscribe(
       (data: any) => {
-        console.log("QuizPlayer Quiz", data);
         this.quizResult = data.data;
         setTimeout(() => {
           this.completed = true;
@@ -214,6 +227,27 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         );
       }
     );
+  }
+
+  // ---------------- Hint & Celebration ----------------
+  showHint(): void {
+    const currentQuestion = this.questions[this.currentQuestionId];
+    if (currentQuestion?.hint) {
+      this.currentHint = currentQuestion?.hint;
+      currentQuestion.hintUsed = true;
+      if (currentQuestion?.answer) {
+        this.currentHint = 'ANSWER : ' + currentQuestion?.answer;
+        currentQuestion.hintUsed = true;
+      }
+    } else {
+      this.currentHint = 'Hint not available';
+    }
+    this.hintActive = true;
+  }
+
+  hideHint() {
+    this.hintActive = false;
+    this.currentHint = '';
   }
 
   isCodeQuestion(text: string): boolean {
@@ -238,7 +272,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       const rect = (event.target as HTMLElement).getBoundingClientRect();
       this.celebrationTrigger = {
         x: event.clientX,
-        y: event.clientY - rect.height / 2 // slightly above click
+        y: event.clientY - rect.height / 2
       };
     } catch (error) {
       console.log("optionSelected() triggerCelebration error", error);
@@ -247,7 +281,5 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   onCelebrationFinished() {
     console.log('🎉 Celebration animation completed!');
-    //this.onSlideNext();
   }
-
 }
