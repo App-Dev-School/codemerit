@@ -301,10 +301,14 @@
   }
 }
 
-.questionScroller{
-  height: auto;
+.question-card {
+  position: relative; /* required for absolute positioning */
 }
 
-.card-content{
-  padding: 0 0.5rem;
+.level-badge {
+  position: absolute;
+  top: 10px;   /* adjust vertical position */
+  right: 10px; /* adjust horizontal position */
+  font-weight: bold;
+  color: #ff6600; /* optional */
 }

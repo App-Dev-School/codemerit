@@ -11,6 +11,11 @@ export const ADMIN_ROUTE: Route[] = [
       import('./topics/topics.routes').then((m) => m.TOPICS_ROUTE),
   },
   {
+    path: 'courses',
+    loadChildren: () =>
+      import('./courses/courses.routes').then((m) => m.COURSE_ROUTE),
+  },
+  {
     path: 'questions',
     loadChildren: () =>
       import('./questions/questions.routes').then((m) => m.QUESTIONS_ROUTE),
