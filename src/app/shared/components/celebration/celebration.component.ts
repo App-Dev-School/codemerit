@@ -6,7 +6,7 @@ interface CelebrationItem {
   y: number;
   duration: number;
   size: number;
-  drift : string;
+  drift: string;
 }
 
 @Component({
@@ -16,6 +16,7 @@ interface CelebrationItem {
 })
 export class CelebrationComponent {
   @Input() trigger: { x: number; y: number } | null = null;
+  @Input() marks: number = 1;
   @Output() animationDone = new EventEmitter<void>();
 
   items: CelebrationItem[] = [];
@@ -27,27 +28,27 @@ export class CelebrationComponent {
     }
   }
 
-private launch(x: number, y: number) {
-  this.items = [];
-
-  for (let i = 0; i < 1; i++) {
-    const drift = Math.random() * 100 - 50; // -50px to +50px drift
-    this.items.push({
-      //emoji: '👏',
-      emoji: this.emojis[Math.floor(Math.random() * this.emojis.length)],
-      x: x,
-      y: y,
-      duration: Math.random() * 1 + 2, // 3s–5s
-      size: Math.random() * 15 + 40,   // larger (40–55px)
-      drift: `${drift}px`
-    });
+  private launch(x: number, y: number) {
+    this.items = [];
+    if (this.marks > 1) {
+      for (let i = 0; i < this.marks - 1; i++) {
+        const drift = Math.random() * 100 - 50; // -50px to +50px drift
+        this.items.push({
+          //emoji: '👏',
+          emoji: this.emojis[Math.floor(Math.random() * this.emojis.length)],
+          x: x,
+          y: y,
+          duration: Math.random() * 1 + 2, // 3s–5s
+          size: Math.random() * 15 + 40,   // larger (40–55px)
+          drift: `${drift}px`
+        });
+      }
+      setTimeout(() => {
+        this.items = [];
+        this.animationDone.emit(); // 👈 notify parent
+      }, 2500);
+    }
   }
-
-  setTimeout(() => {
-      this.items = [];
-      this.animationDone.emit(); // 👈 notify parent
-    }, 2500);
-}
 
 
 }

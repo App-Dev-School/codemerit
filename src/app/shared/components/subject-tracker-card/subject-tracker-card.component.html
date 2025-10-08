@@ -17,38 +17,111 @@
       </div>
     </div>
 
-    <hr class="dim-divider">
-    @if (item.myAllAttempts > 0) {
-    <p class="font-12">Obtained {{item.score}}% score with an accuracy of {{item.accuracy}}%. {{100 - item.coverage}}%
-      assessment to complete.</p>
-    }@else{
-    <p class="font-12">{{item.description}}</p>
-    }
+    <div class="row">
+      @if (user && user?.role === 'Admin') {
+        <div class="col-12">
+        @if (item.numTrivia > 0) {
+        <hr class="dim-divider">
+        <div class="progress" style="height: 20px;width: 100%;margin-top:2px;">
+          <div class="progress-bar" [style.width]="getPercentage(item.numEasyTrivia) + '%'" role="progressbar"
+            [attr.aria-valuenow]="item.numEasyTrivia" aria-valuemin="0" aria-valuemax="100">
+            {{ item.numEasyTrivia }}
+          </div>
+          <div class="progress-bar progress-bar-success" [style.width]="getPercentage(item.numIntTrivia) + '%'"
+            role="progressbar" [attr.aria-valuenow]="item.numIntTrivia" aria-valuemin="0" aria-valuemax="100">
+            {{ item.numIntTrivia }}
+          </div>
+          <div class="progress-bar progress-bar-dark" [style.width]="getPercentage(item.numAdvTrivia) + '%'"
+            role="progressbar" [attr.aria-valuenow]="item.numAdvTrivia" aria-valuemin="0" aria-valuemax="100">
+            {{ item.numAdvTrivia }}
+          </div>
+        </div>
+        }
+      </div>
+      }
+      @if (item.attempted > 0) {
+      <div class="col-12">
+        <!-- <p class="m-b-5 m-t-0 font-12 d-flex align-items-center justify-content-center">
+         {{item.description}}
+        </p>
+        <hr class="dim-divider"> -->
+        <p class="m-b-0 m-t-0 font-12 d-flex align-items-center justify-content-center">
+          Your Level Wise Attempts 
+        </p>
+        <!-- Level Wise Completetion Widget -->
+        <div class="row no-gutter text-center mt-3">
+          <!-- Beginner -->
+          <div class="col-12 col-md-4 mb-3">
+            <div class="p-2 rounded" style="background:#2b982b;">
+              <h6 class="mb-1 col-white font-12">Basic</h6>
+              <h6 class="mb-1 col-white text-center">
+                {{ ((item.attemptedEasy / item.numEasyTrivia) * 100) | number:'1.0-0' }}%
+              </h6>
+            </div>
+          </div>
 
-    <!-- <hr class="dim-divider"> -->
+          <!-- Intermediate -->
+          <div class="col-12 col-md-4 mb-3">
+            <div class="p-2 rounded" style="background:#fb483a;">
+              <h6 class="mb-1 col-white font-12">Intermediate</h6>
+              
+              <h6 class="mb-1 col-white text-center">
+                {{ ((item.attemptedMedium / item.numIntTrivia) * 100) | number:'1.0-0' }}%</h6>
+            </div>
+          </div>
+
+          <!-- Advanced -->
+          <div class="col-12 col-md-4 mb-3 progress-bar-dark">
+            <div class="p-2 rounded progress-bar" style="background:#212529;">
+              <h6 class="mb-1 col-white font-12">Advanced</h6>
+              <h6 class="mb-1 col-white text-center">
+                {{ ((item.attemptedHard / item.numAdvTrivia) * 100) | number:'1.0-0' }}%
+              </h6>
+            </div>
+          </div>
+        </div>
+<hr class="dim-divider">
+        <p class="m-b-5 m-t-0 font-12 d-flex align-items-center justify-content-center">
+          <i class="material-icons me-2">trending_up</i> 
+          Level: {{findUserLevel()}}
+      <span class="col-grey m-l-10 m-r-10"> | </span>Accuracy : {{item?.avgAccuracy}}%
+        </p>
+      </div>
+      }
+    </div>
+
+
     <mat-card-footer>
+      @if (item.coverage > 0) {
+      <hr class="dim-divider">
       <ul class="list-unstyled m-b-10 m-t-10">
         <li>
           <div class="mb-2 d-flex justify-content-between">
-            <span class="progress-label">Coverage</span>
+            <span class="progress-label">Completed</span>
             <span class="progress-percent label label-success">{{item.coverage}}%</span>
           </div>
           <div class="progress skill-progress w-100">
             <div class="progress-bar progress-bar-success" [style.width]="item.coverage + '%'" role="progressbar"
               [attr.aria-valuenow]="item.coverage" aria-valuemin="0" aria-valuemax="100">
             </div>
+
+            <div class="progress-bar progress-bar-success" [style.width]="item.coverage + '%'" role="progressbar"
+              [attr.aria-valuenow]="item.coverage" aria-valuemin="0" aria-valuemax="100">
+            </div>
           </div>
         </li>
       </ul>
+      }
       <hr class="dim-divider">
       <div class="d-flex flex-column flex-sm-row justify-content-center text-center">
         <button (click)="onViewPath()" mat-stroked-button color="primary" class="mb-2 mb-sm-0 me-sm-2">
           Explore
         </button>
-
+        @if (item.numTrivia > 0) {
         <button (click)="onTakeQuiz()" mat-flat-button color="accent">
-          Take Quiz
+          {{ item.attempted > 0 ? 'Next Quiz' : 'Test Skills'}}
         </button>
+        }
       </div>
 
     </mat-card-footer>

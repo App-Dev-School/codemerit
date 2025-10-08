@@ -1,4 +1,3 @@
-import { Direction } from '@angular/cdk/bidi';
 import { SelectionModel } from '@angular/cdk/collections';
 import { CommonModule, NgClass } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -32,16 +31,15 @@ import {
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { rowsAnimation } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
 import { Subject } from 'rxjs';
+import { QuestionDeleteComponent } from './dialogs/delete/delete.component';
 import { QuestionItem } from './question-item.model';
 import { QuestionService } from './questions.service';
-import { QuestionFormComponent } from './dialogs/form-dialog/form-dialog.component';
-import { QuestionDeleteComponent } from './dialogs/delete/delete.component';
-import { Router } from '@angular/router';
 @Component({
   selector: 'app-manage-questions',
   templateUrl: './questions.component.html',
@@ -156,34 +154,6 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/questions/update', row.slug]);
   }
 
-  openDialog(data?: QuestionItem) {
-    let varDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      varDirection = 'rtl';
-    } else {
-      varDirection = 'ltr';
-    }
-    const dialogRef = this.dialog.open(QuestionFormComponent, {
-      width: '90vw',
-      data: { data: data },
-      direction: varDirection,
-      autoFocus: false,
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log("QuestionManager close result", result);
-        this.showNotification(
-          'black',
-          `Displaying Question.`,
-          'bottom',
-          'center'
-        );
-      }
-    });
-  }
-
   private updateRecord(updatedRecord: QuestionItem) {
     const index = this.dataSource.data.findIndex(
       (record) => record.id === updatedRecord.id
@@ -192,6 +162,9 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       this.dataSource.data[index] = updatedRecord;
       this.dataSource._updateChangeSubscription();
     }
+  }
+
+  viewCall(row: QuestionItem){
   }
 
   deleteItem(row: QuestionItem) {

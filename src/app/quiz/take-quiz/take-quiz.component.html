@@ -6,13 +6,12 @@
       <!-- LOADING SCREEN -->
       @if (loading) {
       <div class="overlay"></div>
-      <div class="animToast loading">
+      <div class="animToast quizLoader loading">
         <img src="assets/images/icons/cube.gif" class="loadingIcon">
-        <h4>{{loadingText}}</h4>
-        <h5>Please wait</h5>
+        <h5>{{loadingText}}</h5>
+        <h6>Please wait</h6>
       </div>
       }
-
       <!-- HEADER -->
       @if (!loading && quiz) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
@@ -50,9 +49,10 @@
       <!-- HINT OVERLAY -->
       @if (hintActive) {
       <div class="overlay"></div>
-      <div class="animToast hint">
-        <img src="assets/images/icons/hinting.gif" class="hint-icon" alt="hint">
-        <h5>{{currentHint}}</h5>
+      <div class="animToast quizLoader hint">
+        <!-- <img src="assets/images/icons/hinting.gif" class="hint-icon" alt="hint"> -->
+        <h6>{{currentHint}}</h6>
+        <hr class="dim-divider">
         <button mat-raised-button color="accent" (click)="hideHint()">
           Okay
         </button>
@@ -109,7 +109,7 @@
                   @if (question.selectedOption === choice.id && choice.correct) {
                   <img src="assets/images/icons/ic_correct.png" class="icon-right">
                   }
-                  @if (question.selectedOption === choice.id && !choice.correct) {
+                  @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && !choice.correct) {
                   <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
                   }
                 </div>
@@ -130,25 +130,42 @@
       <!-- FOOTER -->
       @if (!loading) {
       <mat-toolbar color="accent" class="footer-toolbar">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-4 text-start">
-              @if (currentQuestionId > 0) {
-              <button mat-flat-button color="warn" (click)="onSlidePrev()"><mat-icon>keyboard_arrow_left</mat-icon>
-                Prev</button>
-              }
-            </div>
-            <div class="col-4 text-center">
-              <button mat-raised-button color="accent" (click)="showHint()">
-                <mat-icon>live_help</mat-icon> Hint</button>
-            </div>
-            <div class="col-4 text-end">
-              <button mat-flat-button color="primary" (click)="onSlideNext()">
-                <mat-icon>keyboard_arrow_right</mat-icon> {{ currentQuestionId === questions.length - 1 ? 'Finish' :
-                'Next' }}
-              </button>
-            </div>
-          </div>
+        <div class="footer-actions">
+
+          <!-- Prev -->
+          @if (quizConfig.enableNavigation && currentQuestionId > 0) {
+          <ng-container>
+            <button mat-flat-button color="warn" (click)="onSlidePrev()">
+              <mat-icon>keyboard_arrow_left</mat-icon>
+              Prev
+            </button>
+          </ng-container>
+          }
+
+          <!-- Hint -->
+          @if (quizConfig.showHint && currentQuestion?.hint !== "") {
+          <ng-container>
+            <button mat-raised-button color="accent" (click)="showHint()">
+              <mat-icon>live_help</mat-icon> Hint
+            </button>
+          </ng-container>
+          }
+
+          <!-- Answer -->
+          @if (quizConfig.showAnswers && currentQuestion?.answer !== "") {
+          <ng-container>
+            <button mat-raised-button color="accent" (click)="showAnswers()">
+              Answer <mat-icon>lock</mat-icon>
+            </button>
+          </ng-container>
+          }
+          <span class="mat-spacer"></span>
+          <!-- Next / Finish -->
+          <button mat-flat-button color="primary" (click)="onSlideNext()" [hidden]="onSelectionPhase">
+            <mat-icon>keyboard_arrow_right</mat-icon>
+            {{ currentQuestionId === questions.length - 1 ? 'Finish' : 'Next' }}
+          </button>
+
         </div>
       </mat-toolbar>
       }
@@ -163,10 +180,10 @@
 <div class="quiz-result-container">
   <div class="content-block">
     <div class="overlay"></div>
-    <div class="animToast hint">
+    <div class="animToast quizLoader hint">
       <img src="assets/images/icons/loading.gif" class="loadingIcon" alt="hint">
       <h4>Evaluating Quiz</h4>
-      <h6 class="col-grey">Please wait while your assessment is in progress</h6>
+      <h6 class="col-grey">Please wait while evaluation is in progress</h6>
     </div>
   </div>
 </div>
