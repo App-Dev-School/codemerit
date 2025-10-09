@@ -41,8 +41,10 @@ export class QuestionItem {
 
 export class QuestionItemDetail extends QuestionItem {
   options?: {id:number;option:string;correct:boolean}[];
-  topics?: {id:number;title:string}[];
+  topics: {id:number;title:string}[];
   rawQuestion?:SafeHtml;
+  //Auth details
+  //rawQuestion?:string;
   hasAnswered?: boolean;
   usedHint?: boolean;
   selectedChoice?: number;

@@ -12,9 +12,10 @@
         <h5>Please wait...</h5>
       </div>
       }
+
       <!-- MAIN SWIPER CONTENT -->
       @if (!loading) {
-      <div class="m-t-10">
+      <div class="viewerContainer flex-grow-1 overflow-hidden m-t-10">
         @if (questions?.length > 0) {
         <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
 
@@ -24,25 +25,16 @@
             <div class="row clearfix">
               <div class="col-lg-8 col-md-8 col-sm-12">
                 <div class="question-card">
-                  <h4 class="mb-3">#{{ question?.id }}</h4>
+                   <h4 class="mb-3">#{{ question?.id }}</h4>
                   @if (question.title) {
                   <h4 class="mb-3">{{ question?.title }}</h4>
                   }
 
                   @if (isCodeQuestion(question.question)) {
-                  <small>Read the Question Carefully</small>
-                  <div class="question">
-                    <pre><code>{{question.question}}</code></pre>
-                  </div>
+                    <small>Code Question</small>
+                     <div class="question"><pre><code>{{question.question}}</code></pre></div>
                   }@else {
-                  <div class="question" [innerHTML]="question?.question | safe:'html'"></div>
-                  }
-                  @if (question?.topics && question?.topics.length > 0) {
-                  <div class="list-group-item m-b-20">
-                    @for (topic of question?.topics; track topic) {
-                    <span class="badge col-indigo">{{topic.title}}</span>
-                    }
-                  </div>
+                      <div class="question" [innerHTML]="question?.question | safe:'html'"></div>
                   }
                   <hr class="dim-divider">
                   @for (choice of question.options; track choice) {
@@ -84,18 +76,17 @@
               <div class="col-lg-4 col-md-4 col-sm-12">
                 <div class="question-card">
                   @if (question?.hint) {
-                  <h5 class="cmSmallTitle">Hint</h5>
-                  <p class="m-b-20 font-normal">{{ question?.hint }}</p> 
+                  <hr class="dim-divider">
+                  <h5>Hint Available <span class="col-green">{{ question?.hint }}</span> </h5>
                   }
                   @if (question?.answer) {
                   <hr class="dim-divider">
-                  <h5 class="cmSmallTitle">Answer:</h5>
+                  <h5>Answer:</h5>
                   <p class="m-b-20 font-normal">{{ question?.answer }}</p>
                   }
                   <div class="questionInfo">
                     @if (question?.subject?.title) {
-                    <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subject?.title
-                      }}</span>
+                    <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon> {{ question?.subject?.title }}</span>
                     }
                     @if (question.questionType) {
                     <span class="mb-3 icon-text"><mat-icon>{{question?.questionType === 'Trivia' ? 'check_boxcheck_box'
@@ -127,10 +118,7 @@
                   }
                   <hr class="dim-divider">
                   <button mat-raised-button color="dark" (click)="editQuestion(question?.slug)">
-                    <mat-icon>edit</mat-icon> Question Editor</button>
-                  <hr class="dim-divider">
-                  <button mat-raised-button color="dark" (click)="routeEditQuestionPage(question?.slug)">
-                    <mat-icon>edit</mat-icon> Edit Question </button>
+                    <mat-icon>edit</mat-icon> Edit Question</button>
                 </div>
               </div>
             </div>
@@ -140,6 +128,7 @@
         }
       </div>
       }
+
       <!-- FOOTER -->
       @if (!loading) {
       <mat-toolbar color="accent" class="footer-toolbar">

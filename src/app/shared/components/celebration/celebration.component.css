@@ -21,11 +21,11 @@
     opacity: 1;
   }
   30% {
-    transform: translate(var(--drift), -30vh) scale(1.4);
+    transform: translate(var(--drift), -30vh) scale(1.6);
     opacity: 1;
   }
   70% {
-    transform: translate(calc(var(--drift) * 1.5), -70vh) scale(1.1);
+    transform: translate(calc(var(--drift) * 1.5), -70vh) scale(1.2);
     opacity: 0.8;
   }
   100% {

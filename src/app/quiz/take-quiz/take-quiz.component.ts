@@ -1,17 +1,21 @@
-import { CommonModule, JsonPipe, NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ActivatedRoute, Router } from '@angular/router';
-import { QuizEntity } from '@core/models/dtos/GenerateQuizDto';
 import { QuizQuestion } from '@core/models/quiz-question';
+import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
+import { Swiper } from 'swiper';
+import { register } from 'swiper/element/bundle';
+import { QuizService } from '../quiz.service';
 import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
+import { CreateQuizResponse, QuizEntity } from '@core/models/dtos/GenerateQuizDto';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { UtilsService } from '@core/service/utils.service';
+import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
@@ -29,7 +33,6 @@ interface Quiz {
   imports: [
     CommonModule,
     NgClass,
-    NgScrollbar,
     SafePipe,
     CdTimerModule,
     MatToolbarModule,
@@ -55,18 +58,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
   warningActive = false;
   hintActive = false;
-  answerActive = false;
-  currentQuestion: QuizQuestion;
   currentHint = '';
-  onSelectionPhase = false;
   showWarningToast = false;
   userData: User;
-  scheduledAutoNext: any;
   celebrationTrigger: { x: number; y: number } | null = null;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
-  displayingAuthDialog = false;
-  quizConfig: QuizConfig;
 
   // ---------------- Question Timer Variables ----------------
   questionTimeLeft: number = 0;
@@ -76,7 +73,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    public dialog: MatDialog,
     private utility: UtilsService,
     private snackBar: MatSnackBar,
     private quizService: QuizService
@@ -87,8 +83,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.userData = this.authService.currentUserValue;
     this.quizSlug = this.route.snapshot.paramMap.get('qcode');
-    this.quizConfig = this.quizService.getQuizConfig();
-    console.log("QuizPlayer Loaded QuizConfig", this.quizConfig);
     if (this.quizSlug) {
       this.loadQuiz();
     } else {
@@ -171,7 +165,6 @@ getLevelClass(level: number): string {
   optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
     this.authService.log('Quiz optionSelected', choice, question);
     if (!question.hasAnswered) {
-      this.onSelectionPhase = true;
       question.selectedOption = choice;
       question.hasAnswered = true;
     }
@@ -192,12 +185,8 @@ getLevelClass(level: number): string {
       this.updateCurrentIndex();
       this.startQuestionTimer(this.questions[this.currentQuestionId]);
     } else {
-      if (this.quizConfig.enableAudio)
-        this.quizHelper.playSound('well-done');
       this.completeQuiz();
     }
-    //clear any previous scheduled task
-    clearTimeout(this.scheduledAutoNext);
   }
 
   onSlidePrev(): void {
@@ -215,8 +204,6 @@ getLevelClass(level: number): string {
 
   private updateCurrentIndex(): void {
     this.currentQuestionId = this.swiperEx.nativeElement.swiper.activeIndex;
-    const currentQuestion = this.questions[this.currentQuestionId];
-    this.currentQuestion = currentQuestion;
   }
 
   submitQuiz() {
@@ -265,38 +252,6 @@ getLevelClass(level: number): string {
 
   isCodeQuestion(text: string): boolean {
     return this.utility.isCodeQuestion(text);
-  }
-
-  quickRegister() {
-    this.displayingAuthDialog = true;
-    const dialogRef = this.dialog.open(LoginFormComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '480px',
-      data: {
-        title: 'Your Attempts are saved',
-        message: 'Quick register to submit your assessment and generate report.',
-        action: 'Exit this Assessment'
-      },
-      disableClose: true
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log("Take Quiz should receive userID", result);
-      this.displayingAuthDialog = false;
-      if (result && result?.id) {
-        this.showNotification(
-          'snackbar-danger',
-          'Quick Registration Complete.',
-          'bottom',
-          'center'
-        );
-        //if userID received submit the Quiz
-        if (!this.quizResult) {
-          console.log("Submitted again", this.authService.currentUserValue);
-          this.submitQuiz();
-        }
-      }
-    });
   }
 
   showNotification(colorName, text, placementFrom, placementAlign) {

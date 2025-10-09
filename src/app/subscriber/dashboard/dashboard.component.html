@@ -1,18 +1,22 @@
 @if(showContent){
 <!-- <section class="content" [@slideInOut]> -->
 <section class="content" [@fadeIn]>
-  @if (loading) {
+  @if (loading || generatingQuiz) {
   <div class="overlay"></div>
-  <div class="animToast subjectLoader loading">
+  <div class="animToast loading">
     <img [src]="currentSubject ? currentSubject?.image : 'assets/images/icons/cube.gif'"
       class="image-pulse loadingIcon m-b-20">
+    @if(generatingQuiz){
+    <h6>Generating Quiz for {{currentSubject?.title}}</h6>
+    }@else{
     <h5>{{loadingText}}</h5>
+    }
     <h6>Please wait</h6>
     <!-- <p>display image once available: {{subjectData.image}} | {{subjectData.color}}</p> -->
   </div>
   }
 
-  @if (!loading && currentSubject) {
+  @if (!loading && !generatingQuiz && currentSubject) {
   <div class="content-block">
     <mat-tab-group mat-align-tabs="start" class="m-t-20">
       <mat-tab label="{{ currentSubject?.title }} Dashboard">
@@ -148,21 +152,16 @@
     (topicQuiz)="onTopicQuiz($event)"></app-topics-list>
   }@else{
   <mat-card class="card text-center m-t-20 m-b-20" appearance="outlined">
-    <mat-card-content class="text-center m-t-20 m-b-20 no-results">
-      <div class="no-data-container text-center">
-        <img src="assets/images/icons/empty.png" class="loadingIcon" />
-        <h6 class="col-grey">{{ currentSubject?.title }} Road Map</h6>
-        <small>Roadmap for {{currentSubject?.title}} is not available at this
-          moment. Please check again later.</small>
-      </div>
+    <mat-card-content class="text-center no-results">
+      <mat-card-title><span [ngStyle]="{'background-color':currentSubject.color}"></span>{{ currentSubject?.title }}
+        Practice Path</mat-card-title>
+      <h6 class="font-15 m-t-0 col-grey">The Curriculum for {{currentSubject?.title}} is not available at this
+        moment.</h6>
     </mat-card-content>
-    <!-- <mat-card-actions>
-      <div class="text-center p-t-20 p-b-20">
-        <button mat-stroked-button color="primary">
-          Poke for {{currentSubject?.title}}
-        </button>
-      </div>
-    </mat-card-actions> -->
+    <mat-card-actions>
+      <button mat-button class="icon-button">
+        <mat-icon>thumb_up</mat-icon> Vote for {{currentSubject?.title}}</button>
+    </mat-card-actions>
   </mat-card>
   }
 </ng-template>
@@ -213,7 +212,7 @@
           <h4 class="cmSubHeading text-center m-b-0">Schedule Mock Interviews</h4>
           <hr class="dim-divider">
           <p class="m-b-0 font-12 d-flex flex-center">
-            Advance through Basic and Intermediate levels to experience AI and Human-led Mock Interviews.
+           Advance through Basic and Intermediate levels to experience AI and Human-led Mock Interviews.
           </p>
           <hr class="dim-divider">
           <div class="text-center p-t-20 p-b-20">

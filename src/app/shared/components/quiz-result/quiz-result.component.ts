@@ -1,14 +1,13 @@
 
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuizResult } from '@core/models/quiz';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
 import { TopicsScore } from '../topic-wise-score/topics-score.component';
-import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-quiz-result',
@@ -19,7 +18,6 @@ import { MatIcon } from '@angular/material/icon';
     MatCardModule,
     MatProgressBarModule,
     MatButton,
-    MatIcon,
     NgScrollbar,
     NgTemplateOutlet,
     TopicsScore,
@@ -69,7 +67,7 @@ export class QuizResultComponent {
   }
 
   doOnShareResult() {
-    this.onShareResult.emit("quizResultCard");
+    this.onShareResult.emit("");
   }
 
   doOnContinue() {

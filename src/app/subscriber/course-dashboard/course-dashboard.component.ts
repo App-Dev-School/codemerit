@@ -1,30 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 
 import { Direction } from '@angular/cdk/bidi';
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { AsyncPipe, JsonPipe, NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
-import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { fadeInAnimation } from '@shared/animations';
+import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { CourseProgressComponent } from '@shared/components/course-progress/course-progress.component';
 import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
-import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 import { Observable, of } from 'rxjs';
+import { Subject } from '@core/models/subject';
+import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { QuizService } from 'src/app/quiz/quiz.service';
+import { Course } from '@core/models/subject-role';
+import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetModule, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MatLineModule } from '@angular/material/core';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
-import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -32,24 +34,26 @@ import { MatTabsModule } from '@angular/material/tabs';
   styleUrls: ['./course-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
+    AsyncPipe,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
     MatCheckboxModule,
     MatTooltipModule,
-    MatTabsModule,
-    NgTemplateOutlet,
     CongratulationsCardComponent,
     MedalCardComponent,
-    SubjectTrackerCardComponent
+    SubjectTrackerCardComponent,
+    CoursePickerComponent,
+    CourseProgressComponent,
+    //MatBottomSheetModule
   ]
 })
 export class CourseDashboardComponent implements OnInit {
   pageTitle = 'MainDashboard';
   loading = true;
   loadingText = 'Loading your Dashboard';
-  //generatingQuiz = false;
-  userData: User;
+  generatingQuiz = false;
+  userData: Observable<User>;
   showContent = true;
   course = "";
   courseItem: Course;
@@ -73,14 +77,14 @@ export class CourseDashboardComponent implements OnInit {
     private snackService: SnackbarService
   ) {
     console.log(this.pageTitle, "User ", this.authService.currentUser);
-    this.userData = this.authService.currentUserValue;
+    this.userData = this.authService.currentUser;
     //this.userData.profile = localStorage.getItem(AuthConstants.CACHE_FULL_PROFILE);
   }
 
   ngOnInit() {
     this.authService.currentUser.subscribe((localUser: User) => {
-      if (localUser && localUser.email && localUser.token) {
-        this.userData = localUser;
+      if(localUser && localUser.email && localUser.token){
+        this.userData = of(localUser);
         console.log('Course Dashboard user changed.', localUser);
         //this.snackService.display('snackbar-dark','Course Dashboard user changed.', 'bottom', 'center');
       }
@@ -104,16 +108,16 @@ export class CourseDashboardComponent implements OnInit {
     console.log(this.pageTitle, "RouteSnap course", course);
     if (course) {
       this.course = course;
-    } else {
-      if (this.authService.currentUserValue && this.authService.currentUserValue?.userDesignation != null) {
-        this.course = this.authService.currentUserValue?.userDesignation?.slug;
-        console.log(this.pageTitle, "RouteSnap course defaulted", this.course);
-      } else {
+    }else{
+      if(this.authService.currentUserValue && this.authService.currentUserValue?.userDesignation != null){
+      this.course = this.authService.currentUserValue?.userDesignation?.slug;
+      console.log(this.pageTitle, "RouteSnap course defaulted", this.course);
+      }else{
         this.goToCourses();
       }
     }
-    if (this.course)
-      this.onCourseChange(this.course);
+    if(this.course)
+    this.onCourseChange(this.course);
     // this.route.paramMap.subscribe(params => {
     //   console.log("CourseDash @RouteParam change detected =>", params.get("course"));
     //   if (params.get("course")) {
@@ -154,23 +158,23 @@ export class CourseDashboardComponent implements OnInit {
 
       //we need list of all subjects in a course along with course details
       this.master.fetchCourseDashboard().subscribe((data: any) => {
-        if (data) {
-          this.courseData = data;
-          setTimeout(() => {
+          if (data) {
+            this.courseData = data;
+            setTimeout(() => {
             this.loading = false;
           }, 3000);
-        }
-      }, (err: any) => {
-        this.loading = false;
-        this.snackService.display('snackbar-dark', 'Error loading Course Dashboard.', 'bottom', 'center');
-      });
+          }
+        }, (err:any)=>{
+            this.loading = false;
+            this.snackService.display('snackbar-dark','Error loading Course Dashboard.', 'bottom', 'center');
+        });
     }
   }
 
   onSubscribeAAA(subject: string) {
     console.log("CourseDash onSubscribe", subject);
-
-    this.snackService.display('snackbar-dark', subject + ' added to learning list ++', 'bottom', 'center');
+    
+    this.snackService.display('snackbar-dark', subject + ' added to learning list!', 'bottom', 'center');
   }
 
   onSubscribe(course: any) {
@@ -199,47 +203,44 @@ export class CourseDashboardComponent implements OnInit {
     }
   }
 
-  openQuizLauncher(data?: any) {
-    console.log("QuizStartScreen openDialog", data);
-    let varDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      varDirection = 'rtl';
-    } else {
-      varDirection = 'ltr';
-    }
-    const dialogRef = this.dialog.open(QuizCreateComponent, {
-      width: '100vw',
-      height: '100vh',
-      maxWidth: '100vw',
-      maxHeight: '100vh',
-      panelClass: 'full-screen-dialog',
-      data: {
-        title: data?.title + ' Quiz',
-        subject: data?.id,
-        topic: null,
-        source: 'Course'
-      },
-      direction: varDirection,
-      autoFocus: false,
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe((quizUniqueSlug) => {
-      this.loadingText = "Just a moment";
-      this.loading = false;
-      if (quizUniqueSlug) {
-        console.log("QuizCreateScreen quizUniqueSlug", quizUniqueSlug);
-        this.router.navigate(['quiz/take', quizUniqueSlug]);
-      }
-    });
+  async generateSubjectQuiz(topic: any) {
+    console.log('QuizManager generateSubjectQuiz:', topic);
+    this.loading = true;
+    this.generatingQuiz = true;
+    this.loadingText = "Generating Quiz";
+    const payload = new QuizCreateModel();
+    payload.userId = this.authService.currentUserValue.id
+    payload.subjectIds = '' + topic.id;
+    console.log('QuizManager Invoked with Subject:', payload);
+    this.quizService
+      .addQuiz(payload)
+      .subscribe({
+        next: (response) => {
+          console.log('QuizManager CreateAPI response:', response);
+          if (response && response?.slug) {
+            const slug = response?.slug;
+            if (slug && slug !== '') {
+              setTimeout(() => {
+                this.loading = false;
+                this.generatingQuiz = false;
+                this.router.navigate(['quiz/take', slug]);
+              }, 4000);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('QuizManager CreateAPI Error:', error);
+          setTimeout(() => {
+            this.loading = false;
+            this.generatingQuiz = false;
+            this.snackService.display('snackbar-dark', error, 'bottom', 'center');
+          }, 2000);
+        },
+      });
   }
 
   goToCourses() {
     this.router.navigate(['/app/select-job-role']);
-  }
-
-   viewProfile() {
-    this.router.navigate(['/users/profile']);
   }
 
   openCourseLauncher(action: 'default' | 'custom', data?: any) {
@@ -280,6 +281,6 @@ export class CourseDashboardComponent implements OnInit {
   launchSubjectExplorer(subject: any) {
     console.log("View Path clicked:", subject);
     if (subject && subject.slug)
-      this.router.navigate(['/dashboard/learn', subject?.slug]);
+    this.router.navigate(['/dashboard/learn', subject?.slug]);
   }
 }

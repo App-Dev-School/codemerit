@@ -244,8 +244,8 @@ export class WelcomeComponent implements OnInit {
         });
         break;
 
-        case "selfRating":
-        this.router.navigate(['/app/self-skill-rating']).then(() => {
+        case "takeQuiz":
+        this.router.navigate(['/take-quiz/explore']).then(() => {
         });
         break;
       default:

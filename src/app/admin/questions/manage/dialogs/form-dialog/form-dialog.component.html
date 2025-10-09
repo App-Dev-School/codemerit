@@ -1,0 +1,15 @@
+<div class="addContainer">
+  <div class="modalHeader">
+    <div class="avatarDetails">
+      <div class="modalTitle">
+       Question #{{questionItem.id}}
+      </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div>
+    <app-quiz-question [question]="questionItem"></app-quiz-question>
+  </div>
+</div>

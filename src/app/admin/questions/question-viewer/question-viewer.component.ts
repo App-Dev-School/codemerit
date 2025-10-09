@@ -1,23 +1,19 @@
-import { Direction } from '@angular/cdk/bidi';
 import { CommonModule, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChip } from "@angular/material/chips";
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
-import { SnackbarService } from '@core/service/snackbar.service';
-import { UtilsService } from '@core/service/utils.service';
-import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { FullQuestion } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
-import { QuestionFormPage } from '../question-form/question-form.component';
+import { UtilsService } from '@core/service/utils.service';
+import { SafePipe } from '@shared/pipes/safehtml.pipe';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -42,7 +38,6 @@ interface Quiz {
 export class QuestionViewerComponent implements OnInit, AfterViewInit {
   questions: FullQuestion[] = [];
   currentQuestionId = 0;
-  currentQuestion: FullQuestion;
   loading = true;
   loadingText = 'Loading Questions';
   completed = false;
@@ -53,8 +48,6 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   constructor(private sanitizer: DomSanitizer,
     private utility: UtilsService,
     private router: Router,
-    public dialog: MatDialog,
-    private snackService: SnackbarService,
     private questionService: QuestionService) {
     register(); // Register Swiper web components
   }
@@ -75,13 +68,13 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
         this.loadingText = 'Question View is Ready';
         this.loading = false;
         data.sort((a, b) => b.id - a.id);
+        console.log("QuestionViewer queestions", data);
         this.questions = (data || []).map(q => ({
           ...q,
           //rawQuestion:'Here.. '+q.question,
           //rawQuestion: this.sanitizer.bypassSecurityTrustHtml(q.question)
           //rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
         }));
-        this.currentQuestion = this.questions[this.currentQuestionId];
       });
   }
 
@@ -113,53 +106,15 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
 
   private updateCurrentIndex(): void {
     this.currentQuestionId = this.swiperEx.nativeElement.swiper.activeIndex;
-    this.currentQuestion = this.questions[this.currentQuestionId];
   }
 
   exitViewer() {
     this.router.navigate(['/admin/dashboard/main']);
   }
 
-  routeEditQuestionPage(slug: string) {
-    //const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
-    this.router.navigate(['/admin/questions/update', slug]);
-  }
-
   editQuestion(slug: string) {
     //const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
-    //this.router.navigate(['/admin/questions/update', slug]);
-    this.launchQuestionEditorModal('update', this.currentQuestion);
-  }
-
-  launchQuestionEditorModal(action: 'add' | 'update', data?: any) {
-    let varDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      varDirection = 'rtl';
-    } else {
-      varDirection = 'ltr';
-    }
-    const dialogRef = this.dialog.open(QuestionFormPage, {
-      width: '100vw',
-      height: '100vh',
-      maxWidth: '600px',
-      //panelClass: 'full-screen-dialog',
-      data: { questionItem: data, action },
-      direction: varDirection,
-      autoFocus: false,
-      disableClose: true
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        //console.log("QuestionViewer close result", result);
-        if (!result.error) {
-          this.snackService.display('snackbar-dark', result.message ?? "Question updated successfully.", 'bottom', 'center');
-          //update 
-        } else {
-          this.snackService.display('snackbar-dark', result.message ?? "Failed to update question.", 'bottom', 'center');
-        }
-        //this.onQuestionChange(result.data);
-      }
-    });
+    this.router.navigate(['/admin/questions/update', slug]);
   }
 
   isCodeQuestion(text: string): boolean {

@@ -1,13 +1,15 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { catchError, delay, map } from 'rxjs/operators';
+import { HttpService } from '@core/service/http.service';
+import { environment } from 'src/environments/environment';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
-import { CreateQuizResponse, QuizCreateModel, QuizEntity, SubmitQuizResponse } from '@core/models/dtos/GenerateQuizDto';
 import { Quiz, QuizResult } from '@core/models/quiz';
 import { QuizQuestion } from '@core/models/quiz-question';
-import { HttpService } from '@core/service/http.service';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { QuizCreateModel, QuizEntity, SubmitQuizResponse } from '@core/models/dtos/GenerateQuizDto';
+import { CreateQuizResponse } from '@core/models/dtos/GenerateQuizDto';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +17,6 @@ import { catchError, map } from 'rxjs/operators';
 export class QuizService {
   private readonly API_URL = 'assets/data/quizzes/quiz-angular.json';
   dataChange: BehaviorSubject<Quiz[]> = new BehaviorSubject<Quiz[]>([]);
-  quizConfig: QuizConfig;
   currentQuiz: QuizEntity;
 
   constructor(private authService: AuthService,
@@ -42,7 +43,7 @@ export class QuizService {
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/quiz/result/' + resultCode;
+    const url = 'apis/quiz/result/'+resultCode;
     return this.httpService.get(url, api_key).pipe(
       map((response: any) => {
         return response.data;
@@ -75,13 +76,25 @@ export class QuizService {
     const url = 'apis/quiz/create';
     return this.httpService.postData(url, item, api_key).pipe(
       map((response: CreateQuizResponse) => {
-        console.log("QuizService ### Quiz Create Response", response);
-        if(response && response?.data){
-        this.currentQuiz = response?.data;
+        this.currentQuiz = response.data;
         this.setCurrentQuiz(this.currentQuiz);
-        return response?.data;
-        }
-        return null;
+        return response.data; // return response from API
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  submitQuizAAAA(item: QuizResult): Observable<QuizResult> {
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/quiz/submit';
+    console.log('QuizPlayer Submitted Quiz => ', item);
+    return this.httpService.postData(url, item, api_key).pipe(
+      map((response: SubmitQuizResponse) => {
+        //console.log("QuizPlayer SubmitQuiz API response", response);
+        return response.data;
       }),
       catchError(this.handleError)
     );
@@ -139,10 +152,10 @@ export class QuizService {
 
   /** Handle Http operation that failed */
   private handleError(error: HttpErrorResponse) {
-    console.error('An error occurred:', error);
+    console.error('An error occurred:', error.message);
     let errorMsg = 'Something went wrong; please try again later.';
-    if (error?.message) {
-      errorMsg = error?.message;
+    if (error.message) {
+      errorMsg = error.message;
     }
     return throwError(
       () => new Error(errorMsg)
@@ -185,8 +198,7 @@ export class QuizService {
         isCorrect: (q.selectedOption && q.selectedOption === correctOption.id) ?? false,
         isSkipped: q.isSkipped || false,
         timeTaken: q.timeTaken || 0,
-        hintUsed: q.hintUsed || false,
-        answerSeen: q.answerSeen || false,
+        hintUsed: q.hintUsed || false
       };
     });
     analytics['attempts'] = attempts;
@@ -203,34 +215,4 @@ export class QuizService {
     return this.currentQuiz;
   }
 
-  setQuizConfig(quizConfig: QuizConfig) {
-    this.quizConfig = quizConfig;
-    console.log("setQuizConfig", quizConfig);
-  }
-
-  getQuizConfig(): QuizConfig {
-    if(!this.quizConfig){
-     this.quizConfig = new QuizConfig();
-    }
-    return this.quizConfig;
-  }
-}
-export class QuizConfig {
-  numQuestions: number = 8;
-  level: string;
-  mode: string;
-  showHint: boolean;
-  showAnswers: boolean;
-  enableNavigation: boolean = true;
-  enableAudio: boolean;
-
-  constructor(topic: Partial<QuizConfig> = {}) {
-      this.mode = topic.mode || 'Default'; //Interactive
-      this.level = topic.level || 'Basic';
-      this.numQuestions = topic.numQuestions || 8;
-      this.showHint = topic.showHint || true;
-      this.showAnswers = topic.showAnswers || false;
-      this.enableNavigation = topic.enableNavigation || false;
-      this.enableAudio = topic.enableAudio || true;
-    }
 }

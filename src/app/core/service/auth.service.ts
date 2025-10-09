@@ -104,7 +104,6 @@ export class AuthService {
   }
   
   setLocalData(userData: any) {
-    console.log("CodeMeritApp @setLocalData =>", userData);
     //talk to storage service
     if (userData && userData.id > 0) {
       localStorage.setItem(AuthConstants.AUTH, JSON.stringify(userData));

@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { FeatherIconsComponent } from '../feather-icons/feather-icons.component';
+import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { User } from '@core/models/user';
-import { FeatherIconsComponent } from '../feather-icons/feather-icons.component';
 
 @Component({
   selector: 'app-congratulations-card',
@@ -17,7 +18,7 @@ import { FeatherIconsComponent } from '../feather-icons/feather-icons.component'
 })
 export class CongratulationsCardComponent {
   @Input() user: User;
-  @Input() message: string = "Skill Assessments and Practice Real-World Software Development";
+  @Input() message: string = "Grow your skills and gain real-world experience in software development.";
   @Input() action: string = "Explore Tech Roles";
   constructor(private router: Router) {
     console.log("Congratulations Component", this.user);

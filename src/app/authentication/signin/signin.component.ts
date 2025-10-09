@@ -104,8 +104,8 @@ export class SigninComponent
   activateTestLogin() {
     // this.authForm.get('username')?.setValue('user3@codemerit.com');
     // this.authForm.get('password')?.setValue('605161');
-    this.authForm.get('username')?.setValue('mahesha@gmail.com');
-    this.authForm.get('password')?.setValue('560950');
+    this.authForm.get('username')?.setValue('sanika6701@gmail.com');
+    this.authForm.get('password')?.setValue('416038');
   }
 
   activateTestUserLogin() {
