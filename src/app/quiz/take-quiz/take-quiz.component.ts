@@ -21,6 +21,7 @@ import { register } from 'swiper/element/bundle';
 import { QuizConfig, QuizService } from '../quiz.service';
 import { QuizHelperService } from '../quiz-helper.service';
 import { NgScrollbar } from 'ngx-scrollbar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -41,6 +42,7 @@ interface Quiz {
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    MatProgressBarModule,
     CelebrationComponent
   ]
 })
@@ -69,6 +71,9 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
   displayingAuthDialog = false;
   quizConfig: QuizConfig;
+  // -- Question Timer Variables
+  questionTimeLeft: number = 0;
+  questionTimerInterval: any;
 
   constructor(private authService: AuthService,
     private route: ActivatedRoute,
@@ -97,13 +102,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     // Swiper is automatically initialized via web component
   }
 
-  /** Load quiz from local JSON */
   private loadQuiz(): void {
     this.quizService.getQuiz(this.quizSlug)
       .subscribe(data => {
         this.quiz = data;
         this.loadingText = 'Loading Assessment Panel';
-        console.log("QuizPlayer Loaded Quiz", data);
         this.questions = (data.questions || []).map(q => ({
           ...q,
           options: q.options || [],
@@ -115,10 +118,43 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         console.log("QuizPlayer Transformed Loaded Questions", this.questions);
         //#Task2: Done Once all quiz questions are loaded , calculate the sum of timeAllowed for each question
         //set that time as the quiz time
+        if (this.questions.length) {
+          this.startQuestionTimer(this.questions[0]);
+        }
         setTimeout(() => {
           this.loading = false;
         }, 3000);
       });
+  }
+
+  startQuestionTimer(question: QuizQuestion) {
+    // Clear previous timer
+    if (this.questionTimerInterval) {
+      clearInterval(this.questionTimerInterval);
+      this.onTimerComplete();
+    }
+
+    // Initialize time left for the current question
+    this.questionTimeLeft = question.timeAllowed || 30; // default 30s if not set
+
+    this.questionTimerInterval = setInterval(() => {
+      this.questionTimeLeft--;
+
+      // Show warning if 10s left
+      if (this.questionTimeLeft === 10) {
+        this.showWarningToast = true;
+        this.warningActive = true;
+        setTimeout(() => {
+          this.showWarningToast = false;
+        }, 1000);
+      }
+
+      // Auto move to next question if timer ends
+      if (this.questionTimeLeft <= 0) {
+        clearInterval(this.questionTimerInterval);
+        this.onSlideNext();
+      }
+    }, 1000);
   }
 
   /** Record selected answer */
@@ -153,9 +189,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   /** Navigate to next question */
   onSlideNext(): void {
+    this.warningActive = false;
     if (this.currentQuestionId < this.questions.length - 1) {
       this.swiperEx.nativeElement.swiper.slideNext();
       this.updateCurrentIndex();
+      this.startQuestionTimer(this.questions[this.currentQuestionId]);
       if (this.quizConfig.enableAudio)
         this.quizHelper.playSound('click');
     } else {
@@ -169,9 +207,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   /** Navigate to previous question */
   onSlidePrev(): void {
+    this.warningActive = false;
     if (this.currentQuestionId > 0) {
       this.swiperEx.nativeElement.swiper.slidePrev();
       this.updateCurrentIndex();
+      //Not sure the impact of code below. Please justify
+      this.startQuestionTimer(this.questions[this.currentQuestionId]);
       //clear any previous scheduled task
       clearTimeout(this.scheduledAutoNext);
     }
@@ -222,13 +263,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   onTimerComplete() {
-    console.log('Timer finished!');
     this.warningActive = false;
     this.showWarningToast = false;
     if (this.quizConfig.enableAudio)
       this.quizHelper.playSound('click');
     console.log('Quiz Timed Out!', this.questions);
-    this.submitQuiz();
+    //this.submitQuiz();
+    //this is a question level timer
   }
 
   private completeQuiz(): void {
@@ -244,6 +285,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   submitQuiz() {
     console.log("QuizPlayer submitQuiz() with user", this.authService.currentUserValue);
+    clearInterval(this.questionTimerInterval);
     if (!(this.authService.currentUserValue && this.authService.currentUserValue.email)) {
       //#Task1: Display Signup/login option as dialog
       //Use existing signin / signup component and display them as a dialog
@@ -337,7 +379,22 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   onCelebrationFinished() {
     console.log('🎉 Celebration animation completed!');
-    //this.onSlideNext();
   }
 
+  getQuestionLevel(level: number): string {
+    switch (level) {
+      case 1: return 'Easy';
+      case 2: return 'Intermediate';
+      case 3: return 'Advanced';
+      default: return 'Unknown';
+    }
+  }
+  getLevelClass(level: number): string {
+    switch (level) {
+      case 1: return 'col-indigo';
+      case 2: return 'col-purple';
+      case 3: return 'bg-brown';
+      default: return '';
+    }
+  }
 }

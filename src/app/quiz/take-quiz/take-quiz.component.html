@@ -2,6 +2,7 @@
 <div class="auth-container">
   <div class="auth-main">
     <div class="quiz-container d-flex flex-column vh-100">
+      <!-- LOADING SCREEN -->
       @if (loading) {
       <div class="overlay"></div>
       <div class="animToast quizLoader loading">
@@ -23,20 +24,29 @@
         <div class="d-flex align-items-center">
           <img src="assets/images/icons/ic_watch.png" class="timerIcon" alt="timer">
 
-          <cd-timer #timerRef [countdown]="true" [startTime]="quizDuration" [omitZero]="true" maxTimeUnit="minute"
+          <!-- Keep cd-timer for exams i.e. a variation of quiz -->
+          <!-- <cd-timer #timerRef [countdown]="true" [startTime]="quizDuration" [omitZero]="true" maxTimeUnit="minute"
             [autoStart]="true" [callTick]="true" format="ms" (onTick)="onTick($event)" (onComplete)="onTimerComplete()">
-          </cd-timer>
+          </cd-timer> -->
+
+          <div class="question-timer d-flex align-items-center">
+            <span>{{ questionTimeLeft }}s</span>
+          </div>
         </div>
         <!-- #Task3: Display Progressbar here that shows time left in each question -->
       </mat-toolbar>
-      <!-- <p>{{quizConfig | json}}</p> -->
+      @if (questions && questions[currentQuestionId]?.timeAllowed) {
+      <mat-progress-bar mode="determinate"
+        [value]="(questionTimeLeft / (questions[currentQuestionId]?.timeAllowed))*100">
+      </mat-progress-bar>
+      }
       }
 
       <!-- Screen Overlay -->
       @if (showWarningToast) {
       <div class="overlay"></div>
       <div class="animToast warning">
-        <h5>⚠️ 1 Minute Left!</h5>
+        <h5>⚠️ 10 Seconds Left!</h5>
       </div>
       }
 
@@ -67,9 +77,8 @@
         </button>
       </div>
       }
-
       <!-- MAIN SWIPER CONTENT -->
-      <!-- #Task4: Display topic and level of question inside quiz window -->
+      <!-- SWIPER QUESTIONS -->
       @if (!loading) {
       <div class="flex-grow-1 overflow-hidden">
         @if (questions?.length > 0) {
@@ -80,51 +89,59 @@
             <p class="col-grey text-center m-t-20 m-b-10">{{$index+1}} of {{questions?.length}}</p>
             <div class="question-card">
               <ng-scrollbar class="questionScroller" visibility="hover">
-              <div class="card-content">
-                @if (question.title) {
-              <h5 class="mb-3">{{ question.title }}</h5>
-              }
-              @if (isCodeQuestion(question.question)) {
-              <small>Read the question carefully and answer.</small>
-              <div class="question m-b-10">
-                <pre><code>{{question.question}}</code></pre>
-              </div>
-              }@else {
-              <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
-              }
+                <div class="card-content">
+                  @if (question.title) {
+                  <h5 class="mb-3">{{ question.title }}</h5>
+                  }
+                  @if (isCodeQuestion(question.question)) {
+                  <small>Read the question carefully and answer.</small>
+                  <div class="question m-b-10">
+                    <pre><code>{{question.question}}</code></pre>
+                  </div>
+                  }@else {
+                  <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
+                  }
 
-              @if (question?.topicsArr && question?.topicsArr.length > 0) {
-              <div class="list-group-item m-b-20">
-                @for (topic of question?.topicsArr; track topic) {
-                <!-- bg-pink col-indigo -->
-                <span class="badge col-indigo">{{topic}}</span>
-                }
-              </div>
-              }
-              @for (choice of question.options; track choice) {
-              <mat-card (click)="optionSelected($event, choice.id, question)" class="choice p-2 rounded mb-2" [ngClass]="{
+                  <div class="list-group-item m-b-20 d-flex align-items-center justify-content-between flex-wrap">
+                    <div class="d-flex flex-wrap gap-1">
+                      @for (topic of question?.topicsArr; track topic) {
+                      <span class="badge col-indigo">{{ topic }}</span>
+                      }
+                    </div>
+
+                    <span class="badge level-badge" [ngClass]="getLevelClass(question.level)">
+                      {{ getQuestionLevel(question.level) }}
+                    </span>
+                  </div>
+
+
+                  @for (choice of question.options; track choice) {
+                  <mat-card (click)="optionSelected($event, choice.id, question)" class="choice p-2 rounded mb-2"
+                    [ngClass]="{
          'selected': question.selectedOption === choice.id,
          'correct': quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && choice.correct,
          'wrong': quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && !choice.correct
        }">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span>{{ choice.option }}</span>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>{{ choice.option }}</span>
 
-                  @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && choice.correct) {
-                  <img src="assets/images/icons/ic_correct.png" class="icon-right">
+                      @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && choice.correct)
+                      {
+                      <img src="assets/images/icons/ic_correct.png" class="icon-right">
+                      }
+                      @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id &&
+                      !choice.correct) {
+                      <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
+                      }
+                    </div>
+                  </mat-card>
                   }
-                  @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && !choice.correct) {
-                  <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
-                  }
+
+                  <!-- Celebration container -->
+                  <app-celebration [trigger]="celebrationTrigger" [marks]="question.marks"
+                    (animationDone)="onCelebrationFinished()"></app-celebration>
                 </div>
-              </mat-card>
-              }
-
-              <!-- Celebration container -->
-              <app-celebration [trigger]="celebrationTrigger" [marks]="question.marks"
-                (animationDone)="onCelebrationFinished()"></app-celebration>
-              </div>
-            </ng-scrollbar>
+              </ng-scrollbar>
             </div>
           </swiper-slide>
           }

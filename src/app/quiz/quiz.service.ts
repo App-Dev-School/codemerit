@@ -184,7 +184,7 @@ export class QuizService {
         answer: correctOption ? correctOption.option : null,
         isCorrect: (q.selectedOption && q.selectedOption === correctOption.id) ?? false,
         isSkipped: q.isSkipped || false,
-        timeTaken: q.timeTaken || 0,
+        timeTaken: q.timeAllowed || 0,
         hintUsed: q.hintUsed || false,
         answerSeen: q.answerSeen || false,
       };

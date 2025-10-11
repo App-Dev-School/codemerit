@@ -18,10 +18,10 @@ export interface QuizQuestion {
   isSkipped?:boolean;
   hintUsed?: boolean;
   answerSeen?: boolean;
-  timeTaken?: number;
   topics? : {
   id?: number | string;
   title?: string;
   }[];
-  topicsArr?:string[]
+  topicsArr?:string[],
+  level?: number;  
 }
