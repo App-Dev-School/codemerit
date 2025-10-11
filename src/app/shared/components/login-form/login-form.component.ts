@@ -39,6 +39,7 @@ import { environment } from 'src/environments/environment';
 export class LoginFormComponent {
   @Output() onSignUp = new EventEmitter<any>();
   @Output() onLoginLink = new EventEmitter<any>();
+  @Output() onRegisterLink = new EventEmitter<any>();
   authData: User;
   authForm!: UntypedFormGroup;
   options: InitialRole[] = AuthConstants.CURRENT_ROLE_OPTIONS;
@@ -47,6 +48,7 @@ export class LoginFormComponent {
   filteredCountries?: Observable<Country[]>;
   submitted = false;
   error = "";
+  isNewUser = true;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -172,8 +174,18 @@ export class LoginFormComponent {
   onLoginLinkClick() {
     if (this.data) {
       //if dialog data exists, switch to login form in the same dialog
+      this.isNewUser = false;
     } else {
       this.onLoginLink.emit(true);
+    }
+  }
+
+  onRegisterLinkClick() {
+    if (this.data) {
+      //if dialog data exists, switch to register form in the same dialog
+      this.isNewUser = true;
+    } else {
+      this.onRegisterLink.emit(true);
     }
   }
 

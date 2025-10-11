@@ -117,4 +117,12 @@ export class SigninComponent
     console.log("connectWithGoogle => " + this.authService.currentUser);
   }
 
+  navigateToSignUp() {
+    this.router.navigate(['/authentication/signup']);
+  }
+
+  onRegisterLink() {
+    this.navigateToSignUp();
+  }
+
 }

@@ -18,6 +18,7 @@
             }
         </div>
 
+        @if (this.isNewUser) {
         <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
             <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
@@ -120,16 +121,89 @@
                 </button>
             </div>
         </form>
+        }@else {
+        <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>E-mail</mat-label>
+                        <input matInput formControlName="username" />
+                        <mat-icon class="material-icons-outlined p-3" matSuffix>face</mat-icon>
+                        @if (authForm.get('username')!.hasError('required')) {
+                        <mat-error>
+                            E-mail is required
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>Password</mat-label>
+                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+                        <mat-icon class="material-icons-outlined pwd-toggle p-3" matSuffix (click)="hide = !hide">
+                            {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        @if (authForm.get('password')!.hasError('required')) {
+                        <mat-error>
+                            Password is required
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox" value=""> Remember me
+                        <span class="form-check-sign">
+                            <span class="check"></span>
+                        </span>
+                    </label>
+                </div>
+                <a class="txt1" routerLink="/authentication/forgot-password">Forgot Password?</a>
+            </div>
+            @if (error) {
+            <div class="alert alert-danger mt-3 mb-3">{{error}}</div>
+            }
+            <div class="container-auth-form-btn">
+                <div style="text-align:center">
+                    <button mat-flat-button color="accent" [class.auth-spinner]="loading" [disabled]="loading"
+                        class="auth-form-btn" [disabled]="!authForm.valid " type="submit">Login</button>
+                </div>
+
+                <h6 class="social-login-title">OR</h6>
+                <div style="text-align:center">
+                    <!-- <button (click)="connectWithGoogle()" mat-flat-button color="danger" [class.auth-spinner]="loading"
+                  [disabled]="loading" class="auth-form-btn"><i class="fab fa-google"></i> Connect with Google</button> -->
+                    <h6 class="link-msg"> New to CodeMerit ? <a routerLink="/authentication/signup"
+                            class="sign-up-link">Register Now
+                        </a></h6>
+                </div>
+            </div>
+        </form>
+        }
+        @if (this.isNewUser) {
+        }@else{
+
+        }
+        @if (this.isNewUser) {
         <h6 class="social-login-title">OR</h6>
         <div class="text-center m-b-10">
-            <!-- 
-                <button (click)="navigateToLogin()" mat-flat-button color="danger" 
-                   class="auth-form-btn"><i class="fab fa-google"></i> Already Registered? Come In</button> 
-                   -->
-            <h6 class="welcome-msg"> Already Registered? <span (click)="onLoginLinkClick()">
+            <h6 class="link-msg"> Already Registered? <span class="sign-up-link" (click)="onLoginLinkClick()">
                     Login here
                 </span></h6>
         </div>
+        }@else{
+        <h6 class="social-login-title">OR</h6>
+        <div style="text-align:center">
+            <h6 class="link-msg"> New to CodeMerit ?
+                <span class="sign-up-link" (click)="onRegisterLinkClick()">
+                    Register Now
+                </span>
+            </h6>
+        </div>
+        }
 
         @if (data && data.action) {
         <div class="text-center m-t-20">
