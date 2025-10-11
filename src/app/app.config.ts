@@ -25,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideRouter(APP_ROUTE),
     provideAnimations(),
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    //{ provide: LocationStrategy, useClass: HashLocationStrategy },
     DirectionService,
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     {
