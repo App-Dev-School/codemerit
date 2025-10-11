@@ -126,7 +126,7 @@
                 <button (click)="navigateToLogin()" mat-flat-button color="danger" 
                    class="auth-form-btn"><i class="fab fa-google"></i> Already Registered? Come In</button> 
                    -->
-            <h6 class="welcome-msg"> Already Registered? <span routerLink="/authentication/signin">
+            <h6 class="welcome-msg"> Already Registered? <span (click)="onLoginLinkClick()">
                     Login here
                 </span></h6>
         </div>

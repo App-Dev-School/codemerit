@@ -38,6 +38,7 @@ import { environment } from 'src/environments/environment';
 })
 export class LoginFormComponent {
   @Output() onSignUp = new EventEmitter<any>();
+  @Output() onLoginLink = new EventEmitter<any>();
   authData: User;
   authForm!: UntypedFormGroup;
   options: InitialRole[] = AuthConstants.CURRENT_ROLE_OPTIONS;
@@ -142,14 +143,14 @@ export class LoginFormComponent {
         flow: this.data ? "QuickRegistration" : "Registration"
       };
 
-      
+
       this.authService.register(postData).subscribe((res) => {
         //dismiss this dialog
         this.onSignUp.emit(res);
-        if(res && res.data && res.data.id){
+        if (res && res.data && res.data.id) {
           this.authService.setLocalData(res.data);
         }
-        if(this.data){
+        if (this.data) {
           this.dismiss(res.data);
         }
       },
@@ -160,15 +161,23 @@ export class LoginFormComponent {
           this.snackbar.display("snackbar-danger", this.error, "bottom", "center");
           //dismiss this dialog
           this.onSignUp.emit(null);
-          if(this.data){
-          this.dismiss(null);
-        }
+          if (this.data) {
+            this.dismiss(null);
+          }
         }
       );
     }
   }
 
-  dismiss(data:any){
+  onLoginLinkClick() {
+    if (this.data) {
+      //if dialog data exists, switch to login form in the same dialog
+    } else {
+      this.onLoginLink.emit(true);
+    }
+  }
+
+  dismiss(data: any) {
     this.dialogRef.close(data);
   }
 }

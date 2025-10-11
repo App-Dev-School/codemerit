@@ -89,6 +89,10 @@ export class SignupComponent implements OnInit, OnDestroy {
     this.router.navigate(['/authentication/signin']);
   }
 
+  onLoginLink() {
+    this.navigateToLogin();
+  }
+
   ngOnDestroy() {
     this.timeOutIDs.forEach(id => clearTimeout(id));
   }
