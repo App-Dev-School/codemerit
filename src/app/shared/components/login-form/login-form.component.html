@@ -8,18 +8,20 @@
             @if (data && data?.title) {
             <h6 class="welcome-msg text-center"> {{data?.title}} </h6>
             }@else {
-            <h6 class="welcome-msg text-center"> Create CodeMerit Account </h6>
+            <h6 class="welcome-msg text-center"> isNewUser ? 'Create CodeMerit Account' : 'Login to your CodeMerit Account' </h6>
             }
 
             @if (data && data?.message) {
             <p class="auth-signup-text text-center">{{data?.message}}</p>
             }@else {
-            <p class="auth-signup-text text-center">Quick Register to get Started</p>
+            <p class="auth-signup-text text-center">
+                {{ isNewUser ? 'Quick Register to get Started' : 'Access your personalized Learning and Skill Assessment Dashboard'}}
+            </p>
             }
         </div>
 
-        @if (this.isNewUser) {
-        <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
+        @if (isNewUser) {
+        <form [@fadeIn] class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
             <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                     <mat-form-field class="example-full-width" appearance="fill">
@@ -121,15 +123,15 @@
                 </button>
             </div>
         </form>
-        }@else {
-        <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
+       }@else{
+         <form [@fadeIn] class="validate-form" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
                     <mat-form-field class="example-full-width" appearance="fill">
                         <mat-label>E-mail</mat-label>
                         <input matInput formControlName="username" />
                         <mat-icon class="material-icons-outlined p-3" matSuffix>face</mat-icon>
-                        @if (authForm.get('username')!.hasError('required')) {
+                        @if (loginForm.get('username')!.hasError('required')) {
                         <mat-error>
                             E-mail is required
                         </mat-error>
@@ -144,7 +146,7 @@
                         <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
                         <mat-icon class="material-icons-outlined pwd-toggle p-3" matSuffix (click)="hide = !hide">
                             {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        @if (authForm.get('password')!.hasError('required')) {
+                        @if (loginForm.get('password')!.hasError('required')) {
                         <mat-error>
                             Password is required
                         </mat-error>
@@ -169,25 +171,13 @@
             <div class="container-auth-form-btn">
                 <div style="text-align:center">
                     <button mat-flat-button color="accent" [class.auth-spinner]="loading" [disabled]="loading"
-                        class="auth-form-btn" [disabled]="!authForm.valid " type="submit">Login</button>
-                </div>
-
-                <h6 class="social-login-title">OR</h6>
-                <div style="text-align:center">
-                    <!-- <button (click)="connectWithGoogle()" mat-flat-button color="danger" [class.auth-spinner]="loading"
-                  [disabled]="loading" class="auth-form-btn"><i class="fab fa-google"></i> Connect with Google</button> -->
-                    <h6 class="link-msg"> New to CodeMerit ? <a routerLink="/authentication/signup"
-                            class="sign-up-link">Register Now
-                        </a></h6>
-                </div>
+                        class="auth-form-btn" [disabled]="!loginForm.valid " type="submit">Login</button>
+                </div>  
             </div>
         </form>
-        }
-        @if (this.isNewUser) {
-        }@else{
+    }
 
-        }
-        @if (this.isNewUser) {
+        @if (isNewUser) {
         <h6 class="social-login-title">OR</h6>
         <div class="text-center m-b-10">
             <h6 class="link-msg"> Already Registered? <span class="sign-up-link" (click)="onLoginLinkClick()">
@@ -216,7 +206,12 @@
 }@else{
 <div class="loading text-center">
     <img src="assets/images/icons/cube.gif" class="loader" alt="Authenticating">
-    <h5>Registering User</h5>
+    @if (isNewUser) {
+    <h5>Registering Account</h5>
+    <h6>Please wait a moment</h6>
+    }@else{
+    <h5>Authenticating User</h5>
     <h6>Please wait ...</h6>
+    }
 </div>
 }

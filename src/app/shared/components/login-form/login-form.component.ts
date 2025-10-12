@@ -13,9 +13,9 @@ import { AuthConstants } from '@config/AuthConstants';
 import { AuthService, User } from '@core';
 import { Country } from '@core/models/country.data';
 import { InitialRole } from '@core/models/initial-role.data';
-import { Status } from '@core/models/status.enum';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
+import { fadeInAnimation} from '@shared/animations';
 import { map, Observable, of, startWith } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -34,10 +34,12 @@ import { environment } from 'src/environments/environment';
     MatAutocompleteModule
   ],
   templateUrl: './login-form.component.html',
-  styleUrl: './login-form.component.css'
+  styleUrl: './login-form.component.css',
+  animations: [fadeInAnimation]
 })
 export class LoginFormComponent {
   @Output() onSignUp = new EventEmitter<any>();
+  @Output() onSignIn = new EventEmitter<any>();
   @Output() onLoginLink = new EventEmitter<any>();
   @Output() onRegisterLink = new EventEmitter<any>();
   authData: User;
@@ -48,7 +50,11 @@ export class LoginFormComponent {
   filteredCountries?: Observable<Country[]>;
   submitted = false;
   error = "";
+  //enable login form controls
   isNewUser = true;
+  hide = true;
+  loading = false;
+  loginForm!: UntypedFormGroup;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -61,6 +67,10 @@ export class LoginFormComponent {
   }
 
   ngOnInit() {
+    this.loginForm = this.formBuilder.group({
+      username: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    });
     this.authForm = this.formBuilder.group({
       firstName: ['', [Validators.required, Validators.maxLength(20)]],
       lastName: ['', [Validators.maxLength(20)]],
@@ -77,7 +87,7 @@ export class LoginFormComponent {
     if (environment) {
       //this.authForm.get('city')?.setValue('Bengaluru');
       this.authForm.get('country')?.setValue('India');
-      this.authForm.get('about')?.setValue('IT Fresher (Graduate)');
+      this.authForm.get('about')?.setValue('');
     }
     this.filteredOptions = of(this.options);
     this.filteredOptions = this.authForm.get('about').valueChanges.pipe(
@@ -97,7 +107,7 @@ export class LoginFormComponent {
   }
 
   get f() {
-    return this.authForm.controls;
+    return this.isNewUser ? this.authForm.controls : this.loginForm.controls;
   }
 
   /* Auto-complete functions */
@@ -147,13 +157,13 @@ export class LoginFormComponent {
 
 
       this.authService.register(postData).subscribe((res) => {
-        //dismiss this dialog
-        this.onSignUp.emit(res);
         if (res && res.data && res.data.id) {
           this.authService.setLocalData(res.data);
         }
+        this.onSignUp.emit(res);
+        //dismiss this dialog
         if (this.data) {
-          this.dismiss(res.data);
+          this.dismiss({...res.data, isNewUser : this.isNewUser});
         }
       },
         (error) => {
@@ -171,10 +181,74 @@ export class LoginFormComponent {
     }
   }
 
+  onLoginSubmit() {
+    this.submitted = true;
+    this.error = '';
+    if (this.loginForm.invalid) {
+      this.error = 'Username and Password not valid !';
+      this.submitted = false;
+      return;
+    } else {
+      this.loading = true;
+      const payload = {
+        email: this.f['username'].value,
+        password: this.f['password'].value
+      }
+      this.authService
+        .login(payload)
+        .subscribe({
+          next: (res) => {
+            setTimeout(() => {
+              // const role = this.authService.currentUserValue.role;
+              // if (role === Role.All || role === Role.Admin) {
+              //   this.router.navigate(['/admin/dashboard/main']);
+              // } else {
+              //   if (role === Role.Subscriber || role === Role.Manager) {
+              //     if(this.authService.currentUserValue?.userDesignation?.slug){
+              //       this.router.navigate(['/dashboard/start', this.authService.currentUserValue?.userDesignation?.slug]);
+              //     }else{
+              //       this.router.navigate(['/app/select-job-role']);
+              //     }
+              //   }
+              // }
+              // this.loading = false;
+              // this.master.fetchMasterDataFromAPI();
+              //this.submitted = false;
+              if (res && res.data && res.data.id) {
+                console.log("LoginDialog", res.data);
+                this.authService.setLocalData(res.data);
+              }
+              this.onSignIn.emit(res);
+              //dismiss this dialog
+              if (this.data) {
+                this.dismiss({...res.data, isNewUser : this.isNewUser});
+              }
+            }, 1000);
+          },
+          error: (error) => {
+            this.error = error;
+            this.submitted = false;
+            this.loading = false;
+            if (!this.error) {
+              this.error = 'Error logging in. Please try again.';
+            }
+            this.snackbar.display("snackbar-danger", this.error, "bottom", "center");
+            //dismiss this dialog
+            this.onSignIn.emit(null);
+            if (this.data) {
+              this.dismiss(null);
+            }
+          },
+        });
+    }
+  }
+
   onLoginLinkClick() {
     if (this.data) {
       //if dialog data exists, switch to login form in the same dialog
       this.isNewUser = false;
+      //for testing purpose only
+      this.activateTestUserLogin();
     } else {
       this.onLoginLink.emit(true);
     }
@@ -187,6 +261,11 @@ export class LoginFormComponent {
     } else {
       this.onRegisterLink.emit(true);
     }
+  }
+
+   activateTestUserLogin() {
+    this.loginForm.get('username')?.setValue('student@codemerit.com');
+    this.loginForm.get('password')?.setValue('788007');
   }
 
   dismiss(data: any) {

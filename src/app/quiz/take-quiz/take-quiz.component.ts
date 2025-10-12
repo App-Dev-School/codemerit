@@ -328,18 +328,18 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       maxWidth: '480px',
       data: {
         title: 'Your Attempts are saved',
-        message: 'Quick register to submit your assessment and generate report.',
+        message: 'Login/ Register to submit your assessment.',
         action: 'Exit this Assessment'
       },
       disableClose: true
     });
     dialogRef.afterClosed().subscribe((result) => {
-      console.log("Take Quiz should receive userID", result);
+      console.log("Take Quiz QuickAuth Complete", result);
       this.displayingAuthDialog = false;
       if (result && result?.id) {
         this.showNotification(
           'snackbar-danger',
-          'Quick Registration Complete.',
+          (result?.isNewUser) ? 'Quick Registration Complete.' : 'Welcome back '+(result?.firstName),
           'bottom',
           'center'
         );
