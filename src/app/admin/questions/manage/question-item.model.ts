@@ -9,7 +9,7 @@ export class QuestionItem {
   questionType: QuestionType;
   subjectId : number;
   subjectName : string;
-  level : string;
+  level : number;
   status: string;
   marks : number;
   orderId : number;
@@ -26,7 +26,7 @@ export class QuestionItem {
     this.questionType = question.questionType || QuestionType.General;
     this.subjectId = question.subjectId || 0;
     this.subjectName = question.subjectName || '';
-    this.level = question.level || 'Easy';
+    this.level = question.level || 1;
     this.status = question.status || Status.Pending;
     this.marks = question.marks || 1;
     this.orderId = question.orderId || 1;

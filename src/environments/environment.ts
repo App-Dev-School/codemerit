@@ -4,8 +4,8 @@
 export const environment = {
   production: false,
   appUrl: "https://appdevops.in",
-  apiUrl: "http://localhost:3000/",
-  //apiUrl: "https://apis.appdevops.in/",
+  //apiUrl: "http://localhost:3000/",
+  apiUrl: "https://apis.appdevops.in/",
   //apiUrl: "https://apis.codemerit.in/",
   uploadsUrl: "http://apis.appdevops.in/uploads/",
   stripe: {

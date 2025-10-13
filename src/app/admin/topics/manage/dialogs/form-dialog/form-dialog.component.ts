@@ -39,7 +39,6 @@ export interface DialogData {
   imports: [
     MatButtonModule,
     MatIconModule,
-    MatDialogContent,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -88,6 +87,7 @@ export class TopicFormComponent {
         description: data.topicItem.description,
         label: data.topicItem.label,
         subjectId: '' + data.topicItem.subjectId,
+        goal: '' + data.topicItem.goal,
         order: data.topicItem.order,
         weight: data.topicItem.weight,
         popularity: data.topicItem.popularity,
@@ -127,6 +127,7 @@ export class TopicFormComponent {
         Validators.max(999)
       ]],
       description: [this.topicItems.description],
+      goal: [this.topicItems.goal],
       isPublished: [true],
       hideOtherFields: [true]
     });
@@ -177,9 +178,11 @@ export class TopicFormComponent {
           order: formData.order,
           parent: formData.parent !== "" ? formData.parent : null,
           weight : formData.weight,
+          label : formData.label,
           popularity : formData.popularity,
           isPublished: formData.isPublished,
-          description: formData.description
+          description: formData.description,
+          goal: formData.goal
         }
         this.topicService
           .addTopic(payload)
