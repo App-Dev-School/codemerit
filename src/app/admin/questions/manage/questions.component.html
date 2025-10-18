@@ -73,7 +73,15 @@
                     @if (column.def == 'question') {
                     <div class="full-text">{{ row.id }}. {{ row[column.def] }}</div>
                     }@else {
+                    @if (column.def == 'subject') {
+                    <div class="full-text">{{ row[column.def]?.title }}</div>
+                    }@else {
+                    @if (column.def == 'topics') {
+                    <div class="full-text">{{ row[column.def][0]?.title }}</div>
+                    }@else {
                     <span class="truncate-text">{{ row[column.def] }}</span>
+                    }
+                    }
                     }
 
                     <!-- <span class="truncate-text">

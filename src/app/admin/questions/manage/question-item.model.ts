@@ -30,7 +30,7 @@ export class QuestionItem {
     this.status = question.status || Status.Pending;
     this.marks = question.marks || 1;
     this.orderId = question.orderId || 1;
-    this.timeAllowed = question.timeAllowed || 60;
+    this.timeAllowed = question.timeAllowed || 30;
     this.hint = question.hint || '';
     this.answer = question.answer || '';
     this.slug = question.slug || '';
