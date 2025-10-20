@@ -27,7 +27,8 @@ import { SnackbarService } from '@core/service/snackbar.service';
     MatIconModule,
     LearnerWelcomeCardComponent,
     CongratulationsCardComponent,
-    ReportListComponent, MedalCardComponent],
+    ReportListComponent, 
+    MedalCardComponent],
   //  animations: [
   //     trigger('fadeOut', [
   //       transition(':leave', [

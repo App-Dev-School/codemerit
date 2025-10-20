@@ -23,11 +23,12 @@
 @if(requestConfirmed && loading){
 <div class="form-section">
   <div class="text-center">
-    @if (finished) {
+    <!-- @if (finished) {
     <img [src]="'assets/images/icons/evaluating.gif'" class="image-pulse largerLoadingIcon m-b-20">
     }@else {
     <img [src]="'assets/images/icons/hinting.gif'" class="image-pulse largerLoadingIcon m-b-20">
-    }
+    } -->
+    <img [src]="'assets/images/icons/hinting.gif'" class="image-pulse largerLoadingIcon m-b-20">
     <div class="content">
       <h2 class="glow-text">{{ currentMessage }}</h2>
     </div>
@@ -49,16 +50,16 @@
       <p class="font-12 text-center">{{data?.message}}</p>
       }
       <!-- <h6 class="social-login-title">Configure Your Assessment</h6> -->
-       <p class="font-14 m-b-0">Select your preference to generate an assessment.</p>
+      <p class="font-14 m-b-0">Select your preference to generate an assessment.</p>
       <!-- <div class="text-center">
         <img src="assets/images/icons/creatingQuiz.gif" alt="codemerit" class="largerLoadingIcon animEntry" />
       </div> -->
-       <hr class="dim-divider">
+      <hr class="dim-divider">
     </div>
 
     <form class="validate-form" [formGroup]="quizConfigForm" (ngSubmit)="onSubmit()">
       @if (authData && authData.role === 'Admin') {
-<div class="row">
+      <div class="row">
         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Number of Questions</mat-label>

@@ -58,7 +58,6 @@
     <div class="row clearfix">
       @for (engage of engagements; track engage) {
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-
         <mat-card>
           <mat-card-header>
             <div class="header-flex">
@@ -68,7 +67,6 @@
                 <img src="{{engage.imageUrl}}" class="subject-icon" />
               </ng-container>
               }
-
               <div class="title-block">
                 <mat-card-title class="mat-card-title m-b-0">{{ engage.subject }}</mat-card-title>
                 <mat-card-subtitle class="mat-card-subtitle col-grey m-t-0">{{ engage.topic }}</mat-card-subtitle>
@@ -100,8 +98,6 @@
             </div>
           </mat-card-actions>
         </mat-card>
-
-
       </div>
       }
     </div>

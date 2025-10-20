@@ -63,15 +63,15 @@ export class QuizCreateComponent implements OnInit {
   levels = [
     {
       name: "Basic",
-      value: 0
-    },
-    {
-      name: "Intermediate",
       value: 1
     },
     {
-      name: "Advanced",
+      name: "Intermediate",
       value: 2
+    },
+    {
+      name: "Advanced",
+      value: 3
     }
   ];
 
@@ -102,7 +102,6 @@ export class QuizCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("QuizCreate ngOnInit", this.data);
     this.authData = this.authService.currentUserValue;
     this.requestConfirmed = false;
     const quizConfig = this.quizService.getQuizConfig();
@@ -119,10 +118,8 @@ export class QuizCreateComponent implements OnInit {
 
   onSubmit() {
     if (this.quizConfigForm.invalid) {
-      //this.submitted = false;
       return;
     } else {
-
       const payload = new QuizConfig();
       payload.mode = this.quizConfigForm.get('mode')?.value;
       payload.numQuestions = this.quizConfigForm.get('numQuestions')?.value;
@@ -152,10 +149,10 @@ export class QuizCreateComponent implements OnInit {
       } else {
         clearInterval(interval);
         this.finished = true;
-        this.currentMessage = "Saving Your Quiz";
+        this.currentMessage = "Almost Done!";
         this.onFinish();
       }
-    }, 2000);
+    }, 1800);
   }
 
   onFinish() {
@@ -163,7 +160,7 @@ export class QuizCreateComponent implements OnInit {
     if(this.generatedQuizCode){
       setTimeout(() => {
         this.launchQuiz();
-      }, 2000);
+      }, 1400);
     }
   }
 
@@ -194,13 +191,13 @@ export class QuizCreateComponent implements OnInit {
                 this.generatedQuizCode = slug;
                 //this.launchQuiz(this.generatedQuizCode);
                 this.loading = false;
-              }, 8000);
+              }, 6000);
             }
           } else {
             this.loading = false;
-            //#Task: handle error well. Determine eligibilty etc
+            //#Task: handle error well. Determine eligibilty etc.
             this.requestConfirmed = false;
-            this.snackService.display('snackbar-dark', 'Please try again later.'+response, 'bottom', 'center');
+            this.snackService.display('snackbar-dark', response?.message ?? 'Please try again later.', 'bottom', 'center');
           }
         },
         error: (error) => {
