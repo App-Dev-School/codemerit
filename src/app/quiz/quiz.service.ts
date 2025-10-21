@@ -67,7 +67,7 @@ export class QuizService {
     );
   }
 
-  addQuiz(item: QuizCreateModel): Observable<QuizEntity> {
+  addQuiz(item: QuizCreateModel): Observable<CreateQuizResponse> {
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
@@ -79,7 +79,7 @@ export class QuizService {
         if(response && response?.data){
         this.currentQuiz = response?.data;
         this.setCurrentQuiz(this.currentQuiz);
-        return response?.data;
+        return response;
         }
         return null;
       }),

@@ -174,5 +174,4 @@ enrollSubjects(subjectIds: number[]): Observable<any> {
       map((data: any) => data as Subject[])
     );
   }
-
 }

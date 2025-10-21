@@ -165,6 +165,6 @@ export class WizardComponent {
              skillRatings: []
     }
     console.log(assessment);
-    alert(assessment);
+    alert(JSON.stringify(assessment));
   }
 }
