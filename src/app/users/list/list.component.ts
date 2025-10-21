@@ -2,6 +2,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { CommonModule, DatePipe, formatDate, NgClass } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
@@ -36,7 +37,7 @@ import { rowsAnimation, TableExportUtil } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
-import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, fromEvent, map, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-list-users',
@@ -71,7 +72,7 @@ import { Subject } from 'rxjs';
     TableShowHideColumnComponent,
   ],
 })
-export class ListUserComponent implements OnInit, OnDestroy {
+export class ListUserComponent implements OnInit, AfterViewInit, OnDestroy {
   columnDefinitions = [
     { def: 'name', label: 'Name', type: 'text', visible: true },
     { def: 'country', label: 'Country', type: 'address', visible: true },
@@ -111,6 +112,18 @@ export class ListUserComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
+  ngAfterViewInit() {
+    fromEvent(this.filter.nativeElement, 'input')
+      .pipe(
+        map((event: any) => event.target.value.trim().toLowerCase()),
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe((value) => {
+        this.dataSource.filter = value;
+      });
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -133,10 +146,21 @@ export class ListUserComponent implements OnInit, OnDestroy {
         this.dataSource.data = users;
 
         this.dataSource.filterPredicate = (data: User, filter: string): boolean => {
-          const dataStr = Object.values(data)
-            .map((val) => (val ? val.toString().toLowerCase() : ''))
-            .join(' ');
-          return dataStr.includes(filter);
+          const searchStr = (
+            (data.firstName || '') +
+            ' ' +
+            (data.lastName || '') +
+            ' ' +
+            (data.email || '') +
+            ' ' +
+            (data.country || '') +
+            ' ' +
+            (data.designation || '')
+          )
+            .toLowerCase()
+            .trim();
+
+          return searchStr.includes(filter);
         };
 
         this.isLoading = false;
