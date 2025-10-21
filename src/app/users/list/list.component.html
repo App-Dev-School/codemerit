@@ -15,8 +15,8 @@
                 </li>
                 <li class="tbl-search-box">
                   <label for="search-input"><i class="material-icons search-icon">search</i></label>
-                  <input id="search-input" placeholder="Search" type="text" #filter 
-                    class="browser-default search-field" aria-label="Search box">
+                  <input id="search-input" placeholder="Find users" type="text" #filter 
+                    class="browser-default search-field" aria-label="Search box" (keyup)="applyFilter($event)">
                 </li>
               </ul>
             </div>

@@ -106,7 +106,7 @@ export class ListUserComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       this.eventDetails = params;
     });
-    
+
     //this.loadData(this.eventDetails.start);
     this.loadData();
   }
@@ -126,44 +126,21 @@ export class ListUserComponent implements OnInit, OnDestroy {
       .map((cd) => cd.def);
   }
 
-  loadData(filterDate?: string) {
-    //process to get only value
+  loadData() {
     this.authService.getAllUsers().subscribe({
       next: (data) => {
-        const users = data.data;
-        console.log("NgListUser loadData", users);
-        const filteredData = users;
-        if (filterDate) {
-          // Filter data based on the selected date
-          const filteredData = data.filter((appointment) => {
-            const appointmentDate = formatDate(
-              new Date(appointment.date),
-              'yyyy-MM-dd',
-              'en'
-            );
-            const selectedDate = formatDate(
-              new Date(filterDate),
-              'yyyy-MM-dd',
-              'en'
-            );
-            return appointmentDate === selectedDate; // Match by date
-          });
-          this.dataSource.data = filteredData;
-          console.log("NgListUser filteredData", filteredData);
+        const users = data.data || [];
+        this.dataSource.data = users;
 
-        } else {
-          // If no filter date, load all data
-          this.dataSource.data = users;
-          console.log("NgListUser NO filteredData", data);
-        }
+        this.dataSource.filterPredicate = (data: User, filter: string): boolean => {
+          const dataStr = Object.values(data)
+            .map((val) => (val ? val.toString().toLowerCase() : ''))
+            .join(' ');
+          return dataStr.includes(filter);
+        };
 
         this.isLoading = false;
         this.refreshTable();
-
-        this.dataSource.filterPredicate = (data: User, filter: string) =>
-          Object.values(data).some((value) =>
-            value.toString().toLowerCase().includes(filter)
-          );
       },
       error: (err) => console.error(err),
     });
@@ -176,11 +153,9 @@ export class ListUserComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(event: Event) {
-    console.log('applyFilter', event);
     const filterValue = (event.target as HTMLInputElement).value
       .trim()
       .toLowerCase();
-    console.log('applyFilter filterValue', filterValue);  
     this.dataSource.filter = filterValue;
   }
 
@@ -197,31 +172,31 @@ export class ListUserComponent implements OnInit, OnDestroy {
     });
   }
 
-    editUser(row: User) {
-      this.router.navigate(['/users/edit', row.username]).then(() => {
+  editUser(row: User) {
+    this.router.navigate(['/users/edit', row.username]).then(() => {
       console.log('Navigation edit user completed!');
     });
-    }
+  }
 
-    deleteUser(row: User) {
-        // const dialogRef = this.dialog.open(TopicDeleteComponent, {
-        //   data: row,
-        // });
-        // dialogRef.afterClosed().subscribe((result) => {
-        //   if (result) {
-        //     this.dataSource.data = this.dataSource.data.filter(
-        //       (record) => record.id !== row.id
-        //     );
-        //     this.refreshTable();
-        //     this.showNotification(
-        //       'snackbar-danger',
-        //       row.title+' deleted Successfully.',
-        //       'bottom',
-        //       'center'
-        //     );
-        //   }
-        // });
-      }
+  deleteUser(row: User) {
+    // const dialogRef = this.dialog.open(TopicDeleteComponent, {
+    //   data: row,
+    // });
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   if (result) {
+    //     this.dataSource.data = this.dataSource.data.filter(
+    //       (record) => record.id !== row.id
+    //     );
+    //     this.refreshTable();
+    //     this.showNotification(
+    //       'snackbar-danger',
+    //       row.title+' deleted Successfully.',
+    //       'bottom',
+    //       'center'
+    //     );
+    //   }
+    // });
+  }
 
   exportExcel() {
     const exportData = this.dataSource.filteredData.map((x) => ({
