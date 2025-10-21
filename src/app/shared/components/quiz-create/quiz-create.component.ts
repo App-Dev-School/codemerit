@@ -184,8 +184,8 @@ export class QuizCreateComponent implements OnInit {
       .addQuiz(payload)
       .subscribe({
         next: (response) => {
-          if (response && response?.slug) {
-            const slug = response?.slug;
+          if (response && !response.error && response?.data?.slug) {
+            const slug = response?.data?.slug;
             if (slug && slug !== '') {
               setTimeout(() => {
                 this.generatedQuizCode = slug;
@@ -197,7 +197,7 @@ export class QuizCreateComponent implements OnInit {
             this.loading = false;
             //#Task: handle error well. Determine eligibilty etc.
             this.requestConfirmed = false;
-            this.snackService.display('snackbar-dark', response?.message ?? 'Please try again later.', 'bottom', 'center');
+            this.snackService.display('snackbar-dark', response?.message ?? 'Failed to process your Quiz request. Please try again later.', 'bottom', 'center');
           }
         },
         error: (error) => {

@@ -220,7 +220,9 @@ export class QuestionFormPage implements OnInit {
           .updateQuestion(changedFields, formData.id)
           .subscribe({
             next: (response) => {
-              console.log('QuestionManager UpdateAPI response:', response);
+              if(response?.message){
+                this.snackService.display('snackbar-dark', response?.message, 'bottom', 'center');
+              }
               this.submitted = false;
               this.navigateToQuestionList(response);
             },
@@ -256,11 +258,15 @@ export class QuestionFormPage implements OnInit {
             next: (response) => {
               console.log('QuestionManager CreateAPI response:', response);
               this.submitted = false;
+               if(response?.message){
+                this.snackService.display('snackbar-dark', response?.message, 'bottom', 'center');
+              }
               this.navigateToQuestionList(response);
             },
             error: (error) => {
               this.submitted = false;
               console.error('QuestionManager CreateAPI Error:', error);
+              this.snackService.display('snackbar-dark', "Error adding question. Please try again.", 'bottom', 'center');
             },
           });
       }
