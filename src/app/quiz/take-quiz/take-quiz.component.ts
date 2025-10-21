@@ -74,6 +74,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   // -- Question Timer Variables
   questionTimeLeft: number = 0;
   questionTimerInterval: any;
+  allowOptionClick = false;
 
   constructor(private authService: AuthService,
     private route: ActivatedRoute,
@@ -120,6 +121,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         //set that time as the quiz time
         if (this.questions.length) {
           this.startQuestionTimer(this.questions[0]);
+          this.disableOptionClickTemporarily();
         }
         setTimeout(() => {
           this.loading = false;
@@ -159,8 +161,15 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   /** Record selected answer */
   optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
-    this.authService.log('Quiz optionSelected', choice, question);
     if (!question.hasAnswered) {
+      if (!this.allowOptionClick) {
+        this.snackBar.open('Please read the question before answering.', '', {
+          duration: 1500,
+          panelClass: ['snackbar-warning']
+        });
+        return;
+      }
+
       this.onSelectionPhase = true;
       question.selectedOption = choice;
       question.hasAnswered = true;
@@ -193,6 +202,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.currentQuestionId < this.questions.length - 1) {
       this.swiperEx.nativeElement.swiper.slideNext();
       this.updateCurrentIndex();
+      this.disableOptionClickTemporarily();
       this.startQuestionTimer(this.questions[this.currentQuestionId]);
       if (this.quizConfig.enableAudio)
         this.quizHelper.playSound('click');
@@ -211,11 +221,19 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.currentQuestionId > 0) {
       this.swiperEx.nativeElement.swiper.slidePrev();
       this.updateCurrentIndex();
-      //Not sure the impact of code below. Please justify
+      this.disableOptionClickTemporarily();
       this.startQuestionTimer(this.questions[this.currentQuestionId]);
       //clear any previous scheduled task
       clearTimeout(this.scheduledAutoNext);
     }
+  }
+
+  private disableOptionClickTemporarily(): void {
+    this.allowOptionClick = false;
+    // Allow clicking only after 5 seconds
+    setTimeout(() => {
+      this.allowOptionClick = true;
+    }, 5000);
   }
 
   showHint(): void {
@@ -339,7 +357,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       if (result && result?.id) {
         this.showNotification(
           'snackbar-danger',
-          (result?.isNewUser) ? 'Quick Registration Complete.' : 'Welcome back '+(result?.firstName),
+          (result?.isNewUser) ? 'Quick Registration Complete.' : 'Welcome back ' + (result?.firstName),
           'bottom',
           'center'
         );

@@ -121,7 +121,7 @@
          'selected': question.selectedOption === choice.id,
          'correct': quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && choice.correct,
          'wrong': quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && !choice.correct
-       }">
+       }" [disabled]="!allowOptionClick">
                     <div class="d-flex justify-content-between align-items-center">
                       <span>{{ choice.option }}</span>
 
