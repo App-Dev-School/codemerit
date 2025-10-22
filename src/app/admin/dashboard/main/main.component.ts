@@ -12,6 +12,7 @@ import { InitialRole } from '@core/models/initial-role.data';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { AdminDashboardData } from '../../dtos/admin-dashboard.model';
+import { TimeseriesChartComponent } from '@shared/components/timeseries-chart/timeseries-chart.component';
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -24,6 +25,7 @@ import { AdminDashboardData } from '../../dtos/admin-dashboard.model';
     MatSelectModule,
     MatMenuModule,
     MatIconModule,
+    TimeseriesChartComponent
   ]
 })
 export class MainComponent implements OnInit {
