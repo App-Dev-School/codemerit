@@ -1,8 +1,6 @@
 <section class="content">
   <div class="content-block">
-    <div class="block-header">
-      <!-- breadcrumb -->
-      <app-breadcrumb [title]="'Dashboad'" [items]="[]" [active_item]="'Dashboad'"></app-breadcrumb>
+    <div class="block-header m-t-20">
     </div>
 
     <div class="row clearfix">
@@ -10,22 +8,22 @@
         <mat-card class="hoverCard">
           <mat-card-content>
             <div class="text-center">
-              <p class="banner-big-font">521</p>
+              <p class="banner-big-font">{{ dashboard.attempts.total}}</p>
               <h4 class="banner-big-font2 col-blue">Total Attempts</h4>
             </div>
             <hr class="dim-divider">
             <div class="row">
               <div class="col-4">
                 <label class="font-b-500 font-16">Correct</label>
-                <p>437</p>
+                <p>{{ dashboard.attempts.totalCorrect}}</p>
               </div>
               <div class="col-4">
                 <label class="font-b-500 font-16">Wrong</label>
-                <p>97</p>
+                <p>{{ dashboard.attempts.totalWrong}}</p>
               </div>
               <div class="col-4">
                 <label class="font-b-500 font-16">Skipped</label>
-                <p>17</p>
+                <p>{{ dashboard.attempts.totalSkipped}}</p>
               </div>
             </div>
             <div class="progress shadow-style">
@@ -33,6 +31,7 @@
                 [attr.aria-valuenow]="87" aria-valuemin="0" aria-valuemax="100">
                 87% Avg Score
               </div>
+              <p>{{ dashboard.attempts.distinctUsers }} users involved.</p>
             </div>
             <div class="text-center p-t-20 p-b-5">
               <button mat-stroked-button color="primary" (click)="viewAttempts()">View Report</button>
@@ -47,22 +46,22 @@
         <mat-card class="hoverCard">
           <mat-card-content>
             <div class="text-center">
-              <p class="banner-big-font">41</p>
-              <h4 class="banner-big-font2 col-green">Total Questions</h4>
+              <p class="banner-big-font">{{ dashboard.questions.totalTriviaActive}}</p>
+              <h4 class="banner-big-font2 col-green">Active Trivia</h4>
             </div>
             <hr class="dim-divider">
             <div class="row">
               <div class="col-4">
-                <label class="font-b-500 font-16">Trivia</label>
-                <p>32</p>
-              </div>
-              <div class="col-4">
-                <label class="font-b-500 font-16">General</label>
-                <p>9</p>
+                <label class="font-b-500 font-16">Total</label>
+                <p>{{ dashboard.questions.totalTrivia}}</p>
               </div>
               <div class="col-4">
                 <label class="font-b-500 font-16">Pending</label>
-                <p>7</p>
+                <p>{{ dashboard.questions.totalTriviaPending}}</p>
+              </div>
+               <div class="col-4">
+                <label class="font-b-500 font-16">Other</label>
+                <p>{{ dashboard.questions.totalGeneral}}</p>
               </div>
             </div>
             <div class="progress shadow-style">
@@ -84,30 +83,30 @@
         <mat-card class="hoverCard">
           <mat-card-content>
             <div class="text-center">
-              <p class="banner-big-font">25</p>
-              <h4 class="banner-big-font2 col-green">Total Topics</h4>
+              <p class="banner-big-font">{{ dashboard.topics.totalActive}}</p>
+              <h4 class="banner-big-font2 col-green">Active Topics</h4>
             </div>
             <hr class="dim-divider">
             <div class="row">
               <div class="col-4">
-                <label class="font-b-500 font-16">Main</label>
-                <p>22</p>
-              </div>
-              <div class="col-4">
-                <label class="font-b-500 font-16">Sub-Topics</label>
-                <p>3</p>
+                <label class="font-b-500 font-16">Total</label>
+                <p>{{ dashboard.topics.total}}</p>
               </div>
               <div class="col-4">
                 <label class="font-b-500 font-16">Pending</label>
-                <p>0</p>
+                <p>{{ dashboard.topics.totalPending}}</p>
+              </div>
+              <div class="col-4">
+                <label class="font-b-500 font-16">Subjects</label>
+                <p>{{ dashboard.subjects.totalActive}}</p>
               </div>
             </div>
-            <div class="progress shadow-style">
+            <!-- <div class="progress shadow-style">
               <div class="progress-bar progress-bar-blue" [style.width]="100 + '%'" role="progressbar"
                 [attr.aria-valuenow]="100" aria-valuemin="0" aria-valuemax="100">
                 100% Approved
               </div>
-            </div>
+            </div> -->
             <div class="text-center p-t-20 p-b-5">
               <button mat-stroked-button color="primary" (click)="goToQuestionViewer()">Add New Topic</button>
             </div>
@@ -121,28 +120,28 @@
         <mat-card class="hoverCard">
           <mat-card-content>
             <div class="text-center">
-              <p class="banner-big-font">11</p>
-              <h4 class="banner-big-font2 col-green">Total Users</h4>
+              <p class="banner-big-font">{{ dashboard.users.totalActive}}</p>
+              <h4 class="banner-big-font2 col-green">Active Users</h4>
             </div>
             <hr class="dim-divider">
             <div class="row">
               <div class="col-4">
-                <label class="font-b-500 font-16">Admin</label>
-                <p>2</p>
+                <label class="font-b-500 font-16">Designated</label>
+                <p>{{ dashboard.users.totalWithDesignation}}</p>
               </div>
               <div class="col-4">
-                <label class="font-b-500 font-16">Manager</label>
-                <p>7</p>
+                <label class="font-b-500 font-16">Pending</label>
+                <p>{{ dashboard.users.totalPending}}</p>
               </div>
               <div class="col-4">
-                <label class="font-b-500 font-16">User</label>
-                <p>2</p>
+                <label class="font-b-500 font-16">Total</label>
+                <p>{{ dashboard.users.total}}</p>
               </div>
             </div>
             <div class="progress shadow-style">
               <div class="progress-bar" [style.width]="87 + '%'" [style.backgroundColor]="'#2b982b'" role="progressbar"
                 [attr.aria-valuenow]="87" aria-valuemin="0" aria-valuemax="100">
-                87% Approved
+                87% Active
               </div>
             </div>
             <div class="text-center p-t-20 p-b-5">

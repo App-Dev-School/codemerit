@@ -5,50 +5,74 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
 import { InitialRole } from '@core/models/initial-role.data';
+import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
+import { AdminDashboardData } from '../../dtos/admin-dashboard.model';
 @Component({
-    selector: 'app-main',
-    templateUrl: './main.component.html',
-    styleUrls: ['./main.component.scss'],
-    imports: [
-        RouterLink,
-        BreadcrumbComponent,
-        MatCardModule,
-        MatButtonModule,
-        MatTableModule,
-        MatSelectModule,
-        MatMenuModule,
-        MatIconModule,
-    ]
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss'],
+  imports: [
+    //RouterLink,
+    MatCardModule,
+    MatButtonModule,
+    MatTableModule,
+    MatSelectModule,
+    MatMenuModule,
+    MatIconModule,
+  ]
 })
 export class MainComponent implements OnInit {
   selectedTimePeriod: string = 'Monthly';
-  public initialRoles : InitialRole[] = AuthConstants.CURRENT_ROLE_OPTIONS;
-
-  subject= "";
+  public initialRoles: InitialRole[] = AuthConstants.CURRENT_ROLE_OPTIONS;
+  dashboard: AdminDashboardData;
+  subject = "";
   title = 'LMS Stat';
   subtitle = 'LSMS Resource Overview';
-  
-  constructor(private route: ActivatedRoute, 
+  loading = true;
+
+  constructor(private route: ActivatedRoute,
     private authService: AuthService,
+    private masterService: MasterService,
     private router: Router,
     private snackService: SnackbarService) {
     console.log("MainComponent constructor", this.subject);
   }
-  
+
   ngOnInit() {
     this.takeRouteParams();
+    this.loadAdminDashboard();
+  }
+
+  loadAdminDashboard() {
+    this.masterService.getAdminDashboard()
+      .subscribe({
+        next: (response) => {
+          console.log('response:', response);
+          //this.submitted = false;
+          if (response && !response.error) {
+            this.dashboard = response?.data;
+          } else {
+            this.loading = false;
+            this.snackService.display('snackbar-dark', response?.message ?? "Error fetching dashboard.", 'bottom', 'center');
+          }
+        },
+        error: (error) => {
+          this.loading = false;
+          this.snackService.display('snackbar-dark', 'Error enrolling subject. Please try again.', 'bottom', 'center');
+          console.error('Enroll Subject API Error:', error);
+        },
+      });
   }
   //Implement for admin
   takeRouteParams() {
     const subject = this.route.snapshot.paramMap.get('subject');
     console.log("MainComponent ParamMap subject", subject);
-    
+
     /********** CHECK ROUTE PARAM REQUESTS ***********/
     this.route.paramMap.subscribe(params => {
       if (params.get("subject")) {
@@ -61,31 +85,31 @@ export class MainComponent implements OnInit {
     /********* CHECK ROUTE PARAM REQUESTS ***********/
   }
 
-  goToQuestions(){
+  goToQuestions() {
     this.router.navigate(['/admin/questions/list']);
   }
 
-    goToQuestionViewer(){
+  goToQuestionViewer() {
     this.router.navigate(['/admin/questions/viewer']);
   }
 
-  goToTopicManager(){
+  goToTopicManager() {
     this.router.navigate(['/admin/topics/list']);
   }
 
-  goToUsers(){
+  goToUsers() {
     this.router.navigate(['/users/list']);
   }
 
-    addNewUser(){
+  addNewUser() {
     this.router.navigate(['/users/create']);
   }
 
-  manageLearning(){
+  manageLearning() {
     this.router.navigate(['/']);
   }
 
-  viewAttempts(){
+  viewAttempts() {
     this.router.navigate(['/app/subscription']);
   }
 }

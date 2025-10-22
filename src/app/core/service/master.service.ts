@@ -7,6 +7,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { HttpService } from './http.service';
+import { AdminDashboardResponse } from 'src/app/admin/dtos/admin-dashboard.model';
 
 export interface MasterData {
   subjects: any[];
@@ -62,9 +63,9 @@ export class MasterService {
     );
   }
 
-    fetchSubjectDashboard(slug: string) {
+  fetchSubjectDashboard(slug: string) {
     console.log("CourseDash fetchSubjectDashboard()", slug);
-    return this.httpService.get('apis/master/subjectDashboard?slug='+slug, this.authService.currentUserValue?.token).pipe(
+    return this.httpService.get('apis/master/subjectDashboard?slug=' + slug, this.authService.currentUserValue?.token).pipe(
       tap((res: { error: boolean, message: string, data: MasterData }) => {
         console.log('CourseDash master subjectDashboard API response=>', res);
         if (!res.error) {
@@ -86,75 +87,76 @@ export class MasterService {
     this.data = { subjects: [], topics: [], jobRoles: [] };
     localStorage.removeItem(this.storageKey);
     this.dataLoaded.next(false);
+    alert("Local data cleared!");
   }
 
   //Not needed then clean
   fetchJobRoleSubjectMapping(): Observable<Course[]> {
-  console.log('MasterDataFlow Invoking JobMap API');
+    console.log('MasterDataFlow Invoking JobMap API');
 
-  return this.httpService
-    .get('apis/master/jobRoles', this.authService.currentUserValue?.token)
-    .pipe(
-      map((res: { error: boolean; message: string; data: Course[] }) => {
-        if (!res.error) {
-          console.log('MasterDataFlow JobMap API SUCCESS>>>', res.data);
-          this.setJobRoleMap(res.data);
-          return res.data; // ✅ make sure to return it
-        }
-        return []; // ✅ fallback return to satisfy type
-      }),
-      catchError((err) => {
-        console.error('MasterDataFlow Failed to fetch job map', err);
-        return of([]); // ✅ return empty array instead of null
-      })
-    );
-}
-
-fetchCourseDashboard(): Observable<any> {
-  console.log('Calling fetchCourseDashboard API');
-  return this.httpService
-    .get('apis/master/myJobDashboard', this.authService.currentUserValue?.token)
-    .pipe(
-      map((res: { error: boolean; message: string; data: any }) => {
-        if (!res.error) {
-          console.log('CourseAPI success', res.data);
-          //this.setJobRoleMap(res.data);
-          return res.data; // make sure to return it
-        }
-        return {}; // fallback return to satisfy type
-      }),
-      catchError((err) => {
-        console.error('CourseAPI Failed :', err);
-        return of({}); // return empty array instead of null
-      })
-    );
-}
-
-enrollSubjects(subjectIds: number[]): Observable<any> {
-  const payload = {
-    subjectIds: subjectIds
+    return this.httpService
+      .get('apis/master/jobRoles', this.authService.currentUserValue?.token)
+      .pipe(
+        map((res: { error: boolean; message: string; data: Course[] }) => {
+          if (!res.error) {
+            console.log('MasterDataFlow JobMap API SUCCESS>>>', res.data);
+            this.setJobRoleMap(res.data);
+            return res.data; // ✅ make sure to return it
+          }
+          return []; // ✅ fallback return to satisfy type
+        }),
+        catchError((err) => {
+          console.error('MasterDataFlow Failed to fetch job map', err);
+          return of([]); // ✅ return empty array instead of null
+        })
+      );
   }
-  console.log('Calling enrollSubjects API', payload);
-  return this.httpService
-    .postData('apis/master/userSubjects', payload,this.authService.currentUserValue?.token)
-    .pipe(
-      map((res: { error: boolean; message: string; data: any }) => {
-        if (!res.error) {
-          console.log('MasterDataFlow JobMap API SUCCESS>>>', res.data);
-          //this.setJobRoleMap(res.data);
-          //return res.data;
-          return res;
-        }
-        return {};
-      }),
-      catchError((err) => {
-        console.error('enrollSubjects Failed', err);
-        return of({});
-      })
-    );
-}
 
-//Delete this as unused
+  fetchCourseDashboard(): Observable<any> {
+    console.log('Calling fetchCourseDashboard API');
+    return this.httpService
+      .get('apis/master/myJobDashboard', this.authService.currentUserValue?.token)
+      .pipe(
+        map((res: { error: boolean; message: string; data: any }) => {
+          if (!res.error) {
+            console.log('CourseAPI success', res.data);
+            //this.setJobRoleMap(res.data);
+            return res.data; // make sure to return it
+          }
+          return {}; // fallback return to satisfy type
+        }),
+        catchError((err) => {
+          console.error('CourseAPI Failed :', err);
+          return of({}); // return empty array instead of null
+        })
+      );
+  }
+
+  enrollSubjects(subjectIds: number[]): Observable<any> {
+    const payload = {
+      subjectIds: subjectIds
+    }
+    console.log('Calling enrollSubjects API', payload);
+    return this.httpService
+      .postData('apis/master/userSubjects', payload, this.authService.currentUserValue?.token)
+      .pipe(
+        map((res: { error: boolean; message: string; data: any }) => {
+          if (!res.error) {
+            console.log('MasterDataFlow JobMap API SUCCESS>>>', res.data);
+            //this.setJobRoleMap(res.data);
+            //return res.data;
+            return res;
+          }
+          return {};
+        }),
+        catchError((err) => {
+          console.error('enrollSubjects Failed', err);
+          return of({});
+        })
+      );
+  }
+
+  //Delete this as unused
   getJobRoleMap() {
     return this.jobRoleSubjectMap;
   }
@@ -172,6 +174,23 @@ enrollSubjects(subjectIds: number[]): Observable<any> {
   getMockDataSubjects(): Observable<Subject[]> {
     return this.httpService.getLocalMock('assets/data/master/subjects.json').pipe(
       map((data: any) => data as Subject[])
+    );
+  }
+
+  getMockAdminDashboard(): Observable<any> {
+    return this.httpService.getLocalMock('assets/data/master/adminDash.json').pipe(
+      map((data: any) => data as any)
+    );
+  }
+
+  getAdminDashboard(): Observable<AdminDashboardResponse> {
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/admin/dashboard';
+    return this.httpService.get(url, api_key).pipe(
+      map((res: any) => res as AdminDashboardResponse)
     );
   }
 }
