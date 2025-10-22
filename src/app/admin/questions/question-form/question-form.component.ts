@@ -90,7 +90,7 @@ export class QuestionFormPage implements OnInit {
       id: ['' + this.questionItem?.id],
       question: [this.questionItem.question, [Validators.required, Validators.minLength(3)]],
       subjectId: ['' + this.questionItem.subjectId, [Validators.required]],
-      level: [''+this.questionItem.level, [Validators.required]],
+      level: ['' + this.questionItem.level, [Validators.required]],
       marks: ['' + this.questionItem.marks],
       orderId: ['' + this.questionItem.orderId],
       timeAllowed: ['' + this.questionItem.timeAllowed, [Validators.required]],
@@ -185,14 +185,17 @@ export class QuestionFormPage implements OnInit {
   }
 
   getTopicTitleById(id: number): string {
-    const topic = this.topics.find(t => t.id === id);
-    return topic ? topic.title : '';
+    if (this.topics.length > 0) {
+      const topic = this.topics.find(t => t.id === id);
+      return topic ? topic.title : '';
+    }
+    return '';
   }
 
-  onCancel(){
+  onCancel() {
     this.questionForm.reset();
-    if(this.data && this.data.questionItem){
-    this.dialogRef.close(null);
+    if (this.data && this.data.questionItem) {
+      this.dialogRef.close(null);
     }
   }
 
@@ -214,13 +217,15 @@ export class QuestionFormPage implements OnInit {
           }
         }
         changedFields['questionType'] = formData.questionType;
+        changedFields['subjectId'] = this.questionItem.subjectId;
+        changedFields['topicIds'] = this.questionItem.topicIds;
         changedFields['source'] = 'app';
         console.log('QuestionManager Changed fields:', changedFields);
         this.questionService
           .updateQuestion(changedFields, formData.id)
           .subscribe({
             next: (response) => {
-              if(response?.message){
+              if (response?.message) {
                 this.snackService.display('snackbar-dark', response?.message, 'bottom', 'center');
               }
               this.submitted = false;
@@ -258,7 +263,7 @@ export class QuestionFormPage implements OnInit {
             next: (response) => {
               console.log('QuestionManager CreateAPI response:', response);
               this.submitted = false;
-               if(response?.message){
+              if (response?.message) {
                 this.snackService.display('snackbar-dark', response?.message, 'bottom', 'center');
               }
               this.navigateToQuestionList(response);
@@ -313,7 +318,7 @@ export class QuestionFormPage implements OnInit {
       id: data.id,
       question: data.question,
       subjectId: '' + data.subjectId,
-      level: ''+data.level,
+      level: '' + data.level,
       marks: '' + data.marks,
       orderId: '' + data.orderId,
       timeAllowed: '' + data.timeAllowed,
@@ -340,10 +345,10 @@ export class QuestionFormPage implements OnInit {
     //console.log("QuestionEditor Patch Topics", data.topicIds);
   }
 
-  navigateToQuestionList(resultData:any) {
-    if(this.data){
+  navigateToQuestionList(resultData: any) {
+    if (this.data) {
       this.dialogRef.close(resultData);
-    }else{
+    } else {
       this.snackService.display('snackbar-dark', (resultData?.message) ?? "Question added.", 'bottom', 'center');
       this.router.navigate(['/admin/questions/list']);
     }
