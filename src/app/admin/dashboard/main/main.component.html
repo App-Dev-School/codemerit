@@ -3,18 +3,32 @@
     <div class="block-header m-t-20">
     </div>
 
+
+    @if (timeframeData) {
     <div class="row">
-      <div class="col">
-        <app-timeseries-chart></app-timeseries-chart>
+      <div class="col text-center">
+      <mat-button-toggle-group class="mt-0 mb-20" [(ngModel)]="currentModule" (change)="onModuleChange($event)"
+      appearance="standard">
+      <mat-button-toggle value="Users">Users</mat-button-toggle>
+      <mat-button-toggle value="Quizzes">Quizzes</mat-button-toggle>
+      <mat-button-toggle value="Attempts">Attempts</mat-button-toggle>
+      <mat-button-toggle value="Questions">Questions</mat-button-toggle>
+    </mat-button-toggle-group>
+        @if (currentModule) {
+          <app-timeseries-chart [timeframe]="timeframeData"></app-timeseries-chart>
+        }
       </div>
     </div>
+    }
 
+    @if (dashboard) {
     <div class="row clearfix">
+      @if (dashboard?.attempts) {
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="hoverCard">
           <mat-card-content>
             <div class="text-center">
-              <p class="banner-big-font">{{ dashboard.attempts.total}}</p>
+              <p class="banner-big-font">{{ (dashboard?.attempts?.total) ?? '0'}}</p>
               <h4 class="banner-big-font2 col-blue">Total Attempts</h4>
             </div>
             <hr class="dim-divider">
@@ -47,7 +61,8 @@
             </div>
           </mat-card-content></mat-card>
       </div>
-
+      }
+      @if (dashboard?.questions) {
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="hoverCard">
           <mat-card-content>
@@ -65,7 +80,7 @@
                 <label class="font-b-500 font-16">Pending</label>
                 <p>{{ dashboard.questions.totalTriviaPending}}</p>
               </div>
-               <div class="col-4">
+              <div class="col-4">
                 <label class="font-b-500 font-16">Other</label>
                 <p>{{ dashboard.questions.totalGeneral}}</p>
               </div>
@@ -84,7 +99,8 @@
             </div>
           </mat-card-content></mat-card>
       </div>
-
+      }
+      @if (dashboard?.topics) {
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="hoverCard">
           <mat-card-content>
@@ -121,7 +137,8 @@
             </div>
           </mat-card-content></mat-card>
       </div>
-
+      }
+      @if (dashboard?.users) {
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="hoverCard">
           <mat-card-content>
@@ -158,6 +175,7 @@
             </div>
           </mat-card-content></mat-card>
       </div>
+      }
 
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <div class="card hoverCard">
@@ -255,6 +273,7 @@
         </div>
       </div>
     </div>
+    }
 
     <!-- <div class="row">
       <div class="col-sm-4 m-t-16">

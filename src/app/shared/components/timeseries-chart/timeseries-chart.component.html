@@ -1,11 +1,11 @@
-<mat-card>
+@if (timeframe) {
+  <mat-card>
           <mat-card-header class="header-menu">
-            <mat-card-title>Time Series Chart</mat-card-title>
+            <mat-card-title>{{timeframe?.title}} Time Series</mat-card-title>
             <mat-form-field appearance="outline" class="header-form-field">
               <mat-select [(value)]="selectedTimePeriod" (selectionChange)="onTimePeriodChange($event)">
                 <mat-option class="header-select-option" value="Daily">Daily</mat-option>
-                <mat-option class="header-select-option" value="Monthly">Monthly</mat-option>
-                <mat-option class="header-select-option" value="Yearly">Yearly</mat-option>
+                <mat-option class="header-select-option" value="Weekly">Weekly</mat-option>
               </mat-select>
             </mat-form-field>
           </mat-card-header>
@@ -18,3 +18,5 @@
               <!-- [stroke]="areaChartOptions.stroke!" -->
           </mat-card-content>
         </mat-card>
+        <p>{{ timeframe | json}}</p>
+}
