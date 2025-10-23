@@ -15,12 +15,14 @@ import { TimeframeData, TimeseriesChartComponent } from '@shared/components/time
 import { AdminDashboardData } from '../../dtos/admin-dashboard.model';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule } from "@angular/forms";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
   imports: [
+    CommonModule,
     MatCardModule,
     MatButtonModule,
     MatButtonToggleModule,

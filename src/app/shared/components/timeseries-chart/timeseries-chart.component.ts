@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,7 +32,6 @@ export type TimeframeData = {
   styleUrls: ['./timeseries-chart.component.css'],
   imports: [
     FormsModule,
-    JsonPipe,
     ReactiveFormsModule,
     NgApexchartsModule,
     MatFormField,
@@ -85,7 +83,7 @@ export class TimeseriesChartComponent implements OnInit, OnChanges {
     ],
     chart: {
       height: 300,
-      type: 'bar',
+      type: 'line', //bar
       toolbar: { show: false },
       foreColor: '#9aa0ac',
     },

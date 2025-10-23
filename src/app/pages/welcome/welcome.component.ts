@@ -9,11 +9,10 @@ import { Router } from '@angular/router';
 import { AuthService, User } from '@core';
 import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
-import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
-import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
-import { ReportListComponent } from '@shared/components/report-list/report-list.component';
-import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 import { SnackbarService } from '@core/service/snackbar.service';
+import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
+import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
+import { ReportListComponent } from '@shared/components/report-list/report-list.component';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -25,7 +24,7 @@ import { SnackbarService } from '@core/service/snackbar.service';
     MatChipsModule,
     MatRippleModule,
     MatIconModule,
-    LearnerWelcomeCardComponent,
+    //LearnerWelcomeCardComponent,
     CongratulationsCardComponent,
     ReportListComponent, 
     MedalCardComponent],

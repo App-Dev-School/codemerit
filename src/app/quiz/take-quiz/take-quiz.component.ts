@@ -163,7 +163,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
     if (!question.hasAnswered) {
       if (!this.allowOptionClick) {
-        this.snackBar.open('Please read the question before answering.', '', {
+        this.snackBar.open('Please read the question before attempting.', '', {
           duration: 1500,
           panelClass: ['snackbar-warning']
         });
@@ -233,7 +233,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     // Allow clicking only after 5 seconds
     setTimeout(() => {
       this.allowOptionClick = true;
-    }, 5000);
+    }, 3000);
   }
 
   showHint(): void {
