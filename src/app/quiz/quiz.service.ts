@@ -225,9 +225,9 @@ export class QuizConfig {
   enableAudio: boolean;
 
   constructor(topic: Partial<QuizConfig> = {}) {
-      this.mode = topic.mode || 'Default'; //Interactive
+      this.mode = topic.mode || 'Interactive'; //Default or Interactive
       this.level = topic.level || 'Basic';
-      this.numQuestions = topic.numQuestions || 8;
+      this.numQuestions = topic.numQuestions || 11;
       this.showHint = topic.showHint || true;
       this.showAnswers = topic.showAnswers || false;
       this.enableNavigation = topic.enableNavigation || false;

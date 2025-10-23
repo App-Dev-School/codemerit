@@ -30,7 +30,7 @@
               role="progressbar" [attr.aria-valuenow]="group.score" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
 
-          <div class="mb-2">
+          <!-- <div class="mb-2">
             <span class="progress-label">Accuracy</span>
             <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{ group.avgAccuracy
               }}%</span>
@@ -38,7 +38,7 @@
           <div class="progress skill-progress m-b-20 w-100">
             <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="group.avgAccuracy + '%'"
               role="progressbar" [attr.aria-valuenow]="group.avgAccuracy" aria-valuemin="0" aria-valuemax="100"></div>
-          </div>
+          </div> -->
 
           <!-- <hr class="dim-divider"> -->
           <div class="mb-2">
@@ -50,6 +50,22 @@
             <div class="progress-bar" [ngClass]="'bg-dark'" [style.width]="group.coverage + '%'" role="progressbar"
               [attr.aria-valuenow]="group.coverage" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
+          }
+          <hr class="dim-divider">
+          @if (group.numTrivia > 0 && group.myAllAttempts > 0) {
+          <p class="m-b-10 m-t-10 font-12 d-flex align-items-center justify-content-center">
+            ⚡{{ group.avgAccuracy }}% Accuracy&nbsp;
+            @if (group.myAllAttempts >= 5) {
+            <span class="icon-button col-grey font-12">
+               | {{ (group.myUniqueAttempts / group.myAllAttempts)*100 | number:'1.0-0'
+              }}% Unique Attempts &nbsp;</span>
+            }
+          </p>
+          <hr class="dim-divider">
+          }@else {
+          <p class="m-b-10 m-t-10 font-12 d-flex align-items-center justify-content-center">
+            💡Start Skill Assessment
+          </p>
           }
       </mat-card-content>
       @if (group.numTrivia > 0 || group.myAllAttempts > 0) {
@@ -64,14 +80,14 @@
         <button mat-button class="icon-button">
           <mat-icon>quiz</mat-icon>{{ group.numTrivia }}</button>
 
+        @if (group.isCompleted) {
+        <button mat-button class="icon-button">
+          🏆Completed </button>
+        }
+        @else {
         <button mat-button class="icon-button" (click)="onTopicQuiz(group)">
-          🏆 Take Quiz </button>
-
-        <span class="icon-button col-grey font-12">
-          {{ (group.myUniqueAttempts / group.myAllAttempts)*100 | number:'1.0-0'
-          }}% Unique Attempts &nbsp;</span>
-
-
+          💡Take Quiz </button>
+        }
 
         @if (group.numLessons > 0) {
         <button mat-button class="icon-button" matTooltip="{{group.coverage <= 0 ? '' : (group.coverage>= 100
