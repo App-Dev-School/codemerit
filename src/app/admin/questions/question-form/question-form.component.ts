@@ -218,6 +218,7 @@ export class QuestionFormPage implements OnInit {
         }
         changedFields['questionType'] = formData.questionType;
         changedFields['subjectId'] = this.questionItem.subjectId;
+        this.questionItem.topicIds = formData.topicIds;
         changedFields['topicIds'] = this.questionItem.topicIds;
         changedFields['source'] = 'app';
         console.log('QuestionManager Changed fields:', changedFields);
@@ -313,6 +314,7 @@ export class QuestionFormPage implements OnInit {
     let topicIds = [];
     if (data.topics && data.topics.length > 0) {
       topicIds = data.topics.map(topic => topic.id);
+      this.questionItem.topicIds = topicIds;
     }
     this.questionForm.patchValue({
       id: data.id,
