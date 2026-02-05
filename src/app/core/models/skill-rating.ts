@@ -2,27 +2,22 @@ import { RatingType } from "./rating-type"
 import { SkillType } from "./skill-type"
 
 export interface SkillRating {
-    id: number
-    userId: number
-    //base fields
-    skill_id: string
-    skillType: SkillType
-    
-    rating: number
-    //Self Rating: userId same as ratedBy
-    //Quiz : Trivia
-    ratedBy : number
-    ratingType: RatingType
-    createdAt : string
-  }
+  id: number
+  skill_id: string
+  skillType: SkillType
+  rating: number
+  ratingType: RatingType
+  createdAt: string
+  updatedAt?: string
+}
 
-  import { QuestionType } from "./question-type"
-  
-  export interface AssessmentSessionCreateDto {
-      user_id: number
-      ratedBy: number
-      assessmentTitle: string
-      skillRatings: SkillRating[]
-      notes: string
-      ratingType: RatingType
-  }
+export interface SkillRatingSession {
+  id?: number
+  user_id: number        // User being rated
+  ratedBy: number        // User giving the rating
+  assessmentTitle: string
+  skillRatings: SkillRating[]
+  notes: string
+  createdAt: string
+  updatedAt?: string
+}

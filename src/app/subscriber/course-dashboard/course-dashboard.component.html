@@ -20,6 +20,20 @@
   }
   @if (!loading && courseItem) {
   <div class="content-block">
+     <div class="flexContainer">
+     <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
+      @if (courseData && courseData?.length > 0) {
+    @for (item of courseData; track item) {
+    <div class="subjectCard">
+      <app-subject-tracker-card [user]="userData" [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
+        (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
+    </div>
+    }
+    }
+
+
+    </div>
+
     <div class="row m-t-20 match-height clearfix">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
         @if (!userData?.userDesignation?.title) {
@@ -88,8 +102,7 @@
     <hr class="dim-divider">
     <h4 class="text-center font-20 m-t-20 m-b-20"><span class="bold">{{courseItem?.title}} Program</span>
     </h4>
-    <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
-
+    
     <!-- <mat-tab-group mat-align-tabs="start" class="m-t-20">
       <mat-tab label="Initial Assessment">
         <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
@@ -148,7 +161,7 @@
 </ng-template>
 
 <ng-template #courseEnroll>
-  <div class="no-data-container text-center m-t-10 m-b-20">
+  <div class="card no-data-container text-center m-t-10 m-b-20">
     <img src="assets/images/icons/hinting.gif" class="loadingIcon m-t-20" />
     <h6 class="col-grey">Keep Exploring</h6>
     <small>Your timeline, goals and rewards will appear as you progress.</small>
