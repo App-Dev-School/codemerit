@@ -33,4 +33,4 @@ jobs:
           private-ssh-key: ${{ secrets.SSH_PRIVATE }}
           source-path: ./www/
           destination-path:  ${{ secrets.FTP_REMOTE_DIR }}
-          rsync-options:  --archive --verbose --compress --human-readable --progress --exclude=vendor --exclude=node_modules exclude=.github exclude=.vscode exclude=src
+          rsync-options:  --archive --verbose --compress --human-readable --progress --exclude=vendor --exclude=node_modules --exclude=.github --exclude=.vscode --exclude=src
