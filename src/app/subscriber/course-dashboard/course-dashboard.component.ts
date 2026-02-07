@@ -282,4 +282,26 @@ export class CourseDashboardComponent implements OnInit {
     if (subject && subject.slug)
       this.router.navigate(['/dashboard/learn', subject?.slug]);
   }
+
+  /**
+   * Filter subjects that have been attempted (item.attempted > 0)
+   * Used for "In Progress" tab
+   */
+  getAttemptedSubjects(): any[] {
+    if (!this.courseData || this.courseData.length === 0) {
+      return [];
+    }
+    return this.courseData.filter(item => item.attempted && item.attempted > 0);
+  }
+
+  /**
+   * Filter subjects that have not been attempted (item.attempted === 0 or undefined)
+   * Used for "To Start" tab
+   */
+  getNotAttemptedSubjects(): any[] {
+    if (!this.courseData || this.courseData.length === 0) {
+      return [];
+    }
+    return this.courseData.filter(item => !item.attempted || item.attempted === 0);
+  }
 }

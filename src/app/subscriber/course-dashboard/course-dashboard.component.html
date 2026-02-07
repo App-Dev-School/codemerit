@@ -20,20 +20,6 @@
   }
   @if (!loading && courseItem) {
   <div class="content-block">
-     <div class="flexContainer">
-     <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
-      @if (courseData && courseData?.length > 0) {
-    @for (item of courseData; track item) {
-    <div class="subjectCard">
-      <app-subject-tracker-card [user]="userData" [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
-        (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
-    </div>
-    }
-    }
-
-
-    </div>
-
     <div class="row m-t-20 match-height clearfix">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
         @if (!userData?.userDesignation?.title) {
@@ -83,6 +69,7 @@
             </div>
           </div>
         </div>
+        <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
       </div>
       <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
         <ng-container *ngTemplateOutlet="courseSubjectSummary"></ng-container>
@@ -148,19 +135,52 @@
 }
 
 <ng-template #courseSubjectSummary>
-  <div class="row text-center clearfix">
-    @if (courseData && courseData?.length > 0) {
-    @for (item of courseData; track item) {
-    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-      <app-subject-tracker-card [user]="userData" [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
-        (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
-    </div>
-    }
-    }
-  </div>
+  <mat-tab-group mat-align-tabs="start" class="m-t-0">
+      <mat-tab label="In Progress">
+        <div class="row text-center m-t-20 clearfix">
+          @if (getAttemptedSubjects() && getAttemptedSubjects()?.length > 0) {
+          @for (item of getAttemptedSubjects(); track item) {
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+            <app-subject-tracker-card [user]="userData" [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
+              (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
+          </div>
+          }
+          }@else{
+          <div class="col-12 m-t-20">
+            <p class="col-grey">No subjects in progress yet. Start with a subject to get going!</p>
+          </div>
+          }
+        </div>
+      </mat-tab>
+      <mat-tab label="To Start">
+        <div class="row text-center m-t-20 clearfix">
+          @if (getNotAttemptedSubjects() && getNotAttemptedSubjects()?.length > 0) {
+          @for (item of getNotAttemptedSubjects(); track item) {
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+            <app-subject-tracker-card [user]="userData" [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
+              (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
+          </div>
+          }
+          }@else{
+          <div class="col-12 m-t-20">
+            <p class="col-grey">All subjects have been started. Keep up the good work!</p>
+          </div>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
 </ng-template>
 
 <ng-template #courseEnroll>
+  <mat-card>
+          <mat-card-header class="header-style">
+            <mat-card-title>Achievements</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Looks good</p>
+          </mat-card-content>
+        </mat-card>
+
   <div class="card no-data-container text-center m-t-10 m-b-20">
     <img src="assets/images/icons/hinting.gif" class="loadingIcon m-t-20" />
     <h6 class="col-grey">Keep Exploring</h6>

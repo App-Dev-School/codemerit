@@ -15,6 +15,12 @@
   }
 }
 
+// Fix horizontal scrollbar issue in mat-tab-group caused by Bootstrap row negative margins
+::ng-deep .mat-mdc-tab-body-content {
+  overflow: hidden !important;
+  padding: 0 15px;
+}
+
 .congratulation-medal {
   position: absolute;
   top: 0;
