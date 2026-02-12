@@ -1,9 +1,10 @@
-import { CommonModule, JsonPipe, NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,14 +15,14 @@ import { AuthService } from '@core/service/auth.service';
 import { UtilsService } from '@core/service/utils.service';
 import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
 import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
+import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
+import { NgScrollbar } from 'ngx-scrollbar';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
-import { QuizConfig, QuizService } from '../quiz.service';
 import { QuizHelperService } from '../quiz-helper.service';
-import { NgScrollbar } from 'ngx-scrollbar';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { QuizConfig, QuizService } from '../quiz.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -415,4 +416,26 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       default: return '';
     }
   }
+
+  openSettingsDialog() {
+      const dialogRef = this.dialog.open(QuizCreateComponent, {
+      width: '60vw',
+      height: 'auto',
+      minWidth: '345px',
+        data: {
+          editMode: true,
+          title: 'Select your preference',
+          message: ''
+        },
+        hasBackdrop: true,
+        autoFocus: true,
+        disableClose: true
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.quizConfig = this.quizService.getQuizConfig();
+          console.log("QuizPlayer QuizConfig updated", this.quizConfig);
+        }
+      });
+    }
 }

@@ -14,7 +14,12 @@
       <!-- HEADER -->
       @if (!loading && quiz) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
+
         <div class="d-flex align-items-center">
+          <!-- Settings Icon -->
+          <button mat-icon-button (click)="openSettingsDialog()" matTooltip="Settings" style="color: #fff; opacity: 0.8;">
+            <mat-icon>settings</mat-icon>
+          </button>
           @if (quiz.image) {
           <img [src]="quiz.image" alt="icon" class="subject-icon me-2">
           }

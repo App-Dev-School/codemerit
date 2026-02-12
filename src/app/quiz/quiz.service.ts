@@ -13,6 +13,43 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class QuizService {
+    // Storage keys for quiz settings
+    private readonly STORAGE_KEYS = {
+      mode: 'quizMode',
+      showHint: 'enableQuizHint',
+      showAnswers: 'showQuizAnswer',
+      enableNavigation: 'quizNavigator',
+      enableAudio: 'quizAudio',
+      enableTimer: 'quizTimer',
+      numQuestions: 'quizNumQuestions',
+      level: 'quizLevel'
+    };
+
+    // Save quiz config to localStorage
+    saveQuizConfigToStorage(config: QuizConfig) {
+      localStorage.setItem(this.STORAGE_KEYS.mode, config.mode || 'Interactive');
+      localStorage.setItem(this.STORAGE_KEYS.showHint, String(config.showHint));
+      localStorage.setItem(this.STORAGE_KEYS.showAnswers, String(config.showAnswers));
+      localStorage.setItem(this.STORAGE_KEYS.enableNavigation, String(config.enableNavigation));
+      localStorage.setItem(this.STORAGE_KEYS.enableAudio, String(config.enableAudio));
+      localStorage.setItem(this.STORAGE_KEYS.enableTimer, String(config.enableTimer));
+      localStorage.setItem(this.STORAGE_KEYS.numQuestions, String(config.numQuestions));
+      localStorage.setItem(this.STORAGE_KEYS.level, config.level || 'Basic');
+    }
+
+    // Load quiz config from localStorage
+    loadQuizConfigFromStorage(): QuizConfig {
+      const config = new QuizConfig();
+      config.mode = localStorage.getItem(this.STORAGE_KEYS.mode) || 'Interactive';
+      config.showHint = localStorage.getItem(this.STORAGE_KEYS.showHint) === 'true';
+      config.showAnswers = localStorage.getItem(this.STORAGE_KEYS.showAnswers) === 'true';
+      config.enableNavigation = localStorage.getItem(this.STORAGE_KEYS.enableNavigation) === 'true';
+      config.enableAudio = localStorage.getItem(this.STORAGE_KEYS.enableAudio) === 'true';
+      config.enableTimer = localStorage.getItem(this.STORAGE_KEYS.enableTimer) === 'true';
+      config.numQuestions = Number(localStorage.getItem(this.STORAGE_KEYS.numQuestions)) || 8;
+      config.level = localStorage.getItem(this.STORAGE_KEYS.level) || 'Basic';
+      return config;
+    }
   private readonly API_URL = 'assets/data/quizzes/quiz-angular.json';
   dataChange: BehaviorSubject<Quiz[]> = new BehaviorSubject<Quiz[]>([]);
   quizConfig: QuizConfig;
@@ -205,12 +242,12 @@ export class QuizService {
 
   setQuizConfig(quizConfig: QuizConfig) {
     this.quizConfig = quizConfig;
-    console.log("setQuizConfig", quizConfig);
+    this.saveQuizConfigToStorage(quizConfig);
   }
 
   getQuizConfig(): QuizConfig {
-    if(!this.quizConfig){
-     this.quizConfig = new QuizConfig();
+    if (!this.quizConfig) {
+      this.quizConfig = this.loadQuizConfigFromStorage();
     }
     return this.quizConfig;
   }
@@ -223,14 +260,16 @@ export class QuizConfig {
   showAnswers: boolean;
   enableNavigation: boolean = true;
   enableAudio: boolean;
+  enableTimer: boolean = true;
 
   constructor(topic: Partial<QuizConfig> = {}) {
       this.mode = topic.mode || 'Interactive'; //Default or Interactive
       this.level = topic.level || 'Basic';
       this.numQuestions = topic.numQuestions || 11;
-      this.showHint = topic.showHint || true;
-      this.showAnswers = topic.showAnswers || false;
-      this.enableNavigation = topic.enableNavigation || false;
-      this.enableAudio = topic.enableAudio || true;
+      this.showHint = topic.showHint ?? true;
+      this.showAnswers = topic.showAnswers ?? false;
+      this.enableNavigation = topic.enableNavigation ?? false;
+      this.enableAudio = topic.enableAudio ?? true;
+      this.enableTimer = topic.enableTimer ?? true;
     }
 }
