@@ -493,3 +493,45 @@ nav a.button-collapse i {
     margin-left: 0;
   }
 }
+
+
+
+ //  Navbar Mobile Viev 
+
+
+@media (max-width: 991px) {
+
+  body {
+    overflow-x: hidden;
+  }
+
+  // navbar always on top 
+  .navbar {
+    z-index: 6000 !important;
+    width: 100% !important;
+  }
+
+  .navbar-header {
+    width: 100% !important;
+  }
+
+  // overlay must NOT cover navbar 
+  body.overlay-open::before {
+    top: 60px !important;
+    height: calc(100vh - 60px) !important;
+  }
+
+  // disable desktop hover 
+  body.side-closed-hover .sidebar {
+    width: 260px !important;
+  }
+
+  body.side-closed-hover section.content {
+    margin-left: 0 !important;
+  }
+}
+.bars {
+  position: relative;
+  z-index: 7000;
+}
+

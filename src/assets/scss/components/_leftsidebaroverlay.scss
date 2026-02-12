@@ -902,3 +902,74 @@
   display: block;
   list-style-type: none;
 }
+
+
+
+// Mobile sidebar
+
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    top: 0;
+    left: 0;
+    width: min(85vw, 340px);
+    height: 100dvh;
+
+    border-radius: 0 18px 18px 0;
+
+    transform: translateX(-100%);
+    transition: transform 0.35s ease;
+
+    box-shadow: 8px 0 25px rgba(0,0,0,0.18);
+    z-index: 1001;
+  }
+
+  body.overlay-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .sidebar .user-info {
+    height: auto;
+    padding: 14px;
+  }
+
+  .sidebar .menu {
+    height: calc(100dvh - 140px);
+    overflow-y: auto;
+  }
+
+  //Menu items
+
+  .sidebar .menu .list a {
+    padding: 10px 12px;
+    margin: 4px 10px;
+    font-size: 13.5px;
+    border-radius: 10px;
+  }
+
+  .sidebar .menu .list li.active > a {
+    background: #eef3ff;
+  }
+
+
+}
+
+@media (max-width: 420px) {
+
+  .sidebar {
+    width: 92vw;
+  }
+
+}
+@media (max-width: 991px) {
+
+  body.overlay-open .sidebar .menu-text,
+  body.overlay-open .sidebar span,
+  body.overlay-open .sidebar a span {
+    display: inline !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+}

@@ -166,12 +166,22 @@ export class SidebarComponent
   }
 
   checkStatuForResize(firstTime: boolean) {
-    if (window.innerWidth < 1025) {
-      this.renderer.addClass(this.document.body, 'ls-closed');
-    } else {
-      this.renderer.removeClass(this.document.body, 'ls-closed');
-    }
+  const width = window.innerWidth;
+
+  if (width <= 768) {
+   
+    this.renderer.addClass(this.document.body, 'ls-closed');
+
+    
+    this.renderer.removeClass(this.document.body, 'side-closed-hover');
+    this.renderer.removeClass(this.document.body, 'submenu-closed');
+
+  } else {
+    
+    this.renderer.removeClass(this.document.body, 'ls-closed');
   }
+}
+
   mouseHover() {
     const body = this.elementRef.nativeElement.closest('body');
     if (body.classList.contains('submenu-closed')) {
