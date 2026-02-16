@@ -1,5 +1,4 @@
-import { QuestionItem } from "src/app/admin/questions/manage/question-item.model"
-import { QuizTypeEnum } from "../enums/quiz-type.enum"
+import { QuizTypeEnum } from "../enums/quiz-type.enum";
 import { QuizResult } from "../quiz";
 import { QuizQuestion } from "../quiz-question";
 
@@ -7,11 +6,12 @@ export interface QuizCreateDto {
     id?: number;
     title?: string;
     shortDesc?: string;
-    userId: number;
+    userId?: number;
     description?: string;
     subjectIds?: string;
     jobIds?: string;
     topicIds?: string;
+    tag?: string;
     quizType: QuizTypeEnum;
 }
 
@@ -24,6 +24,7 @@ export class QuizCreateModel implements QuizCreateDto{
     subjectIds?: string;
     jobIds?: string;
     topicIds?: string;
+    tag?: string;
     quizType: QuizTypeEnum;
 
     constructor(quiz: Partial<QuizCreateModel> = {}) {

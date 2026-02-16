@@ -1,0 +1,103 @@
+<form class="register-form m-4" [formGroup]="quizForm" (ngSubmit)="submit()">
+          <ng-scrollbar visibility="hover">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Quiz Title</mat-label>
+                <textarea matInput formControlName="title" rows="2" cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1"
+                  style="resize: none; overflow: hidden;" placeholder="Enter the quiz title" required></textarea>
+                @if (quizForm.get('title')?.hasError('minLength')) {
+                <mat-error>
+                  Quiz title is too short
+                </mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Select Subject</mat-label>
+                <mat-select formControlName="subjectIds">
+                  @for (subject of subjects; track subject) {
+                  <mat-option value="{{subject.id}}">{{subject.title}}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+              <mat-form-field appearance="fill" class="example-full-width">
+                <mat-label class="mb-2">Select Topic(s)</mat-label>
+                <mat-select formControlName="topicIds" multiple>
+                  <mat-select-trigger>
+                    @for (option of quizForm.get('topicIds')?.value ?? [];track option) {
+                    <mat-chip class="chip-spacing">{{ getTopicTitleById(option) }}</mat-chip>
+                    }
+                  </mat-select-trigger>
+                  @for (item of topics; track item.id) {
+                  <mat-option [value]="item.id">{{ item.title }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Quiz Tag</mat-label>
+                <input matInput formControlName="tag" type="text" maxLength="20"
+                  (keydown)="restrictInput($event)" placeholder="Add a tag to identify this quiz (e.g. arrays, linkedlist, etc.)" required>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Short Description</mat-label>
+                <textarea matInput formControlName="shortDesc" rows="2" cdkTextareaAutosize
+                  #autosizeDesc="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="2"
+                  style="resize: none; overflow: hidden;" placeholder="Short quiz description"></textarea>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Long Description</mat-label>
+                <textarea matInput formControlName="description" rows="3" cdkTextareaAutosize
+                  #autosizeDesc="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="3"
+                  style="resize: none; overflow: hidden;" placeholder="Enter the quiz description"></textarea>
+              </mat-form-field>
+            </div>
+            </div>
+
+            <!-- <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Number of Questions</mat-label>
+                <input matInput type="number" formControlName="numOfQuestions" (keydown)="restrictInput($event)"
+                  placeholder="Enter the number of questions" required>
+                @if (quizForm.get('numOfQuestions')?.hasError('min')) {
+                <mat-error>
+                  Number of questions must be at least 1
+                </mat-error>
+                }
+              </mat-form-field>
+          </div> -->
+
+
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-checkbox class="example-margin" formControlName="isPublished" checked>Publish this quiz
+              </mat-checkbox>
+            </div>
+          </div>
+          </ng-scrollbar>
+
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <button mat-flat-button class="btn-space" color="primary" [disabled]="!quizForm.valid">Submit</button>
+              <button mat-raised-button color="warn" (click)="onCancel()">Cancel</button>
+            </div>
+          </div>
+        </form>

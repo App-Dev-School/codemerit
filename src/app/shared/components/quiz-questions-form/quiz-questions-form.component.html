@@ -1,0 +1,104 @@
+<div class="quiz-questions-form row g-3">
+  <!-- Column 1: Question Filter & List -->
+  <div class="col-12 col-md-6 d-flex flex-column h-100">
+    <!-- Header -->
+    <h5 class="mb-3">Quiz Questions Filter</h5>
+
+    <!-- Filter Panel -->
+    <form [formGroup]="filterForm" class="mb-2">
+      <div class="row g-2">
+        <div class="col-12 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Subject</mat-label>
+            <mat-select formControlName="subject" multiple>
+               @for (item of subjects; track item.id) {
+                  <mat-option [value]="item.id">{{ item.name }}</mat-option>
+                  }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-4">
+           <mat-form-field appearance="fill" class="example-full-width">
+                <mat-label class="mb-2">Select Topic(s)</mat-label>
+                <mat-select formControlName="topic" multiple>
+                  @for (item of topics; track item.id) {
+                  <mat-option [value]="item.id">{{ item.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+        </div>
+        <div class="col-12 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Level</mat-label>
+            <mat-select formControlName="level">
+              <mat-option value="">All</mat-option>
+              <mat-option value="Easy">Easy</mat-option>
+              <mat-option value="Intermediate">Intermediate</mat-option>
+              <mat-option value="Advanced">Advanced</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row g-2 mt-1">
+        <div class="col">
+          <button mat-stroked-button color="primary" type="button" (click)="resetFilters()">Reset</button>
+        </div>
+        <div class="col text-end">
+          <button mat-flat-button color="accent" type="button" (click)="applyFilters()">Apply</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Questions List -->
+    <ng-scrollbar style="height: 350px" visibility="hover">
+      <mat-selection-list [formControl]="selectedQuestionsControl" class="question-list">
+        @for (q of filteredQuestions; track q.id) {
+          <mat-list-option [value]="q">
+            <div class="d-flex flex-column">
+              <span class="fw-bold">{{ q.title }}</span>
+              <small class="text-muted">{{ q.subject }} | {{ q.topic }} | {{ q.level }}</small>
+            </div>
+          </mat-list-option>
+        }
+      </mat-selection-list>
+    </ng-scrollbar>
+
+    <!-- Footer -->
+    <div class="mt-3">
+      <button mat-raised-button color="primary" class="w-100 py-2" [disabled]="!selectedQuestionsControl.value?.length"
+        (click)="addSelectedQuestions()">
+        Add Selected Questions
+      </button>
+    </div>
+  </div>
+
+  <!-- Column 2: Selected Questions -->
+  <div class="col-12 col-md-6 d-flex flex-column h-100">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5>Selected Questions ({{ quizQuestions.length }})</h5>
+    </div>
+    <div class="flex-grow-1 overflow-hidden">
+      <ng-scrollbar class="h-100" visibility="hover">
+        <ng-container *ngIf="quizQuestions.length; else emptyState">
+          <mat-list>
+            @for (q of quizQuestions; track q.id) {
+              <mat-list-item>
+                <div class="d-flex flex-column">
+                  <span class="fw-bold">{{ q.title }}</span>
+                  <small class="text-muted">{{ q.subject }} | {{ q.topic }} | {{ q.level }}</small>
+                </div>
+              </mat-list-item>
+            }
+          </mat-list>
+        </ng-container>
+        <ng-template #emptyState>
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <mat-icon color="disabled" fontSize="48">help_outline</mat-icon>
+            <p class="text-muted mt-2">No questions added yet.</p>
+          </div>
+        </ng-template>
+      </ng-scrollbar>
+    </div>
+  </div>
+</div>

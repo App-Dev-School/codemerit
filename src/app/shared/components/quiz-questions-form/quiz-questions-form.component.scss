@@ -1,0 +1,36 @@
+.quiz-questions-form {
+  min-height: 60vh;
+  .mat-form-field {
+    margin-bottom: 0.5rem;
+  }
+  .question-list {
+    min-height: 200px;
+    max-height: 350px;
+  }
+  .ng-scrollbar {
+    height: 100%;
+    min-height: 200px;
+    max-height: 350px;
+  }
+  .mat-list-item {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0.5rem 0;
+  }
+  .mat-list-item:last-child {
+    border-bottom: none;
+  }
+  .empty-state {
+    text-align: center;
+    color: #aaa;
+    margin-top: 2rem;
+  }
+  @media (max-width: 767px) {
+    .col-md-6 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+    .question-list, .ng-scrollbar {
+      max-height: 200px;
+    }
+  }
+}
