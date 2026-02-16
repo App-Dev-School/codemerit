@@ -8,6 +8,8 @@ import { MatListModule, MatListOption, MatSelectionList } from '@angular/materia
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { MatIcon } from '@angular/material/icon';
+import { MatCard, MatCardModule } from '@angular/material/card';
+import { NgTemplateOutlet } from '@angular/common';
 
 interface Question {
   id: number;
@@ -26,9 +28,11 @@ interface Question {
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    NgTemplateOutlet,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatCardModule,
     MatIcon,
     MatSelectModule,
     MatSelectionList,
