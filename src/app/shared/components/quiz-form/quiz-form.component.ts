@@ -9,6 +9,7 @@ import {
   Validators
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCard, MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChip } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -19,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute } from '@angular/router';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
+import { QuizTypeEnum } from '@core/models/enums/quiz-type.enum';
 import { Status } from '@core/models/status.enum';
 import { Subject } from '@core/models/subject';
 import { MasterService } from '@core/service/master.service';
@@ -40,6 +42,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
     NgTemplateOutlet,
     NgScrollbar,
     TextFieldModule,
+    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -78,23 +81,22 @@ export class QuizFormPage implements OnInit {
   createQuizForm(): UntypedFormGroup {
     return this.fb.group({
       id: ['' + this.quizItem?.id],
-      title: [this.quizItem.title, [Validators.required, Validators.minLength(10)]],
-      quizType: ['' + this.quizItem.quizType, [Validators.required]],
+      title: [this.quizItem.title, [Validators.required, Validators.minLength(10), Validators.maxLength(50)]],
+      quizType: [QuizTypeEnum.Standrad, [Validators.required]],
       subjectIds: ['' + this.quizItem.subjectIds, [Validators.required]],
       topicIds: [[], [Validators.required]],
       tag: [this.quizItem.tag, [Validators.required, Validators.minLength(3)]],
-      description: [this.quizItem.description],
-      shortDesc: [this.quizItem.shortDesc],
+      description: [this.quizItem.description, [Validators.required, Validators.minLength(10), Validators.maxLength(200)]],
+      shortDesc: [this.quizItem.shortDesc, [Validators.required, Validators.minLength(10), Validators.maxLength(100)]],
+      label: [''],
       isPublished: [true]
     });
   }
 
   ngOnInit() {
-    this.questionSlug = this.route.snapshot.paramMap.get('question-slug');
-
+    //this.questionSlug = this.route.snapshot.paramMap.get('question-slug');
     this.quizForm.get('subjectIds')?.valueChanges.subscribe(subject => {
-      console.log("hello ", subject);
-      
+      console.log("Subject Selected ", subject);
       this.topics = this.masterSrv.topics;
       if (subject > 0) {
         this.topics = this.topics.filter(topic => topic.subjectId == subject);

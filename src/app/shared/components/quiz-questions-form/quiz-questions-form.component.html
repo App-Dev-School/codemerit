@@ -62,7 +62,7 @@
 <ng-template #selectQuestionCard>
     <mat-card>
         <mat-card-header class="header-style">
-            <mat-card-title>Quiz Questions Filter ({{ getAvailableQuestions().length }})</mat-card-title>
+            <mat-card-title>Available Questions ({{ getAvailableQuestions().length }})</mat-card-title>
         </mat-card-header>
         <mat-card-content>
             @if (getAvailableQuestions().length > 0) {
@@ -113,7 +113,7 @@
         </mat-card-header>
         <mat-card-content>
             @if (quizQuestions.length > 0) {
-            <ng-scrollbar style="height: 400px" visibility="hover">
+            <ng-scrollbar style="height: 300px" visibility="hover">
                 <div class="question-list" cdkDropList (cdkDropListDropped)="drop($event)">
                     @for (question of quizQuestions; track question.id) {
                     <div class="question-item" cdkDrag>
@@ -123,10 +123,6 @@
                             </div>
                             <div class="ms-3 question-content">
                                 <h4>{{question.title}}</h4>
-                                <div class="d-flex question-meta">
-                                    <span class="question-category">{{question.subject}}</span>
-                                    <span class="question-priority">{{question.topic}}</span>
-                                </div>
                             </div>
                         </div>
                         <div class="question-actions">

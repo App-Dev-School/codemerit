@@ -1,49 +1,48 @@
 .quiz-questions-form {
   min-height: 60vh;
+
   .mat-form-field {
     margin-bottom: 0.5rem;
   }
 }
 
-.question-list {
-  .question-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid #eee;
+.question-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
 
-    &:last-child {
-      border-bottom: none;
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .question-content {
+    flex: 1;
+
+    h4 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+      font-weight: 500;
     }
 
-    .question-content {
-      flex: 1;
+    .question-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
 
-      h4 {
-        margin: 0 0 5px 0;
-        font-size: 16px;
+      .question-category {
+        color: #757575;
+      }
+
+      .question-priority {
         font-weight: 500;
       }
-
-      .question-meta {
-        display: flex;
-        gap: 15px;
-        font-size: 12px;
-
-        .question-category {
-          color: #757575;
-        }
-
-        .question-priority {
-          font-weight: 500;
-        }
-      }
     }
+  }
 
-    .question-actions {
-      display: flex;
-      gap: 8px;
-    }
+  .question-actions {
+    display: flex;
+    gap: 8px;
   }
 }
