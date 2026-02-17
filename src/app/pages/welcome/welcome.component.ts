@@ -14,6 +14,7 @@ import { CongratulationsCardComponent } from '@shared/components/congratulations
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 import { QuizFormPage } from '@shared/components/quiz-form/quiz-form.component';
 import { QuizQuestionsFormComponent } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
+import { QuizSettingsFormComponent } from '@shared/components/quiz-settings-form/quiz-settings-form.component';
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
 @Component({
   selector: 'app-welcome',
@@ -27,6 +28,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
     MatRippleModule,
     MatIconModule,
     QuizFormPage,
+    QuizSettingsFormComponent,
     QuizQuestionsFormComponent,
     //LearnerWelcomeCardComponent,
     CongratulationsCardComponent,

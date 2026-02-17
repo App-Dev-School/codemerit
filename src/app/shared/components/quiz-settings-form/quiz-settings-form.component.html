@@ -1,0 +1,141 @@
+<mat-card>
+  <mat-card-header class="header-style">
+    <mat-card-title>Quiz Settings</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="register-form m-4" [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
+      <ng-scrollbar visibility="hover">
+        <!-- Number of Questions -->
+        <div class="row">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Number of Questions</mat-label>
+              <input type="number" matInput formControlName="numQuestions" min="1" max="50" required>
+              @if (settingsForm.get('numQuestions')?.hasError('required')) {
+              <mat-error>
+                Number of questions is required
+              </mat-error>
+              }
+              @if (settingsForm.get('numQuestions')?.hasError('min')) {
+              <mat-error>
+                Minimum 1 question required
+              </mat-error>
+              }
+              @if (settingsForm.get('numQuestions')?.hasError('max')) {
+              <mat-error>
+                Maximum 50 questions allowed
+              </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Question Ordering</mat-label>
+              <mat-select formControlName="ordering" required>
+                @for (option of orderingOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Mode Selection -->
+        <mat-divider class="dim-divider"></mat-divider>
+
+        <div class="row settingRow align-items-center">
+          <div class="col-6 d-flex align-items-center text-start">
+            <h5 class="cmHeading2">Quiz Mode</h5>
+          </div>
+          <div class="col-6 text-end">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="mode" appearance="standard">
+              @for (option of modeOptions; track option.value) {
+              <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+              }
+            </mat-button-toggle-group>
+          </div>
+        </div>
+
+        <!-- Show Hint -->
+        <div class="row settingRow align-items-center">
+          <div class="col-6 d-flex align-items-center text-start">
+            <h5 class="cmHeading2">Enable Hints</h5>
+          </div>
+          <div class="col-6 text-end">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="showHint" appearance="standard">
+              <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+              <mat-button-toggle [value]="false">No</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+
+        <!-- Show Answers -->
+        <div class="row settingRow align-items-center">
+          <div class="col-6 d-flex align-items-center text-start">
+            <h5 class="cmHeading2">Show Answer</h5>
+          </div>
+          <div class="col-6 text-end">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="showAnswers" appearance="standard">
+              <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+              <mat-button-toggle [value]="false">No</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+
+        <!-- Enable Navigation -->
+        <div class="row settingRow align-items-center">
+          <div class="col-6 d-flex align-items-center text-start">
+            <h5 class="cmHeading2">Enable Navigation</h5>
+          </div>
+          <div class="col-6 text-end">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableNavigation" appearance="standard">
+              <mat-button-toggle [value]="true">ON</mat-button-toggle>
+              <mat-button-toggle [value]="false">OFF</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+
+        <!-- Enable Audio -->
+        <div class="row settingRow align-items-center">
+          <div class="col-6 d-flex align-items-center text-start">
+            <h5 class="cmHeading2">Enable Audio</h5>
+          </div>
+          <div class="col-6 text-end">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableAudio" appearance="standard">
+              <mat-button-toggle [value]="true">ON</mat-button-toggle>
+              <mat-button-toggle [value]="false">OFF</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+
+        <!-- Enable Timer -->
+        <div class="row settingRow align-items-center">
+          <div class="col-6 d-flex align-items-center text-start">
+            <h5 class="cmHeading2">Enable Timer</h5>
+          </div>
+          <div class="col-6 text-end">
+            <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableTimer" appearance="standard">
+              <mat-button-toggle [value]="true">ON</mat-button-toggle>
+              <mat-button-toggle [value]="false">OFF</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+
+        <mat-divider class="dim-divider"></mat-divider>
+
+        <!-- Action Buttons -->
+        <div class="row">
+          <div class="col-12 d-flex gap-2 justify-content-end mt-3">
+            <button mat-stroked-button color="primary" type="button" (click)="resetForm()">
+              Reset
+            </button>
+            <button mat-flat-button color="accent" [disabled]="!settingsForm.valid" type="submit">
+              Save Settings
+            </button>
+          </div>
+        </div>
+      </ng-scrollbar>
+    </form>
+  </mat-card-content>
+</mat-card>
