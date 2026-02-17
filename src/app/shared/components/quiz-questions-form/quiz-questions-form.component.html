@@ -114,13 +114,13 @@
         <mat-card-content>
             @if (quizQuestions.length > 0) {
             <ng-scrollbar style="height: 400px" visibility="hover">
-                <div class="question-list">
+                <div class="question-list" cdkDropList (cdkDropListDropped)="drop($event)">
                     @for (question of quizQuestions; track question.id) {
-                    <div class="question-item">
+                    <div class="question-item" cdkDrag>
                         <div class="d-flex align-items-center">
-                            <mat-checkbox [checked]="isQuestionSelected(question)"
-                                (change)="onQuestionToggle(question, $event)" color="primary">
-                            </mat-checkbox>
+                            <div class="task-handle" cdkDragHandle>
+                                <mat-icon aria-hidden="false">drag_indicator</mat-icon>
+                            </div>
                             <div class="ms-3 question-content">
                                 <h4>{{question.title}}</h4>
                                 <div class="d-flex question-meta">

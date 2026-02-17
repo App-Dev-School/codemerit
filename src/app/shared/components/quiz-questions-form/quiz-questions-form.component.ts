@@ -5,11 +5,20 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatListModule, MatListOption, MatSelectionList } from '@angular/material/list';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  CdkDropList,
+  CdkDrag,
+  CdkDragHandle,
+  CdkDragPlaceholder,
+} from '@angular/cdk/drag-drop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardModule } from '@angular/material/card';
 import { NgTemplateOutlet } from '@angular/common';
+
 
 interface Question {
   id: number;
@@ -37,6 +46,10 @@ interface Question {
     MatSelectModule,
     MatSelectionList,
     MatCheckboxModule,
+    CdkDropList,
+    CdkDrag,
+    CdkDragHandle,
+    CdkDragPlaceholder,
     NgScrollbar
   ]
 })
@@ -138,7 +151,7 @@ export class QuizQuestionsFormComponent implements OnInit {
   onQuestionToggle(question: Question, event: any): void {
     const isChecked = event.checked;
     const currentSelected = this.selectedQuestionsControl.value || [];
-    
+
     if (isChecked) {
       // Add question if not already selected
       if (!currentSelected.some(q => q.id === question.id)) {
@@ -158,5 +171,9 @@ export class QuizQuestionsFormComponent implements OnInit {
   getAvailableQuestions(): Question[] {
     const quizQuestionIds = this.quizQuestions.map(q => q.id);
     return this.filteredQuestions.filter(q => !quizQuestionIds.includes(q.id));
+  }
+
+  drop(event: CdkDragDrop<Question[]>): void {
+    moveItemInArray(this.quizQuestions, event.previousIndex, event.currentIndex);
   }
 }
