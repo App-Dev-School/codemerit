@@ -34,3 +34,56 @@
     }
   }
 }
+
+// Task list styles
+.question-list {
+  .question-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .question-content {
+      flex: 1;
+
+      h4 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      &.completed {
+        h4 {
+          text-decoration: line-through;
+          color: #9e9e9e;
+        }
+      }
+
+      &.in-progress {
+        h4 {
+          font-weight: 600;
+          color: #2196f3;
+        }
+      }
+
+      .question-meta {
+        display: flex;
+        gap: 15px;
+        font-size: 12px;
+
+        .question-category {
+          color: #757575;
+        }
+
+        .question-priority {
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}

@@ -36,8 +36,6 @@ interface Question {
     MatIcon,
     MatSelectModule,
     MatSelectionList,
-    MatListModule,
-    MatListOption,
     MatCheckboxModule,
     NgScrollbar
   ]
@@ -130,5 +128,30 @@ export class QuizQuestionsFormComponent implements OnInit {
     const selected = this.selectedQuestionsControl.value || [];
     this.quizQuestions = [...this.quizQuestions, ...selected.filter(q => !this.quizQuestions.includes(q))];
     this.selectedQuestionsControl.setValue([]);
+  }
+
+  isQuestionSelected(question: Question): boolean {
+    const selected = this.selectedQuestionsControl.value || [];
+    return selected.some(q => q.id === question.id);
+  }
+
+  onQuestionToggle(question: Question, event: any): void {
+    const isChecked = event.checked;
+    const currentSelected = this.selectedQuestionsControl.value || [];
+    
+    if (isChecked) {
+      // Add question if not already selected
+      if (!currentSelected.some(q => q.id === question.id)) {
+        this.selectedQuestionsControl.setValue([...currentSelected, question]);
+      }
+    } else {
+      // Remove question if unchecked
+      const filtered = currentSelected.filter(q => q.id !== question.id);
+      this.selectedQuestionsControl.setValue(filtered);
+    }
+  }
+
+  removeQuestionFromQuiz(question: Question): void {
+    this.quizQuestions = this.quizQuestions.filter(q => q.id !== question.id);
   }
 }
