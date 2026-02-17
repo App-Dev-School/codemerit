@@ -154,4 +154,9 @@ export class QuizQuestionsFormComponent implements OnInit {
   removeQuestionFromQuiz(question: Question): void {
     this.quizQuestions = this.quizQuestions.filter(q => q.id !== question.id);
   }
+
+  getAvailableQuestions(): Question[] {
+    const quizQuestionIds = this.quizQuestions.map(q => q.id);
+    return this.filteredQuestions.filter(q => !quizQuestionIds.includes(q.id));
+  }
 }

@@ -62,40 +62,46 @@
 <ng-template #selectQuestionCard>
     <mat-card>
         <mat-card-header class="header-style">
-            <mat-card-title>Quiz Questions Filter ({{ filteredQuestions.length }})</mat-card-title>
+            <mat-card-title>Quiz Questions Filter ({{ getAvailableQuestions().length }})</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-            <!-- Custom Questions List -->
-            <ng-scrollbar style="height: 200px" visibility="hover">
-                <div class="question-list">
-                @for (question of filteredQuestions; track question.id) {
-                <div class="question-item">
-                  <div class="d-flex align-items-center">
-                    <mat-checkbox 
-                      [checked]="isQuestionSelected(question)"
-                      (change)="onQuestionToggle(question, $event)"
-                      color="primary">
-                    </mat-checkbox>
-                    <div class="ms-3 question-content">
-                      <h4>{{question.title}}</h4>
-                      <div class="d-flex question-meta">
-                        <span class="question-category">{{question.topic}}</span>
-                        <span class="question-priority">{{question.level}}</span>
-                      </div>
+            @if (getAvailableQuestions().length > 0) {
+            <div class="scrollbar-container" style="height: 300px;">
+                <ng-scrollbar visibility="hover">
+                    <div class="question-list">
+                        @for (question of getAvailableQuestions(); track question.id) {
+                        <div class="question-item">
+                            <div class="d-flex align-items-center">
+                                <mat-checkbox [checked]="isQuestionSelected(question)"
+                                    (change)="onQuestionToggle(question, $event)" color="primary">
+                                </mat-checkbox>
+                                <div class="ms-3 question-content">
+                                    <h4>{{question.title}}</h4>
+                                    <div class="d-flex question-meta">
+                                        <span class="question-category">{{question.topic}}</span>
+                                        <span class="question-priority">{{question.level}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
                     </div>
-                  </div>
-                </div>
-                }
-              </div>
-            </ng-scrollbar>
+                </ng-scrollbar>
+            </div>
 
             <!-- Footer -->
             <div class="mt-3">
-                <button mat-raised-button color="primary" class="w-100 py-2"
+                <button mat-flat-button color="primary" class="w-100 py-2"
                     [disabled]="!selectedQuestionsControl.value?.length" (click)="addSelectedQuestions()">
                     Add Selected Questions
                 </button>
             </div>
+            }@else{
+            <div class="no-data-container text-center">
+                <img src="assets/images/icons/empty.png" class="loadingIcon m-t-20" />
+                <p class="col-grey">No question available.</p>
+            </div>
+            }
         </mat-card-content>
     </mat-card>
 </ng-template>
@@ -107,37 +113,36 @@
         </mat-card-header>
         <mat-card-content>
             @if (quizQuestions.length > 0) {
-            <ng-scrollbar class="h-100" visibility="hover">
+            <ng-scrollbar style="height: 400px" visibility="hover">
                 <div class="question-list">
-                @for (question of quizQuestions; track question.id) {
-                <div class="question-item">
-                  <div class="d-flex align-items-center">
-                    <mat-checkbox 
-                      [checked]="isQuestionSelected(question)"
-                      (change)="onQuestionToggle(question, $event)"
-                      color="primary">
-                    </mat-checkbox>
-                    <div class="ms-3 question-content">
-                      <h4>{{question.title}}</h4>
-                      <div class="d-flex question-meta">
-                        <span class="question-category">{{question.subject}}</span>
-                        <span class="question-priority">{{question.topic}}</span>
-                      </div>
+                    @for (question of quizQuestions; track question.id) {
+                    <div class="question-item">
+                        <div class="d-flex align-items-center">
+                            <mat-checkbox [checked]="isQuestionSelected(question)"
+                                (change)="onQuestionToggle(question, $event)" color="primary">
+                            </mat-checkbox>
+                            <div class="ms-3 question-content">
+                                <h4>{{question.title}}</h4>
+                                <div class="d-flex question-meta">
+                                    <span class="question-category">{{question.subject}}</span>
+                                    <span class="question-priority">{{question.topic}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-actions">
+                            <button mat-icon-button matTooltip="Remove Question"
+                                (click)="removeQuestionFromQuiz(question)">
+                                <mat-icon class="material-icons-outlined">close</mat-icon>
+                            </button>
+                        </div>
                     </div>
-                  </div>
-                  <div class="question-actions">
-                    <button mat-icon-button matTooltip="Remove Question" (click)="removeQuestionFromQuiz(question)">
-                      <mat-icon class="material-icons-outlined">close</mat-icon>
-                    </button>
-                  </div>
+                    }
                 </div>
-                }
-              </div>
             </ng-scrollbar>
             }@else{
             <div class="no-data-container text-center">
                 <img src="assets/images/icons/empty.png" class="loadingIcon m-t-20" />
-                <p class="col-grey">No questions selected.</p>
+                <p class="col-grey">No question selected.</p>
             </div>
             }
         </mat-card-content>
