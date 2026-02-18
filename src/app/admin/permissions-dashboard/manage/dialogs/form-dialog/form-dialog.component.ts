@@ -1,34 +1,32 @@
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatDialogContent,
-  MatDialogClose,
-} from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
-import { JsonPipe } from '@angular/common';
 import {
-  UntypedFormControl,
-  Validators,
-  UntypedFormGroup,
-  UntypedFormBuilder,
   FormsModule,
   ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
 } from '@angular/forms';
-import { permissionsItem } from '../../permission-item.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatInputModule } from '@angular/material/input';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogClose,
+  MatDialogRef
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { permissionsService } from '../../permissions.service';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { Permission, UserPermissionItem } from '@core/models/permission.model';
 
 
 export interface DialogData {
   id: number;
   action: string;
-  permissionsItem: permissionsItem;
+  permissionsItem: UserPermissionItem;
 }
 
 @Component({
@@ -43,36 +41,38 @@ export interface DialogData {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatDatepickerModule,
-    MatDialogClose,
-    MatCheckboxModule
+    MatDialogClose
   ]
 })
-export class permissionsFormComponent {
+export class UserPermissionsFormComponent {
   action: string;
   dialogTitle: string;
-  permissionsImage = 'assets/images/icons/permissions.png';
   permissionsForm: UntypedFormGroup;
   initialFormValue: any;
-  permissionsItems: permissionsItem;
+  permissionsItems: UserPermissionItem;
+  resourceTypes = [
+    { value: 'Subject', title: 'Subject' },
+    { value: 'Topic', title: 'Topic' }
+  ];
+  permissionsList : Permission[];
+
   constructor(
-    public dialogRef: MatDialogRef<permissionsFormComponent>,
+    public dialogRef: MatDialogRef<UserPermissionsFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public permissionsService: permissionsService,
     private fb: UntypedFormBuilder
   ) {
     this.action = data.action;
-    this.dialogTitle =this.action === 'edit'? 'Edit Permission': 'Create New Permission';
-    this.permissionsItems = this.action === 'edit' ? data.permissionsItem : new permissionsItem({}); // Create a blank object
-    this.permissionsForm = this.createContactForm();
-
-  
+    this.dialogTitle =this.action === 'edit'? 'Edit User Permission': 'Grant New Permission';
+    this.permissionsList = this.permissionsService.getSavedMasterPermissions();
+    this.permissionsItems = this.action === 'edit' ? data.permissionsItem : new UserPermissionItem({}); // Create a blank object
+    this.permissionsForm = this.createPermissionForm();
 
     if (this.action === 'edit') {
       console.log('permissionsManager ###Update Form in Edit Mode:', data.permissionsItem);
       //populate permissions
       this.permissionsForm.patchValue({
-        permissionId: data.permissionsItem.permissionId,
+        permissionId: data.permissionsItem.permissionIds,
         permissionName: data.permissionsItem.permissionName,
         resourceType: data.permissionsItem.resourceType,
         resourceId: data.permissionsItem.resourceId,
@@ -93,24 +93,15 @@ export class permissionsFormComponent {
        */
     }
     this.permissionsForm.updateValueAndValidity();
-
   }
 
- createContactForm(): UntypedFormGroup {
+ createPermissionForm(): UntypedFormGroup {
   return this.fb.group({
     id: [this.permissionsItems.id],
-
-    permissionId: [this.permissionsItems.permissionId, Validators.required],
-    permissionName: [this.permissionsItems.permissionName],
-
-
+    permissionIds: [this.permissionsItems.permissionIds, Validators.required],
+    userIds: [this.permissionsItems.userId, Validators.required],
     resourceType: [this.permissionsItems.resourceType],
-    resourceId: [this.permissionsItems.resourceId, Validators.required],
-    resourceName: [this.permissionsItems.resourceName],
-
-    userId: [this.permissionsItems.userId, Validators.required],
-    userName: [this.permissionsItems.userName],
-    userEmail: [this.permissionsItems.userEmail, [Validators.email]]
+    resourceId: [this.permissionsItems.resourceId, Validators.required]
   });
 }
 

@@ -2,39 +2,58 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
+import { Permission, UserPermissionItem } from '@core/models/permission.model';
 import { HttpService } from '@core/service/http.service';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { permissionsItem } from './permission-item.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class permissionsService {
+
   private readonly API_URL = 'assets/data/permissions.json';
-  dataChange: BehaviorSubject<permissionsItem[]> = new BehaviorSubject<permissionsItem[]>([]);
+  dataChange: BehaviorSubject<UserPermissionItem[]> = new BehaviorSubject<UserPermissionItem[]>([]);
+  masterPermissions: Permission[];
 
   constructor(private authService: AuthService, private httpService: HttpService, private httpClient: HttpClient) { }
 
-  getDummyPermissions(): Observable<permissionsItem[]> {
+  getDummyPermissions(): Observable<UserPermissionItem[]> {
     return this.httpClient
-      .get<permissionsItem[]>(this.API_URL)
+      .get<UserPermissionItem[]>(this.API_URL)
       .pipe(catchError(this.handleError));
   }
 
-        getAllPermissions(): Observable<permissionsItem[]> {
-          let api_key = '';
+  setPermissions(data: Permission[]) {
+    this.masterPermissions = data;
+  }
 
-          if (this.authService.currentUserValue?.token) {
-            api_key = this.authService.currentUserValue.token;
-          }
+  getSavedMasterPermissions(): Permission[] {
+    return this.masterPermissions;
+  }
 
-          const url = 'apis/userPermissions';
 
-          return this.httpService.get(url, api_key).pipe(
-            map((response: any) => response.data)
-          );
-        }
+   getAllPermissions(): Observable<Permission[]> {
+    // let api_key = '';
+    // if (this.authService.currentUserValue?.token) {
+    //   api_key = this.authService.currentUserValue.token;
+    // }
+    const url = 'apis/permissions/master-permissions';
+    return this.httpService.getWithoutAuth(url).pipe(
+      map((response: any) => response.data)
+    );
+  }
+
+  getAllUserPermissions(): Observable<UserPermissionItem[]> {
+    let api_key = '';
+    if (this.authService.currentUserValue?.token) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/permissions/master-permissions';
+    return this.httpService.get(url, api_key).pipe(
+      map((response: any) => response.data)
+    );
+  }
 
   addpermissions(item: any): Observable<any> {
     let api_key = '';

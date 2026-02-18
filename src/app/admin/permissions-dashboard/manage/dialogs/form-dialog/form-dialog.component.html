@@ -11,55 +11,64 @@
   </div>
   <div>
     <form class="register-form m-4" [formGroup]="permissionsForm" (ngSubmit)="submit()">
-      
-       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Select Permission</mat-label>
-        <mat-select formControlName="permissionId">
-          <mat-option value="Course">create</mat-option>
-          <mat-option value="Topic">update</mat-option>
-          <mat-option value="Module">delete</mat-option>
-          <mat-option *ngFor="let p of permissionsList" [value]="p.id">
-            {{ p.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-           <!-- Select user -->
-    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Select Users</mat-label>
-        <mat-select formControlName="resourceType">
-          <mat-option value="Course">John</mat-option>
-          <mat-option value="Topic">Peter</mat-option>
-          <mat-option value="Module">Tom</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-             <!-- RESOURCE -->
-    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Select Resource</mat-label>
-        <mat-select formControlName="resourceId">
-          <mat-option value="Course">John</mat-option>
-          <mat-option *ngFor="let r of resources" [value]="r.id">
-            {{ r.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-      
-        <div class="row">
-          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-            <button mat-flat-button class="btn-space" color="primary" [disabled]="!permissionsForm.valid">
-              {{action ==='edit' ? 'Update Permission' : 'Grant Permission'}}
-            </button>
-            <button mat-raised-button color="warn" (click)="permissionsForm.reset()">Cancel</button>
-          </div>
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Permission</mat-label>
+            <mat-select formControlName="permissionIds" multiple>
+              @for (p of permissionsList; track p.id) {
+              <mat-option [value]="p.id">
+                {{ p.permission }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
         </div>
-        <!-- <p>{{ topicForm.value | json }}</p> -->
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Users</mat-label>
+            <mat-select formControlName="userIds" multiple>
+              <mat-option value="Course">John</mat-option>
+              <mat-option value="Topic">Peter</mat-option>
+              <mat-option value="Module">Tom</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Resource Type</mat-label>
+            <mat-select formControlName="resourceType">
+              @for (r of resourceTypes; track r.value) {
+              <mat-option [value]="r.value">
+                {{ r.title }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Resource</mat-label>
+            <mat-select formControlName="resourceId">
+              <!-- @for (r of resourceTypes; track r.value) {
+              <mat-option [value]="r.id">
+                {{ r.value }}
+              </mat-option>
+              } -->
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <button mat-flat-button class="btn-space" color="primary" [disabled]="!permissionsForm.valid">
+            {{action ==='edit' ? 'Update Permission' : 'Grant Permission'}}
+          </button>
+          <button mat-raised-button color="warn" (click)="permissionsForm.reset()">Cancel</button>
+        </div>
+      </div>
     </form>
   </div>
 </div>

@@ -1,9 +1,27 @@
-import { formatDate } from '@angular/common';
-export class permissionsItem {
+export interface Permission {
+  id: number;
+  permission: string;
+  description: string;
+  createdAt: string;
+}
+
+export interface UserPermission {
+  id?: number;
+  permissionIds: number;
+  permissionName: string;
+  resourceId: number;
+  resourceName: string;
+  resourceType?: string;
+  userId: number;
+  userName: string;
+  userEmail?: string;
+  createdAt?: Date;
+}
+
+export class UserPermissionItem implements UserPermission {
 
   id?: number;
-
-  permissionId!: number;
+  permissionIds!: number;
   permissionName!: string;
 
   resourceId!: number;
@@ -13,12 +31,13 @@ export class permissionsItem {
   userId!: number;
   userName!: string;
   userEmail?: string;
+  createdAt?: Date;
 
-  constructor(data: Partial<permissionsItem> = {}) {
+  constructor(data: Partial<UserPermissionItem> = {}) {
 
     this.id = data.id ?? this.getRandomID();
 
-    this.permissionId = data.permissionId ?? 0;
+    this.permissionIds = data.permissionIds ?? 0;
     this.permissionName = data.permissionName ?? '';
 
     this.resourceId = data.resourceId ?? 0;

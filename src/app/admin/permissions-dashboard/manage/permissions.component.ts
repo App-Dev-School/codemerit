@@ -1,3 +1,7 @@
+import { Direction } from '@angular/cdk/bidi';
+import { SelectionModel } from '@angular/cdk/collections';
+import { CommonModule, NgClass } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -5,44 +9,41 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { SelectionModel } from '@angular/cdk/collections';
-import { fromEvent, Subject } from 'rxjs';
-import { permissionsFormComponent } from './dialogs/form-dialog/form-dialog.component';
-import { permissionsDeleteComponent } from './dialogs/delete/delete.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
   MAT_DATE_LOCALE,
   MatOptionModule,
   MatRippleModule,
 } from '@angular/material/core';
-import { permissionsService } from './permissions.service';
-import { rowsAnimation, TableExportUtil } from '@shared';
-import { formatDate, DatePipe, CommonModule, NgClass } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import {
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Permission, UserPermission } from '@core/models/permission.model';
+import { rowsAnimation } from '@shared';
+import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
-import { Direction } from '@angular/cdk/bidi';
 import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
-import { permissionsItem } from './permission-item.model';
+import { Subject } from 'rxjs';
+import { permissionsDeleteComponent } from './dialogs/delete/delete.component';
+import { UserPermissionsFormComponent } from './dialogs/form-dialog/form-dialog.component';
+import { permissionsService } from './permissions.service';
+
 @Component({
   selector: 'app-manage-permissions',
   templateUrl: './permissions.component.html',
@@ -80,12 +81,12 @@ export class permissionsComponent implements OnInit, OnDestroy {
   { def: 'userName', label: 'User Name', type: 'text', class: 'col-default', visible: true },
   { def: 'permissionName', label: 'Permission', type: 'text', class: 'col-default', visible: true },
   { def: 'resourceName', label: 'Resource', type: 'text', class: 'col-default', visible: true },
+  { def: 'createdAt', label: 'Grant Date', type: 'text', class: 'col-default', visible: true },
   { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-default', visible: true },
 ];
 
-
-  dataSource = new MatTableDataSource<permissionsItem>([]);
-  selection = new SelectionModel<permissionsItem>(true, []);
+  dataSource = new MatTableDataSource<UserPermission>([]);
+  selection = new SelectionModel<UserPermission>(true, []);
   isLoading = true;
   private destroy$ = new Subject<void>();
 
@@ -101,6 +102,9 @@ export class permissionsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.permissionsService.getAllPermissions().subscribe(data => {
+      this.permissionsService.setPermissions(data);
+    });
     this.loadData();
   }
 
@@ -128,7 +132,7 @@ export class permissionsComponent implements OnInit, OnDestroy {
         this.dataSource.data = data;
         this.isLoading = false;
         this.refreshTable();
-        this.dataSource.filterPredicate = (data: permissionsItem, filter: string) =>
+        this.dataSource.filterPredicate = (data: UserPermission, filter: string) =>
           Object.values(data).some((value) =>
             value.toString().toLowerCase().includes(filter)
           );
@@ -155,12 +159,12 @@ export class permissionsComponent implements OnInit, OnDestroy {
     this.openDialog('add');
   }
 
-  editCall(row: permissionsItem) {
+  editCall(row: UserPermission) {
     this.openDialog('edit', row);
     console.log("permissionsManager editCall", row);
   }
 
-  openDialog(action: 'add' | 'edit', data?: permissionsItem) {
+  openDialog(action: 'add' | 'edit', data?: UserPermission) {
     console.log("permissionsManager openDialog", action, data);
     let varDirection: Direction;
     if (localStorage.getItem('isRtl') === 'true') {
@@ -168,10 +172,9 @@ export class permissionsComponent implements OnInit, OnDestroy {
     } else {
       varDirection = 'ltr';
     }
-    const dialogRef = this.dialog.open(permissionsFormComponent, {
+    const dialogRef = this.dialog.open(UserPermissionsFormComponent, {
       width: '500px',
       minWidth: '500px',
-      height: '90vh',
       data: { permissionsItem: data, action },
       direction: varDirection,
       autoFocus: false,
@@ -198,7 +201,7 @@ export class permissionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private updateRecord(updatedRecord: permissionsItem) {
+  private updateRecord(updatedRecord: UserPermission) {
     const index = this.dataSource.data.findIndex(
       (record) => record.id === updatedRecord.id
     );
@@ -208,7 +211,7 @@ export class permissionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteItem(row: permissionsItem) {
+  deleteItem(row: UserPermission) {
     const dialogRef = this.dialog.open(permissionsDeleteComponent, {
       data: row,
     });
