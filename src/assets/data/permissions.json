@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "permissionId": 101,
+    "permissionName": "View",
+    "resourceId": 5001,
+    "resourceName": "Course",
+    "resourceType": "MENU",
+    "userId": 201,
+    "userName": "Admin User",
+    "userEmail": "admin@gmail.com"
+  },
+  {
+    "id": 2,
+    "permissionId": 102,
+    "permissionName": "Create",
+    "resourceId": 5002,
+    "resourceName": "Topic",
+    "resourceType": "PAGE",
+    "userId": 202,
+    "userName": "John Doe",
+    "userEmail": "john@gmail.com"
+  },
+  {
+    "id": 3,
+    "permissionId": 103,
+    "permissionName": "Edit",
+    "resourceId": 5003,
+    "resourceName": "Subject",
+    "resourceType": "API",
+    "userId": 203,
+    "userName": "Sanika",
+    "userEmail": "sanika@gmail.com"
+  },
+  {
+    "id": 4,
+    "permissionId": 104,
+    "permissionName": "Delete",
+    "resourceId": 5004,
+    "resourceName": "Users",
+    "resourceType": "MENU",
+    "userId": 204,
+    "userName": "Test User",
+    "userEmail": "test@gmail.com"
+  }
+]
