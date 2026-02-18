@@ -12,3 +12,18 @@
 mat-form-field {
   margin: 0;
 }
+.form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            gap: 12px;
+
+            .flex-grow {
+              flex: 1;
+            }
+
+            button {
+              min-width: 120px;
+            }
+          }

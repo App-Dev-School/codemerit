@@ -1,0 +1,63 @@
+<div class="quiz-builder-container">
+  <!-- Tab Navigation -->
+  <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" mat-align-tabs="start" class="builder-tabs m-t-0">
+    @for (tab of tabs; track $index) {
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">{{ tab.icon }}</mat-icon>
+        <span class="tab-label">{{ tab.label }}</span>
+      </ng-template>
+    </mat-tab>
+    }
+  </mat-tab-group>
+
+  <!-- Swiper Container with Forms -->
+  <div class="builder-content">
+    <swiper-container #swiperContainer slides-per-view="1" space-between="0" allow-touch-move="false"
+      (swiper-slide-change)="onSwiperSlideChange()" class="builder-swiper">
+
+      <!-- Slide 1: Quiz Form -->
+      <swiper-slide class="swiper-slide-content">
+        <div class="slide-wrapper" style="max-width: 600px;">
+          <app-quiz-form (formSubmitted)="onQuizFormSubmit($event)"></app-quiz-form>
+        </div>
+      </swiper-slide>
+
+      <!-- Slide 2: Quiz Questions Form -->
+      <swiper-slide class="swiper-slide-content">
+        <div class="slide-wrapper">
+          <app-quiz-questions-form></app-quiz-questions-form>
+          <div class="slide-actions">
+            <button mat-stroked-button color="primary" (click)="goToPreviousTab()">
+              <mat-icon>keyboard_arrow_left</mat-icon>
+              Previous
+            </button>
+            <span class="flex-grow"></span>
+            <button mat-flat-button color="accent" (click)="goToNextTab()">
+              Next
+              <mat-icon>keyboard_arrow_right</mat-icon>
+            </button>
+          </div>
+        </div>
+      </swiper-slide>
+
+      <!-- Slide 3: Quiz Settings Form -->
+      <swiper-slide class="swiper-slide-content">
+        <div class="slide-wrapper" style="max-width: 500px;">
+          <app-quiz-settings-form (formSubmitted)="onSettingsFormSubmit($event)"></app-quiz-settings-form>
+          <div class="slide-actions">
+            <button mat-stroked-button color="primary" (click)="goToPreviousTab()">
+              <mat-icon>keyboard_arrow_left</mat-icon>
+              Previous
+            </button>
+            <span class="flex-grow"></span>
+            <button mat-flat-button color="warn">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </swiper-slide>
+
+    </swiper-container>
+  </div>
+</div>
