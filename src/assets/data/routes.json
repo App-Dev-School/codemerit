@@ -148,7 +148,7 @@
       "path": "/admin/permissions/list",
       "title": "User Permissions",
       "iconType": "material-icons-outlined",
-      "icon": "grain",
+      "icon": "vpn_lock",
       "class": "",
       "groupTitle": false,
       "badge": "",
