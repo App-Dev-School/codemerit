@@ -31,6 +31,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { AuthService, User } from '@core';
 
 @Component({
   selector: 'app-question-form',
@@ -66,6 +67,7 @@ export class QuestionFormPage implements OnInit {
   questionItem: QuestionItem | QuestionItemDetail;
   subjects: Subject[] = [];
   topics: TopicItem[] = [];
+  authData: User;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -73,9 +75,11 @@ export class QuestionFormPage implements OnInit {
     private masterSrv: MasterService,
     private fb: UntypedFormBuilder,
     private snackService: SnackbarService,
+    public authService: AuthService,
     @Optional() public dialogRef?: MatDialogRef<CoursePickerComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: any
   ) {
+    this.authData = this.authService.currentUserValue;
     this.questionItem = new QuestionItemDetail();
     this.questionForm = this.createQuestionForm();
     this.subjects = this.masterSrv.subjects;
@@ -248,7 +252,7 @@ export class QuestionFormPage implements OnInit {
           questionType: formData.questionType,
           title: "",
           level: Number.parseInt(formData.level),
-          //status: formData.status,
+          //AAAA: status: formData.status,
           status: Status.Active,
           orderId: formData.orderId,
           marks: formData.marks,

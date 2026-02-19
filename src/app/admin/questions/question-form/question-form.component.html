@@ -173,6 +173,7 @@
               </mat-form-field>
             </div>
 
+            @if (authData?.role === 'Admin'){
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Question Status</mat-label>
@@ -183,6 +184,7 @@
                 </mat-select>
               </mat-form-field>
             </div>
+            }
 
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
