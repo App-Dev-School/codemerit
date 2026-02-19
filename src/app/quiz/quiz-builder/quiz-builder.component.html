@@ -1,8 +1,8 @@
 <div class="quiz-builder-container">
   <!-- Tab Navigation -->
-  <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" mat-align-tabs="start" class="builder-tabs m-t-0">
+  <mat-tab-group [selectedIndex]="selectedTabIndex" mat-align-tabs="start" class="builder-tabs m-t-0 no-click-tabs" [disableRipple]="true" [animationDuration]="'0ms'" [disablePagination]="true">
     @for (tab of tabs; track $index) {
-    <mat-tab>
+    <mat-tab [disabled]="selectedTabIndex !== $index">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">{{ tab.icon }}</mat-icon>
         <span class="tab-label">{{ tab.label }}</span>
@@ -26,14 +26,14 @@
       <!-- Slide 2: Quiz Questions Form -->
       <swiper-slide class="swiper-slide-content">
         <div class="slide-wrapper">
-          <app-quiz-questions-form></app-quiz-questions-form>
+          <app-quiz-questions-form (questionsAdded)="onQuestionsAdded($event)"></app-quiz-questions-form>
           <div class="slide-actions">
             <button mat-stroked-button color="primary" (click)="goToPreviousTab()">
               <mat-icon>keyboard_arrow_left</mat-icon>
               Previous
             </button>
             <span class="flex-grow"></span>
-            <button mat-flat-button color="accent" (click)="goToNextTab()">
+            <button mat-flat-button color="accent" (click)="goToNextTab()" [disabled]="!canProceedToNext">
               Next
               <mat-icon>keyboard_arrow_right</mat-icon>
             </button>

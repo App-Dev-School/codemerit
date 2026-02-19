@@ -1,6 +1,6 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Optional, Output } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -51,6 +51,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
   ]
 })
 export class QuizFormPage implements OnInit {
+  @Output() formSubmitted = new EventEmitter<any>();
   questionSlug: string;
   action: string;
   actionText: string;
@@ -127,9 +128,10 @@ export class QuizFormPage implements OnInit {
 
   submit() {
     if (this.quizForm.valid) {
-      return;
+      this.formSubmitted.emit(this.quizForm.value);
+    } else {
+      this.quizForm.markAllAsTouched();
     }
-    console.log(this.quizForm.value);
   }
 
   restrictInput(event: KeyboardEvent): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -54,6 +54,7 @@ interface Question {
   ]
 })
 export class QuizQuestionsFormComponent implements OnInit {
+  @Output() questionsAdded = new EventEmitter<any[]>();
   showFilter = true;
   filterForm: FormGroup;
   subjects = [
@@ -144,6 +145,7 @@ export class QuizQuestionsFormComponent implements OnInit {
     const selected = this.selectedQuestionsControl.value || [];
     this.quizQuestions = [...this.quizQuestions, ...selected.filter(q => !this.quizQuestions.includes(q))];
     this.selectedQuestionsControl.setValue([]);
+    this.questionsAdded.emit(this.quizQuestions);
   }
 
   isQuestionSelected(question: Question): boolean {

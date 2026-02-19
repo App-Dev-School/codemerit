@@ -1,3 +1,12 @@
+// Hide tab header pointer events for stepper effect
+.no-click-tabs ::ng-deep .mat-mdc-tab-labels .mat-mdc-tab {
+  pointer-events: none;
+  opacity: 0.7;
+}
+.no-click-tabs ::ng-deep .mat-mdc-tab-labels .mat-mdc-tab.mat-mdc-tab-active {
+  pointer-events: auto;
+  opacity: 1;
+}
 .quiz-builder-container {
   display: flex;
   flex-direction: column;

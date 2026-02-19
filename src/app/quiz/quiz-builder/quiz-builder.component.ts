@@ -10,6 +10,7 @@ import { register } from 'swiper/element/bundle';
 import { QuizFormPage } from '@shared/components/quiz-form/quiz-form.component';
 import { QuizQuestionsFormComponent } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
 import { QuizSettingsFormComponent } from '@shared/components/quiz-settings-form/quiz-settings-form.component';
+import { SnackbarService } from '@core/service/snackbar.service';
 
 register();
 
@@ -36,6 +37,7 @@ export class QuizBuilderComponent implements OnInit {
 
   selectedTabIndex = 0;
   swiperInstance: Swiper | null = null;
+  canProceedToNext = false;
 
   tabs = [
     { label: 'Quiz Info', icon: 'assignment' },
@@ -48,7 +50,7 @@ export class QuizBuilderComponent implements OnInit {
   quizQuestionsData: any[] = [];
   quizSettingsData: any = {};
 
-  constructor() {}
+  constructor(private snackbar: SnackbarService) {}
 
   ngOnInit(): void {}
 
@@ -72,14 +74,31 @@ export class QuizBuilderComponent implements OnInit {
     }
   }
 
+
   onQuizFormSubmit(data: any): void {
     this.quizFormData = data;
-    // Move to next tab
-    this.onTabChange(1);
+    console.log('StandardQuiz Form Data 1:', data);
+    this.canProceedToNext = false; // Reset for next step
+    // Ensure swiperInstance is ready before moving
+    setTimeout(() => {
+      this.onTabChange(1);
+    }, 0);
+  }
+
+  onQuestionsAdded(questions: any[]): void {
+    this.quizQuestionsData = questions;
+    console.log('StandardQuiz Questions Data:', questions);
+    if (questions && questions.length >= 3) {
+      this.canProceedToNext = true;
+    } else {
+      this.canProceedToNext = false;
+      this.snackbar.display('warn', 'At least 3 more questions required to continue.', 'top', 'center');
+    }
   }
 
   onQuestionsFormSubmit(data: any): void {
     this.quizQuestionsData = data;
+    console.log('StandardQuiz Data 2:', data);
     // Move to next tab
     this.onTabChange(2);
   }
@@ -106,6 +125,11 @@ export class QuizBuilderComponent implements OnInit {
   }
 
   goToNextTab(): void {
+    // Only allow next if canProceedToNext is true on questions step
+    if (this.selectedTabIndex === 1 && !this.canProceedToNext) {
+      this.snackbar.display('warn', 'At least 3 more questions required to continue.', 'top', 'center');
+      return;
+    }
     if (this.selectedTabIndex < this.tabs.length - 1) {
       this.onTabChange(this.selectedTabIndex + 1);
     }
