@@ -12,10 +12,14 @@
               <textarea matInput formControlName="title" rows="2" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
                 [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1" style="resize: none; overflow: hidden;"
                 placeholder="Enter a quiz title" required></textarea>
-              @if (quizForm.get('title')?.hasError('minLength')) {
-              <mat-error>
-                Quiz title is too short
-              </mat-error>
+              @if (quizForm.get('title')?.hasError('required') && (quizForm.get('title')?.touched || quizForm.get('title')?.dirty)) {
+                <mat-error>Quiz title is required</mat-error>
+              }
+              @if (quizForm.get('title')?.hasError('minlength') && (quizForm.get('title')?.touched || quizForm.get('title')?.dirty)) {
+                <mat-error>Quiz title is too short</mat-error>
+              }
+              @if (quizForm.get('title')?.hasError('maxlength') && (quizForm.get('title')?.touched || quizForm.get('title')?.dirty)) {
+                <mat-error>Quiz title is too long</mat-error>
               }
             </mat-form-field>
           </div>
@@ -53,6 +57,9 @@
               <mat-label>Quiz Tag</mat-label>
               <input matInput formControlName="tag" type="text" maxLength="20"
                 placeholder="Add a tag to identify this quiz (e.g. arrays, linkedlist, etc.)">
+              @if (quizForm.get('tag')?.hasError('required') && (quizForm.get('tag')?.touched || quizForm.get('tag')?.dirty)) {
+                <mat-error>Quiz tag is required</mat-error>
+              }
             </mat-form-field>
           </div>
         </div>
@@ -64,6 +71,15 @@
               <textarea matInput formControlName="shortDesc" rows="2" cdkTextareaAutosize
                 #autosizeDesc="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="2"
                 style="resize: none; overflow: hidden;" placeholder="Short quiz description"></textarea>
+              @if (quizForm.get('shortDesc')?.hasError('required') && (quizForm.get('shortDesc')?.touched || quizForm.get('shortDesc')?.dirty)) {
+                <mat-error>Short description is required</mat-error>
+              }
+              @if (quizForm.get('shortDesc')?.hasError('minlength') && (quizForm.get('shortDesc')?.touched || quizForm.get('shortDesc')?.dirty)) {
+                <mat-error>Short description is too short</mat-error>
+              }
+              @if (quizForm.get('shortDesc')?.hasError('maxlength') && (quizForm.get('shortDesc')?.touched || quizForm.get('shortDesc')?.dirty)) {
+                <mat-error>Short description is too long</mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -73,6 +89,15 @@
               <textarea matInput formControlName="description" rows="3" cdkTextareaAutosize
                 #autosizeDesc="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="3"
                 style="resize: none; overflow: hidden;" placeholder="Enter the quiz description"></textarea>
+              @if (quizForm.get('description')?.hasError('required') && (quizForm.get('description')?.touched || quizForm.get('description')?.dirty)) {
+                <mat-error>Description is required</mat-error>
+              }
+              @if (quizForm.get('description')?.hasError('minlength') && (quizForm.get('description')?.touched || quizForm.get('description')?.dirty)) {
+                <mat-error>Description is too short</mat-error>
+              }
+              @if (quizForm.get('description')?.hasError('maxlength') && (quizForm.get('description')?.touched || quizForm.get('description')?.dirty)) {
+                <mat-error>Description is too long</mat-error>
+              }
             </mat-form-field>
           </div>
         </div>
@@ -82,20 +107,14 @@
             <mat-form-field class="example-full-width" appearance="fill">
               <mat-label>Number of Questions</mat-label>
               <input type="number" matInput formControlName="numQuestions" min="1" max="50" required>
-              @if (quizForm.get('numQuestions')?.hasError('required')) {
-              <mat-error>
-                Number of questions is required
-              </mat-error>
+              @if (quizForm.get('numQuestions')?.hasError('required') && (quizForm.get('numQuestions')?.touched || quizForm.get('numQuestions')?.dirty)) {
+                <mat-error>Number of questions is required</mat-error>
               }
-              @if (quizForm.get('numQuestions')?.hasError('min')) {
-              <mat-error>
-                Minimum 1 question required
-              </mat-error>
+              @if (quizForm.get('numQuestions')?.hasError('min') && (quizForm.get('numQuestions')?.touched || quizForm.get('numQuestions')?.dirty)) {
+                <mat-error>Minimum 1 question required</mat-error>
               }
-              @if (quizForm.get('numQuestions')?.hasError('max')) {
-              <mat-error>
-                Maximum 50 questions allowed
-              </mat-error>
+              @if (quizForm.get('numQuestions')?.hasError('max') && (quizForm.get('numQuestions')?.touched || quizForm.get('numQuestions')?.dirty)) {
+                <mat-error>Maximum 50 questions allowed</mat-error>
               }
             </mat-form-field>
           </div>
