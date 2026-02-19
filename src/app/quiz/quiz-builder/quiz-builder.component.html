@@ -1,63 +1,54 @@
 <div class="quiz-builder-container">
-  <!-- Tab Navigation -->
-  <mat-tab-group [selectedIndex]="selectedTabIndex" mat-align-tabs="start" class="builder-tabs m-t-0 no-click-tabs" [disableRipple]="true" [animationDuration]="'0ms'" [disablePagination]="true">
-    @for (tab of tabs; track $index) {
-    <mat-tab [disabled]="selectedTabIndex !== $index">
-      <ng-template mat-tab-label>
-        <mat-icon class="tab-icon">{{ tab.icon }}</mat-icon>
-        <span class="tab-label">{{ tab.label }}</span>
-      </ng-template>
-    </mat-tab>
-    }
-  </mat-tab-group>
+  <!-- Stepper Header -->
+  <div class="stepper-header">
+    <div class="step" [class.active]="currentStep === 0">Quiz Info</div>
+    <div class="step" [class.active]="currentStep === 1">Questions</div>
+    <div class="step" [class.active]="currentStep === 2">Settings</div>
+  </div>
 
-  <!-- Swiper Container with Forms -->
+  <!-- Stepper Content -->
   <div class="builder-content">
-    <swiper-container #swiperContainer slides-per-view="1" space-between="0" allow-touch-move="false"
-      (swiper-slide-change)="onSwiperSlideChange()" class="builder-swiper">
+    @if (currentStep === 0) {
+      <div class="step-content" style="max-width: 600px; margin: 0 auto;">
+        <app-quiz-form (formSubmitted)="onQuizFormSubmit($event)" [formData]="quizFormData"></app-quiz-form>
+      </div>
+    }
+    @if (currentStep === 1) {
+      <div class="step-content">
+        <app-quiz-questions-form (questionsAdded)="onQuestionsAdded($event)" [questions]="quizQuestionsData"></app-quiz-questions-form>
+      </div>
+    }
+    @if (currentStep === 2) {
+      <div class="step-content" style="max-width: 500px; margin: 0 auto;">
+        <app-quiz-settings-form (formSubmitted)="onSettingsFormSubmit($event)" [settings]="quizSettingsData"></app-quiz-settings-form>
+      </div>
+    }
+  </div>
 
-      <!-- Slide 1: Quiz Form -->
-      <swiper-slide class="swiper-slide-content">
-        <div class="slide-wrapper" style="max-width: 600px;">
-          <app-quiz-form (formSubmitted)="onQuizFormSubmit($event)"></app-quiz-form>
-        </div>
-      </swiper-slide>
-
-      <!-- Slide 2: Quiz Questions Form -->
-      <swiper-slide class="swiper-slide-content">
-        <div class="slide-wrapper">
-          <app-quiz-questions-form (questionsAdded)="onQuestionsAdded($event)"></app-quiz-questions-form>
-          <div class="slide-actions">
-            <button mat-stroked-button color="primary" (click)="goToPreviousTab()">
-              <mat-icon>keyboard_arrow_left</mat-icon>
-              Previous
-            </button>
-            <span class="flex-grow"></span>
-            <button mat-flat-button color="accent" (click)="goToNextTab()" [disabled]="!canProceedToNext">
-              Next
-              <mat-icon>keyboard_arrow_right</mat-icon>
-            </button>
-          </div>
-        </div>
-      </swiper-slide>
-
-      <!-- Slide 3: Quiz Settings Form -->
-      <swiper-slide class="swiper-slide-content">
-        <div class="slide-wrapper" style="max-width: 500px;">
-          <app-quiz-settings-form (formSubmitted)="onSettingsFormSubmit($event)"></app-quiz-settings-form>
-          <div class="slide-actions">
-            <button mat-stroked-button color="primary" (click)="goToPreviousTab()">
-              <mat-icon>keyboard_arrow_left</mat-icon>
-              Previous
-            </button>
-            <span class="flex-grow"></span>
-            <button mat-flat-button color="warn">
-              Cancel
-            </button>
-          </div>
-        </div>
-      </swiper-slide>
-
-    </swiper-container>
+  <!-- Stepper Actions -->
+  <div class="stepper-actions">
+    <button mat-stroked-button color="primary" (click)="prevStep()" [disabled]="currentStep === 0">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+      Previous
+    </button>
+    <span class="flex-grow"></span>
+    @if (currentStep < 2) {
+      <button mat-flat-button color="accent" (click)="nextStep()" [disabled]="!canProceedToNext">
+        Next
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    }
+    @if (currentStep === 2) {
+      <button mat-flat-button color="primary" (click)="publishQuiz()" [disabled]="!allStepsValid">
+        Publish
+      </button>
+    }
+  </div>
+  <!-- Debug: Visualize form values -->
+  <div style="background:#222; color:#fff; font-size:13px; padding:16px; border-radius:8px; margin:24px auto; max-width:700px;">
+    <b>Debug Form Values</b>
+    <pre>quizFormData: {{ quizFormData | json }}</pre>
+    <pre>quizQuestionsData: {{ quizQuestionsData | json }}</pre>
+    <pre>quizSettingsData: {{ quizSettingsData | json }}</pre>
   </div>
 </div>

@@ -60,10 +60,9 @@
 <ng-template #selectQuestionCard>
     <mat-card>
         <mat-card-header class="header-style">
-            @if (showFilter) {
-            <mat-card-title>Find Questions</mat-card-title>
-            }@else{
-            <mat-card-title>Available Questions ({{ getAvailableQuestions().length }})</mat-card-title>
+            <mat-card-title> {{ showFilter ? "Find Questions" : "Available Questions (" + getAvailableQuestions().length
+                + ")" }}</mat-card-title>
+            @if (!showFilter) {
             <a mat-button color="primary" href="#" (click)="toggleFilter()">Filter</a>
             }
         </mat-card-header>

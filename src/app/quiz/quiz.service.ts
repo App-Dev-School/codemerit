@@ -124,6 +124,15 @@ export class QuizService {
     );
   }
 
+  addStandardQuiz(item: QuizCreateModel): Observable<CreateQuizResponse> {
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/quiz/create';
+    return this.httpService.postData(url, item, api_key)
+  }
+
   submitQuiz(item: QuizResult): Observable<QuizResult> {
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {

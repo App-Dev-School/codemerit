@@ -1,9 +1,4 @@
-<mat-card>
-  <!-- <mat-card-header class="header-style">
-    <mat-card-title>Create New Quiz</mat-card-title>
-  </mat-card-header> -->
-  <mat-card-content>
-    <form class="register-form m-4" [formGroup]="quizForm" (ngSubmit)="submit()">
+<form class="register-form m-4" [formGroup]="quizForm">
       <ng-scrollbar visibility="hover">
         <div class="row">
           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -140,7 +135,7 @@
         </div>
       </ng-scrollbar>
 
-      <div class="form-actions">
+      <!-- <div class="form-actions">
             <button mat-stroked-button color="primary" (click)="onCancel()">
               <mat-icon>keyboard_arrow_left</mat-icon>
               Cancel
@@ -150,8 +145,6 @@
               Next
               <mat-icon>keyboard_arrow_right</mat-icon>
             </button>
-          </div>
+          </div> -->
 
     </form>
-  </mat-card-content>
-</mat-card>

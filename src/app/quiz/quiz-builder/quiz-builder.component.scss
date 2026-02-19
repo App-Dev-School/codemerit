@@ -1,179 +1,79 @@
-// Hide tab header pointer events for stepper effect
-.no-click-tabs ::ng-deep .mat-mdc-tab-labels .mat-mdc-tab {
-  pointer-events: none;
-  opacity: 0.7;
-}
-.no-click-tabs ::ng-deep .mat-mdc-tab-labels .mat-mdc-tab.mat-mdc-tab-active {
-  pointer-events: auto;
-  opacity: 1;
-}
+
 .quiz-builder-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f5f5f5;
-
-//   .builder-toolbar {
-//     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-//     z-index: 100;
-
-//     .toolbar-title {
-//       font-size: 18px;
-//       font-weight: 600;
-//       margin-left: 16px;
-//     }
-
-//     .spacer {
-//       flex: 1 1 auto;
-//     }
-//   }
-
-  .builder-tabs {
-    //background-color: #fff;
-    //border-bottom: 1px solid #e0e0e0;
-    //z-index: 50;
-
-    ::ng-deep {
-    //   .mat-mdc-tab-labels {
-    //     border-bottom: 10px solid #e0e0e0;
-    //   }
-
-      .mat-mdc-tab {
-        min-width: 150px;
-        font-weight: 500;
-        //background-color: yellow;
-
-        .mdc-tab__content {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-
-          .tab-icon {
-            font-size: 21px;
-            width: 21px;
-            height: 21px;
-            margin-right: 8px;
-          }
-
-          .tab-label {
-            font-size: 1.1rem;
-          }
-        }
-      }
-
-      .mat-mdc-tab-header-pagination {
-        border-bottom: 1px solid #e0e0e0;
-      }
-    }
-  }
-
-  .builder-content {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-
-    .builder-swiper {
-      width: 100%;
-      height: 100%;
-      flex: 1;
-
-      .swiper-slide-content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow-y: auto;
-        background-color: #f5f5f5;
-        padding: 24px;
-
-        .slide-wrapper {
-          display: flex;
-          flex-direction: column;
-          flex: 1;
-          max-width: 1000px;
-          margin: 0 auto;
-          width: 100%;
-
-          mat-card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-          }
-
-          .slide-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 24px;
-            gap: 12px;
-
-            .flex-grow {
-              flex: 1;
-            }
-
-            button {
-              min-width: 120px;
-            }
-          }
-        }
-      }
-    }
-  }
 }
 
-// Responsive styles
+.stepper-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  margin: 32px 0 24px 0;
+}
+
+.step {
+  padding: 12px 32px;
+  border-radius: 24px;
+  background: #e0e0e0;
+  color: #888;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: background 0.2s, color 0.2s;
+}
+.step.active {
+  background: #1976d2;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+}
+
+.builder-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 16px;
+}
+
+.step-content {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 32px 24px;
+  margin-bottom: 32px;
+}
+
+.stepper-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin: 0 24px 32px 24px;
+}
+.stepper-actions .flex-grow {
+  flex: 1;
+}
+
 @media (max-width: 768px) {
-  .quiz-builder-container {
-    .builder-tabs {
-      ::ng-deep {
-        .mat-mdc-tab {
-          min-width: 100px;
-
-          .mdc-tab__content {
-            gap: 4px;
-
-            .tab-label {
-              font-size: 12px;
-            }
-          }
-        }
-      }
-    }
-
-    .builder-content {
-      .builder-swiper {
-        .swiper-slide-content {
-          padding: 16px;
-
-          .slide-wrapper {
-            max-width: 100%;
-
-            .slide-actions {
-              flex-direction: column;
-              gap: 8px;
-
-              button {
-                width: 100%;
-              }
-            }
-          }
-        }
-      }
-    }
+  .stepper-header {
+    gap: 8px;
+    margin: 16px 0 12px 0;
   }
-}
-
-// Swiper theme customization
-::ng-deep {
-  .builder-swiper {
-    .swiper-slide {
-      display: flex;
-      flex-direction: column;
-    }
-
-    // Hide scrollbar on swiper
-    .swiper-scrollbar {
-      display: none;
-    }
+  .step {
+    padding: 8px 12px;
+    font-size: 0.95rem;
+  }
+  .step-content {
+    padding: 16px 4px;
+    margin-bottom: 16px;
+  }
+  .stepper-actions {
+    flex-direction: column;
+    gap: 8px;
+    margin: 0 8px 16px 8px;
   }
 }

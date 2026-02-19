@@ -59,6 +59,16 @@ export class QuizSettingsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    // Emit value on init if valid
+    if (this.settingsForm && this.settingsForm.valid) {
+      this.formSubmitted.emit(this.settingsForm.value);
+    }
+    // Emit value on every valid change
+    this.settingsForm.valueChanges.subscribe(() => {
+      if (this.settingsForm.valid) {
+        this.formSubmitted.emit(this.settingsForm.value);
+      }
+    });
   }
 
   initializeForm(): void {
@@ -79,11 +89,7 @@ export class QuizSettingsFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    if (this.settingsForm.valid) {
-      this.formSubmitted.emit(this.settingsForm.value);
-    }
-  }
+  // Removed onSubmit logic; parent handles navigation and actions
 
   resetForm(): void {
     this.initializeForm();

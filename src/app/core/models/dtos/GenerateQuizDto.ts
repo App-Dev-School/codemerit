@@ -2,6 +2,7 @@ import { QuizOrderEnum } from "../enums/quiz-order.enum";
 import { QuizTypeEnum } from "../enums/quiz-type.enum";
 import { QuizResult } from "../quiz";
 import { QuizQuestion } from "../quiz-question";
+import { QuizSettings } from "../quiz-settings";
 
 export interface QuizCreateDto {
     id?: number;
@@ -27,8 +28,10 @@ export class QuizCreateModel implements QuizCreateDto{
     topicIds?: string;
     tag?: string;
     quizType: QuizTypeEnum;
-    numQuestions?: number;
+    questionIds?: number[];
+    //numQuestions?: number;
     ordering?: string = QuizOrderEnum.Default;
+    settings?: QuizSettings; // Extend with specific settings properties as needed
 
     //Creating Temporary Values to save time during dev
     constructor(quiz: Partial<QuizCreateModel> = {}) {

@@ -95,18 +95,27 @@ export class QuizFormPage implements OnInit {
       shortDesc: [this.quizItem.shortDesc, [Validators.required, Validators.minLength(10), Validators.maxLength(100)]],
       label: [''],
       isPublished: [true],
-      numQuestions: [this.quizItem.numQuestions || 10, [Validators.required, Validators.min(1), Validators.max(50)]],
-      ordering: [this.quizItem.ordering || 'Default', Validators.required],
+      numQuestions: [this.quizItem.settings?.numQuestions || 10, [Validators.required, Validators.min(1), Validators.max(50)]],
+      ordering: [this.quizItem.settings?.ordering || 'Default', Validators.required],
     });
   }
 
   ngOnInit() {
     //this.questionSlug = this.route.snapshot.paramMap.get('question-slug');
     this.quizForm.get('subjectIds')?.valueChanges.subscribe(subject => {
-      console.log("Subject Selected ", subject);
       this.topics = this.masterSrv.topics;
       if (subject > 0) {
         this.topics = this.topics.filter(topic => topic.subjectId == subject);
+      }
+    });
+    // Emit value on init if valid
+    if (this.quizForm.valid) {
+      this.formSubmitted.emit(this.quizForm.value);
+    }
+    // Emit value on every valid change
+    this.quizForm.valueChanges.subscribe(() => {
+      if (this.quizForm.valid) {
+        this.formSubmitted.emit(this.quizForm.value);
       }
     });
   }
@@ -126,13 +135,7 @@ export class QuizFormPage implements OnInit {
     }
   }
 
-  submit() {
-    if (this.quizForm.valid) {
-      this.formSubmitted.emit(this.quizForm.value);
-    } else {
-      this.quizForm.markAllAsTouched();
-    }
-  }
+  // Removed submit button logic; parent handles navigation and actions
 
   restrictInput(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
