@@ -55,6 +55,7 @@ export class UserPermissionsFormComponent {
     { value: 'Topic', title: 'Topic' }
   ];
   permissionsList : Permission[];
+  users: any[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<UserPermissionsFormComponent>,
@@ -67,18 +68,23 @@ export class UserPermissionsFormComponent {
     this.permissionsList = this.permissionsService.getSavedMasterPermissions();
     this.permissionsItems = this.action === 'edit' ? data.permissionsItem : new UserPermissionItem({}); // Create a blank object
     this.permissionsForm = this.createPermissionForm();
+    this.permissionsService.getAllUsers().subscribe({
+      next: (res: any) => {
+        this.users = res;
+        console.log('USERS:', this.users);
+      },
+      error: (err) => console.error(err)
+    });
 
+  
     if (this.action === 'edit') {
       console.log('permissionsManager ###Update Form in Edit Mode:', data.permissionsItem);
       //populate permissions
       this.permissionsForm.patchValue({
-        permissionId: data.permissionsItem.permissionIds,
-        permissionName: data.permissionsItem.permissionName,
+        permissionIds: data.permissionsItem.permissionIds,
         resourceType: data.permissionsItem.resourceType,
         resourceId: data.permissionsItem.resourceId,
-        resourceName: data.permissionsItem.resourceName,
         userId: data.permissionsItem.userId,
-        userName: data.permissionsItem.userName,
         userEmail: data.permissionsItem.userEmail
       
       });
@@ -99,7 +105,7 @@ export class UserPermissionsFormComponent {
   return this.fb.group({
     id: [this.permissionsItems.id],
     permissionIds: [this.permissionsItems.permissionIds, Validators.required],
-    userIds: [this.permissionsItems.userId, Validators.required],
+    userId: [this.permissionsItems.userId, Validators.required],
     resourceType: [this.permissionsItems.resourceType],
     resourceId: [this.permissionsItems.resourceId, Validators.required]
   });
@@ -144,7 +150,7 @@ export class UserPermissionsFormComponent {
       } else {
         // Add new permissions
         const payload = {
-              permissionId: formData.permissionId,
+              permissionId: formData.permissionIds,
               resourceId: formData.resourceId,
               userId: formData.userId
           };

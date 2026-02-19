@@ -28,14 +28,16 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Select Users</mat-label>
-            <mat-select formControlName="userIds" multiple>
-              <mat-option value="Course">John</mat-option>
-              <mat-option value="Topic">Peter</mat-option>
-              <mat-option value="Module">Tom</mat-option>
+            <mat-select formControlName="userId">
+              @for (user of users; track user.userId) {
+              <mat-option [value]="user.userId">
+               {{ user.firstName }} {{ user.lastName }}
+              </mat-option>
+              }
             </mat-select>
           </mat-form-field>
         </div>
-
+          
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Select Resource Type</mat-label>
