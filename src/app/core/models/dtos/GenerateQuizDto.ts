@@ -30,11 +30,17 @@ export class QuizCreateModel implements QuizCreateDto{
     numQuestions?: number;
     ordering?: string = QuizOrderEnum.Default;
 
+    //Creating Temporary Values to save time during dev
     constructor(quiz: Partial<QuizCreateModel> = {}) {
     this.id = quiz.id || Number.parseInt(this.getRandomID());
     this.quizType = QuizTypeEnum.UserQuiz;
-    this.title = quiz.title || '';
-    this.shortDesc = quiz.shortDesc || '';
+    this.title = quiz.title || 'Test Your Angular Skills!';
+    this.shortDesc = quiz.shortDesc || 'How good you are at Angular? Take this quiz to find out!';
+    this.description = quiz.description || 'This quiz covers various aspects of Angular, including components, services, directives, and more. It is designed to test your knowledge and understanding of Angular concepts and best practices.';
+    this.subjectIds = quiz.subjectIds || '1,2';
+    //this.jobIds = quiz.jobIds || '1';
+    //this.topicIds = quiz.topicIds || '1,2,3';
+    this.tag = quiz.tag || 'angular,frontend,webdev';
   }
 
   public getRandomID(): string {
