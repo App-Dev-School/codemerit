@@ -30,6 +30,7 @@ import { QuestionService } from '../manage/questions.service';
 import { NgTemplateOutlet } from '@angular/common';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { NgScrollbar } from 'ngx-scrollbar';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 
 @Component({
   selector: 'app-question-form',
@@ -43,6 +44,7 @@ import { NgScrollbar } from 'ngx-scrollbar';
     NgTemplateOutlet,
     NgScrollbar,
     TextFieldModule,
+    MatCard, MatCardHeader, MatCardTitle, MatCardContent,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
