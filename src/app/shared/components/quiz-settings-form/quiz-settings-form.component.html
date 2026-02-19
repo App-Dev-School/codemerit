@@ -1,0 +1,84 @@
+<form class="quiz-settings-form m-4" [formGroup]="settingsForm">
+  <h4 class="text-center">Customize and Publish</h4>
+  <p class="cmHeading2 text-center m-b-20">Customize how the quiz is presented to users.</p>
+    <!-- Mode Selection -->
+    <div class="dim-divider"></div>
+
+    <div class="row settingRow align-items-center">
+      <div class="col-6 d-flex align-items-center text-start">
+        <h5 class="cmHeading2">Quiz Mode</h5>
+      </div>
+      <div class="col-6 text-end">
+        <mat-button-toggle-group class="mt-0 mb-0" formControlName="mode" appearance="standard">
+          @for (option of modeOptions; track option.value) {
+          <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+          }
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <!-- Show Hint -->
+    <div class="row settingRow align-items-center">
+      <div class="col-6 d-flex align-items-center text-start">
+        <h5 class="cmHeading2">Enable Hints</h5>
+      </div>
+      <div class="col-6 text-end">
+        <mat-button-toggle-group class="mt-0 mb-0" formControlName="showHint" appearance="standard">
+          <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+          <mat-button-toggle [value]="false">No</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <!-- Show Answers -->
+    <div class="row settingRow align-items-center">
+      <div class="col-6 d-flex align-items-center text-start">
+        <h5 class="cmHeading2">Show Answer</h5>
+      </div>
+      <div class="col-6 text-end">
+        <mat-button-toggle-group class="mt-0 mb-0" formControlName="showAnswers" appearance="standard">
+          <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+          <mat-button-toggle [value]="false">No</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <!-- Enable Navigation -->
+    <div class="row settingRow align-items-center">
+      <div class="col-6 d-flex align-items-center text-start">
+        <h5 class="cmHeading2">Enable Navigation</h5>
+      </div>
+      <div class="col-6 text-end">
+        <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableNavigation" appearance="standard">
+          <mat-button-toggle [value]="true">ON</mat-button-toggle>
+          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <!-- Enable Audio -->
+    <div class="row settingRow align-items-center">
+      <div class="col-6 d-flex align-items-center text-start">
+        <h5 class="cmHeading2">Enable Audio</h5>
+      </div>
+      <div class="col-6 text-end">
+        <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableAudio" appearance="standard">
+          <mat-button-toggle [value]="true">ON</mat-button-toggle>
+          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <!-- Enable Timer -->
+    <div class="row settingRow align-items-center">
+      <div class="col-6 d-flex align-items-center text-start">
+        <h5 class="cmHeading2">Enable Timer</h5>
+      </div>
+      <div class="col-6 text-end">
+        <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableTimer" appearance="standard">
+          <mat-button-toggle [value]="true">ON</mat-button-toggle>
+          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+</form>

@@ -1,9 +1,27 @@
 <section class="content">
   <div class="content-block">
 
+    <!-- <div class="row m-t-20 clearfix">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <app-quiz-questions-form></app-quiz-questions-form>
+      </div>
+      </div> -->
+
+      <app-quiz-questions-form></app-quiz-questions-form>
+
     <div class="row match-height m-t-20 clearfix">
       <!-- Congratulations Card -->
       <div class="col-12 col-md-6 col-lg-7">
+        <app-quiz-form></app-quiz-form>
+        <app-quiz-settings-form 
+  [initialSettings]="{ numQuestions: 15, mode: 'Interactive' }">
+</app-quiz-settings-form>
+        <!-- <app-quiz-settings-form 
+  [initialSettings]="{ numQuestions: 15, mode: 'Interactive' }"
+  (formSubmitted)="onSettingsSaved($event)"
+  (settingsChanged)="onSettingsChanged($event)">
+</app-quiz-settings-form> -->
+
         <app-congratulations-card [user]="authUser"></app-congratulations-card>
       </div>
       <!-- Medal Card -->
@@ -34,12 +52,6 @@
     </div> -->
 
     <div class="row m-t-20 clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <!-- <app-learner-welcome-card></app-learner-welcome-card> -->
-        <!-- Add in my subjects panel -->
-        <!-- <app-my-subjects [minimal]="true" (subjectSelected)="onSubjectChange($event)"></app-my-subjects> -->
-      </div>
-
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <h3 class="text-center m-t-20">Skills by <span class="col-green">Job Roles</span></h3>
         @if(subjectRoleMap && subjectRoleMap.length > 0){

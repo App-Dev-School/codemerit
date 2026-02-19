@@ -1,0 +1,54 @@
+<div class="quiz-builder-container">
+  <!-- Stepper Header -->
+  <div class="stepper-header">
+    <div class="step" [class.active]="currentStep === 0">Quiz Info</div>
+    <div class="step" [class.active]="currentStep === 1">Questions</div>
+    <div class="step" [class.active]="currentStep === 2">Settings</div>
+  </div>
+
+  <!-- Stepper Content -->
+  <div class="builder-content">
+    @if (currentStep === 0) {
+      <div class="step-content" style="max-width: 600px; margin: 0 auto;">
+        <app-quiz-form (formSubmitted)="onQuizFormSubmit($event)" [formData]="quizFormData"></app-quiz-form>
+      </div>
+    }
+    @if (currentStep === 1) {
+      <div class="step-content">
+        <app-quiz-questions-form (questionsAdded)="onQuestionsAdded($event)" [questions]="quizQuestionsData"></app-quiz-questions-form>
+      </div>
+    }
+    @if (currentStep === 2) {
+      <div class="step-content" style="max-width: 500px; margin: 0 auto;">
+        <app-quiz-settings-form (formSubmitted)="onSettingsFormSubmit($event)" [settings]="quizSettingsData"></app-quiz-settings-form>
+      </div>
+    }
+  </div>
+
+  <!-- Stepper Actions -->
+  <div class="stepper-actions">
+    <button mat-stroked-button color="primary" (click)="prevStep()" [disabled]="currentStep === 0">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+      Previous
+    </button>
+    <span class="flex-grow"></span>
+    @if (currentStep < 2) {
+      <button mat-flat-button color="accent" (click)="nextStep()" [disabled]="!canProceedToNext">
+        Next
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    }
+    @if (currentStep === 2) {
+      <button mat-flat-button color="primary" (click)="publishQuiz()" [disabled]="!allStepsValid">
+        Publish
+      </button>
+    }
+  </div>
+  <!-- Debug: Visualize form values -->
+  <div style="background:#222; color:#fff; font-size:13px; padding:16px; border-radius:8px; margin:24px auto; max-width:700px;">
+    <b>Debug Form Values</b>
+    <pre>quizFormData: {{ quizFormData | json }}</pre>
+    <pre>quizQuestionsData: {{ quizQuestionsData | json }}</pre>
+    <pre>quizSettingsData: {{ quizSettingsData | json }}</pre>
+  </div>
+</div>
