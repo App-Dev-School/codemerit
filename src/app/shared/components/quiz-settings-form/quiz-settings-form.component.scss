@@ -20,32 +20,21 @@
     padding: 0;
   }
 
+  .settingRow {
+    margin-bottom: 16px;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .cmHeading2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+  }
+
   form {
     padding: 0;
-
-    .row {
-      margin-bottom: 0;
-
-      &.settingRow {
-        padding: 16px 0;
-        border-bottom: 1px solid #f0f0f0;
-
-        &:last-of-type {
-          border-bottom: none;
-        }
-      }
-    }
-
-    mat-form-field {
-      width: 100%;
-    }
-
-    .cmHeading2 {
-      margin: 0;
-      font-size: 14px;
-      font-weight: 500;
-      color: #333;
-    }
 
     .example-full-width {
       width: 100%;
@@ -70,7 +59,9 @@
 
     .dim-divider {
       margin: 16px 0;
-      background-color: #f0f0f0;
+      background-color: #e0e0e0;
+      height: 1px;
+      opacity: 0.5;
     }
 
     .mb-2 {

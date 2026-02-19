@@ -73,8 +73,8 @@
             <ng-container *ngTemplateOutlet="questionFilterForm"></ng-container>
             }@else{
             @if (getAvailableQuestions().length > 0) {
-            <div class="scrollbar-container" style="height: 300px;">
-                <ng-scrollbar visibility="hover">
+            <div class="scrollbar-container">
+                <ng-scrollbar style="height: 300px" visibility="hover">
                     <div class="question-list">
                         @for (question of getAvailableQuestions(); track question.id) {
                         <div class="question-item">

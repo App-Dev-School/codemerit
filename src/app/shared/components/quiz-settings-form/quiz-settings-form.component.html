@@ -3,7 +3,9 @@
     <mat-card-title>Quiz Settings</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <form class="register-form m-4" [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
+    <form class="quiz-settings-form m-4" [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
+      <h4 class="text-center">Customize and Publish</h4>
+      <p class="cmHeading2 text-center">Customize how the quiz is presented to users.</p>
       <ng-scrollbar visibility="hover">
         <!-- Mode Selection -->
         <mat-divider class="dim-divider"></mat-divider>
@@ -91,9 +93,7 @@
         <!-- Action Buttons -->
         <div class="row">
           <div class="col-12 d-flex gap-2 justify-content-end mt-3">
-            <button mat-stroked-button color="primary" type="button" (click)="resetForm()">
-              Reset
-            </button>
+
             <button mat-flat-button color="accent" [disabled]="!settingsForm.valid" type="submit">
               Save Settings
             </button>
