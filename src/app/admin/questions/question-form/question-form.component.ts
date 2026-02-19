@@ -212,13 +212,10 @@ export class QuestionFormPage implements OnInit {
       if (this.action === 'edit') {
         const changedFields: any = {};
         // Compare each field
-        console.log('QuestionManager FIELDS#:', formData);
         for (const key in formData) {
           if (formData.hasOwnProperty(key)) {
-            console.log('QuestionManager FIELDS#1:', key, formData[key]);
             if (formData[key] !== this.initialFormValue[key]) {
               changedFields[key] = formData[key];
-              //console.log('QuestionManager FIELDS#1:');
             }
           }
         }
@@ -252,8 +249,7 @@ export class QuestionFormPage implements OnInit {
           questionType: formData.questionType,
           title: "",
           level: Number.parseInt(formData.level),
-          //AAAA: status: formData.status,
-          status: Status.Active,
+          status: this.authData.role === 'Admin' ? formData.status : Status.Pending,
           orderId: formData.orderId,
           marks: formData.marks,
           timeAllowed: formData.timeAllowed,
@@ -277,8 +273,7 @@ export class QuestionFormPage implements OnInit {
             },
             error: (error) => {
               this.submitted = false;
-              console.error('QuestionManager CreateAPI Error:', error);
-              this.snackService.display('snackbar-dark', "Error adding question. Please try again.", 'bottom', 'center');
+              this.snackService.display('snackbar-dark', error? error : "Error adding question. Please try again.", 'bottom', 'center');
             },
           });
       }

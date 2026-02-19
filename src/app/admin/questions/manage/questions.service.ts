@@ -68,12 +68,7 @@ export class QuestionService {
       })
     };
     const url = 'apis/question/create';
-    return this.httpService.postWithParams(url, payload, httpOptions).pipe(delay(3000),
-      map((response) => {
-        return response;
-      }),
-      catchError(this.handleError)
-    );
+     return this.httpService.postWithParams(url, payload, httpOptions);
   }
 
   updateQuestion(payload: any, questionId: any): Observable<any> {
@@ -82,12 +77,7 @@ export class QuestionService {
       api_key = this.authService.currentUserValue.token;
     }
     const url = 'apis/question/update?id=' + questionId;
-    return this.httpService.put(url, payload, api_key).pipe(delay(1000),
-      map((response) => {
-        return response; // return response from API
-      }),
-      catchError(this.handleError)
-    );
+    return this.httpService.put(url, payload, api_key);
   }
 
   deleteQuestion(id: number): Observable<number> {
