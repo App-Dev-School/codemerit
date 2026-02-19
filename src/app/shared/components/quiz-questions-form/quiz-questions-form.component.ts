@@ -54,6 +54,7 @@ interface Question {
   ]
 })
 export class QuizQuestionsFormComponent implements OnInit {
+  showFilter = true;
   filterForm: FormGroup;
   subjects = [
     { id: 1, name: 'HTML' },
@@ -126,15 +127,17 @@ export class QuizQuestionsFormComponent implements OnInit {
       const levelMatch = !level || q.level === level;
       return subjectMatch && topicMatch && levelMatch;
     });
-    // Debug: log filtered questions
-    // Remove/comment this in production
-    // eslint-disable-next-line no-console
+    this.toggleFilter();
     console.log('Filtered Questions:', this.filteredQuestions);
   }
 
   resetFilters() {
     this.filterForm.reset({ subject: [], topic: [], level: '' });
     this.filteredQuestions = this.questions;
+  }
+
+  toggleFilter() {
+    this.showFilter = !this.showFilter;
   }
 
   addSelectedQuestions() {

@@ -77,18 +77,40 @@
           </div>
         </div>
 
-        <!-- <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
-              <mat-form-field class="example-full-width" appearance="fill">
-                <mat-label>Number of Questions</mat-label>
-                <input matInput type="number" formControlName="numOfQuestions" (keydown)="restrictInput($event)"
-                  placeholder="Enter the number of questions" required>
-                @if (quizForm.get('numOfQuestions')?.hasError('min')) {
-                <mat-error>
-                  Number of questions must be at least 1
-                </mat-error>
+        <div class="row">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Number of Questions</mat-label>
+              <input type="number" matInput formControlName="numQuestions" min="1" max="50" required>
+              @if (quizForm.get('numQuestions')?.hasError('required')) {
+              <mat-error>
+                Number of questions is required
+              </mat-error>
+              }
+              @if (quizForm.get('numQuestions')?.hasError('min')) {
+              <mat-error>
+                Minimum 1 question required
+              </mat-error>
+              }
+              @if (quizForm.get('numQuestions')?.hasError('max')) {
+              <mat-error>
+                Maximum 50 questions allowed
+              </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Question Ordering</mat-label>
+              <mat-select formControlName="ordering" required>
+                @for (option of orderingOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
                 }
-              </mat-form-field>
-          </div> -->
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
 
 
         <div class="row">

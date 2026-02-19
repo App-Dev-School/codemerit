@@ -1,3 +1,4 @@
+import { QuizOrderEnum } from "../enums/quiz-order.enum";
 import { QuizTypeEnum } from "../enums/quiz-type.enum";
 import { QuizResult } from "../quiz";
 import { QuizQuestion } from "../quiz-question";
@@ -26,6 +27,8 @@ export class QuizCreateModel implements QuizCreateDto{
     topicIds?: string;
     tag?: string;
     quizType: QuizTypeEnum;
+    numQuestions?: number;
+    ordering?: string = QuizOrderEnum.Default;
 
     constructor(quiz: Partial<QuizCreateModel> = {}) {
     this.id = quiz.id || Number.parseInt(this.getRandomID());

@@ -62,6 +62,11 @@ export class QuizFormPage implements OnInit {
   quizItem: QuizCreateModel;
   subjects: Subject[] = [];
   topics: TopicItem[] = [];
+  orderingOptions = [
+    { label: 'Default', value: 'Default' },
+    { label: 'Random', value: 'Random' }
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private quizService: QuizService,
@@ -82,13 +87,15 @@ export class QuizFormPage implements OnInit {
       id: ['' + this.quizItem?.id],
       title: [this.quizItem.title, [Validators.required, Validators.minLength(10), Validators.maxLength(50)]],
       quizType: [QuizTypeEnum.Standrad, [Validators.required]],
-      subjectIds: ['' + this.quizItem.subjectIds],
+      subjectIds: [this.quizItem.subjectIds],
       topicIds: [[]],
       tag: [this.quizItem.tag, [Validators.required]],
       description: [this.quizItem.description, [Validators.required, Validators.minLength(10), Validators.maxLength(200)]],
       shortDesc: [this.quizItem.shortDesc, [Validators.required, Validators.minLength(10), Validators.maxLength(100)]],
       label: [''],
-      isPublished: [true]
+      isPublished: [true],
+      numQuestions: [this.quizItem.numQuestions || 10, [Validators.required, Validators.min(1), Validators.max(50)]],
+      ordering: [this.quizItem.ordering || 'Default', Validators.required],
     });
   }
 

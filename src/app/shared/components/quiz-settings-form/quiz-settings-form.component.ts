@@ -50,11 +50,6 @@ export class QuizSettingsFormComponent implements OnInit {
 
   settingsForm!: FormGroup;
 
-  orderingOptions = [
-    { label: 'Default', value: 'Default' },
-    { label: 'Random', value: 'Random' }
-  ];
-
   modeOptions = [
     { label: 'Default', value: 'Default' },
     { label: 'Interactive', value: 'Interactive' }
@@ -68,8 +63,6 @@ export class QuizSettingsFormComponent implements OnInit {
 
   initializeForm(): void {
     this.settingsForm = this.fb.group({
-      numQuestions: [this.initialSettings.numQuestions || 10, [Validators.required, Validators.min(1), Validators.max(50)]],
-      ordering: [this.initialSettings.ordering || 'Default', Validators.required],
       mode: [this.initialSettings.mode || 'Default', Validators.required],
       showHint: [this.initialSettings.showHint !== undefined ? this.initialSettings.showHint : true],
       showAnswers: [this.initialSettings.showAnswers !== undefined ? this.initialSettings.showAnswers : false],

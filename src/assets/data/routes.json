@@ -18,7 +18,7 @@
       "path": "/app/select-job-role",
       "title": "Browse Tech Roles",
       "iconType": "material-icons-outlined",
-      "icon": "library_books",
+      "icon": "school",
       "class": "",
       "groupTitle": false,
       "badge": "",
@@ -32,7 +32,21 @@
       "path": "/app/select-subject",
       "title": "Subject Explorer",
       "iconType": "material-icons-outlined",
-      "icon": "school",
+      "icon": "library_books",
+      "class": "",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": [
+        "All"
+      ],
+      "submenu": []
+    },
+    {
+      "path": "/quiz/builder",
+      "title": "Quiz Builder",
+      "iconType": "material-icons-outlined",
+      "icon": "extension",
       "class": "",
       "groupTitle": false,
       "badge": "",
@@ -102,6 +116,20 @@
       "submenu": []
     },
     {
+      "path": "/quiz/builder",
+      "title": "Quiz Builder",
+      "iconType": "material-icons-outlined",
+      "icon": "extension",
+      "class": "menu-toggle",
+      "groupTitle": false,
+      "badge": "New",
+      "badgeClass": "badge bg-blue sidebar-badge float-end",
+      "role": [
+        "All"
+      ],
+      "submenu": []
+    },
+    {
       "path": "/users/list",
       "title": "Manage Users",
       "iconType": "material-icons-outlined",
@@ -143,35 +171,6 @@
         "Admin"
       ],
       "submenu": []
-    },
-    {
-      "path": "",
-      "title": "Quiz Player",
-      "iconType": "material-icons-outlined",
-      "icon": "extension",
-      "class": "menu-toggle",
-      "groupTitle": false,
-      "badge": "Mock",
-      "badgeClass": "badge bg-blue sidebar-badge float-end",
-      "role": [
-        "Admin"
-      ],
-      "submenu": [
-        {
-          "path": "/quiz/take/javascript",
-          "title": "Player v1",
-          "iconType": "",
-          "icon": "",
-          "class": "ml-menu",
-          "groupTitle": false,
-          "badge": "",
-          "badgeClass": "",
-          "role": [
-            ""
-          ],
-          "submenu": []
-        }
-      ]
     },
     {
       "path": "",
