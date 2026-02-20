@@ -17,7 +17,7 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-permissions-delete',
+  selector: 'app-permissions-revoke',
     templateUrl: './delete.component.html',
     styleUrls: ['./delete.component.scss'],
     imports: [
@@ -27,20 +27,20 @@ export interface DialogData {
         MatDialogClose,
     ]
 })
-export class permissionsDeleteComponent {
+export class permissionsrevokeComponent {
   constructor(
-    public dialogRef: MatDialogRef<permissionsDeleteComponent>,
+    public dialogRef: MatDialogRef<permissionsrevokeComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public permissionsService: permissionsService
   ) {}
-  confirmDelete(): void {
-    this.permissionsService.deletepermissions(this.data.id).subscribe({
+  confirmRevoke(): void {
+    this.permissionsService.revokepermissions(this.data.id).subscribe({
       next: (response) => {
-        console.log("PermissionsManager delete response received", response);
+        console.log("PermissionsManager revoke response received", response);
         this.dialogRef.close(response);
       },
       error: (error) => {
-        console.error('Delete Error:', error);
+        console.error('Revoke Error:', error);
         // Handle the error appropriately
         this.dialogRef.close(null);
       },

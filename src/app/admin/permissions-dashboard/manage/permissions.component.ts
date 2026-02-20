@@ -40,7 +40,7 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
 import { Subject } from 'rxjs';
-import { permissionsDeleteComponent } from './dialogs/delete/delete.component';
+import { permissionsrevokeComponent } from './dialogs/delete/delete.component';
 import { UserPermissionsFormComponent } from './dialogs/form-dialog/form-dialog.component';
 import { permissionsService } from './permissions.service';
 
@@ -211,8 +211,8 @@ export class permissionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteItem(row: UserPermission) {
-    const dialogRef = this.dialog.open(permissionsDeleteComponent, {
+  revokeItem(row: UserPermission) {
+    const dialogRef = this.dialog.open(permissionsrevokeComponent, {
       data: row,
     });
     dialogRef.afterClosed().subscribe((result) => {
@@ -223,7 +223,7 @@ export class permissionsComponent implements OnInit, OnDestroy {
         this.refreshTable();
         this.showNotification(
           'snackbar-danger',
-          row.userName+' deleted Successfully.',
+          row.userName+' revoked Successfully.',
           'bottom',
           'center'
         );
@@ -266,7 +266,7 @@ export class permissionsComponent implements OnInit, OnDestroy {
     this.selection.clear();
     this.showNotification(
       'snackbar-danger',
-      `${totalSelect} Record(s) Deleted Successfully...!!!`,
+      `${totalSelect} permissions(s) Revoked Successfully...!!!`,
       'bottom',
       'center'
     );

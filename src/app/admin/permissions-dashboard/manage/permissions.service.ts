@@ -116,12 +116,13 @@ export class permissionsService {
     );
   }
 
-  deletepermissions(id: number): Observable<number> {
+  revokepermissions(id: number): Observable<number> {
     let api_key = '';
     if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/permissions/delete/' + id;
+    //const url = 'apis/permissions/revoke/' + id;
+    const url = `apis/permissions/revoke?id=${id}`;
     return this.httpService.delete(url, api_key).pipe(
       map((response) => {
         if (AuthConstants.DEV_MODE) {

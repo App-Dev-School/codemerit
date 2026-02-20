@@ -23,7 +23,7 @@
             <div class="right">
               <div class="right-side-btn">
                 <button mat-icon-button [hidden]=!selection.hasValue() (click)="removeSelectedRows()"
-                  class="tbl-header-btn col-red" matTooltip="Delete">
+                  class="tbl-header-btn col-red" matTooltip="revoke">
                   <mat-icon>delete_outline</mat-icon>
                 </button>
 
@@ -85,9 +85,9 @@
                       class="tbl-action-btn">
                       <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'"></app-feather-icons>
                     </button>
-                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="deleteItem(row)"
+                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="revokeItem(row)"
                       class="tbl-action-btn">
-                      <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'"></app-feather-icons>
+                      <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-revoke'"></app-feather-icons>
                     </button>
                   </mat-cell>
                 </ng-container>
