@@ -3,7 +3,7 @@
     <div class="navbar-header">
       <a href="#" onClick="return false;" class="navbar-toggle collapsed"
         (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-expanded="false"></a>
-    <a href="javascript:void(0)" class="bars" (click)="mobileMenuSidebarOpen()"></a>
+     <a href="#" onClick="return false;" class="bars" (click)="mobileMenuSidebarOpen($event,'overlay-open')"></a>
 
       <a class="navbar-brand" routerLink={{homePage}}>
         <!-- @if (isNavbarCollapsed) {
