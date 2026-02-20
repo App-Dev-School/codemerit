@@ -1,0 +1,76 @@
+<div class="addContainer">
+  <div class="modalHeader">
+    <div class="avatarDetails">
+      <div class="modalTitle">
+        {{dialogTitle}}
+      </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div>
+    <form class="register-form m-4" [formGroup]="permissionsForm" (ngSubmit)="submit()">
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Permission</mat-label>
+            <mat-select formControlName="permissionIds" multiple>
+              @for (p of permissionsList; track p.id) {
+              <mat-option [value]="p.id">
+                {{ p.permission }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Users</mat-label>
+            <mat-select formControlName="userId">
+              @for (user of users; track user.userId) {
+              <mat-option [value]="user.userId">
+               {{ user.firstName }} {{ user.lastName }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+          
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Resource Type</mat-label>
+            <mat-select formControlName="resourceType">
+              @for (r of resourceTypes; track r.value) {
+              <mat-option [value]="r.value">
+                {{ r.title }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Select Resource</mat-label>
+            <mat-select formControlName="resourceId">
+              <!-- @for (r of resourceTypes; track r.value) {
+              <mat-option [value]="r.id">
+                {{ r.value }}
+              </mat-option>
+              } -->
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <button mat-flat-button class="btn-space" color="primary" [disabled]="!permissionsForm.valid">
+            {{action ==='edit' ? 'Update Permission' : 'Grant Permission'}}
+          </button>
+          <button mat-raised-button color="warn" (click)="permissionsForm.reset()">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

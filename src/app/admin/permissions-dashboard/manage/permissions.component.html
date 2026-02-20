@@ -1,0 +1,122 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <!-- breadcrumb -->
+      <app-breadcrumb [title]="'All permissions'" [items]="['permissions']" [active_item]="'All permissions'"></app-breadcrumb>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="materialTableHeader">
+            <div class="left">
+              <ul class="header-buttons-left ms-0">
+                <li class="tbl-title">
+                  <h2> User Permissions </h2>
+                </li>
+                <li class="tbl-search-box">
+                  <label for="search-input"><i class="material-icons search-icon">search</i></label>
+                  <input id="search-input" placeholder="Search" type="text" #filter (keyup)="applyFilter($event)"
+                    class="browser-default search-field" aria-label="Search box">
+                </li>
+              </ul>
+            </div>
+            <div class="right">
+              <div class="right-side-btn">
+                <button mat-icon-button [hidden]=!selection.hasValue() (click)="removeSelectedRows()"
+                  class="tbl-header-btn col-red" matTooltip="revoke">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+
+                <app-table-show-hide-column [columnDefinitions]="columnDefinitions"></app-table-show-hide-column>
+
+                <button mat-icon-button (click)="addNew()" class="tbl-header-btn col-green" matTooltip="Add">
+                  <mat-icon>add_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button (click)="refresh()" class="tbl-header-btn col-brown" matTooltip="Refresh">
+                  <mat-icon>refresh</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="overflow-auto">
+            <div class="responsive_table">
+              <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                  <mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox (change)="$event ? masterToggle() : null"
+                      [checked]="selection.hasValue() && isAllSelected()" color="primary"
+                      [indeterminate]="selection.hasValue() && !isAllSelected()" [ngClass]="'tbl-checkbox'">
+                    </mat-checkbox>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+                      [checked]="selection.isSelected(row)" [ngClass]="'tbl-checkbox'" color="primary">
+                    </mat-checkbox>
+                  </mat-cell>
+                </ng-container>
+                @for (column of columnDefinitions; track column) {
+                <!-- Skip rendering if column.label is "select" or "action" -->
+                @if (column.type === 'check' || column.type === 'actionBtn') {
+                <!-- Skip this column -->
+                } @else {
+               <ng-container [matColumnDef]="column.def">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <span class="truncate-text">{{ column.label }}</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matTooltip]="row[column.def]">
+                    <span class="mobile-label">{{ column.label }}:</span>
+
+                    @if (column.def == 'title') {
+                    <div class="full-text">{{ row.id }}. {{ row[column.def] }}</div>
+                    }@else {
+                    <span class="truncate-text">{{ row[column.def] }}</span>
+                    }
+                  </mat-cell>
+                </ng-container>
+                }
+                }
+              
+                <!-- actions -->
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell class="pr-0" *matHeaderCellDef>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
+                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
+                      class="tbl-action-btn">
+                      <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'"></app-feather-icons>
+                    </button>
+                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="revokeItem(row)"
+                      class="tbl-action-btn">
+                      <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-revoke'"></app-feather-icons>
+                    </button>
+                  </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: getDisplayedColumns();"
+                  (click)="editCall(row)" [style.cursor]="'pointer'" matRipple>
+                </mat-row>
+              </table>
+              <!-- Loading spinner -->
+              @if (isLoading) {
+              <div class="tbl-spinner">
+                <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
+                </mat-progress-spinner>
+              </div>
+              }
+
+             @if (isLoading || dataSource.data.length === 0) {
+              <div class="no-results text-center" [style.display]="dataSource.data.length === 0 ? '' : 'none'">
+              <img src="assets/images/icons/loading.gif" class="smallLoadingIcon">
+                <h4 class="col-grey">Loading Permissions</h4>
+              </div>
+              }
+              <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+              </mat-paginator>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
