@@ -67,7 +67,7 @@ export class permissionsService {
     );
   }
 
-  addpermissions(item: any): Observable<any> {
+  addPermissions(item: any): Observable<any> {
     let api_key = '';
     if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
       api_key = this.authService.currentUserValue.token;
@@ -90,7 +90,7 @@ export class permissionsService {
     );
   }
 
-  updatepermissions(permissions: any, topicId: any): Observable<any> {
+  updatePermissions(permissions: any, topicId: any): Observable<any> {
     let api_key = '';
     if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
       api_key = this.authService.currentUserValue.token;
@@ -113,7 +113,7 @@ export class permissionsService {
     );
   }
 
-  revokepermissions(id: number): Observable<number> {
+  revokePermissions(id: number): Observable<number> {
     let api_key = '';
     if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
       api_key = this.authService.currentUserValue.token;
