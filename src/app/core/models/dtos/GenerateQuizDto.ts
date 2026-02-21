@@ -29,6 +29,7 @@ export class QuizCreateModel implements QuizCreateDto{
     tag?: string;
     quizType: QuizTypeEnum;
     questionIds?: number[];
+    isPublished: boolean;
     //numQuestions?: number;
     ordering?: string = QuizOrderEnum.Default;
     settings?: QuizSettings; // Extend with specific settings properties as needed
@@ -44,6 +45,8 @@ export class QuizCreateModel implements QuizCreateDto{
     //this.jobIds = quiz.jobIds || '1';
     //this.topicIds = quiz.topicIds || '1,2,3';
     this.tag = quiz.tag || 'angular,frontend,webdev';
+    this.userId = quiz.userId || 1; // Default to user ID 1 for testing
+    this.isPublished = quiz.isPublished !== undefined ? quiz.isPublished : true;
   }
 
   public getRandomID(): string {

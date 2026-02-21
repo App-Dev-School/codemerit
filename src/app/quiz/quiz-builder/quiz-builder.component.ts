@@ -1,19 +1,18 @@
-import { Component, OnInit, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Swiper } from 'swiper';
-import { register } from 'swiper/element/bundle';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
+import { AuthService } from '@core';
+import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
+import { SnackbarService } from '@core/service/snackbar.service';
 import { QuizFormPage } from '@shared/components/quiz-form/quiz-form.component';
 import { QuizQuestionsFormComponent } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
 import { QuizSettingsFormComponent } from '@shared/components/quiz-settings-form/quiz-settings-form.component';
-import { SnackbarService } from '@core/service/snackbar.service';
+import { register } from 'swiper/element/bundle';
 import { QuizService } from '../quiz.service';
-import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
-import { AuthService } from '@core';
 
 register();
 
@@ -107,11 +106,13 @@ export class QuizBuilderComponent implements OnInit {
     payload.title = this.quizFormData.title;
     payload.shortDesc = this.quizFormData.shortDesc;
     payload.description = this.quizFormData.description;
-    payload.subjectIds = this.quizFormData.subjectIds ? this.quizFormData.subjectIds.join(',') : '';
-    payload.topicIds = this.quizFormData.topicIds ? this.quizFormData.topicIds.join(',') : '';
+    // payload.subjectIds = this.quizFormData.subjectIds ? this.quizFormData.subjectIds.join(',') : '';
+    // payload.topicIds = this.quizFormData.topicIds ? this.quizFormData.topicIds.join(',') : '';
+    payload.subjectIds = this.quizFormData.subjectIds;
+    payload.topicIds = this.quizFormData.topicIds;
     payload.tag = this.quizFormData.tag;
     payload.questionIds = this.quizQuestionsData.map(q => q.id);
-    //payload.isPublished = this.quizFormData.isPublished;
+    payload.isPublished = this.quizFormData.isPublished;
     //payload.questionsCount = this.quizQuestionsData.length;
     payload.quizType = this.quizFormData.quizType;
     payload.settings = {
@@ -124,19 +125,19 @@ export class QuizBuilderComponent implements OnInit {
       enableAudio: this.quizSettingsData.enableAudio,
       enableTimer: this.quizSettingsData.enableTimer
     }
-    //payload.subjectIds = subject > 0 ? '' + subject : null;
-    //payload.topicIds = topic > 0 ? '' + topic : null;
     console.log('QuizBuilder Payload:', payload);
 
     // Call the quizCreate API now
     this.loading = true;
     this.quizService
-      .addQuiz(payload)
+      .addStandardQuiz(payload)
       .subscribe({
         next: (response) => {
           console.log('QuizBuilder CreateQuizAPI Response:', response);
-          if (response && !response.error && response?.data?.slug) {
-            const slug = response?.data?.slug;
+
+          if (response && !response.error && response?.data) {
+            /*
+           const slug = response?.data?.slug;
             if (slug && slug !== '') {
               setTimeout(() => {
                 this.generatedQuizCode = slug;
@@ -144,6 +145,8 @@ export class QuizBuilderComponent implements OnInit {
                 this.loading = false;
               }, 2000);
             }
+           */  
+          this.loading = false;
           } else {
             this.loading = false;
             this.snackbar.display('snackbar-dark', response?.message ?? 'Failed to process your Quiz request. Please try again later.', 'bottom', 'center');
