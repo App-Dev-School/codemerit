@@ -12,9 +12,6 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
-import { QuizFormComponent } from '@shared/components/quiz-form/quiz-form.component';
-import { QuizQuestionsFormComponent } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
-import { QuizSettingsFormComponent } from '@shared/components/quiz-settings-form/quiz-settings-form.component';
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
 @Component({
   selector: 'app-welcome',
@@ -27,9 +24,6 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
     MatChipsModule,
     MatRippleModule,
     MatIconModule,
-    QuizFormComponent,
-    QuizSettingsFormComponent,
-    QuizQuestionsFormComponent,
     //LearnerWelcomeCardComponent,
     CongratulationsCardComponent,
     ReportListComponent, 

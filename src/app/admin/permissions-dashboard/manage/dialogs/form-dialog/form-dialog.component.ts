@@ -40,8 +40,7 @@ export interface DialogData {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatDialogClose,
-    JsonPipe
+    MatDialogClose
   ]
 })
 export class UserPermissionsFormComponent {
@@ -76,13 +75,6 @@ export class UserPermissionsFormComponent {
       },
       error: (err) => console.error(err)
     });
-
-
-    // this.permissionsForm.valueChanges.subscribe(() => {
-    //   if (this.permissionsForm.valid) {
-    //     this.formSubmitted.emit(this.permissionsForm.value);
-    //   }
-    // });
 
     this.permissionsForm.get('resourceType')?.valueChanges.subscribe(resourceType => {
       this.resources = this.masterService.subjects;

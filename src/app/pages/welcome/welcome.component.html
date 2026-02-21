@@ -7,21 +7,9 @@
       </div>
       </div> -->
 
-      <app-quiz-questions-form></app-quiz-questions-form>
-
     <div class="row match-height m-t-20 clearfix">
       <!-- Congratulations Card -->
       <div class="col-12 col-md-6 col-lg-7">
-        <app-quiz-form></app-quiz-form>
-        <app-quiz-settings-form 
-  [initialSettings]="{ numQuestions: 15, mode: 'Interactive' }">
-</app-quiz-settings-form>
-        <!-- <app-quiz-settings-form 
-  [initialSettings]="{ numQuestions: 15, mode: 'Interactive' }"
-  (formSubmitted)="onSettingsSaved($event)"
-  (settingsChanged)="onSettingsChanged($event)">
-</app-quiz-settings-form> -->
-
         <app-congratulations-card [user]="authUser"></app-congratulations-card>
       </div>
       <!-- Medal Card -->
