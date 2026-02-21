@@ -8,8 +8,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import {
   MAT_DIALOG_DATA,
   MatDialogClose,
@@ -19,8 +17,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { permissionsService } from '../../permissions.service';
 import { Permission, UserPermissionItem } from '@core/models/permission.model';
+import { permissionsService } from '../../permissions.service';
+import { MasterService } from '@core/service/master.service';
 
 
 export interface DialogData {
@@ -54,29 +53,45 @@ export class UserPermissionsFormComponent {
     { value: 'Subject', title: 'Subject' },
     { value: 'Topic', title: 'Topic' }
   ];
-  permissionsList : Permission[];
+  resources: any[] = [];
+  permissionsList: Permission[];
   users: any[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<UserPermissionsFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public permissionsService: permissionsService,
-    private fb: UntypedFormBuilder
+    private fb: UntypedFormBuilder,
+    private masterService: MasterService
   ) {
     this.action = data.action;
-    this.dialogTitle =this.action === 'edit'? 'Edit User Permission': 'Grant New Permission';
+    this.dialogTitle = this.action === 'edit' ? 'Edit User Permission' : 'Grant New Permission';
     this.permissionsList = this.permissionsService.getSavedMasterPermissions();
     this.permissionsItems = this.action === 'edit' ? data.permissionsItem : new UserPermissionItem({}); // Create a blank object
     this.permissionsForm = this.createPermissionForm();
     this.permissionsService.getAllUsers().subscribe({
       next: (res: any) => {
         this.users = res;
-        console.log('USERS:', this.users);
       },
       error: (err) => console.error(err)
     });
 
-  
+
+    this.permissionsForm.valueChanges.subscribe(() => {
+      if (this.permissionsForm.valid) {
+        //this.formSubmitted.emit(this.permissionsForm.value);
+      }
+    });
+
+    this.permissionsForm.get('resourceType')?.valueChanges.subscribe(resourceType => {
+      this.resources = this.masterService.subjects;
+      if (resourceType === 'Topic') {
+        this.resources = this.masterService.topics;
+      } else {
+        this.resources = this.masterService.subjects;
+      }
+    });
+
     if (this.action === 'edit') {
       console.log('permissionsManager ###Update Form in Edit Mode:', data.permissionsItem);
       //populate permissions
@@ -86,7 +101,7 @@ export class UserPermissionsFormComponent {
         resourceId: data.permissionsItem.resourceId,
         userId: data.permissionsItem.userId,
         userEmail: data.permissionsItem.userEmail
-      
+
       });
       // Save initial value for later comparison
       this.initialFormValue = this.permissionsForm.getRawValue();
@@ -101,15 +116,15 @@ export class UserPermissionsFormComponent {
     this.permissionsForm.updateValueAndValidity();
   }
 
- createPermissionForm(): UntypedFormGroup {
-  return this.fb.group({
-    id: [this.permissionsItems.id],
-    permissionIds: [this.permissionsItems.permissionIds, Validators.required],
-    userId: [this.permissionsItems.userId, Validators.required],
-    resourceType: [this.permissionsItems.resourceType],
-    resourceId: [this.permissionsItems.resourceId, Validators.required]
-  });
-}
+  createPermissionForm(): UntypedFormGroup {
+    return this.fb.group({
+      id: [this.permissionsItems.id],
+      permissionIds: [this.permissionsItems.permissionIds, Validators.required],
+      userId: [this.permissionsItems.userId, Validators.required],
+      resourceType: [this.permissionsItems.resourceType],
+      resourceId: [this.permissionsItems.resourceId, Validators.required]
+    });
+  }
 
   getErrorMessage(control: UntypedFormControl): string {
     if (control.hasError('required')) {
@@ -150,10 +165,10 @@ export class UserPermissionsFormComponent {
       } else {
         // Add new permissions
         const payload = {
-              permissionId: formData.permissionIds,
-              resourceId: formData.resourceId,
-              userId: formData.userId
-          };
+          permissionId: formData.permissionIds,
+          resourceId: formData.resourceId,
+          userId: formData.userId
+        };
 
         this.permissionsService
           .addpermissions(payload)

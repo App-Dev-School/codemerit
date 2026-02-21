@@ -29,8 +29,8 @@
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Select Users</mat-label>
             <mat-select formControlName="userId">
-              @for (user of users; track user.userId) {
-              <mat-option [value]="user.userId">
+              @for (user of users; track user.id) {
+              <mat-option [value]="user.id">
                {{ user.firstName }} {{ user.lastName }}
               </mat-option>
               }
@@ -55,11 +55,11 @@
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Select Resource</mat-label>
             <mat-select formControlName="resourceId">
-              <!-- @for (r of resourceTypes; track r.value) {
+              @for (r of resources; track r.id) {
               <mat-option [value]="r.id">
-                {{ r.value }}
+                {{ r.title }}
               </mat-option>
-              } -->
+              }
             </mat-select>
           </mat-form-field>
         </div>

@@ -33,7 +33,7 @@ export class permissionsService {
   }
 
 
-   getAllPermissions(): Observable<Permission[]> {
+  getAllPermissions(): Observable<Permission[]> {
     // let api_key = '';
     // if (this.authService.currentUserValue?.token) {
     //   api_key = this.authService.currentUserValue.token;
@@ -55,20 +55,17 @@ export class permissionsService {
     );
   }
 
-    // for getAllusers in dropdown
-            getAllUsers(): Observable<any[]> {
-            let api_key = '';
+  getAllUsers(): Observable<any[]> {
+    let api_key = '';
 
-            if (this.authService.currentUserValue?.token) {
-              api_key = this.authService.currentUserValue.token;
-            }
-
-            const url = 'apis/users'; // 🔁 replace with your real API
-
-            return this.httpService.get(url, api_key).pipe(
-              map((response: any) => response.data)
-            );
-          }
+    if (this.authService.currentUserValue?.token) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/users';
+    return this.httpService.get(url, api_key).pipe(
+      map((response: any) => response.data)
+    );
+  }
 
   addpermissions(item: any): Observable<any> {
     let api_key = '';
