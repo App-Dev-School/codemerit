@@ -50,7 +50,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
     MatChip
   ]
 })
-export class QuizFormPage implements OnInit {
+export class QuizFormComponent implements OnInit {
   @Output() formSubmitted = new EventEmitter<any>();
   questionSlug: string;
   action: string;

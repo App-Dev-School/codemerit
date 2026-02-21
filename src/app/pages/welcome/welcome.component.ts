@@ -12,7 +12,7 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
-import { QuizFormPage } from '@shared/components/quiz-form/quiz-form.component';
+import { QuizFormComponent } from '@shared/components/quiz-form/quiz-form.component';
 import { QuizQuestionsFormComponent } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
 import { QuizSettingsFormComponent } from '@shared/components/quiz-settings-form/quiz-settings-form.component';
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
@@ -27,7 +27,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
     MatChipsModule,
     MatRippleModule,
     MatIconModule,
-    QuizFormPage,
+    QuizFormComponent,
     QuizSettingsFormComponent,
     QuizQuestionsFormComponent,
     //LearnerWelcomeCardComponent,

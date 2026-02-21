@@ -8,11 +8,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { AuthService } from '@core';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { QuizFormPage } from '@shared/components/quiz-form/quiz-form.component';
+import { QuizFormComponent } from '@shared/components/quiz-form/quiz-form.component';
 import { QuizQuestionsFormComponent } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
 import { QuizSettingsFormComponent } from '@shared/components/quiz-settings-form/quiz-settings-form.component';
 import { register } from 'swiper/element/bundle';
 import { QuizService } from '../quiz.service';
+import { MasterService } from '@core/service/master.service';
 
 register();
 
@@ -29,7 +30,7 @@ register();
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    QuizFormPage,
+    QuizFormComponent,
     QuizQuestionsFormComponent,
     QuizSettingsFormComponent
   ]
@@ -40,15 +41,31 @@ export class QuizBuilderComponent implements OnInit {
   quizFormData: any = {};
   quizQuestionsData: any[] = [];
   quizSettingsData: any = {};
+  subjects: any[] = [];
+  topics: any[] = [];
+  allQuestions: any[] = [];
   //other fields
   loading = false;
   editMode: boolean = false;//reserved for future use when we add quiz editing functionality
   error: string = '';
   generatedQuizCode = '';
 
-  constructor(private snackbar: SnackbarService, private authService: AuthService, private quizService: QuizService) { }
+  constructor(
+    private snackbar: SnackbarService,
+    private authService: AuthService,
+    private quizService: QuizService,
+    private masterService: MasterService
+  ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    // Fetch master data (subjects, topics, questions)
+    this.subjects = this.masterService.subjects;
+    this.topics = this.masterService.topics;
+    // If you have a questions API, fetch here. For now, use topics/subjects to filter questions if needed.
+    // If questions are part of masterService, assign here. Otherwise, fetch from API/service.
+    // Example: this.allQuestions = this.masterService.questions;
+    this.dummyInitialize()
+  }
 
   prevStep(): void {
     if (this.currentStep > 0) {
@@ -160,4 +177,54 @@ export class QuizBuilderComponent implements OnInit {
         },
       });
   }
+
+  dummyInitialize() {
+    this.subjects = [
+    { id: 1, name: 'HTML' },
+    { id: 2, name: 'CSS' },
+    { id: 3, name: 'JavaScript' },
+    { id: 4, name: 'Node.js' },
+    { id: 5, name: 'Python' },
+    { id: 6, name: 'Angular' },
+    { id: 7, name: 'React' }
+  ];
+  this.topics = [
+    { id: 1, name: 'Elements', subjectId: 1 },
+    { id: 2, name: 'Selectors', subjectId: 2 },
+    { id: 3, name: 'Flexbox', subjectId: 2 },
+    { id: 4, name: 'ES6', subjectId: 3 },
+    { id: 5, name: 'Async', subjectId: 3 },
+    { id: 6, name: 'Modules', subjectId: 4 },
+    { id: 7, name: 'Express', subjectId: 4 },
+    { id: 8, name: 'Functions', subjectId: 5 },
+    { id: 9, name: 'OOP', subjectId: 5 },
+    { id: 10, name: 'Components', subjectId: 6 },
+    { id: 11, name: 'Services', subjectId: 6 },
+    { id: 12, name: 'Hooks', subjectId: 7 },
+    { id: 13, name: 'State', subjectId: 7 }
+  ];
+  this.allQuestions = [
+    { id: 1, title: 'What does <div> represent in HTML?', subject: 'HTML', topic: 'Elements', subjectId: 1, topicId: 1, level: 'Easy' },
+    { id: 2, title: 'How do you select an element by class in CSS?', subject: 'CSS', topic: 'Selectors', subjectId: 2, topicId: 2, level: 'Easy' },
+    { id: 3, title: 'What is Flexbox used for?', subject: 'CSS', topic: 'Flexbox', subjectId: 2, topicId: 3, level: 'Intermediate' },
+    { id: 4, title: 'What is a let declaration in ES6?', subject: 'JavaScript', topic: 'ES6', subjectId: 3, topicId: 4, level: 'Easy' },
+    { id: 5, title: 'Explain Promises in JavaScript.', subject: 'JavaScript', topic: 'Async', subjectId: 3, topicId: 5, level: 'Intermediate' },
+    { id: 6, title: 'How do you export a module in Node.js?', subject: 'Node.js', topic: 'Modules', subjectId: 4, topicId: 6, level: 'Easy' },
+    { id: 7, title: 'What is Express used for?', subject: 'Node.js', topic: 'Express', subjectId: 4, topicId: 7, level: 'Easy' },
+    { id: 8, title: 'How do you define a function in Python?', subject: 'Python', topic: 'Functions', subjectId: 5, topicId: 8, level: 'Easy' },
+    { id: 9, title: 'What is a class in Python?', subject: 'Python', topic: 'OOP', subjectId: 5, topicId: 9, level: 'Intermediate' },
+    { id: 10, title: 'What is a component in Angular?', subject: 'Angular', topic: 'Components', subjectId: 6, topicId: 10, level: 'Easy' },
+    { id: 11, title: 'What is a service in Angular?', subject: 'Angular', topic: 'Services', subjectId: 6, topicId: 11, level: 'Intermediate' },
+    { id: 12, title: 'What are React Hooks?', subject: 'React', topic: 'Hooks', subjectId: 7, topicId: 12, level: 'Intermediate' },
+    { id: 13, title: 'How do you manage state in React?', subject: 'React', topic: 'State', subjectId: 7, topicId: 13, level: 'Intermediate' },
+    { id: 14, title: 'What is the purpose of <span> in HTML?', subject: 'HTML', topic: 'Elements', subjectId: 1, topicId: 1, level: 'Easy' },
+    { id: 15, title: 'How do you center a div using Flexbox?', subject: 'CSS', topic: 'Flexbox', subjectId: 2, topicId: 3, level: 'Intermediate' },
+    { id: 16, title: 'What is the difference between var, let, and const?', subject: 'JavaScript', topic: 'ES6', subjectId: 3, topicId: 4, level: 'Intermediate' },
+    { id: 17, title: 'How do you handle async code in Node.js?', subject: 'Node.js', topic: 'Modules', subjectId: 4, topicId: 6, level: 'Intermediate' },
+    { id: 18, title: 'What is inheritance in Python OOP?', subject: 'Python', topic: 'OOP', subjectId: 5, topicId: 9, level: 'Advanced' },
+    { id: 19, title: 'How do you create a new Angular service?', subject: 'Angular', topic: 'Services', subjectId: 6, topicId: 11, level: 'Intermediate' },
+    { id: 20, title: 'What is useEffect in React?', subject: 'React', topic: 'Hooks', subjectId: 7, topicId: 12, level: 'Intermediate' }
+  ];
+}
+
 }

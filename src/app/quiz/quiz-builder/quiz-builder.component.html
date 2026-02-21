@@ -15,7 +15,12 @@
     }
     @if (currentStep === 1) {
       <div class="step-content">
-        <app-quiz-questions-form (questionsAdded)="onQuestionsAdded($event)" [questions]="quizQuestionsData"></app-quiz-questions-form>
+        <app-quiz-questions-form
+          (questionsAdded)="onQuestionsAdded($event)"
+          [subjects]="subjects"
+          [topics]="topics"
+          [questions]="allQuestions"
+        ></app-quiz-questions-form>
       </div>
     }
     @if (currentStep === 2) {
