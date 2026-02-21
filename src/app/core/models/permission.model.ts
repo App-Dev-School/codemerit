@@ -7,46 +7,55 @@ export interface Permission {
 
 export interface UserPermission {
   id?: number;
-  permissionIds: number;
-  permissionName: string;
-  resourceId: number;
-  resourceName: string;
+  permissionId?: number;
+  permissionName?: string;
   resourceType?: string;
-  userId: number;
-  userName: string;
-  userEmail?: string;
-  createdAt?: Date;
+  resourceId?: number;
+  resourceName?: string;
+  user?: {
+    id?: number;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    role?: string;
+    designation?: number;
+    createdAt?: string;
+  };
 }
 
 export class UserPermissionItem implements UserPermission {
-
   id?: number;
-  permissionIds!: number;
-  permissionName!: string;
-
-  resourceId!: number;
-  resourceName!: string;
+  permissionId?: number;
+  permissionName?: string;
   resourceType?: string;
-
-  userId!: number;
-  userName!: string;
-  userEmail?: string;
-  createdAt?: Date;
+  resourceId?: number;
+  resourceName?: string;
+  user?: {
+    id?: number;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    role?: string;
+    designation?: number;
+    createdAt?: string;
+  };
 
   constructor(data: Partial<UserPermissionItem> = {}) {
-
     this.id = data.id ?? this.getRandomID();
-
-    this.permissionIds = data.permissionIds ?? 0;
+    this.permissionId = data.permissionId ?? 0;
     this.permissionName = data.permissionName ?? '';
-
+    this.resourceType = data.resourceType ?? '';
     this.resourceId = data.resourceId ?? 0;
     this.resourceName = data.resourceName ?? '';
-    this.resourceType = data.resourceType ?? '';
-
-    this.userId = data.userId ?? 0;
-    this.userName = data.userName ?? '';
-    this.userEmail = data.userEmail ?? '';
+    this.user = data.user ?? {
+      id: 0,
+      firstName: '',
+      lastName: '',
+      email: '',
+      role: '',
+      designation: 0,
+      createdAt: ''
+    };
   }
 
   private getRandomID(): number {
