@@ -34,7 +34,7 @@ export class permissionsrevokeComponent {
     public permissionsService: permissionsService
   ) {}
   confirmRevoke(): void {
-    this.permissionsService.revokepermissions(this.data.id).subscribe({
+    this.permissionsService.revokePermissions(this.data.id).subscribe({
       next: (response) => {
         console.log("PermissionsManager revoke response received", response);
         this.dialogRef.close(response);

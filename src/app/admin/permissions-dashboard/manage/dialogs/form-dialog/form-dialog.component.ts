@@ -96,12 +96,11 @@ export class UserPermissionsFormComponent {
       console.log('permissionsManager ###Update Form in Edit Mode:', data.permissionsItem);
       //populate permissions
       this.permissionsForm.patchValue({
-        permissionIds: data.permissionsItem.permissionIds,
+        permissionIds: data.permissionsItem.permissionId,
         resourceType: data.permissionsItem.resourceType,
         resourceId: data.permissionsItem.resourceId,
-        userId: data.permissionsItem.userId,
-        userEmail: data.permissionsItem.userEmail
-
+        userId: data.permissionsItem.user?.id,
+        userEmail: data.permissionsItem.user?.email
       });
       // Save initial value for later comparison
       this.initialFormValue = this.permissionsForm.getRawValue();
@@ -119,8 +118,8 @@ export class UserPermissionsFormComponent {
   createPermissionForm(): UntypedFormGroup {
     return this.fb.group({
       id: [this.permissionsItems.id],
-      permissionIds: [this.permissionsItems.permissionIds, Validators.required],
-      userId: [this.permissionsItems.userId, Validators.required],
+      permissionIds: [this.permissionsItems.permissionId, Validators.required],
+      userId: [this.permissionsItems.user?.id, Validators.required],
       resourceType: [this.permissionsItems.resourceType],
       resourceId: [this.permissionsItems.resourceId, Validators.required]
     });
@@ -151,7 +150,7 @@ export class UserPermissionsFormComponent {
 
         console.log('permissionsManager Changed fields:', changedFields);
         this.permissionsService
-          .updatepermissions(changedFields, formData.id)
+          .updatePermissions(changedFields, formData.id)
           .subscribe({
             next: (response) => {
               console.log('permissionsManager UpdateAPI response:', changedFields);
@@ -171,7 +170,7 @@ export class UserPermissionsFormComponent {
         };
 
         this.permissionsService
-          .addpermissions(payload)
+          .addPermissions(payload)
           .subscribe({
             next: (response) => {
               this.dialogRef.close(response); // Close dialog and return newly added doctor data

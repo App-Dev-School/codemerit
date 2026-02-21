@@ -34,7 +34,7 @@ import {
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Permission, UserPermission } from '@core/models/permission.model';
+import { UserPermission } from '@core/models/permission.model';
 import { rowsAnimation } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
@@ -76,12 +76,12 @@ import { permissionsService } from './permissions.service';
   ],
 })
 export class permissionsComponent implements OnInit, OnDestroy {
- columnDefinitions = [
+columnDefinitions = [
   { def: 'select', label: 'Checkbox', type: 'check', class: 'col-default', visible: true },
-  { def: 'userName', label: 'User Name', type: 'text', class: 'col-default', visible: true },
+  { def: 'userFullName', label: 'User Name', type: 'text', class: 'col-default', visible: true },
   { def: 'permissionName', label: 'Permission', type: 'text', class: 'col-default', visible: true },
   { def: 'resourceName', label: 'Resource', type: 'text', class: 'col-default', visible: true },
-  { def: 'createdAt', label: 'Grant Date', type: 'text', class: 'col-default', visible: true },
+  { def: 'userCreatedAt', label: 'Grant Date', type: 'text', class: 'col-default', visible: true },
   { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-default', visible: true },
 ];
 
@@ -124,11 +124,9 @@ export class permissionsComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    this.permissionsService.getDummyPermissions().subscribe({
+    this.permissionsService.getAllUserPermissions().subscribe({
 
       next: (data) => {
-        console.log("permissionsManager data", data);
-        
         this.dataSource.data = data;
         this.isLoading = false;
         this.refreshTable();
@@ -223,7 +221,7 @@ export class permissionsComponent implements OnInit, OnDestroy {
         this.refreshTable();
         this.showNotification(
           'snackbar-danger',
-          row.userName+' revoked Successfully.',
+          row.permissionName+' revoked Successfully.',
           'bottom',
           'center'
         );

@@ -56,25 +56,29 @@
                   </mat-cell>
                 </ng-container>
                 @for (column of columnDefinitions; track column) {
-                <!-- Skip rendering if column.label is "select" or "action" -->
-                @if (column.type === 'check' || column.type === 'actionBtn') {
-                <!-- Skip this column -->
-                } @else {
-               <ng-container [matColumnDef]="column.def">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    <span class="truncate-text">{{ column.label }}</span>
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row" [matTooltip]="row[column.def]">
-                    <span class="mobile-label">{{ column.label }}:</span>
-
-                    @if (column.def == 'title') {
-                    <div class="full-text">{{ row.id }}. {{ row[column.def] }}</div>
-                    }@else {
-                    <span class="truncate-text">{{ row[column.def] }}</span>
-                    }
-                  </mat-cell>
-                </ng-container>
-                }
+                  @if (column.type === 'check' || column.type === 'actionBtn') {
+                    <!-- Skip this column -->
+                  } @else {
+                    <ng-container [matColumnDef]="column.def">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <span class="truncate-text">{{ column.label }}</span>
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label">{{ column.label }}:</span>
+                        @if (column.def === 'userFullName') {
+                          <div class="p-10">
+                            <div>{{ row.user?.firstName }} {{ row.user?.lastName }}</div>
+                            <div class="col-grey font-12">({{ row.user?.email }})</div>
+                            <div class="badge bg-primary">{{ row.user?.role }}</div>
+                          </div>
+                        } @else if (column.def === 'userCreatedAt') {
+                          <span class="truncate-text">{{ row.user?.createdAt | date:'dd/MM/yyyy' }}</span>
+                        } @else {
+                          <span class="truncate-text">{{ row[column.def] }}</span>
+                        }
+                      </mat-cell>
+                    </ng-container>
+                  }
                 }
               
                 <!-- actions -->
