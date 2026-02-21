@@ -40,7 +40,8 @@ export interface DialogData {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatDialogClose
+    MatDialogClose,
+    JsonPipe
   ]
 })
 export class UserPermissionsFormComponent {
@@ -65,7 +66,7 @@ export class UserPermissionsFormComponent {
     private masterService: MasterService
   ) {
     this.action = data.action;
-    this.dialogTitle = this.action === 'edit' ? 'Edit User Permission' : 'Grant New Permission';
+    this.dialogTitle = this.action === 'edit' ? 'View User Permission' : 'Grant New Permission';
     this.permissionsList = this.permissionsService.getSavedMasterPermissions();
     this.permissionsItems = this.action === 'edit' ? data.permissionsItem : new UserPermissionItem({}); // Create a blank object
     this.permissionsForm = this.createPermissionForm();
@@ -77,11 +78,11 @@ export class UserPermissionsFormComponent {
     });
 
 
-    this.permissionsForm.valueChanges.subscribe(() => {
-      if (this.permissionsForm.valid) {
-        //this.formSubmitted.emit(this.permissionsForm.value);
-      }
-    });
+    // this.permissionsForm.valueChanges.subscribe(() => {
+    //   if (this.permissionsForm.valid) {
+    //     this.formSubmitted.emit(this.permissionsForm.value);
+    //   }
+    // });
 
     this.permissionsForm.get('resourceType')?.valueChanges.subscribe(resourceType => {
       this.resources = this.masterService.subjects;
@@ -118,10 +119,10 @@ export class UserPermissionsFormComponent {
   createPermissionForm(): UntypedFormGroup {
     return this.fb.group({
       id: [this.permissionsItems.id],
-      permissionIds: [this.permissionsItems.permissionId, Validators.required],
-      userId: [this.permissionsItems.user?.id, Validators.required],
+      permissionIds: [this.permissionsItems.permissionId, [Validators.required, Validators.min(1)]],
+      userId: [this.permissionsItems.user?.id, [Validators.required, Validators.min(1)]],
       resourceType: [this.permissionsItems.resourceType],
-      resourceId: [this.permissionsItems.resourceId, Validators.required]
+      resourceId: [this.permissionsItems.resourceId]
     });
   }
 
@@ -163,8 +164,10 @@ export class UserPermissionsFormComponent {
           });
       } else {
         // Add new permissions
+        const permissionIds = Array.isArray(formData.permissionIds) ? formData.permissionIds : [formData.permissionIds];
         const payload = {
-          permissionId: formData.permissionIds,
+          permissionIds,
+          resourceType: formData.resourceType,
           resourceId: formData.resourceId,
           userId: formData.userId
         };
