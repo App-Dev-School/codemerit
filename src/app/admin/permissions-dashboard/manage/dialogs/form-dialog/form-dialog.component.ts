@@ -54,6 +54,8 @@ export class UserPermissionsFormComponent {
     { value: 'Topic', title: 'Topic' }
   ];
   resources: any[] = [];
+  resourceSearchCtrl = new UntypedFormControl('');
+  filteredResources: any[] = [];
   permissionsList: Permission[];
   users: any[] = [];
 
@@ -75,7 +77,13 @@ export class UserPermissionsFormComponent {
       },
       error: (err) => console.error(err)
     });
+        this.resourceSearchCtrl.valueChanges.subscribe(value => {
+          this.filteredResources = this.resources.filter(r =>
+            r.title.toLowerCase().includes((value || '').toLowerCase())
+          );
+        });
 
+        
     this.permissionsForm.get('resourceType')?.valueChanges.subscribe(resourceType => {
       this.resources = this.masterService.subjects;
       if (resourceType === 'Topic') {
@@ -83,6 +91,7 @@ export class UserPermissionsFormComponent {
       } else {
         this.resources = this.masterService.subjects;
       }
+        this.filteredResources = this.resources; 
     });
 
     if (this.action === 'edit') {

@@ -55,10 +55,8 @@
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Select Resource</mat-label>
             <mat-select formControlName="resourceId">
-              @for (r of resources; track r.id) {
-              <mat-option [value]="r.id">
-                {{ r.title }}
-              </mat-option>
+             @for (r of filteredResources; track r.id) {
+           <mat-option [value]="r.id">{{ r.title }}</mat-option>
               }
             </mat-select>
           </mat-form-field>

@@ -23,7 +23,7 @@
             <div class="right">
               <div class="right-side-btn">
                 <button mat-icon-button [hidden]=!selection.hasValue() (click)="removeSelectedRows()"
-                  class="tbl-header-btn col-red" matTooltip="revoke">
+                  class="tbl-header-btn col-red " matTooltip="revoke">
                   <mat-icon>delete_outline</mat-icon>
                 </button>
 
@@ -44,15 +44,10 @@
                 <!-- Checkbox Column -->
                 <ng-container matColumnDef="select">
                   <mat-header-cell *matHeaderCellDef>
-                    <mat-checkbox (change)="$event ? masterToggle() : null"
-                      [checked]="selection.hasValue() && isAllSelected()" color="primary"
-                      [indeterminate]="selection.hasValue() && !isAllSelected()" [ngClass]="'tbl-checkbox'">
-                    </mat-checkbox>
+                
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-                      [checked]="selection.isSelected(row)" [ngClass]="'tbl-checkbox'" color="primary">
-                    </mat-checkbox>
+                   
                   </mat-cell>
                 </ng-container>
                 @for (column of columnDefinitions; track column) {
@@ -84,11 +79,7 @@
                 <!-- actions -->
                 <ng-container matColumnDef="actions">
                   <mat-header-cell class="pr-0" *matHeaderCellDef>Actions</mat-header-cell>
-                  <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
-                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
-                      class="tbl-action-btn">
-                      <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'"></app-feather-icons>
-                    </button>
+                  <mat-cell *matCellDef="let row; let i=index;" class="pr-0">                 
                     <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="revokeItem(row)"
                       class="tbl-action-btn">
                       <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-revoke'"></app-feather-icons>
@@ -97,7 +88,7 @@
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
                 <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: getDisplayedColumns();"
-                  (click)="editCall(row)" [style.cursor]="'pointer'" matRipple>
+                   [style.cursor]="'pointer'" matRipple>
                 </mat-row>
               </table>
               <!-- Loading spinner -->
