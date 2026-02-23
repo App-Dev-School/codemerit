@@ -41,17 +41,9 @@
           <div class="overflow-auto">
             <div class="responsive_table">
               <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
-                <!-- Checkbox Column -->
-                <ng-container matColumnDef="select">
-                  <mat-header-cell *matHeaderCellDef>
-                
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                   
-                  </mat-cell>
-                </ng-container>
+               
                 @for (column of columnDefinitions; track column) {
-                  @if (column.type === 'check' || column.type === 'actionBtn') {
+                  @if (column.type === 'actionBtn') {
                     <!-- Skip this column -->
                   } @else {
                     <ng-container [matColumnDef]="column.def">

@@ -77,7 +77,6 @@ import { permissionsService } from './permissions.service';
 })
 export class permissionsComponent implements OnInit, OnDestroy {
 columnDefinitions = [
-  { def: 'select', label: 'Checkbox', type: 'check', class: 'col-default', visible: true },
   { def: 'userFullName', label: 'User Name', type: 'text', class: 'col-default', visible: true },
   { def: 'permissionName', label: 'Permission', type: 'text', class: 'col-default', visible: true },
   { def: 'resourceName', label: 'Resource', type: 'text', class: 'col-default', visible: true },
