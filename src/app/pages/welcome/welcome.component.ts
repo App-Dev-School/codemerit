@@ -10,6 +10,7 @@ import { AuthService, User } from '@core';
 import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
+import { CertificateComponent } from '@shared/certificate/certificate.component';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
@@ -25,6 +26,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
     MatRippleModule,
     MatIconModule,
     //LearnerWelcomeCardComponent,
+    CertificateComponent,
     CongratulationsCardComponent,
     ReportListComponent, 
     MedalCardComponent],
