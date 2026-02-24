@@ -902,7 +902,7 @@
   list-style-type: none;
 }
 @media (max-width: 768px) {
-  body.overlay-open .sidebar {
+  body.overlay-open .sidebar{
     transform: translateX(0);
   }
 }

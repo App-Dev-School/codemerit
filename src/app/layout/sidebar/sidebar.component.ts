@@ -164,17 +164,14 @@ export class SidebarComponent
   isOpen() {
     return this.bodyTag.classList.contains('overlay-open');
   }
-
    checkStatuForResize(firstTime: boolean) {
     if (window.innerWidth < 1025) {
       this.renderer.addClass(this.document.body, 'ls-closed');
     } else {
-      this.renderer.removeClass(this.document.body, 'ls-closed');
-      
-      
+      this.renderer.removeClass(this.document.body, 'ls-closed'); 
     }
   }
-
+  
   mouseHover() {
     const body = this.elementRef.nativeElement.closest('body');
     if (body.classList.contains('submenu-closed')) {

@@ -172,11 +172,9 @@ export class HeaderComponent
       this.isMobileMenuOpen = false;
       this.renderer.addClass(this.document.body, className);
       this.renderer.removeClass(this.document.body, 'side-closed');
-      
     }
     console.log("Header mobileMenuSidebarOpen :: className => ", className);
   }
-
   callSidemenuCollapse() {
     const hasClass = this.document.body.classList.contains('side-closed');
     if (hasClass) {
