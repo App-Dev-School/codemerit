@@ -56,6 +56,12 @@ export const APP_ROUTE: Route[] = [
         loadChildren: () =>
             import('./authentication/auth.routes').then((m) => m.AUTH_ROUTE),
     },
+     {
+        path: 'subject-skill-rating',
+        loadComponent: () =>
+            import('./shared/components/subject-skill-rating/subject-skill-rating.component')
+            .then(m => m.SubjectSkillRatingComponent)
+        },
     {
         path: "quiz",
         //component: MainLayoutComponent,

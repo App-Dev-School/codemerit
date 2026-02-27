@@ -1,0 +1,38 @@
+.skill-rating-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;   
+}
+.content {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+}
+swiper-container {
+  width: 100%;
+}
+.topic-card {
+  border: 1px solid #ddd;
+  width: min(500px, 90%);
+  margin: auto;
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
+
+.left-toggle {
+  display: flex;
+  justify-content: flex-start;
+  width: fit-content;
+}

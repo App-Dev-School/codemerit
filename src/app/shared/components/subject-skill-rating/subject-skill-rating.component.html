@@ -1,0 +1,49 @@
+<div class="skill-rating-container">
+  <!-- Swiper Section -->
+  <div class="content">
+   <swiper-container #swiperRef slides-per-view="1" (swiperslidechange)="onSlideChange($event)" [allowTouchMove]="false">
+      @for (topic of topics; track topic) {
+        <swiper-slide>
+          <div class="topic-card" [formGroup]="getTopicGroup(topic)">
+            <h2 class="text-center m-b-20">{{ topic }}</h2>
+
+            <h5 class="text-center m-b-10">
+              Do you know this topic?
+            </h5>
+              
+            <mat-button-toggle-group formControlName="knows" class="center-toggle m-b-20">
+              <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+              <mat-button-toggle [value]="false">No</mat-button-toggle>
+            </mat-button-toggle-group>
+
+                @if (knowsTopic(topic)) {
+                    <div class="m-b-15">
+                      <h5 class="text-center">Specify your expertise</h5>
+                      <mat-button-toggle-group formControlName="level" class="center-toggle m-b-30">
+                        <mat-button-toggle value="Basic">Basic</mat-button-toggle>
+                        <mat-button-toggle value="Working">Working</mat-button-toggle>
+                        <mat-button-toggle value="Expert">Expert</mat-button-toggle>
+                      </mat-button-toggle-group>
+                    </div>
+
+                    <div class="rating-section m-b-15">
+                      <h5 class="text-center">Rate your knowledge out of 10</h5>
+                      <app-skill-rating formControlName="rating"></app-skill-rating>
+                    </div>
+                  }
+              </div>
+            </swiper-slide>
+            }
+      </swiper-container>
+    </div>
+
+  <div class="footer">
+    <button mat-stroked-button (click)="prevSlide()"[disabled]="currentIndex === 0">
+      Previous
+    </button>
+
+    <button mat-raised-button color="primary" (click)="nextSlide()" [disabled]="isCurrentSlideInvalid()">
+      {{ isLastSlide ? 'Finish' : 'Next' }}
+    </button>
+  </div>
+</div>
