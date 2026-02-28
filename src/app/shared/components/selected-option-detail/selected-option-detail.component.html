@@ -1,0 +1,49 @@
+<div class="selected-option-detail-modal">
+    <div class="icon-container text-center">
+        <img [src]="data.icon" class="result-icon" />
+    </div>
+    <h2 class="text-center font-20" [ngClass]="{'correct': data.isCorrect, 'wrong': !data.isCorrect}">
+        {{ data.message }}
+    </h2>
+    @if (data.isCorrect) {
+    @switch (rewardMessageIndex) {
+    @case (0) {
+    <p class="font-11 text-center">⭐{{data?.question.marks}} {{data?.question.marks > 1 ? 'marks' : 'mark'}} awarded</p>
+    }
+    @case (1) {
+    <p class="font-11 text-center">+{{data?.question.marks}} {{data?.question.marks > 1 ? 'Marks' : 'Mark'}} Earned ⭐
+    </p>
+    }
+    @case (2){
+    <p class="font-11 text-center">🔥 Awesome! +{{data?.question.marks}} {{data?.question.marks > 1 ? 'Marks' : 'Mark'}}
+    </p>
+    }
+    @case (3) {
+    <p class="font-11 text-center">🧠 You got +{{data?.question.marks}} {{data?.question.marks > 1 ? 'Marks' : 'Mark'}}
+    </p>
+    }
+    @case (4) {
+    <p class="font-11 text-center">🏅 {{data?.question.marks}} {{data?.question.marks > 1 ? 'Marks' : 'Mark'}} Achieved
+    </p>
+    }
+    @default {
+    <p class="font-11 text-center">⭐{{data?.question.marks}} {{data?.question.marks > 1 ? 'marks' : 'mark'}} awarded</p>
+    }
+    }
+    }
+    @if (!data.isCorrect && data.question?.answer && quizConfig.showAnswers) {
+    <hr class="dim-divider">
+    <div class="answer-section">
+        <p class="font-14 col-indigo m-b-0">Question:</p>
+        <h6 class="col-indigo m-t-0">{{data.question?.question}}</h6>
+        <p class="font-14">Answer:</p>
+        <p class="cmSubHeading m-t-0">{{data?.question?.answer}}</p>
+    </div>
+    }
+    <hr class="dim-divider">
+    <div class="actions text-center mt-3 mb-3">
+        <button mat-stroked-button color="primary" class="text-center" (click)="onNext()">Next Question
+            <mat-icon>keyboard_arrow_right</mat-icon> </button>
+    </div>
+    <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+</div>

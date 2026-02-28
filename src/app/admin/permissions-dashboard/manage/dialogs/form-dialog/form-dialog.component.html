@@ -54,11 +54,21 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Select Resource</mat-label>
-            <mat-select formControlName="resourceId">
-             @for (r of filteredResources; track r.id) {
-           <mat-option [value]="r.id">{{ r.title }}</mat-option>
+            <input
+              type="text"
+              matInput
+              [formControl]="resourceSearchCtrl"
+              [matAutocomplete]="auto"
+              placeholder="Search Resource"
+              autocomplete="off"
+              (focus)="filterResources(resourceSearchCtrl.value)"
+              [disabled]="!resources || resources.length === 0"
+            />
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayResource" (optionSelected)="onResourceSelected($event)">
+              @for (r of filteredResources; track r.id) {
+                <mat-option [value]="r">{{ r.title }}</mat-option>
               }
-            </mat-select>
+            </mat-autocomplete>
           </mat-form-field>
         </div>
 

@@ -87,7 +87,7 @@ export class QuizFormComponent implements OnInit {
     return this.fb.group({
       id: ['' + this.quizItem?.id],
       title: [this.quizItem.title, [Validators.required, Validators.minLength(10), Validators.maxLength(50)]],
-      quizType: [QuizTypeEnum.Standrad, [Validators.required]],
+      quizType: [QuizTypeEnum.Standard, [Validators.required]],
       subjectIds: [this.quizItem.subjectIds],
       topicIds: [[]],
       tag: [this.quizItem.tag, [Validators.required]],
