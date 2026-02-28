@@ -35,7 +35,10 @@
     </div>
 
     <div class="row match-height m-t-10 clearfix">
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+        <ng-container *ngTemplateOutlet="courseSubjectSummary"></ng-container>
+      </div>
+       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
         <div class="card">
           <div class="m-b-20">
             <div class="contact-grid">
@@ -75,15 +78,6 @@
         <ng-container *ngTemplateOutlet="courseAssessments"></ng-container>
         <ng-container *ngTemplateOutlet="courseCertification"></ng-container>
         <ng-container *ngTemplateOutlet="courseAssistant"></ng-container>
-      </div>
-      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-        <ng-container *ngTemplateOutlet="courseSubjectSummary"></ng-container>
-      </div>
-    </div>
-
-    <div class="row m-t-0 match-height clearfix">
-      <div class="col-12">
-        <p>I am a bottom bar. What should be hosted here?</p>
       </div>
     </div>
 
