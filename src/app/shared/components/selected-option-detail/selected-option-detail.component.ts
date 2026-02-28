@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { QuestionItem } from 'src/app/admin/questions/manage/question-item.model';
+import { QuizConfig, QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
   selector: 'app-selected-option-detail',
@@ -16,16 +17,18 @@ import { QuestionItem } from 'src/app/admin/questions/manage/question-item.model
     MatProgressBar
   ],
   templateUrl: './selected-option-detail.component.html',
-  styleUrl: './selected-option-detail.component.scss'
+  styleUrls: ['./selected-option-detail.component.scss']
 })
 export class SelectedOptionDetailComponent {
   progress = 100;
   private intervalId: any;
-  private duration = 25; // seconds
+  private duration = 250; // seconds
   private step = 100 / (this.duration * 10); // update every 100ms
   rewardMessageIndex: number = 0;
+  quizConfig: QuizConfig;
 
   constructor(
+    private quizService: QuizService,
     public dialogRef: MatDialogRef<SelectedOptionDetailComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {
       isCorrect: boolean;
@@ -36,6 +39,7 @@ export class SelectedOptionDetailComponent {
   ) {}
 
   ngOnInit(): void {
+    this.quizConfig = this.quizService.getQuizConfig();
     this.startProgressBar();
     // Pick a random reward message index (0-4) for correct answers
     if (this.data.isCorrect) {

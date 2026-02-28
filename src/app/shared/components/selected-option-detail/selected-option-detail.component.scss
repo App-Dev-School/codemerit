@@ -1,22 +1,12 @@
 /* Dialog card styling */
 .selected-option-detail-modal {
-	padding: 2rem 2.5rem 1.5rem 2.5rem;
+	padding: 1.6rem 1rem 0.5rem 1rem;
 	border-radius: 16px;
 	background: #fff;
-	min-width: 320px;
-	max-width: 400px;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 	box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-}
-
-.dialog-content {
-	flex: 1 1 auto;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding-bottom: 1.5rem;
 }
 
 .result-icon {

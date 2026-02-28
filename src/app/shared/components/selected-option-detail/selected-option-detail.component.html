@@ -31,9 +31,11 @@
     }
     }
     }
-    @if (!data.isCorrect && data.question?.answer) {
+    @if (!data.isCorrect && data.question?.answer && quizConfig.showAnswers) {
     <hr class="dim-divider">
     <div class="answer-section">
+        <p class="font-14 col-indigo m-b-0">Question:</p>
+        <h6 class="col-indigo m-t-0">{{data.question?.question}}</h6>
         <p class="font-14">Answer:</p>
         <p class="cmSubHeading m-t-0">{{data?.question?.answer}}</p>
     </div>

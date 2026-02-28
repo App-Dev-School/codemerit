@@ -228,8 +228,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if(!this.showingInteractiveDialog){
       this.showingInteractiveDialog = true;
       const dialogRef = this.dialog.open(SelectedOptionDetailComponent, {
-          width: '80vw',
-          maxWidth: '400px',
+          width: '92vw',
+          maxWidth: '600px',
           data: {
             isCorrect: data.isCorrect,
             question: this.questions[this.currentQuestionId],

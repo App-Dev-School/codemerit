@@ -70,7 +70,7 @@
       </div>
       }
 
-      <!-- Screen Overlay -->
+      <!-- Screen Overlay : Not In Use -->
       @if (answerActive) {
       <div class="overlay"></div>
       <div class="animToast text-start quizLoader hint">
@@ -182,7 +182,7 @@
           </ng-container>
           }
 
-          <!-- Answer -->
+          <!-- Answer 
           @if (quizConfig.showAnswers && currentQuestion?.answer !== "") {
           <ng-container>
             <button mat-raised-button color="accent" (click)="showAnswers()">
@@ -190,6 +190,7 @@
             </button>
           </ng-container>
           }
+          -->
           <span class="mat-spacer"></span>
           <!-- Next / Finish -->
           <button mat-flat-button color="primary" (click)="onSlideNext()" [hidden]="onSelectionPhase">
