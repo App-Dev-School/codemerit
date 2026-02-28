@@ -16,6 +16,7 @@ import { UtilsService } from '@core/service/utils.service';
 import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
 import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
+import { SelectedOptionDetailComponent } from '@shared/components/selected-option-detail/selected-option-detail.component';
 import { SafePipe } from '@shared/pipes/safehtml.pipe';
 import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { NgScrollbar } from 'ngx-scrollbar';
@@ -67,6 +68,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showWarningToast = false;
   userData: User;
   scheduledAutoNext: any;
+  showingInteractiveDialog = false;
   celebrationTrigger: { x: number; y: number } | null = null;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
@@ -143,8 +145,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.questionTimerInterval = setInterval(() => {
       this.questionTimeLeft--;
 
-      // Show warning if 10s left
-      if (this.questionTimeLeft === 10) {
+      // Show warning if 10s left in default mode
+      if (this.questionTimeLeft === 10 && this.quizConfig.mode === 'Default' && !this.warningActive) {
         this.showWarningToast = true;
         this.warningActive = true;
         setTimeout(() => {
@@ -155,7 +157,16 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       // Auto move to next question if timer ends
       if (this.questionTimeLeft <= 0) {
         clearInterval(this.questionTimerInterval);
-        this.onSlideNext();
+       if(this.quizConfig.mode === 'Default'){
+          this.onSlideNext();
+        }else{
+          this.displayInteractiveDialog({
+            isCorrect: false,
+            answer: question.answer || '',    
+            message: 'Time Up!',
+            icon: 'assets/images/icons/timeout.png'
+        });
+      }
       }
     }, 1000);
   }
@@ -175,25 +186,64 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       question.selectedOption = choice;
       question.hasAnswered = true;
 
-      //console.log("optionSelected() =>", choice, question);
       const isCorrect = question.options.some(
         opt => opt.id === question.selectedOption && (opt.correct === true)
       );
-      //#Task5: Show celebration only for special questions
-      if (this.quizConfig.mode === 'Interactive' && isCorrect && question.marks > 1) {
-        this.triggerCelebration($event);
+
+      if (this.quizConfig.mode === 'Interactive') {
+        // Show selected-option-detail dialog using direct class reference
+        const data = {
+            isCorrect,
+            answer: question.answer || '',
+            message: isCorrect ? 'Correct Answer' : 'Wrong Attempt',
+            icon: isCorrect ? 'assets/images/icons/ic_correct.png' : 'assets/images/icons/ic_wrong.png'
+          };
+        this.displayInteractiveDialog(data);
+        // Play sound
+        if (this.quizConfig.enableAudio) {
+          if (isCorrect)
+            this.quizHelper.playSound('right_answer');
+          else
+            this.quizHelper.playSound('wrong_answer');
+        }
+        return;
       }
+
+      // Non-interactive fallback
       this.scheduledAutoNext = setTimeout(() => {
         this.onSlideNext();
         this.onSelectionPhase = false;
       }, isCorrect ? 1600 : 1200);
-      //playsound
       if (this.quizConfig.enableAudio) {
         if (isCorrect)
           this.quizHelper.playSound('right_answer');
         else
           this.quizHelper.playSound('wrong_answer');
       }
+    }
+  }
+
+
+  private displayInteractiveDialog(data: { isCorrect: boolean; answer?: string; message: string; icon: string }): void {
+    if(!this.showingInteractiveDialog){
+      this.showingInteractiveDialog = true;
+      const dialogRef = this.dialog.open(SelectedOptionDetailComponent, {
+          width: '80vw',
+          maxWidth: '400px',
+          data: {
+            isCorrect: data.isCorrect,
+            question: this.questions[this.currentQuestionId],
+            answer: data.answer || '',
+            message: data.message,
+            icon: data.icon
+          },
+          disableClose: true
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+          this.onSlideNext();
+          this.onSelectionPhase = false;
+          this.showingInteractiveDialog = false;
+        });
     }
   }
 
@@ -213,6 +263,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       this.completeQuiz();
     }
     //clear any previous scheduled task
+    ///AAAAA also when option selected
     clearTimeout(this.scheduledAutoNext);
   }
 
