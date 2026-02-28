@@ -7,6 +7,7 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -18,9 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Permission, UserPermissionItem } from '@core/models/permission.model';
-import { permissionsService } from '../../permissions.service';
 import { MasterService } from '@core/service/master.service';
-
+import { permissionsService } from '../../permissions.service';
 
 export interface DialogData {
   id: number;
@@ -39,6 +39,7 @@ export interface DialogData {
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatAutocompleteModule,
     MatSelectModule,
     MatDialogClose
   ]
@@ -77,44 +78,66 @@ export class UserPermissionsFormComponent {
       },
       error: (err) => console.error(err)
     });
-        this.resourceSearchCtrl.valueChanges.subscribe(value => {
-          this.filteredResources = this.resources.filter(r =>
-            r.title.toLowerCase().includes((value || '').toLowerCase())
-          );
-        });
+    this.filteredResources = this.resources ? [...this.resources] : [];
+    this.resourceSearchCtrl.valueChanges.subscribe(value => {
+      this.filterResources(value);
+    });
+  }
 
-        
-    this.permissionsForm.get('resourceType')?.valueChanges.subscribe(resourceType => {
+  ngOnInit() {
+    // Set resources and filteredResources based on current resourceType
+    const resourceType = this.permissionsForm.get('resourceType')?.value;
+    if (resourceType === 'Topic') {
+      this.resources = this.masterService.topics;
+    } else {
       this.resources = this.masterService.subjects;
+    }
+    this.filteredResources = this.resources ? [...this.resources] : [];
+
+    // Set the input value to the selected resource's title if editing
+    const selectedId = this.permissionsForm.get('resourceId')?.value;
+    if (selectedId && this.resources) {
+      const selected = this.resources.find(r => r.id === selectedId);
+      if (selected) {
+        this.resourceSearchCtrl.setValue(selected, { emitEvent: false });
+      }
+    }
+
+    this.permissionsForm.get('resourceType')?.valueChanges.subscribe(resourceType => {
       if (resourceType === 'Topic') {
         this.resources = this.masterService.topics;
       } else {
         this.resources = this.masterService.subjects;
       }
-        this.filteredResources = this.resources; 
+      this.filteredResources = this.resources;
+      this.resourceSearchCtrl.setValue('');
     });
+  }
 
-    if (this.action === 'edit') {
-      console.log('permissionsManager ###Update Form in Edit Mode:', data.permissionsItem);
-      //populate permissions
-      this.permissionsForm.patchValue({
-        permissionIds: data.permissionsItem.permissionId,
-        resourceType: data.permissionsItem.resourceType,
-        resourceId: data.permissionsItem.resourceId,
-        userId: data.permissionsItem.user?.id,
-        userEmail: data.permissionsItem.user?.email
-      });
-      // Save initial value for later comparison
-      this.initialFormValue = this.permissionsForm.getRawValue();
-
-      /**
-       * Form should not be closed on click outside
-       * Form fields validation to be reviewed
-       * Edit Mode Fixes
-       * Display Status and other disabled fields in list permissionss
-       */
+  filterResources(search: string | any) {
+    let searchValue = '';
+    if (typeof search === 'string') {
+      searchValue = search.toLowerCase();
+    } else if (search && search.title) {
+      searchValue = search.title.toLowerCase();
     }
-    this.permissionsForm.updateValueAndValidity();
+    this.filteredResources = (this.resources || []).filter(r =>
+      r.title.toLowerCase().includes(searchValue)
+    );
+  }
+
+  onResourceSelected(event: any) {
+    const selected = event.option.value;
+    if (selected && selected.id) {
+      this.permissionsForm.get('resourceId')?.setValue(selected.id);
+      setTimeout(() => {
+        this.resourceSearchCtrl.setValue(selected, { emitEvent: false });
+      }, 0);
+    }
+  }
+
+  displayResource(resource: any): string {
+    return resource && resource.title ? resource.title : '';
   }
 
   createPermissionForm(): UntypedFormGroup {
