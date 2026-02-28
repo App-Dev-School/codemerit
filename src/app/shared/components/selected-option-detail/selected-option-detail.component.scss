@@ -19,6 +19,16 @@
 	margin: 0.5rem 0 0.5rem 0;
 	text-align: left;
 }
+// Fade-in without layout shift
+.fade-in-no-shift {
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.5s;
+}
+.fade-in-no-shift.visible {
+	opacity: 1;
+	pointer-events: auto;
+}
 
 .actions {
 	margin-top: 1rem;

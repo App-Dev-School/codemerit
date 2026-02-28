@@ -22,10 +22,11 @@ import { QuizConfig, QuizService } from 'src/app/quiz/quiz.service';
 export class SelectedOptionDetailComponent {
   progress = 100;
   private intervalId: any;
-  private duration = 250; // seconds
+  private duration = 25; // seconds
   private step = 100 / (this.duration * 10); // update every 100ms
   rewardMessageIndex: number = 0;
   quizConfig: QuizConfig;
+  answerVisible = false;
 
   constructor(
     private quizService: QuizService,
@@ -45,6 +46,10 @@ export class SelectedOptionDetailComponent {
     if (this.data.isCorrect) {
       this.rewardMessageIndex = Math.floor(Math.random() * 5);
     }
+    // Delay making the answer section visible by 1.5s
+    setTimeout(() => {
+      this.answerVisible = true;
+    }, 1500);
   }
 
   ngOnDestroy(): void {
