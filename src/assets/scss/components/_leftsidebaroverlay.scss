@@ -897,8 +897,14 @@
     }
   }
 }
-
 .collapse.in {
   display: block;
   list-style-type: none;
 }
+@media (max-width: 768px) {
+  body.overlay-open .sidebar{
+    transform: translateX(0);
+  }
+}
+
+

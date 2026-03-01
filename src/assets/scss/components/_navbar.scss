@@ -493,3 +493,8 @@ nav a.button-collapse i {
     margin-left: 0;
   }
 }
+@media (max-width: 991px){
+  .navbar-header {
+    width: 100% !important;
+  }
+}
