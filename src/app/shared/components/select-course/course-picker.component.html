@@ -23,8 +23,7 @@
           <!-- @if(job.isSubscribed){
         <img src="assets/images/icons/badge.svg" class="job-badge" alt="Medal Pic" />
         } -->
-          <!-- <h6>{{ job.id }} = {{ currentCourse}}</h6> -->
-          @if(job.id == currentCourse){
+          @if(job.isSubscribed || currentCourses.includes(+job.id)){
           <img src="assets/images/icons/badge.svg" class="job-badge" alt="Learner Badge" />
           }
           <div class="subjectHeader">
@@ -77,7 +76,7 @@
           <mat-card-footer>
             <hr class="dim-divider">
             <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 w-100">
-              @if (currentCourse > 0) {
+              @if (currentCourses.length > 0 && currentCourses.includes(job.id)) {
               <button mat-flat-button color="primary" (click)="switchJobRole(job)" rippleEffect class="w-100 w-md-auto">
                 View
               </button>

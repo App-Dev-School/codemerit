@@ -105,8 +105,10 @@ export class CourseDashboardComponent implements OnInit {
     if (course) {
       this.course = course;
     } else {
-      if (this.authService.currentUserValue && this.authService.currentUserValue?.userDesignation != null) {
-        this.course = this.authService.currentUserValue?.userDesignation?.slug;
+      if (this.authService.currentUserValue && this.authService.getUserJobRoles()?.length > 0) {
+        const userCourses = this.authService.getUserJobRoles();
+        const firstCourse = userCourses[userCourses.length - 1];
+        this.course = this.master.jobRoles.filter(role => role.id === firstCourse.jobRoleId)[0]?.slug;
         console.log(this.pageTitle, "RouteSnap course defaulted", this.course);
       } else {
         this.goToCourses();

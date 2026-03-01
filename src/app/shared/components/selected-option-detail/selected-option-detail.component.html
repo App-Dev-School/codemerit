@@ -34,9 +34,10 @@
     @if (!data.isCorrect && data.question?.answer && quizConfig.showAnswers) {
     <div class="answer-section fade-in-no-shift" [class.visible]="answerVisible">
         <hr class="dim-divider">
-        <h6 class="col-dark m-t-0 m-b-10">{{data.question?.question}}</h6>
-        <p class="font-14 m-b-0">Answer:</p>
-        <p class="cmSubHeading m-t-0">{{data?.question?.answer}}</p>
+        <h6 class="col-dark m-t-0 m-b-2">❓{{data.question?.question}}</h6>
+        <p class="font-11 m-b-10">🎓 Level: {{data.question?.level}}</p>
+        <!-- <p class="font-14 m-b-0">Answer:</p> -->
+        <p class="cmSubHeading m-t-0">💡{{data?.question?.answer}}</p>
     </div>
     }
     <div class="actions text-center mt-3 mb-3">

@@ -105,9 +105,9 @@ export class SidebarComponent
                 this.authService.currentUserValue.firstName +
                 ' ' +
                 this.authService.currentUserValue.lastName;
-              this.userDesignation = "New Joiner";
-              if (this.authService.currentUserValue?.userDesignation?.title) {
-                this.userDesignation = this.authService.currentUserValue?.userDesignation?.title;
+              this.userDesignation = "Tell about your self";
+              if (this.authService.currentUserValue?.designation) {
+                this.userDesignation = this.authService.currentUserValue?.designation;
               }
               if (this.authService.currentUserValue.userImage) {
                 this.userImg = this.authService.currentUserValue.userImage;
