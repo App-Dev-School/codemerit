@@ -250,6 +250,10 @@ export class WelcomeComponent implements OnInit {
         this.router.navigate(['/app/self-skill-rating']).then(() => {
         });
         break;
+        case "subjectRating":
+        this.router.navigate(['/subject-skill-rating']).then(() => {
+        });
+        break;
       default:
         break;
     }
