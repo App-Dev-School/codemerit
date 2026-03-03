@@ -4,11 +4,11 @@
    <swiper-container #swiperRef slides-per-view="1" (swiperslidechange)="onSlideChange($event)" [allowTouchMove]="false">
       @for (topic of topics; track topic) {
         <swiper-slide>
-          <div class="topic-card" [formGroup]="getTopicGroup(topic)">
-            <h2 class="text-center m-b-20">{{ topic }}</h2>
+          <div class="topic-card" [formGroup]="getTopicGroup(topic.title)">
+            <h2 class="text-center m-b-20">{{ topic.title }}</h2>
 
             <h5 class="text-center m-b-10">
-              Do you know this topic?
+              Do you know - "{{ topic.title }}"?
             </h5>
               
             <mat-button-toggle-group formControlName="knows" class="center-toggle m-b-20">
@@ -16,7 +16,7 @@
               <mat-button-toggle [value]="false">No</mat-button-toggle>
             </mat-button-toggle-group>
 
-                @if (knowsTopic(topic)) {
+                @if (knowsTopic(topic.title)) {
                     <div class="m-b-15">
                       <h5 class="text-center">Specify your expertise</h5>
                       <mat-button-toggle-group formControlName="level" class="center-toggle m-b-30">

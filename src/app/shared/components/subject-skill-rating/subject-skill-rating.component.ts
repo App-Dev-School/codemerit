@@ -1,9 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, Input, inject } from '@angular/core';
-import { EventEmitter, Output } from '@angular/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -16,13 +12,15 @@ import {
 } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatRippleModule } from '@angular/material/core';
+import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule} from '@angular/material/radio';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MasterService } from '@core/service/master.service';
 import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rating.component';
-import { Swiper } from 'swiper';
+import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
 import { register } from 'swiper/element/bundle';
 
 
@@ -55,21 +53,25 @@ export class SubjectSkillRatingComponent {
   @Input() subjectId!: number;
 
   skillForm!: FormGroup;
-  topics: string[] = [];
+  topics: TopicItem[] = [];
   currentIndex: number = 0;
 
   @Output() completed = new EventEmitter<boolean>();
   @ViewChild('swiperRef') swiperRef!: ElementRef<any>;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private masterSrv: MasterService) {}
 
   ngOnInit() {
-    this.loadTopics();
+    this.subjectId = 1;
+    if (this.subjectId > 0) {
+      this.loadTopics();
+    }
     register();
   }
 
   loadTopics() {
-    this.topics = ['HTML', 'CSS', 'JavaScript'];
+    const topics = this.masterSrv.topics;
+    this.topics = topics.filter(topic => topic.subjectId == this.subjectId);
     const group: any = {};
     for (const topic of this.topics) {
 
@@ -96,7 +98,7 @@ export class SubjectSkillRatingComponent {
           subjectGroup.get('rating')?.updateValueAndValidity();
           subjectGroup.get('level')?.updateValueAndValidity();
         });
-      group[topic] = subjectGroup;
+      group[topic.title] = subjectGroup;
     }
 
     this.skillForm = this.fb.group(group);
@@ -116,7 +118,7 @@ export class SubjectSkillRatingComponent {
 
           isCurrentSlideInvalid(): boolean {
             const topic = this.topics[this.currentIndex];
-            return this.getTopicGroup(topic)?.invalid ?? true;
+            return this.getTopicGroup(topic.title)?.invalid ?? true;
           }
 
           onSlideChange(event: any) {
