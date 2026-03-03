@@ -59,7 +59,7 @@ export class SubjectSkillRatingComponent {
   @Output() completed = new EventEmitter<boolean>();
   @ViewChild('swiperRef') swiperRef!: ElementRef<any>;
 
-  constructor(private fb: FormBuilder, private masterSrv: MasterService) {}
+  constructor(private fb: FormBuilder, private masterSrv: MasterService) { }
 
   ngOnInit() {
     this.subjectId = 1;
@@ -79,61 +79,93 @@ export class SubjectSkillRatingComponent {
         knows: [null, Validators.required],
         level: [null],
         rating: [null]
-        
+
       });
 
-              // Make rating required only if knows = true
-            subjectGroup.get('knows')?.valueChanges.subscribe(val => {
+      // Make rating required only if knows = true
+      subjectGroup.get('knows')?.valueChanges.subscribe(val => {
 
-          if (val === true) {
-            subjectGroup.get('rating')?.setValidators(Validators.required);
-            subjectGroup.get('level')?.setValidators(Validators.required);
-          } 
-          else if (val === false) {
-            subjectGroup.get('rating')?.clearValidators();
-            subjectGroup.get('level')?.clearValidators();
-            subjectGroup.patchValue({ level: null, rating: null });
-          }
+        if (val === true) {
+          subjectGroup.get('rating')?.setValidators(Validators.required);
+          subjectGroup.get('level')?.setValidators(Validators.required);
+        }
+        else if (val === false) {
+          subjectGroup.get('rating')?.clearValidators();
+          subjectGroup.get('level')?.clearValidators();
+          subjectGroup.patchValue({ level: null, rating: null });
+        }
 
-          subjectGroup.get('rating')?.updateValueAndValidity();
-          subjectGroup.get('level')?.updateValueAndValidity();
-        });
+        subjectGroup.get('rating')?.updateValueAndValidity();
+        subjectGroup.get('level')?.updateValueAndValidity();
+      });
       group[topic.title] = subjectGroup;
     }
 
     this.skillForm = this.fb.group(group);
   }
 
-     prevSlide(): void {
-        const swiper = this.swiperRef?.nativeElement?.swiper;
-        if (!swiper) return;
-        swiper.slidePrev();
+  prevSlide(): void {
+    const swiper = this.swiperRef?.nativeElement?.swiper;
+    if (!swiper) return;
+    swiper.slidePrev();
+  }
+
+
+  nextSlide(): void {
+    const swiper = this.swiperRef?.nativeElement?.swiper;
+    if (!swiper) return;
+    if (this.isSummarySlide) {
+      // Only submit from summary card
+      this.completed.emit(true);
+      console.log('Final submitted payload:', this.skillForm.value);
+    } else {
+      swiper.slideNext();
+    }
+  }
+
+  get isSummarySlide(): boolean {
+    return this.currentIndex === this.topics.length;
+  }
+
+  getSummaryStats() {
+    // Calculate averages and seniority score
+    let levelSum = 0, levelCount = 0, ratingSum = 0, ratingCount = 0;
+    const levelMap: any = { Basic: 1, Working: 2, Expert: 3 };
+    Object.values(this.skillForm.value).forEach((topic: any) => {
+      if (topic.level && levelMap[topic.level]) {
+        levelSum += levelMap[topic.level];
+        levelCount++;
       }
+      if (typeof topic.rating === 'number') {
+        ratingSum += topic.rating;
+        ratingCount++;
+      }
+    });
+    const avgLevel = levelCount ? (levelSum / levelCount) : 0;
+    const avgRating = ratingCount ? (ratingSum / ratingCount) : 0;
+    // Example seniority score: weighted avg
+    const seniorityScore = (avgLevel * 2 + avgRating) / 3;
+    return { avgLevel, avgRating, seniorityScore: seniorityScore * 100 };
+  }
 
-       nextSlide(): void {
-          const swiper = this.swiperRef?.nativeElement?.swiper;
-          if (!swiper) return;
-          swiper.slideNext();
-        }
+  isCurrentSlideInvalid(): boolean {
+    const topic = this.topics[this.currentIndex];
+    return this.getTopicGroup(topic.title)?.invalid ?? true;
+  }
 
-          isCurrentSlideInvalid(): boolean {
-            const topic = this.topics[this.currentIndex];
-            return this.getTopicGroup(topic.title)?.invalid ?? true;
-          }
+  onSlideChange(event: any) {
+    this.currentIndex = event.target.swiper.activeIndex;
+  }
 
-          onSlideChange(event: any) {
-              this.currentIndex = event.target.swiper.activeIndex;
-            }
-          
-          get isLastSlide(): boolean {
-          return this.currentIndex === this.topics.length - 1;
-          }
-          getTopicGroup(topic: string): FormGroup {
-            return this.skillForm.get(topic) as FormGroup;
-          }
+  get isLastSlide(): boolean {
+    return this.currentIndex === this.topics.length - 1;
+  }
+  getTopicGroup(topic: string): FormGroup {
+    return this.skillForm.get(topic) as FormGroup;
+  }
 
-          knowsTopic(topic: string): boolean {
-            return this.getTopicGroup(topic)?.get('knows')?.value === true;
-          }
+  knowsTopic(topic: string): boolean {
+    return this.getTopicGroup(topic)?.get('knows')?.value === true;
+  }
 
 }
