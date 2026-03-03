@@ -5,29 +5,28 @@
       @for (topic of topics; track topic) {
         <swiper-slide>
           <div class="topic-card" [formGroup]="getTopicGroup(topic.title)">
-            <h2 class="text-center m-b-20">{{ topic.title }}</h2>
-
-            <h5 class="text-center m-b-10">
-              Do you know - "{{ topic.title }}"?
+             <h5 class="text-center m-b-10 col-grey">
+              Have you gone through
             </h5>
+            <h2 class="text-center m-b-20">{{ topic.title }} ?</h2>
               
             <mat-button-toggle-group formControlName="knows" class="center-toggle m-b-20">
-              <mat-button-toggle [value]="true">Yes</mat-button-toggle>
-              <mat-button-toggle [value]="false">No</mat-button-toggle>
+              <mat-button-toggle [value]="true">Yes! I confirm</mat-button-toggle>
+              <mat-button-toggle [value]="false">Not yet</mat-button-toggle>
             </mat-button-toggle-group>
 
                 @if (knowsTopic(topic.title)) {
                     <div class="m-b-15">
-                      <h5 class="text-center">Specify your expertise</h5>
+                      <h5 class="text-center">What is your expertise level?</h5>
                       <mat-button-toggle-group formControlName="level" class="center-toggle m-b-30">
-                        <mat-button-toggle value="Basic">Basic</mat-button-toggle>
-                        <mat-button-toggle value="Working">Working</mat-button-toggle>
-                        <mat-button-toggle value="Expert">Expert</mat-button-toggle>
+                        <mat-button-toggle value="Basic">Basic (Theory)</mat-button-toggle>
+                        <mat-button-toggle value="Working">Working (Hands-on)</mat-button-toggle>
+                        <mat-button-toggle value="Expert">Expert / Mastery</mat-button-toggle>
                       </mat-button-toggle-group>
                     </div>
 
                     <div class="rating-section m-b-15">
-                      <h5 class="text-center">Rate your knowledge out of 10</h5>
+                      <h5 class="text-center">Rate your knowledge out of 5</h5>
                       <app-skill-rating formControlName="rating"></app-skill-rating>
                     </div>
                   }
