@@ -7,22 +7,22 @@
       <swiper-slide>
         <div class="topic-card" [formGroup]="getTopicGroup(topic.title)">
           <h5 class="text-center m-b-10 col-grey">
-            Have you gone through
+            Have you gone through the topic
           </h5>
           <h2 class="text-center m-b-20">{{ topic.title }} ?</h2>
 
           <mat-button-toggle-group formControlName="knows" class="center-toggle m-b-20">
-            <mat-button-toggle [value]="true">Yes! I confirm</mat-button-toggle>
-            <mat-button-toggle [value]="false">Not yet</mat-button-toggle>
+            <mat-button-toggle [value]="true">Yes<span class="only-desktop">. I confirm</span></mat-button-toggle>
+            <mat-button-toggle [value]="false">No<span class="only-desktop">. Not yet</span></mat-button-toggle>
           </mat-button-toggle-group>
 
           @if (knowsTopic(topic.title)) {
           <div class="m-b-15">
             <h5 class="text-center">What is your expertise level?</h5>
             <mat-button-toggle-group formControlName="level" class="center-toggle m-b-30">
-              <mat-button-toggle value="Basic">Basic (Theory)</mat-button-toggle>
-              <mat-button-toggle value="Working">Working (Hands-on)</mat-button-toggle>
-              <mat-button-toggle value="Expert">Expert / Mastery</mat-button-toggle>
+              <mat-button-toggle value="Basic">Basic <span class="only-desktop"> (Theory)</span></mat-button-toggle>
+              <mat-button-toggle value="Working">Working <span class="only-desktop"> (Hands-on)</span></mat-button-toggle>
+              <mat-button-toggle value="Expert">Expert <span class="only-desktop"> / Mastery</span></mat-button-toggle>
             </mat-button-toggle-group>
           </div>
 
@@ -37,20 +37,17 @@
       <!-- Summary Card -->
       <swiper-slide>
         <div class="topic-card">
-          <h2 class="text-center m-b-20">Summary</h2>
+          <h2 class="text-center m-b-20">Subject Rating Summary</h2>
           <div class="summary-section">
-            <h5>Form Data</h5>
-            <pre style="text-align:left; background:#f8f8f8; padding:12px; border-radius:8px; font-size:13px; max-height:200px; overflow:auto;">{{ skillForm.value | json }}</pre>
-            <h5 class="m-t-20">Averages</h5>
-            <div>Avg Level: {{ getSummaryStats().avgLevel | number:'1.2-2' }}</div>
-            <div>Avg Rating: {{ getSummaryStats().avgRating | number:'1.2-2' }}</div>
-            <div>Seniority Score: {{ getSummaryStats().seniorityScore | number:'1.2-2' }}</div>
+            <h5 class="m-t-20">Level: {{ getSummaryStats().avgLevel }}</h5>
+            <h5>Rating: {{ getSummaryStats().avgRating | number:'1.2-2' }}</h5>
+            <app-skill-rating [rating]="getSummaryStats().avgRating" [readOnly]="true"></app-skill-rating>
+            <h5>Expertise Score: {{ getSummaryStats().seniorityScore }}</h5>
           </div>
           <button mat-raised-button color="primary" class="m-t-20" (click)="nextSlide()">Submit Self Rating</button>
         </div>
       </swiper-slide>
     </swiper-container>
-    <!-- <p>{{skillForm.value | json}}</p> -->
   </div>
 
   <div class="footer">

@@ -17,12 +17,12 @@ swiper-container {
 
 .topic-card {
   border: 1px solid #ddd;
-  width: min(500px, 90%);
+  width: min(560px, 96%);
   margin: auto;
-  padding: 24px;
+  padding: 20px;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -33,4 +33,13 @@ swiper-container {
   background: #fff;
   border-top: 1px solid #eee;
 }
-
+.only-desktop {
+  display: inline !important;
+  vertical-align: middle;
+  align-items: center;
+}
+@media (max-width: 1025px) {
+  .only-desktop {
+    display: none !important;
+  }
+}

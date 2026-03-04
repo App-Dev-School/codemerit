@@ -115,12 +115,24 @@ export class SubjectSkillRatingComponent {
     const swiper = this.swiperRef?.nativeElement?.swiper;
     if (!swiper) return;
     if (this.isSummarySlide) {
-      // Only submit from summary card
+      const payload = this.getPayload();
       this.completed.emit(true);
-      console.log('Final submitted payload:', this.skillForm.value);
+      console.log('Final submitted payload:', payload);
     } else {
       swiper.slideNext();
     }
+  }
+
+  getPayload() {
+    return this.topics.map(topic => {
+      const val = this.skillForm.value[topic.title] || {};
+      return {
+        topicId: topic.id,
+        knows: val.knows,
+        rating: val.rating,
+        level: val.level
+      };
+    });
   }
 
   get isSummarySlide(): boolean {
@@ -131,6 +143,7 @@ export class SubjectSkillRatingComponent {
     // Calculate averages and seniority score
     let levelSum = 0, levelCount = 0, ratingSum = 0, ratingCount = 0;
     const levelMap: any = { Basic: 1, Working: 2, Expert: 3 };
+    const levelReverseMap = [null, 'Basic', 'Working', 'Expert'];
     Object.values(this.skillForm.value).forEach((topic: any) => {
       if (topic.level && levelMap[topic.level]) {
         levelSum += levelMap[topic.level];
@@ -141,11 +154,22 @@ export class SubjectSkillRatingComponent {
         ratingCount++;
       }
     });
-    const avgLevel = levelCount ? (levelSum / levelCount) : 0;
+    // avgLevel as string
+    let avgLevelNum = levelCount ? (levelSum / levelCount) : 0;
+    let avgLevelIdx = Math.round(avgLevelNum);
+    if (avgLevelIdx < 1) avgLevelIdx = 1;
+    if (avgLevelIdx > 3) avgLevelIdx = 3;
+    const avgLevel = levelReverseMap[avgLevelIdx];
+    // avgRating as number (1-5)
     const avgRating = ratingCount ? (ratingSum / ratingCount) : 0;
-    // Example seniority score: weighted avg
-    const seniorityScore = (avgLevel * 2 + avgRating) / 3;
-    return { avgLevel, avgRating, seniorityScore: seniorityScore * 100 };
+    // seniorityScore: 0-100, 100 for Expert+5
+    // Normalize: (level-1)/2 gives 0 for Basic, 1 for Expert
+    // rating/5 gives 0-1
+    // Weighted: 70% level, 30% rating
+    const levelNorm = levelCount ? ((avgLevelNum - 1) / 2) : 0;
+    const ratingNorm = ratingCount ? (avgRating / 5) : 0;
+    const seniorityScore = Math.round((levelNorm * 0.7 + ratingNorm * 0.3) * 100);
+    return { avgLevel, avgRating, seniorityScore };
   }
 
   isCurrentSlideInvalid(): boolean {
