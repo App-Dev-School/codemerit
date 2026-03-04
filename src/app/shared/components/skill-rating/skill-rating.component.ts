@@ -21,13 +21,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ]
 })
 export class SkillRatingComponent implements ControlValueAccessor {
-  @Input() maxStars: number = 5; //test with 5 for warnings
+  @Input() maxStars: number = 5;
   @Input() readOnly: boolean = false;
-
+  @Input() rating: number = 0;
   @Output() ratingChange = new EventEmitter<number>();
 
   stars: boolean[] = [];
-  rating: number = 0;
   hovered = 0;
 
   private onChange = (rating: number) => {};

@@ -1,0 +1,45 @@
+.skill-rating-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+}
+
+swiper-container {
+  width: 100%;
+}
+
+.topic-card {
+  border: 1px solid #ddd;
+  width: min(560px, 96%);
+  margin: auto;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
+.only-desktop {
+  display: inline !important;
+  vertical-align: middle;
+  align-items: center;
+}
+@media (max-width: 1025px) {
+  .only-desktop {
+    display: none !important;
+  }
+}

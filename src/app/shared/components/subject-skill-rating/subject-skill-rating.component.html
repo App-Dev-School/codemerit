@@ -1,0 +1,62 @@
+<div class="skill-rating-container">
+  <!-- Swiper Section -->
+  <div class="content">
+    <swiper-container #swiperRef slides-per-view="1" (swiperslidechange)="onSlideChange($event)"
+      [allowTouchMove]="false">
+      @for (topic of topics; track topic) {
+      <swiper-slide>
+        <div class="topic-card" [formGroup]="getTopicGroup(topic.title)">
+          <h5 class="text-center m-b-10 col-grey">
+            Have you gone through the topic
+          </h5>
+          <h2 class="text-center m-b-20">{{ topic.title }} ?</h2>
+
+          <mat-button-toggle-group formControlName="knows" class="center-toggle m-b-20">
+            <mat-button-toggle [value]="true">Yes<span class="only-desktop">. I confirm</span></mat-button-toggle>
+            <mat-button-toggle [value]="false">No<span class="only-desktop">. Not yet</span></mat-button-toggle>
+          </mat-button-toggle-group>
+
+          @if (knowsTopic(topic.title)) {
+          <div class="m-b-15">
+            <h5 class="text-center">What is your expertise level?</h5>
+            <mat-button-toggle-group formControlName="level" class="center-toggle m-b-30">
+              <mat-button-toggle value="Basic">Basic <span class="only-desktop"> (Theory)</span></mat-button-toggle>
+              <mat-button-toggle value="Working">Working <span class="only-desktop"> (Hands-on)</span></mat-button-toggle>
+              <mat-button-toggle value="Expert">Expert <span class="only-desktop"> / Mastery</span></mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+
+          <div class="rating-section m-b-15">
+            <h5 class="text-center">Rate your knowledge out of 5</h5>
+            <app-skill-rating formControlName="rating"></app-skill-rating>
+          </div>
+          }
+        </div>
+      </swiper-slide>
+      }
+      <!-- Summary Card -->
+      <swiper-slide>
+        <div class="topic-card">
+          <h2 class="text-center m-b-20">Subject Rating Summary</h2>
+          <div class="summary-section">
+            <h5 class="m-t-20">Level: {{ getSummaryStats().avgLevel }}</h5>
+            <h5>Rating: {{ getSummaryStats().avgRating | number:'1.2-2' }}</h5>
+            <app-skill-rating [rating]="getSummaryStats().avgRating" [readOnly]="true"></app-skill-rating>
+            <h5>Expertise Score: {{ getSummaryStats().seniorityScore }}</h5>
+          </div>
+          <button mat-raised-button color="primary" class="m-t-20" (click)="nextSlide()">Submit Self Rating</button>
+        </div>
+      </swiper-slide>
+    </swiper-container>
+  </div>
+
+  <div class="footer">
+    <button mat-stroked-button (click)="prevSlide()" [disabled]="currentIndex === 0">
+      Previous
+    </button>
+
+    <button mat-raised-button color="primary" (click)="nextSlide()" [disabled]="isSummarySlide ? false : isCurrentSlideInvalid()">
+      {{ isSummarySlide ? 'Submit' : (isLastSlide ? 'Finish' : 'Next') }}
+    </button>
+  </div>
+</div>
