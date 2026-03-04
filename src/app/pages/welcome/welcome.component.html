@@ -1,12 +1,11 @@
 <section class="content">
   <div class="content-block">
 
-    <div class="row m-t-20 clearfix">
+    <!-- <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <!-- <app-quiz-questions-form></app-quiz-questions-form> -->
          <app-subject-skill-rating></app-subject-skill-rating>
       </div>
-      </div>
+      </div> -->
 
     <div class="row match-height m-t-20 clearfix">
       <!-- Congratulations Card -->
@@ -16,7 +15,7 @@
       <!-- Medal Card -->
       <div class="col-12 col-md-6 col-lg-5">
         <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"
-        (medalAction)="handleAction($event)"></app-medal-card>
+          (medalAction)="handleAction($event)"></app-medal-card>
       </div>
     </div>
 
