@@ -107,16 +107,20 @@ export class SubjectPerformanceCardComponent implements OnInit {
         },
       },
       fill: {
-        colors: ['#FFA726'], // Orange gradient
+        colors: ['#25be20'], 
       },
       stroke: {
         lineCap: 'round',
       },
-      colors: ['#FFA726'],
+      colors: ['#25be20'],
       labels: ['Assessment Completion'],
     };
-  }
-
+  } 
+  getColorClass(value: number) {
+  if (value < 40) return 'l-bg-red';
+  if (value < 70) return 'l-bg-blue';
+  return 'l-bg-green';
+}
   onExploreSubject(subject: Subject) {
   this.exploreSubject.next(subject);
   }

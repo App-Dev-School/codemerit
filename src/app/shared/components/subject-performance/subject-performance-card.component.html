@@ -30,24 +30,24 @@
           <li>
             <div class="mb-2">
               <span class="progress-label">Score</span>
-              <span class="float-end progress-percent label m-b-5 text-white" [style.backgroundColor]="subject.color">{{
+              <span class="float-end progress-percent label m-b-5 text-white"  [ngClass]="getColorClass(subject.score)">{{
                 subject.score
                 }}%</span>
             </div>
             <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [style.backgroundColor]="subject.color" [style.width]="subject.score + '%'"
+              <div class="progress-bar" [ngClass]="getColorClass(subject.score)" [style.width]="subject.score + '%'"
                 role="progressbar" [attr.aria-valuenow]="subject.score" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
           </li>
           <li>
             <div class="mb-2">
               <span class="progress-label">Avg. Accuracy</span>
-              <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success text-white'">{{
+              <span class="float-end progress-percent label m-b-5"  [ngClass]="getColorClass(subject.avgAccuracy)">{{
                 subject.avgAccuracy
                 }}%</span>
             </div>
             <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="subject.avgAccuracy + '%'"
+              <div class="progress-bar" [ngClass]="getColorClass(subject.avgAccuracy)" [style.width]="subject.avgAccuracy + '%'"
                 role="progressbar" [attr.aria-valuenow]="subject.avgAccuracy" aria-valuemin="0" aria-valuemax="100">
               </div>
             </div>
@@ -55,11 +55,11 @@
           <li>
             <div class="mb-2">
               <span class="progress-label">Completion</span>
-              <span class="float-end progress-percent label m-b-5" [ngClass]="'bg-dark text-white'">{{ subject.coverage
+              <span class="float-end progress-percent label m-b-5" [ngClass]="getColorClass(subject.coverage)">{{ subject.coverage
                 }}%</span>
             </div>
             <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [ngClass]="'bg-dark'" [style.width]="subject.coverage + '%'" role="progressbar"
+              <div class="progress-bar" [ngClass]="getColorClass(subject.coverage)" [style.width]="subject.coverage + '%'" role="progressbar"
                 [attr.aria-valuenow]="subject.coverage" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
           </li>
@@ -114,7 +114,6 @@
         }
     </p>
     }
-
     <!-- <p class="m-b-20 m-t-0 font-12 d-flex align-items-center justify-content-center">
        @if (subject.coverage > 5 && subject.avgAccuracy < 40) { <i class="material-icons col-green me-2">pan_tool</i>
           Oh! Your {{subject.title}} accuracy is falling down. Avoid wrong attempts.
