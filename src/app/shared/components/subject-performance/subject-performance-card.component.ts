@@ -116,7 +116,6 @@ export class SubjectPerformanceCardComponent implements OnInit {
       labels: ['Assessment Completion'],
     };
   } 
-  
   getColorClass(value: number) {
   if (value < 40) return 'l-bg-red';
   if (value < 70) return 'l-bg-blue';
