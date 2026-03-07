@@ -10,27 +10,86 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.12);
 
   .settingPanelToggle {
-    background: #6777ef;
-    padding: 13px 13px;
+    background: linear-gradient(135deg, #6777ef 0%, #4e66e8 100%);
+    padding: 15px;
     color: #fff;
     position: absolute;
     top: 30%;
-    left: -40px;
-    width: 40px;
-    border-radius: 10px 0 0 10px;
+    left: -48px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px 0 0 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: linear-gradient(135deg, #5668e0 0%, #3f57d9 100%);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
     .setting-sidebar-icon .feather {
-      height: 17px;
-      width: 17px;
+      height: 20px;
+      width: 20px;
+      stroke-width: 2.5px;
     }
   }
 
   &.showSettingPanel {
     right: 0;
+    animation: slideInRight 0.3s ease-out forwards;
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
 
   .settingSidebar-body {
     position: relative;
     height: 100%;
+  }
+
+  /* Section animations */
+  .p-15,
+  .rightSetting {
+    animation: fadeInUp 0.4s ease-out forwards;
+    opacity: 0;
+  }
+
+  .p-15:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .rightSetting:nth-of-type(1) {
+    animation-delay: 0.2s;
+  }
+
+  .p-15:nth-child(4) {
+    animation-delay: 0.3s;
+  }
+
+  .rightSetting:nth-of-type(2) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
   .settingSidebar-tab {
@@ -58,23 +117,46 @@
     }
   }
 
+  .theme-setting-options {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  ul.choose-theme {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+  }
+
   ul.choose-theme li {
     display: inline-block;
+    transition: all 0.2s ease;
 
     &:hover {
       cursor: pointer;
+      transform: scale(1.1);
+    }
+
+    &.active {
+      transform: scale(1.15);
     }
   }
 
   ul.choose-theme li div {
-    border-radius: 15px;
+    border-radius: 50%;
     display: inline-block;
     vertical-align: middle;
-    height: 25px;
-    width: 25px;
+    height: 30px;
+    width: 30px;
     overflow: hidden;
     position: relative;
-    margin: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
   }
 
   ul.choose-theme li div.purple {
@@ -124,26 +206,38 @@
     box-shadow: 4px 3px 6px 0 rgba(0, 0, 0, 0.2);
   }
 
+  ul.choose-theme li.active div {
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #6777ef, 0 3px 8px rgba(0, 0, 0, 0.2);
+  }
+
   ul.choose-theme li.active div::after {
     content: "\f00c";
     color: #fff;
-    top: 4px;
-    left: 7px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    font-size: 12px;
+    font-size: 14px;
     position: absolute;
-    -webkit-transition: 0.5s;
-    transition: 0.5s;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 
   .setting-panel-header {
-    display: block;
-    padding: 15px 20px;
-    color: #212529;
-    font-size: 15px;
-    border: 1px solid #eae9e9;
-    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 20px;
+    color: #3f4254;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: linear-gradient(to right, #f8f9fa, #f1f2f6);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    position: relative;
   }
 
   .disk-server-setting {
@@ -166,9 +260,13 @@
   }
 }
 .hiddenradio {
-  padding: 0px 20px 0px 0px;
-  margin: 0px 20px 0px 0px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
+
 .hiddenradio [type="radio"] {
   position: absolute;
   opacity: 0;
@@ -181,16 +279,88 @@
   cursor: pointer;
   height: auto;
   width: 100%;
-  border: 3px solid #d5e0ec;
+  border-radius: 8px;
+  border: 3px solid #e6eef8;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* CHECKED STYLES */
 .hiddenradio [type="radio"]:checked + img {
-  outline: 2px solid #6777ef;
+  border-color: #6777ef;
+  box-shadow: 0 4px 12px rgba(103, 119, 239, 0.3);
+  transform: translateY(-2px);
 }
 
-@media only screen and (max-width: 1024px) {
+.hiddenradio .flex-col {
+  width: 180px;
+  transition: all 0.3s ease;
+}
+
+.hiddenradio .text-md {
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+@media only screen and (max-width: 1199px) {
   .settingSidebar {
-    display: none;
+    width: 250px;
+    right: -250px;
+
+    .settingPanelToggle {
+      left: -42px;
+      width: 42px;
+      height: 42px;
+    }
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  .settingSidebar {
+    top: 60px;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .settingSidebar {
+    width: 230px;
+    right: -230px;
+    top: 56px;
+
+    .settingPanelToggle {
+      top: 20%;
+      left: -38px;
+      width: 38px;
+      height: 38px;
+
+      .setting-sidebar-icon .feather {
+        height: 18px;
+        width: 18px;
+      }
+    }
+
+    .hiddenradio .flex-col {
+      width: 100px;
+    }
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .settingSidebar {
+    width: 100%;
+    right: -100%;
+
+    &.showSettingPanel {
+      right: 0;
+    }
+
+    .settingPanelToggle {
+      top: 15%;
+    }
+
+    ul.choose-theme li div {
+      height: 28px;
+      width: 28px;
+    }
   }
 }

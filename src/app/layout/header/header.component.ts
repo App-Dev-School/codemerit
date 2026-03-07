@@ -63,7 +63,6 @@ export class HeaderComponent
   docElement?: HTMLElement;
   isFullScreen = false;
   isMobileMenuOpen = false;
-  isSidebarCollapsed = false;
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
@@ -138,10 +137,6 @@ export class HeaderComponent
     } else {
       this.homePage = 'admin/dashboard/main';
     }
-
-    this.sidebarService.watchIsCollapsed.subscribe((data)=>{
-      this.isSidebarCollapsed = data;
-    })
   }
 
   callFullscreen() {

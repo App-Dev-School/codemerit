@@ -1,13 +1,15 @@
 import { Direction, BidiModule } from '@angular/cdk/bidi';
-import { AfterViewInit, Component, Inject, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, Renderer2, inject } from '@angular/core';
 import { DirectionService, InConfiguration, RightSidebarService } from '@core';
 import { ConfigService } from '@config';
-import { DOCUMENT } from '@angular/common';
+
 import { RouterOutlet } from '@angular/router';
 import { RightSidebarComponent } from '../../right-sidebar/right-sidebar.component';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { HeaderComponent } from '../../header/header.component';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
+import { StorageService } from '@core/service/storage.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
     selector: 'app-main-layout',
@@ -23,34 +25,35 @@ import { UnsubscribeOnDestroyAdapter } from '@shared';
     providers: [RightSidebarService]
 })
 export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements AfterViewInit {
+  private directoryService = inject(DirectionService);
+  private configService = inject(ConfigService);
+  private document = inject<Document>(DOCUMENT);
+  private renderer = inject(Renderer2);
+  private localStorageService = inject(StorageService);
+
   direction!: Direction;
   public config!: InConfiguration;
-  constructor(
-    private directoryService: DirectionService,
-    private configService: ConfigService,
-    @Inject(DOCUMENT) private document: Document,
-    private renderer: Renderer2
-  ) {
+  constructor() {
     super();
     this.config = this.configService.configData;
     this.subs.sink = this.directoryService.currentData.subscribe((currentData) => {
       if (currentData) {
         this.direction = currentData === 'ltr' ? 'ltr' : 'rtl';
       } else {
-        if (localStorage.getItem('isRtl')) {
-          if (localStorage.getItem('isRtl') === 'true') {
+        if (this.localStorageService.has('isRtl')) {
+          if (this.localStorageService.get('isRtl') === 'true') {
             this.direction = 'rtl';
-          } else if (localStorage.getItem('isRtl') === 'false') {
+          } else if (this.localStorageService.get('isRtl') === 'false') {
             this.direction = 'ltr';
           }
         } else {
           if (this.config) {
             if (this.config.layout.rtl === true) {
               this.direction = 'rtl';
-              localStorage.setItem('isRtl', 'true');
+              this.localStorageService.set('isRtl', 'true');
             } else {
               this.direction = 'ltr';
-              localStorage.setItem('isRtl', 'false');
+              this.localStorageService.set('isRtl', 'false');
             }
           }
         }
@@ -59,22 +62,22 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
   }
   ngAfterViewInit(): void {
     //------------ set varient start----------------
-    if (localStorage.getItem('theme')) {
+    if (this.localStorageService.has('theme')) {
       this.renderer.removeClass(this.document.body, this.config.layout.variant);
       this.renderer.addClass(
         this.document.body,
-        localStorage.getItem('theme') as string
+        this.localStorageService.get('theme') as string
       );
     } else {
       this.renderer.addClass(this.document.body, this.config.layout.variant);
-      localStorage.setItem('theme', this.config.layout.variant);
+      this.localStorageService.set('theme', this.config.layout.variant);
     }
 
     //------------ set varient end----------------
 
     //------------ set theme start----------------
 
-    if (localStorage.getItem('choose_skin')) {
+    if (this.localStorageService.has('choose_skin')) {
       this.renderer.removeClass(
         this.document.body,
         'theme-' + this.config.layout.theme_color
@@ -82,11 +85,11 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
 
       this.renderer.addClass(
         this.document.body,
-        localStorage.getItem('choose_skin') as string
+        this.localStorageService.get('choose_skin') as string
       );
-      localStorage.setItem(
+      this.localStorageService.set(
         'choose_skin_active',
-        (localStorage.getItem('choose_skin') as string).substring(6)
+        (this.localStorageService.get('choose_skin') as string).substring(6)
       );
     } else {
       this.renderer.addClass(
@@ -94,11 +97,11 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
         'theme-' + this.config.layout.theme_color
       );
 
-      localStorage.setItem(
+      this.localStorageService.set(
         'choose_skin',
         'theme-' + this.config.layout.theme_color
       );
-      localStorage.setItem(
+      this.localStorageService.set(
         'choose_skin_active',
         this.config.layout.theme_color
       );
@@ -108,10 +111,10 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
 
     //------------ set RTL start----------------
 
-    if (localStorage.getItem('isRtl')) {
-      if (localStorage.getItem('isRtl') === 'true') {
+    if (this.localStorageService.has('isRtl')) {
+      if (this.localStorageService.get('isRtl') === 'true') {
         this.setRTLSettings();
-      } else if (localStorage.getItem('isRtl') === 'false') {
+      } else if (this.localStorageService.get('isRtl') === 'false') {
         this.setLTRSettings();
       }
     } else {
@@ -125,17 +128,17 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
 
     //------------ set sidebar color start----------------
 
-    if (localStorage.getItem('menuOption')) {
+    if (this.localStorageService.has('menuOption')) {
       this.renderer.addClass(
         this.document.body,
-        localStorage.getItem('menuOption') as string
+        this.localStorageService.get('menuOption') as string
       );
     } else {
       this.renderer.addClass(
         this.document.body,
         'menu_' + this.config.layout.sidebar.backgroundColor
       );
-      localStorage.setItem(
+      this.localStorageService.set(
         'menuOption',
         'menu_' + this.config.layout.sidebar.backgroundColor
       );
@@ -145,10 +148,10 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
 
     //------------ set logo color start----------------
 
-    if (localStorage.getItem('choose_logoheader')) {
+    if (this.localStorageService.has('choose_logoheader')) {
       this.renderer.addClass(
         this.document.body,
-        localStorage.getItem('choose_logoheader') as string
+        this.localStorageService.get('choose_logoheader') as string
       );
     } else {
       this.renderer.addClass(
@@ -160,8 +163,8 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
     //------------ set logo color end----------------
 
     //------------ set sidebar collapse start----------------
-    if (localStorage.getItem('collapsed_menu')) {
-      if (localStorage.getItem('collapsed_menu') === 'true') {
+    if (this.localStorageService.has('collapsed_menu')) {
+      if (this.localStorageService.get('collapsed_menu') === 'true') {
         this.renderer.addClass(this.document.body, 'side-closed');
         this.renderer.addClass(this.document.body, 'submenu-closed');
       }
@@ -169,11 +172,11 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
       if (this.config.layout.sidebar.collapsed == true) {
         this.renderer.addClass(this.document.body, 'side-closed');
         this.renderer.addClass(this.document.body, 'submenu-closed');
-        localStorage.setItem('collapsed_menu', 'true');
+        this.localStorageService.set('collapsed_menu', 'true');
       } else {
         this.renderer.removeClass(this.document.body, 'side-closed');
         this.renderer.removeClass(this.document.body, 'submenu-closed');
-        localStorage.setItem('collapsed_menu', 'false');
+        this.localStorageService.set('collapsed_menu', 'false');
       }
     }
 
@@ -184,12 +187,12 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
     document.getElementsByTagName('html')[0].setAttribute('dir', 'rtl');
     this.renderer.addClass(this.document.body, 'rtl');
 
-    localStorage.setItem('isRtl', 'true');
+    this.localStorageService.set('isRtl', 'true');
   }
   setLTRSettings() {
     document.getElementsByTagName('html')[0].removeAttribute('dir');
     this.renderer.removeClass(this.document.body, 'rtl');
 
-    localStorage.setItem('isRtl', 'false');
+    this.localStorageService.set('isRtl', 'false');
   }
 }

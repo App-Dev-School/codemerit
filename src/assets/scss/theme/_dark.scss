@@ -1,9 +1,3 @@
-/*
- *  Document   : dark.scss
- *  Author     : AppDev Theme
- *  Description: This scss file for dark theme style classes
- */
-
 body.dark {
   background-color: #232b3e;
 }
@@ -881,7 +875,12 @@ body.dark {
           }
         }
       }
-      .nfc-read-more {
+    }
+
+    .user_dw_menu li {
+      border-bottom: 1px solid #232a31;
+
+      a {
         color: #96a2b4;
       }
     }
@@ -1227,6 +1226,10 @@ body.dark {
     }
   }
 
+  .mat-timepicker-panel {
+    background: #12161f;
+    color: #b8bbbd;
+  }
   .mat-select-panel {
     background: #12161f;
     color: #b8bbbd;
@@ -1270,6 +1273,10 @@ body.dark {
 
   .txt1 {
     color: #96a2b4;
+  }
+
+  .apexcharts-legend-text {
+    color: #96a2b4 !important;
   }
 
   .mat-button[disabled],
@@ -1399,11 +1406,11 @@ body.dark {
 
   .mat-mdc-dialog-container {
     .mdc-dialog__surface {
-      background: #1a202e;
+      background: #0c0f18;
       color: #96a2b4;
     }
     .mdc-dialog__content {
-      background: #1a202e;
+      background: #0c0f18;
       color: #96a2b4 !important;
     }
   }
@@ -1531,50 +1538,6 @@ body.dark {
     color: #7c7c7c;
   }
 
-  .nfc-menu {
-    .nfc-dropdown {
-      background-color: #1b1e27;
-      .menu {
-        button {
-          &:hover {
-            background-color: #10131c;
-          }
-        }
-        .msg-read {
-          background-color: #1b1e27;
-          border-bottom: 1px solid #5e5e5e;
-        }
-        .menu-info {
-          h4 {
-            color: #96a2b4;
-          }
-          .menu-title {
-            color: #96a2b4;
-          }
-          p {
-            color: rgba(255, 255, 255, 0.55);
-          }
-          .menu-desc {
-            color: rgba(255, 255, 255, 0.55);
-            .material-icons {
-              color: #979797;
-            }
-          }
-        }
-        .msg-unread {
-          background-color: #000000;
-          border-bottom: 1px solid #5e5e5e;
-        }
-      }
-    }
-    .nfc-footer {
-      background-color: #1b1e27;
-      border-top: 1px solid #363636;
-      .nfc-read-all {
-        color: rgb(181 181 181);
-      }
-    }
-  }
   .user_dw_menu {
     .mat-mdc-menu-item.mdc-list-item {
       background-color: #1b1e27;

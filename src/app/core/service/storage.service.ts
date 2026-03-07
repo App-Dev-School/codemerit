@@ -1,59 +1,82 @@
-import { Injectable } from '@angular/core';
-//import { Plugins } from '@capacitor/core';
-//const { Storage } = Plugins;
+import { Injectable, inject } from '@angular/core';
+import { ConfigService } from '@config';
+import { InConfiguration } from '@core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StorageService {
+  private configService = inject(ConfigService);
 
-  constructor() { }
+  public config!: InConfiguration;
 
-
-  // Store the value
-  async store(storageKey: string, value: any) {
-  //const encryptedValue = btoa(escape(JSON.stringify(value)));
-//   const encryptedValue = JSON.stringify(value);
-//   await Storage.set({
-//   key: storageKey,
-//   value: encryptedValue
-//   });
-  }
-  
-  // Get the value
-  async get(storageKey: string) {
-//   const ret = await Storage.get({ key: storageKey });
-//   return JSON.parse(ret.value);
-  }
-  
-  async removeStorageItem(storageKey: string) {
-  //await Storage.remove({ key: storageKey });
-  }
-  
-  // Clear storage
-  async clear() {
-  //await Storage.clear();
+  constructor() {
+    this.config = this.configService.configData;
   }
 
-  
+  private getStoragePrefix(): string {
+    const templateType =
+      this.config.layout.variant === 'dark' ? 'dark' : 'light';
+    const directionPrefix = this.config.layout.rtl ? 'rtl_' : 'ltr_';
+    return `${templateType}_${directionPrefix}`;
+  }
+
+  get<T = unknown>(key: string): T | null {
+    const prefix = this.getStoragePrefix();
+    const item = localStorage.getItem(prefix + key);
+    if (item) {
+      try {
+        return JSON.parse(item);
+      } catch {
+        return item as unknown as T;
+      }
+    }
+    return null;
+  }
+
+  set<T = unknown>(key: string, value: T): boolean {
+    const prefix = this.getStoragePrefix();
+    localStorage.setItem(prefix + key, JSON.stringify(value));
+
+    return true;
+  }
+
+  has(key: string): boolean {
+    const prefix = this.getStoragePrefix();
+    return !!localStorage.getItem(prefix + key);
+  }
+
+  remove(key: string) {
+    const prefix = this.getStoragePrefix();
+    localStorage.removeItem(prefix + key);
+  }
+
+  clear() {
+    localStorage.clear();
+  }
 }
 
-/************ JOSH WAY ************
-export async function set(key: string, value: any): Promise<void> {
-  await Storage.set({
-    key: key,
-    value: JSON.stringify(value)
-  });
-}
+export class MemoryStorageService {
+  private store: Record<string, string> = {};
 
-export async function get(key: string): Promise<any> {
-  const item = await Storage.get({ key: key });
-  return JSON.parse(item.value);
-}
+  get<T = unknown>(key: string): T | null {
+    return JSON.parse(this.store[key] || '{}') || {};
+  }
 
-export async function remove(key: string): Promise<void> {
-  await Storage.remove({
-    key: key
-  });
+  set<T = unknown>(key: string, value: T): boolean {
+    this.store[key] = JSON.stringify(value);
+    return true;
+  }
+
+  has(key: string): boolean {
+    return !!this.store[key];
+  }
+
+  remove(key: string) {
+    delete this.store[key];
+  }
+
+  clear() {
+    this.store = {};
+  }
 }
-***********/

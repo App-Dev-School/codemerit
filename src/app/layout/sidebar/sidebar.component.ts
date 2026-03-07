@@ -75,7 +75,6 @@ export class SidebarComponent
       this.renderer.removeClass(this.document.body, 'overlay-open');
       isCollapsed = true;
     }
-    this.sidebarService.setCollapsed(isCollapsed);
   }
 
   callToggleMenu(event: Event, length: number) {
@@ -149,7 +148,6 @@ export class SidebarComponent
   }
 
   initLeftSidebar() {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _this = this;
     // Set menu height
     _this.setMenuHeight();
@@ -165,7 +163,7 @@ export class SidebarComponent
     return this.bodyTag.classList.contains('overlay-open');
   }
 
-  checkStatuForResize(firstTime: boolean) {
+  checkStatuForResize(_firstTime: boolean) {
     if (window.innerWidth < 1025) {
       this.renderer.addClass(this.document.body, 'ls-closed');
     } else {
