@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
 
 import { Direction } from '@angular/cdk/bidi';
-import { AsyncPipe, JsonPipe, NgStyle, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -122,7 +122,7 @@ export class DashboardComponent implements OnInit {
     this.takeRouteParams();
     setTimeout(() => {
       this.loading = false;
-    }, 3800);
+    }, 1000);
   }
 
   generateRandomLabels() {
@@ -190,7 +190,7 @@ export class DashboardComponent implements OnInit {
               }
               setTimeout(() => {
                 this.loading = false;
-              }, 3000);
+              }, 1000);
             },
             error: (error) => {
               this.loading = false;
@@ -236,7 +236,7 @@ export class DashboardComponent implements OnInit {
                 //this.cdRef.markForCheck();
                 this.snackService.display('snackbar-success', 'Congrats for the beginning. Start Deep Diving ' + this.currentSubject.title + '!', 'bottom', 'center');
                 this.loading = false;
-              }, 2000);
+              }, 1500);
             }
           } else {
             this.loading = false;

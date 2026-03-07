@@ -1,4 +1,3 @@
-// chart-card4.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
@@ -58,7 +57,6 @@ export class QuizCreateComponent implements OnInit {
   //animation effect variables
   messages = [
     'Finding Questions…',
-    'Applying Configuration',
     'Generating Quiz…'
   ];
   levels = [

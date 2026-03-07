@@ -59,10 +59,10 @@ export class SubjectSkillRatingComponent {
   @Output() completed = new EventEmitter<boolean>();
   @ViewChild('swiperRef') swiperRef!: ElementRef<any>;
 
-  constructor(private fb: FormBuilder, private masterSrv: MasterService) { }
+  constructor(private fb: FormBuilder, private masterSrv: MasterService) {
+  }
 
   ngOnInit() {
-    this.subjectId = 1;
     if (this.subjectId > 0) {
       this.loadTopics();
     }
