@@ -1,0 +1,58 @@
+<div class="certificate-border">
+  <div class="certificate-main">
+    <div class="certificate-header">
+      <img src="https://dummyimage.com/80x80/0d3b66/fff&text=LOGO" alt="Platform Logo" class="certificate-logo" />
+      <div class="certificate-title accent">{{ model.platformName }}</div>
+      <div class="certificate-subtitle">This certificate is awarded to</div>
+    </div>
+    <div class="certificate-ribbon">
+      <span class="recipient">{{ model.userName }}</span>
+    </div>
+    <div class="certificate-details">
+      <div class="details-row">
+        <div class="details-col">
+          <div class="details-label">Skill</div>
+          <div class="details-value">{{ model.skillName }}</div>
+        </div>
+        <div class="details-col">
+          <div class="details-label">Tier</div>
+          <div class="details-value">{{ model.tierDisplayName }}</div>
+        </div>
+      </div>
+      <div class="details-row">
+        <div class="details-col">
+          <div class="details-label">Assessment</div>
+          <div class="details-value">{{ model.assessmentTitle }}</div>
+        </div>
+        <div class="details-col">
+          <div class="details-label">Score</div>
+          <div class="details-value">{{ model.scorePercentage }}%</div>
+        </div>
+      </div>
+      <div class="details-row">
+        <div class="details-col">
+          <div class="details-label">Certificate No.</div>
+          <div class="details-value">{{ model.certificateNumber }}</div>
+        </div>
+        <div class="details-col">
+          <div class="details-label">Verification Code</div>
+          <div class="details-value">{{ model.verificationCode }}</div>
+        </div>
+      </div>
+      <div class="details-row">
+        <div class="details-col">
+          <div class="details-label">Issued Date</div>
+          <div class="details-value">{{ model.issuedDate | date:'mediumDate' }}</div>
+        </div>
+        <div class="details-col">
+          <div class="details-label">Expiry Date</div>
+          <div class="details-value">{{ model.expiryDate | date:'mediumDate' }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="certificate-footer">
+      <div>{{ model.issuerName }} | {{ model.programLead }}</div>
+      <div>Template ID: {{ model.templateId }}</div>
+    </div>
+  </div>
+</div>
