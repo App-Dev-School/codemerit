@@ -52,18 +52,18 @@ export class WelcomeComponent implements OnInit {
   limit: number = 10; // <==== Edit this number to limit API results
   certificateModels : CertificateModel[] = [
     {
-      platformName: 'Angular Developer Program',
-      userName: 'Jane Doe',
+      platformName: 'Angular Developer Certification',
+      userName: 'Vishal Kumar',
       skillName: 'Angular Development',
-      tierDisplayName: 'Gold',
-      assessmentTitle: 'Final Project',
+      tierDisplayName: 'Expert',
+      assessmentTitle: 'Live Contribution',
       scorePercentage: 95,
-      certificateNumber: 'CM-2026-0001',
+      certificateNumber: 'CM-2026-00671',
       verificationCode: 'ABCD1234',
       issuedDate: new Date('2026-03-01'),
       expiryDate: new Date('2027-03-01'),
-      issuerName: 'CodeMerit Academy',
-      programLead: 'John Smith',
+      issuerName: 'David Moore',
+      programLead: 'Kunal Anand',
       templateId: 'default',
     },
     {
@@ -92,7 +92,7 @@ export class WelcomeComponent implements OnInit {
       verificationCode: 'WORK2026',
       issuedDate: new Date('2026-01-10'),
       expiryDate: new Date('2027-01-10'),
-      issuerName: 'CodeMerit Management',
+      issuerName: 'Tech Lead',
       programLead: 'Michael Lee',
       templateId: 'work',
     },
@@ -107,7 +107,7 @@ export class WelcomeComponent implements OnInit {
       verificationCode: 'APP2026',
       issuedDate: new Date('2026-03-19'),
       expiryDate: new Date('2027-03-19'),
-      issuerName: 'CodeMerit Community',
+      issuerName: 'Tech Lead',
       programLead: 'Sophia Turner',
       templateId: 'appreciation',
     }

@@ -13,38 +13,18 @@
       </div>
     </div>
 
-    <!-- <div class="row match-height m-t-20 clearfix">
-      <div class="col-12 col-md-6 col-lg-7">
-        <div class="card card-congratulations">
-          <div class="card-body text-center">
-            <h1>Hello test</h1>
-          </div>
-        </div>
-
-      </div>
-      <div class="col-12 col-md-6 col-lg-5">
-        <div class="card card-congratulations">
-          <div class="card-body text-center">
-            <h1>Hello test</h1>
-            <h1>Hello test</h1>
-          </div>
-
-        </div>
-      </div>
-    </div> -->
-
     <div class="row m-t-20 clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
-        <app-certificate [model]="certificateModels[0]"></app-certificate>
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
-        <app-certificate [model]="certificateModels[certificateModels.length-1]"></app-certificate>
-      </div>
       @for(certificate of certificateModels; track certificate) {
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
         <app-certificate [templateId]="certificate.templateId" [model]="certificate"></app-certificate>
       </div>
       }
+      <!-- <div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
+        <app-certificate [model]="certificateModels[0]"></app-certificate>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+        <app-certificate [model]="certificateModels[certificateModels.length-1]"></app-certificate>
+      </div> -->
     </div>
 
     <div class="row m-t-20 clearfix">
