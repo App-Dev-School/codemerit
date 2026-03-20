@@ -171,10 +171,8 @@ export class MasterService {
     );
   }
 
-  getMockDataSubjects(): Observable<Subject[]> {
-    return this.httpService.getLocalMock('assets/data/master/subjects.json').pipe(
-      map((data: any) => data as Subject[])
-    );
+  fetchMockSubjectDashboard(): Observable<any> {
+    return this.httpService.getLocalMock('assets/data/master/subjectDashboard.json');
   }
 
   getMockAdminDashboard(): Observable<any> {

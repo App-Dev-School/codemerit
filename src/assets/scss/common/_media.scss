@@ -189,8 +189,9 @@
 @media (min-width: 320px) and (max-width: 480px) {
   section.content {
     margin: 35px 15px 0 15px;
+    background: grey;
     .content-block {
-      padding: 25px 10px 0px 12px;
+      padding: 5px 0px 0px 0px;
     }
   }
   .rtl {

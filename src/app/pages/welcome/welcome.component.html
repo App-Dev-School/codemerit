@@ -9,7 +9,7 @@
       <!-- Medal Card -->
       <div class="col-12 col-md-6 col-lg-5">
         <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"
-        (medalAction)="handleAction($event)"></app-medal-card>
+          (medalAction)="handleAction($event)"></app-medal-card>
       </div>
     </div>
 
@@ -34,8 +34,22 @@
     </div> -->
 
     <div class="row m-t-20 clearfix">
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
+        <app-certificate [model]="certificateModels[0]"></app-certificate>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+        <app-certificate [model]="certificateModels[certificateModels.length-1]"></app-certificate>
+      </div>
+      @for(certificate of certificateModels; track certificate) {
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <app-certificate [templateId]="certificate.templateId" [model]="certificate"></app-certificate>
+      </div>
+      }
+    </div>
+
+    <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <app-certificate></app-certificate>
+        <!-- <app-certificate></app-certificate> -->
         <!-- <app-learner-welcome-card></app-learner-welcome-card> -->
         <!-- Add in my subjects panel -->
         <!-- <app-my-subjects [minimal]="true" (subjectSelected)="onSubjectChange($event)"></app-my-subjects> -->

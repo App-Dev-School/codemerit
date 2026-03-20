@@ -3,21 +3,25 @@ import { CertificateModel } from './certificate.model';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass, NgSwitch, NgSwitchCase } from '@angular/common';
 
 @Component({
   selector: 'app-certificate',
+  templateUrl: './certificate.component.html',
+  styleUrls: ['./certificate.component.scss'],
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    DatePipe,
     MatProgressSpinnerModule,
     MatButtonModule,
+    DatePipe,
+    NgSwitchCase,
+    NgSwitch,
+    NgClass,
     //AsyncPipe
-  ],
-  templateUrl: './certificate.component.html',
-  styleUrls: ['./certificate.component.scss'],
+  ]
 })
 export class CertificateComponent {
+  @Input() templateId: string = 'default';
   @Input() model!: CertificateModel;
 }

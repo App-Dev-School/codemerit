@@ -1,25 +1,38 @@
-<div class="certificate-border">
+
+<div class="certificate certificate-professional">
   <div class="certificate-main">
     <div class="certificate-header">
-      <img src="https://dummyimage.com/80x80/0d3b66/fff&text=LOGO" alt="Platform Logo" class="certificate-logo" />
-      <div class="certificate-title accent">{{ model.platformName }}</div>
-      <div class="certificate-subtitle">This certificate is awarded to</div>
+      <img src="./../../../assets/images/logo.png" alt="CodeMerit Logo" class="certificate-logo" />
+      <div class="certificate-title accent">
+        {{ model.platformName }}
+        <span *ngIf="templateId === 'internship'"> Internship Certificate</span>
+        <span *ngIf="templateId === 'work'"> Work Certificate</span>
+        <span *ngIf="templateId === 'appreciation'"> Appreciation Certificate</span>
+      </div>
+      <div class="certificate-subtitle">
+        <ng-container [ngSwitch]="templateId">
+          <span *ngSwitchCase="'internship'">This internship certificate is awarded to</span>
+          <span *ngSwitchCase="'work'">This work certificate is awarded to</span>
+          <span *ngSwitchCase="'appreciation'">This appreciation certificate is awarded to</span>
+          <span *ngSwitchDefault>This certificate is awarded to</span>
+        </ng-container>
+      </div>
     </div>
-    <div class="certificate-ribbon">
-      <span class="recipient">{{ model.userName }}</span>
+    <div class="certificate-recipient">
+      <span class="recipient-name">{{ model.userName }}</span>
     </div>
     <div class="certificate-details">
       <div class="details-row">
         <div class="details-col">
           <div class="details-label">Skill</div>
-          <div class="details-value">{{ model.skillName }}</div>
+          <div class="details-value">{{ model.skillName }} {{ model.tierDisplayName }}</div>
         </div>
         <div class="details-col">
-          <div class="details-label">Tier</div>
-          <div class="details-value">{{ model.tierDisplayName }}</div>
+          <div class="details-label">Score</div>
+          <div class="details-value">{{ model.scorePercentage }}%</div>
         </div>
       </div>
-      <div class="details-row">
+      <!-- <div class="details-row">
         <div class="details-col">
           <div class="details-label">Assessment</div>
           <div class="details-value">{{ model.assessmentTitle }}</div>
@@ -28,8 +41,8 @@
           <div class="details-label">Score</div>
           <div class="details-value">{{ model.scorePercentage }}%</div>
         </div>
-      </div>
-      <div class="details-row">
+      </div> -->
+      <!-- <div class="details-row">
         <div class="details-col">
           <div class="details-label">Certificate No.</div>
           <div class="details-value">{{ model.certificateNumber }}</div>
@@ -38,21 +51,32 @@
           <div class="details-label">Verification Code</div>
           <div class="details-value">{{ model.verificationCode }}</div>
         </div>
-      </div>
+      </div> -->
       <div class="details-row">
         <div class="details-col">
           <div class="details-label">Issued Date</div>
           <div class="details-value">{{ model.issuedDate | date:'mediumDate' }}</div>
         </div>
         <div class="details-col">
-          <div class="details-label">Expiry Date</div>
-          <div class="details-value">{{ model.expiryDate | date:'mediumDate' }}</div>
+          <div class="details-label">Verification Code</div>
+          <div class="details-value">{{ model.verificationCode }}</div>
         </div>
       </div>
     </div>
     <div class="certificate-footer">
-      <div>{{ model.issuerName }} | {{ model.programLead }}</div>
-      <div>Template ID: {{ model.templateId }}</div>
+      <div class="footer-names-row">
+        <div class="footer-col footer-issuer">
+          <div class="footer-label">Issuer</div>
+          <img class="footer-signature" src="assets/images/signature-placeholder.png" alt="Issuer Signature" />
+          <div class="footer-name">{{ model.issuerName }}</div>
+        </div>
+        <div class="footer-col footer-lead">
+          <div class="footer-label">Program Lead</div>
+          <img class="footer-signature" src="assets/images/signature-placeholder.png" alt="Program Lead Signature" />
+          <div class="footer-name">{{ model.programLead }}</div>
+        </div>
+      </div>
+      <div class="footer-template">Certificate No. {{ model.certificateNumber }}</div>
     </div>
   </div>
 </div>

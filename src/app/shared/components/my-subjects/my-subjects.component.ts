@@ -12,7 +12,8 @@ import { Observable } from 'rxjs';
   selector: 'app-my-subjects',
   imports: [
     AsyncPipe,
-    NgClass, JsonPipe,
+    NgClass, 
+    JsonPipe,
     MatCardModule,
     MatDividerModule,
     MatButtonModule,

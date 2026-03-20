@@ -91,6 +91,7 @@ export class SidebarComponent
     }
   }
   ngOnInit() {
+    //move logic to backend
     this.subs.sink = this.sidebarService
       .getRouteInfo()
       .subscribe((routes: RouteInfo[]) => {
