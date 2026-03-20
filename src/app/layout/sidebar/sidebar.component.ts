@@ -24,16 +24,12 @@ import { SidebarService } from './sidebar.service';
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [
-    NgScrollbar,
-    RouterLinkActive,
-    RouterLink,
-    NgClass
-  ]
+  imports: [NgScrollbar, RouterLinkActive, RouterLink, NgClass],
 })
 export class SidebarComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   public sidebarItems!: RouteInfo[];
   public innerHeight?: number;
   public bodyTag!: HTMLElement;
@@ -52,7 +48,7 @@ export class SidebarComponent
     public elementRef: ElementRef,
     private authService: AuthService,
     private router: Router,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
   ) {
     super();
     this.elementRef.nativeElement.closest('body');
@@ -94,58 +90,15 @@ export class SidebarComponent
       .getRouteInfo()
       .subscribe((routes: RouteInfo[]) => {
         this.sidebarItems = routes;
-        this.authService.log("#1 sidebarItems", this.sidebarItems);
-        this.authService.currentUser.subscribe(user => {
-          if (user) {
-            this.authService.log("#2 sidebar user", user);
-            if (this.authService.currentUserValue && this.authService.currentUserValue.email) {
-              const userRole = this.authService.currentUserValue.role;
-              this.userFullName =
-                this.authService.currentUserValue.firstName +
-                ' ' +
-                this.authService.currentUserValue.lastName;
-              this.userDesignation = "Tell about your self";
-              if (this.authService.currentUserValue?.designation) {
-                this.userDesignation = this.authService.currentUserValue?.designation;
-              }
-              if (this.authService.currentUserValue.userImage) {
-                this.userImg = this.authService.currentUserValue.userImage;
-              }
-              this.sidebarItems = routes.filter(
-                (x) =>
-                  x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
-              );
-              this.authService.log("#3 sidebarItems for " + userRole, this.sidebarItems);
 
-              if (userRole === Role.Admin) {
-                this.userType = Role.Admin;
-              } else if (userRole === Role.Subscriber) {
-                this.userType = Role.Subscriber;
-              } else if (userRole === Role.Manager) {
-                this.userType = Role.Manager;
-              }
-            } else {
-              this.sidebarItems = routes.filter(
-                (x) =>
-                  x.role.indexOf('All') !== -1
-              );
-              this.authService.log("#3 sidebarItems for Guest", this.sidebarItems);
-              this.userFullName = "Guest";
-              this.userImg = "assets/images/users/user.jpg";
-            }
-          }
-        });
-
-        //this.filterUserMenu();
+        // //this.filterUserMenu();
       });
 
     this.initLeftSidebar();
     this.bodyTag = this.document.body;
   }
 
-  filterUserMenu() {
-
-  }
+  filterUserMenu() {}
 
   initLeftSidebar() {
     const _this = this;
