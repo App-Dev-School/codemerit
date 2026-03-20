@@ -25,6 +25,7 @@ import { SubjectPerformanceCardComponent } from '@shared/components/subject-perf
 import { NgScrollbar } from 'ngx-scrollbar';
 import { Observable, of } from 'rxjs';
 import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
+import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -45,7 +46,8 @@ import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
     MeritListWidgetComponent,
     RecentCommentsComponent,
     SubjectPerformanceCardComponent,
-    GoalPathComponent
+    GoalPathComponent,
+    CertificateComponent
   ]
 })
 export class DashboardComponent implements OnInit {
@@ -108,17 +110,17 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        // Animation trigger can be based on route change
-        this.showContent = false; // Hide content when navigation starts
-      }
+    // this.router.events.subscribe(event => {
+    //   if (event instanceof NavigationStart) {
+    //     // Animation trigger can be based on route change
+    //     this.showContent = false; // Hide content when navigation starts
+    //   }
 
-      if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
-        // Ensure content is shown when navigation is complete
-        this.showContent = true;
-      }
-    });
+    //   if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
+    //     // Ensure content is shown when navigation is complete
+    //     this.showContent = true;
+    //   }
+    // });
     this.takeRouteParams();
     setTimeout(() => {
       this.loading = false;
@@ -158,19 +160,49 @@ export class DashboardComponent implements OnInit {
   }
 
   onSubjectChange(subject: string) {
-    //check for master data presence
-    if (!this.master.subjects || !this.master.topics || !this.master.jobRoles) {
-      console.log(this.pageTitle, "^^^ NO MASTER DATA FOUND ^^^", subject);
-      //this.master.fetchMasterDataFromAPI();
+    if (!this.master.subjects) {
+      // Wait for master data before fetching subject details
+      this.master.fetchMasterDataFromAPI().subscribe({
+        next: (res: any) => {
+          if (res && !res.error) {
+            this.fetchSubjectData(subject);
+          } else {
+            this.subjectData = null;
+            console.error(this.pageTitle, 'Failed to load master data for visitor.');
+          }
+        },
+        error: () => {
+          this.subjectData = null;
+          console.error(this.pageTitle, 'Error loading master data for visitor.');
+        }
+      });
+      return;
+    }else{
+      this.fetchSubjectData(subject);
     }
+  }
+
+  fetchSubjectData(subject:string){
+    if (this.authService.currentUserValue) {
+      this.fetchSubjectDetails(subject);
+      return;
+    } else {
+      this.subject = subject ? subject : "";
+    if (this.subject && this.master.subjects) {
+      this.currentSubject = this.master.subjects.find(subjectItem => subjectItem.slug === this.subject);
+      console.log(this.pageTitle, "Visitor requested @currentSubject", this.currentSubject);
+    }
+      this.fetchMockSubjectDetails(subject);
+    }
+  }
+
+  fetchSubjectDetails(subject: string) {
     this.subject = subject ? subject : "";
     if (this.subject) {
-      //fetch this subject details
       this.currentSubject = this.master.subjects.find(subjectItem => subjectItem.slug === this.subject);
       console.log(this.pageTitle, "#1 @currentSubject", this.currentSubject);
       if (this.currentSubject && this.currentSubject.id) {
         this.generateRandomLabels();
-        //fetch this subject topics from topics master
         let subjectTopics = this.master.topics;
         subjectTopics = subjectTopics.filter(topic => topic.subjectId == this.currentSubject.id);
         this.subjectTopics$ = of(subjectTopics);
@@ -199,6 +231,25 @@ export class DashboardComponent implements OnInit {
           });
       }
     }
+  }
+
+  fetchMockSubjectDetails(subject: string) {
+   this.master.fetchMockSubjectDashboard().subscribe({
+        next: (response: any) => {
+          if (response) {
+                this.subjectData = response.data;
+                console.log(this.pageTitle, 'Mock@subjectData:', this.subjectData);
+                console.log(this.pageTitle, 'Mock@syllabus:', this.subjectData?.syllabus);
+              } else {
+            this.subjectData = null;
+            console.error(this.pageTitle, 'Failed to load master data for visitor.');
+          }
+        },
+        error: () => {
+          this.subjectData = null;
+          console.error(this.pageTitle, 'Error loading master data for visitor.');
+        }
+      });
   }
 
   onSubscribe(subject: string) {
@@ -253,6 +304,29 @@ export class DashboardComponent implements OnInit {
 
   goToSubjects() {
     this.router.navigate(['/app/select-subject']);
+  }
+
+  fetchDashboardData() {
+        this.loading = true;
+        this.master
+          .fetchSubjectDashboard(this.currentSubject.slug)
+          .subscribe({
+            next: (response) => {
+              //console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
+              if (response) {
+                this.subjectData = response.data;
+                console.log(this.pageTitle, '@subjectData:', this.subjectData);
+                console.log(this.pageTitle, '@syllabus:', this.subjectData?.syllabus);
+              }
+              setTimeout(() => {
+                this.loading = false;
+              }, 3000);
+            },
+            error: (error) => {
+              this.loading = false;
+              console.error(this.pageTitle, '#3 SubjectDashAPI Error:', error);
+            },
+          });
   }
 
   //keep any one

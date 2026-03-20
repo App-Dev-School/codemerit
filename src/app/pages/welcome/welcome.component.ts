@@ -10,6 +10,8 @@ import { AuthService, User } from '@core';
 import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
+import { CertificateComponent } from '@shared/components/certificate/certificate.component';
+import { CertificateModel } from '@shared/components/certificate/certificate.model';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
@@ -25,6 +27,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
     MatRippleModule,
     MatIconModule,
     //LearnerWelcomeCardComponent,
+    CertificateComponent,
     CongratulationsCardComponent,
     ReportListComponent,
     MedalCardComponent],
@@ -47,6 +50,69 @@ export class WelcomeComponent implements OnInit {
   subjectData: any;
   subjectsByRole: { [role: string]: Course[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
+  certificateModels : CertificateModel[] = [
+    {
+      platformName: 'Angular Developer Certification',
+      userName: 'Vishal Kumar',
+      skillName: 'Angular Development',
+      tierDisplayName: 'Expert',
+      assessmentTitle: 'Live Contribution',
+      scorePercentage: 95,
+      certificateNumber: 'CM-2026-00671',
+      verificationCode: 'ABCD1234',
+      issuedDate: new Date('2026-03-01'),
+      expiryDate: new Date('2027-03-01'),
+      issuerName: 'David Moore',
+      programLead: 'Kunal Anand',
+      templateId: 'default',
+    },
+    {
+      platformName: 'CodeMerit Tech Talent Search',
+      userName: 'Alex Intern',
+      skillName: 'Web Internship',
+      tierDisplayName: 'Intern',
+      assessmentTitle: 'Internship Completion',
+      scorePercentage: 100,
+      certificateNumber: 'CM-2026-INT-001',
+      verificationCode: 'INT2026',
+      issuedDate: new Date('2026-02-15'),
+      expiryDate: new Date('2027-02-15'),
+      issuerName: 'CodeMerit HR',
+      programLead: 'Emily Clark',
+      templateId: 'internship',
+    },
+    {
+      platformName: 'Advanced Backend Certification',
+      userName: 'Sam Worker',
+      skillName: 'Professional Services',
+      tierDisplayName: 'Employee',
+      assessmentTitle: 'Work Excellence',
+      scorePercentage: 88,
+      certificateNumber: 'CM-2026-WRK-001',
+      verificationCode: 'WORK2026',
+      issuedDate: new Date('2026-01-10'),
+      expiryDate: new Date('2027-01-10'),
+      issuerName: 'Tech Lead',
+      programLead: 'Michael Lee',
+      templateId: 'work',
+    },
+    {
+      platformName: 'CodeMerit Community Contribution',
+      userName: 'Taylor Star',
+      skillName: 'Community Contribution',
+      tierDisplayName: 'Contributor',
+      assessmentTitle: 'Appreciation Award',
+      scorePercentage: 100,
+      certificateNumber: 'CM-2026-APP-001',
+      verificationCode: 'APP2026',
+      issuedDate: new Date('2026-03-19'),
+      expiryDate: new Date('2027-03-19'),
+      issuerName: 'Tech Lead',
+      programLead: 'Sophia Turner',
+      templateId: 'appreciation',
+    }
+  ];
+
   engagements = [
     {
       "id": 1,

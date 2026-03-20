@@ -4,8 +4,6 @@ import { AuthGuard } from '@core/guard/auth.guard';
 import { Page404Component } from './authentication/page404/page404.component';
 import { AuthLayoutComponent } from './layout/app-layout/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './layout/app-layout/main-layout/main-layout.component';
-import { SelectSubjectComponent } from './subscriber/select-subject/select-subject.component';
-import { SelectCourseComponent } from './subscriber/select-course/select-course.component';
 
 export const APP_ROUTE: Route[] = [
     {
@@ -24,11 +22,20 @@ export const APP_ROUTE: Route[] = [
                     import('./admin/admin.routes').then((m) => m.ADMIN_ROUTE),
             },
             {
-                path: 'dashboard',
+                path: 'dashboardOld',
                 canActivate: [AuthGuard],
                 data: {
                     role: [Role.Subscriber, Role.Manager, Role.Admin],
                 },
+                loadChildren: () =>
+                    import('./subscriber/subscriber.routes').then((m) => m.SUBSCRIBER_ROUTE),
+            },
+            {
+                path: 'dashboard',
+                //canActivate: [AuthGuard],
+                // data: {
+                //     role: [Role.Subscriber, Role.Manager, Role.Admin],
+                // },
                 loadChildren: () =>
                     import('./subscriber/subscriber.routes').then((m) => m.SUBSCRIBER_ROUTE),
             },
