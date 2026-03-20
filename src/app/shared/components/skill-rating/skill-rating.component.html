@@ -1,16 +1,5 @@
-<!-- @for (star of stars; track star;let i = $index) {
-  <span (click)="setRating(i + 1)"
-  (keydown.enter)="setRating(i + 1)"
-  [class.filled]="i < rating"
-  [class.read-only]="readOnly"
-  tabindex="0"
-  role="button"
->
-  ★
-</span>
-} -->
 <div class="star-rating">
-   @for (star of stars; track star;let i = $index) {
+   @for (star of stars; track $index; let i = $index) {
   <ng-container>
     <span
       class="star"

@@ -14,14 +14,20 @@
       <!-- HEADER -->
       @if (!loading && quiz) {
       <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
+
         <div class="d-flex align-items-center">
+          <!-- Settings Icon -->
+          <button mat-icon-button (click)="openSettingsDialog()" matTooltip="Settings" style="color: #fff; opacity: 0.8;">
+            <mat-icon>settings</mat-icon>
+          </button>
           @if (quiz.image) {
           <img [src]="quiz.image" alt="icon" class="subject-icon me-2">
           }
           <span class="quiz-title">{{ quiz.title }}</span>
         </div>
 
-        <div class="d-flex align-items-center">
+        @if(!questions[currentQuestionId]?.hasAnswered) {
+         <div class="d-flex align-items-center">
           <img src="assets/images/icons/ic_watch.png" class="timerIcon" alt="timer">
 
           <!-- Keep cd-timer for exams i.e. a variation of quiz -->
@@ -33,9 +39,10 @@
             <span>{{ questionTimeLeft }}s</span>
           </div>
         </div>
+        }
         <!-- #Task3: Display Progressbar here that shows time left in each question -->
       </mat-toolbar>
-      @if (questions && questions[currentQuestionId]?.timeAllowed) {
+      @if (questions && questions[currentQuestionId]?.timeAllowed && !questions[currentQuestionId]?.hasAnswered) {
       <mat-progress-bar mode="determinate"
         [value]="(questionTimeLeft / (questions[currentQuestionId]?.timeAllowed))*100">
       </mat-progress-bar>
@@ -43,7 +50,7 @@
       }
 
       <!-- Screen Overlay -->
-      @if (showWarningToast) {
+      @if (quizConfig.mode !== 'Interactive' && showWarningToast) {
       <div class="overlay"></div>
       <div class="animToast warning">
         <h5>⚠️ 10 Seconds Left!</h5>
@@ -63,7 +70,7 @@
       </div>
       }
 
-      <!-- Screen Overlay -->
+      <!-- Screen Overlay : Not In Use -->
       @if (answerActive) {
       <div class="overlay"></div>
       <div class="animToast text-start quizLoader hint">
@@ -175,7 +182,7 @@
           </ng-container>
           }
 
-          <!-- Answer -->
+          <!-- Answer 
           @if (quizConfig.showAnswers && currentQuestion?.answer !== "") {
           <ng-container>
             <button mat-raised-button color="accent" (click)="showAnswers()">
@@ -183,6 +190,7 @@
             </button>
           </ng-container>
           }
+          -->
           <span class="mat-spacer"></span>
           <!-- Next / Finish -->
           <button mat-flat-button color="primary" (click)="onSlideNext()" [hidden]="onSelectionPhase">

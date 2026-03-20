@@ -71,14 +71,13 @@ import { QuestionService } from './questions.service';
 })
 export class QuestionsComponent implements OnInit, OnDestroy {
   columnDefinitions = [
-    { def: 'select', label: 'Checkbox', type: 'check',  class: 'col-type', visible: false },
     { def: 'question', label: 'Question', type: 'text', class: 'mat-col-question',  visible: true },
     { def: 'subject', label: 'Subject', type: 'text', class: 'col-subject', visible: true },
     { def: 'topics', label: 'Topic', type: 'text', class: 'col-subject', visible: true },
     { def: 'questionType', label: 'Type', type: 'text', class: 'col-type', visible: false },
     { def: 'status', label: 'Status', type: 'text', class: 'col-status',  visible: true },
     { def: 'level', label: 'Level', type: 'text', class: 'col-level', visible: false },
-    { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-actions', visible: true },
+    { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-actions', visible: true }
   ];
 
   dataSource = new MatTableDataSource<QuestionItem>([]);

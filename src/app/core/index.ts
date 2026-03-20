@@ -1,7 +1,6 @@
 // services
 export { AuthService } from './service/auth.service';
 export { DirectionService } from './service/direction.service';
-export { RightSidebarService } from './service/rightsidebar.service';
 
 // models
 export { User } from './models/user';

@@ -28,6 +28,7 @@ export class SelectCourseComponent implements OnInit {
   subjectData: any;
   loading = false;
   loadingTxt = "";
+  userJobRoles: number[] = [];
 
   constructor(private router: Router, 
     private _bottomSheet: MatBottomSheet,
@@ -36,7 +37,9 @@ export class SelectCourseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.events.subscribe(event => {
+    const roles = this.authService.getUserJobRoles();
+    this.userJobRoles = Array.isArray(roles) ? roles.map(r => r.jobRoleId) : [];
+    this.router.events.subscribe(event => {   
       if (event instanceof NavigationStart) {
         // Animation trigger can be based on route change
         this.showContent = false; // Hide content when navigation starts
@@ -63,35 +66,5 @@ export class SelectCourseComponent implements OnInit {
           data: subject
         });
     //this.doSetUserDesignation(subject);
-  }
-
-  //delete me here.
-  doSetUserDesignation(subject: any) {
-    this.loading = true;
-    console.log("SelectCourse @onSubscribe", subject);
-    if (this.authService.currentUserValue) {
-      const authData = this.authService.currentUserValue;
-      const postData = {
-        designation: subject?.id
-      }
-      if (subject && this.authService.currentUserValue.id) {
-        this.loadingTxt = "Enrollment In Progress";
-        let setDesignation = this.authService.updateUserAccount(authData.token, authData.id, postData);
-        setDesignation.subscribe((res) => {
-          this.loading = false;
-          if (res) {
-            if (!res.error && res.data) {
-              this.onCourseChange(subject.title);
-            } else {
-              console.log("Error Enrolling Course");
-            }
-          }
-        });
-      } else {
-        this.authService.redirectToLogin();
-      }
-      //alert("Here to call the Set Designation API. See this callback trigger in Course Dashboard. Is Requireed?");
-      //this.snackService.display('snackbar-success',subject+' added to learning list!','bottom','center');
-    }
   }
 }

@@ -1,9 +1,11 @@
   export interface QuizSettings {
-    quiz_id: number
-    quiz_name: string
-    hasNegativeMarking: boolean
-    timerRequired: boolean
-    timeoutDuration: number
-    audioRequired: boolean
-    videoRequired: boolean
+    quiz_id?: number
+    numQuestions: number;
+    ordering: string;
+    mode: string;
+    showHint: boolean;
+    showAnswers: boolean;
+    enableNavigation: boolean;
+    enableAudio: boolean;
+    enableTimer: boolean;
   }

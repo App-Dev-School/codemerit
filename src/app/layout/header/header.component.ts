@@ -12,7 +12,6 @@ import { ConfigService } from '@config';
 import {
   AuthService,
   InConfiguration,
-  RightSidebarService,
   Role,
 } from '@core';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
@@ -63,13 +62,11 @@ export class HeaderComponent
   docElement?: HTMLElement;
   isFullScreen = false;
   isMobileMenuOpen = false;
-  isSidebarCollapsed = false;
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
     public elementRef: ElementRef,
     public sidebarService: SidebarService,
-    private rightSidebarService: RightSidebarService,
     private configService: ConfigService,
     private authService: AuthService,
     private router: Router
@@ -138,10 +135,6 @@ export class HeaderComponent
     } else {
       this.homePage = 'admin/dashboard/main';
     }
-
-    this.sidebarService.watchIsCollapsed.subscribe((data)=>{
-      this.isSidebarCollapsed = data;
-    })
   }
 
   callFullscreen() {
@@ -155,12 +148,6 @@ export class HeaderComponent
     this.isFullScreen = !this.isFullScreen;
   }
 
-  callRightsidebar(){
-    this.rightSidebarService.setRightSidebar(
-      (this.isOpenSidebar = !this.isOpenSidebar)
-    );
-  }
-  
   mobileMenuSidebarOpen(event: Event, className: string) {
     const hasClass = (event.target as HTMLInputElement).classList.contains(
       className

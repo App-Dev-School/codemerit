@@ -8,6 +8,7 @@ import { AuthConstants } from '@config/AuthConstants';
 import { HttpService } from './http.service';
 import { environment } from 'src/environments/environment';
 import { User } from '@core/models/user';
+import { UserJobRole } from '@core/models/userJobRole.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,7 @@ import { User } from '@core/models/user';
 export class AuthService {
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
+  userJobRoles: UserJobRole[] = [];
 
   private users = [
     {
@@ -64,19 +66,32 @@ export class AuthService {
     };
     const url = 'auth/login';
     return this.httpService.post(url, postData, httpOptions).pipe(map((user: any) => {
+      console.log("LoginResponse", user);
       //store user details and jwt token in local storage to keep user logged in between page refreshes
       if (user.data) {
         this.setLocalData(user.data);
         //this.currentUserSubject.next(user.data);
       }
       //console.log("LoginResponse" , user, JSON.stringify(user.data));
-      if (user.myProfile) {
-        localStorage.setItem(AuthConstants.CACHE_FULL_PROFILE, JSON.stringify(user.myProfile));
+      // if (user.myProfile) {
+      //   localStorage.setItem(AuthConstants.CACHE_FULL_PROFILE, JSON.stringify(user.myProfile));
+      // }
+      if(user.data?.userJobRoles){
+      console.log("SelectCourseComponent ! $$$$", user.data?.userJobRoles);
+      this.setUserJobRoles(user.data?.userJobRoles);
       }
       return user;
     }));
 
     //return this.httpService.post(url, postData, httpOptions);
+  }
+  setUserJobRoles(userJobRoles: UserJobRole[]) {
+    this.userJobRoles = userJobRoles;
+    console.log("SelectCourseComponent ! setUserJobRoles", userJobRoles);
+  }
+
+  getUserJobRoles(): UserJobRole[] {
+    return this.userJobRoles;
   }
 
   register(postData: any): Observable<any> {
@@ -145,14 +160,6 @@ export class AuthService {
     this.router.navigate(["/account/dashboard"]);
   }
 
-  redirectToDashboard() {
-    if(this.currentUserValue.role == Role.Admin){
-      this.router.navigate(["/account/dashboard"]);
-    }else{
-      this.router.navigate(["/account/dashboard"]);
-    }
-  }
-
   getFullProfile(user_name: any, api_key: any): Observable<any> {
     const url = 'apis/users/profile/' + user_name;
     if (AuthConstants.DEV_MODE) {
@@ -163,6 +170,14 @@ export class AuthService {
 
   updateUserAccount(api_key: any, user_name: any, postData: any): Observable<any> {
     const url = 'apis/users/update?userId='+user_name;
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
+    }
+    return this.httpService.put(url, postData, api_key);
+  }
+
+  enrollInJobRole(api_key: any, postData: any): Observable<any> {
+    const url = 'apis/users/jobRoleEnrollment';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
     }

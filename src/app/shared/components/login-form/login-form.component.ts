@@ -199,21 +199,6 @@ export class LoginFormComponent {
         .subscribe({
           next: (res) => {
             setTimeout(() => {
-              // const role = this.authService.currentUserValue.role;
-              // if (role === Role.All || role === Role.Admin) {
-              //   this.router.navigate(['/admin/dashboard/main']);
-              // } else {
-              //   if (role === Role.Subscriber || role === Role.Manager) {
-              //     if(this.authService.currentUserValue?.userDesignation?.slug){
-              //       this.router.navigate(['/dashboard/start', this.authService.currentUserValue?.userDesignation?.slug]);
-              //     }else{
-              //       this.router.navigate(['/app/select-job-role']);
-              //     }
-              //   }
-              // }
-              // this.loading = false;
-              // this.master.fetchMasterDataFromAPI();
-              //this.submitted = false;
               if (res && res.data && res.data.id) {
                 console.log("LoginDialog", res.data);
                 this.authService.setLocalData(res.data);

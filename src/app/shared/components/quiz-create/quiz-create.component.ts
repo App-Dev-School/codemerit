@@ -1,4 +1,3 @@
-// chart-card4.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
@@ -51,13 +50,13 @@ export class QuizCreateComponent implements OnInit {
   requestConfirmed = false;
   loading = false;
   mode: 'dialog' | 'route' = 'route';
+  editMode: boolean = false;
   userId?: string;
   error: string = '';
   generatedQuizCode = '';
   //animation effect variables
   messages = [
     'Finding Questions…',
-    'Applying Configuration',
     'Generating Quiz…'
   ];
   levels = [
@@ -92,6 +91,7 @@ export class QuizCreateComponent implements OnInit {
     if (this.dialogRef) {
       this.mode = 'dialog';
       this.userId = data?.id;
+      this.editMode = data?.editMode ?? false;
       console.log("QuizCreate Data ", data);
     } else {
       this.mode = 'route';
@@ -112,32 +112,41 @@ export class QuizCreateComponent implements OnInit {
       showHint: [quizConfig.showHint],
       showAnswers: [quizConfig.showAnswers],
       enableNavigation: [quizConfig.enableNavigation],
-      enableAudio : [quizConfig.enableAudio],
+      enableAudio: [quizConfig.enableAudio],
     });
   }
 
   onSubmit() {
+    console.log("submitting", this.quizConfigForm.invalid, this.quizConfigForm.value);
     if (this.quizConfigForm.invalid) {
       return;
     } else {
-      const payload = new QuizConfig();
-      payload.mode = this.quizConfigForm.get('mode')?.value;
-      payload.numQuestions = this.quizConfigForm.get('numQuestions')?.value;
-      payload.level = this.quizConfigForm.get('level')?.value;
-      payload.showHint = this.quizConfigForm.get('showHint')?.value;
-      payload.showAnswers = this.quizConfigForm.get('showAnswers')?.value;
-      payload.enableNavigation = this.quizConfigForm.get('enableNavigation')?.value;
-      payload.enableAudio = this.quizConfigForm.get('enableAudio')?.value;
-
-      this.quizService.setQuizConfig(payload);
+      const quizConfig = this.saveQuizConfig();
+      if(!this.editMode) {
       this.requestConfirmed = true;
       this.startMessageCycle();
       this.generateQuiz(this.data.subject, this.data.topic);
+      }else{
+        this.dialogRef.close(quizConfig);
+      }
     }
   }
 
   close() {
-    this.dialogRef.close(null);
+    this.dialogRef.close(this.saveQuizConfig());
+  }
+
+  saveQuizConfig() : QuizConfig {
+    const payload = new QuizConfig();
+    payload.mode = this.quizConfigForm.get('mode')?.value;
+    payload.numQuestions = this.quizConfigForm.get('numQuestions')?.value;
+    payload.level = this.quizConfigForm.get('level')?.value;
+    payload.showHint = this.quizConfigForm.get('showHint')?.value;
+    payload.showAnswers = this.quizConfigForm.get('showAnswers')?.value;
+    payload.enableNavigation = this.quizConfigForm.get('enableNavigation')?.value;
+    payload.enableAudio = this.quizConfigForm.get('enableAudio')?.value;
+    this.quizService.setQuizConfig(payload);
+    return payload;
   }
 
   startMessageCycle() {
@@ -157,7 +166,7 @@ export class QuizCreateComponent implements OnInit {
 
   onFinish() {
     console.log('All tasks finished!');
-    if(this.generatedQuizCode){
+    if (this.generatedQuizCode) {
       setTimeout(() => {
         this.launchQuiz();
       }, 1400);

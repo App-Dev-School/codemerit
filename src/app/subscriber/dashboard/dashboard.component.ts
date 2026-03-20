@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
 
 import { Direction } from '@angular/cdk/bidi';
-import { AsyncPipe, JsonPipe, NgStyle, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -122,9 +122,9 @@ export class DashboardComponent implements OnInit {
     //   }
     // });
     this.takeRouteParams();
-    // setTimeout(() => {
-    //   this.loading = false;
-    // }, 3800);
+    setTimeout(() => {
+      this.loading = false;
+    }, 1000);
   }
 
   generateRandomLabels() {
@@ -207,7 +207,28 @@ export class DashboardComponent implements OnInit {
         subjectTopics = subjectTopics.filter(topic => topic.subjectId == this.currentSubject.id);
         this.subjectTopics$ = of(subjectTopics);
         console.log(this.pageTitle, "#2 @subjectTopics", subjectTopics);
-        this.fetchDashboardData();
+        //this.subjectTopics$ = of(subjectTopics);
+        //fetch the subject dashboard
+        this.loading = true;
+        this.master
+          .fetchSubjectDashboard(this.currentSubject.slug)
+          .subscribe({
+            next: (response) => {
+              //console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
+              if (response) {
+                this.subjectData = response.data;
+                console.log(this.pageTitle, '@subjectData:', this.subjectData);
+                console.log(this.pageTitle, '@syllabus:', this.subjectData?.syllabus);
+              }
+              setTimeout(() => {
+                this.loading = false;
+              }, 1000);
+            },
+            error: (error) => {
+              this.loading = false;
+              console.error(this.pageTitle, '#3 SubjectDashAPI Error:', error);
+            },
+          });
       }
     }
   }
@@ -266,7 +287,7 @@ export class DashboardComponent implements OnInit {
                 //this.cdRef.markForCheck();
                 this.snackService.display('snackbar-success', 'Congrats for the beginning. Start Deep Diving ' + this.currentSubject.title + '!', 'bottom', 'center');
                 this.loading = false;
-              }, 2000);
+              }, 1500);
             }
           } else {
             this.loading = false;
@@ -323,7 +344,7 @@ export class DashboardComponent implements OnInit {
     const dialogRef = this.dialog.open(QuizCreateComponent, {
       width: '60vw',
       height: 'auto',
-      minWidth: '344px',
+      minWidth: '345px',
       data: {
         title: title,
         subject: subject,

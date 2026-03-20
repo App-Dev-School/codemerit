@@ -38,11 +38,11 @@ export class SetDesignationBottomSheetComponent {
     if (this.authService.currentUserValue) {
       const authData = this.authService.currentUserValue;
       const postData = {
-        designation: this.courseItem?.id
+        jobRoleId: this.courseItem?.id
       }
       if (this.courseItem && this.authService.currentUserValue.id) {
         this.loadingTxt = "Enrolling as "+this.courseItem.title;
-        let setDesignation = this.authService.updateUserAccount(authData.token, authData.id, postData);
+        let setDesignation = this.authService.enrollInJobRole(authData.token, postData);
         setDesignation.subscribe((res) => {
           if (res) {
             if (!res.error && res.data) {
@@ -50,7 +50,7 @@ export class SetDesignationBottomSheetComponent {
                 ...this.authService.currentUserValue,            // spread old fields
                 designation: res.data?.designation
               };
-              this.authService.setLocalData(updatedUser);
+              //this.authService.setLocalData(updatedUser);
 
               setTimeout(() => {
                 this.loading = false;

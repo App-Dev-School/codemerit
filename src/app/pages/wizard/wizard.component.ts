@@ -155,15 +155,15 @@ export class WizardComponent {
     //send flatData to API
     const flatData = this.getAllSubjectEntries();
     console.log(flatData);
-    const assessment : Partial<SkillRatingSession> = {
-       user_id: 4,
-             ratedBy: 4,
-             assessmentTitle: 'Self Skill Rating',
-             //skillRatings: flatData,
-             notes: '',
-             skillRatings: []
+    const assessment: Partial<SkillRatingSession> = {
+      user_id: 4,
+      ratedBy: 4,
+      assessmentTitle: 'Self Skill Rating',
+      //skillRatings: flatData,
+      notes: '',
+      skillRatings: []
     }
-    console.log(assessment);
+    console.log("Payload =>", assessment);
     alert(JSON.stringify(assessment));
   }
 }

@@ -29,7 +29,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
     //LearnerWelcomeCardComponent,
     CertificateComponent,
     CongratulationsCardComponent,
-    ReportListComponent, 
+    ReportListComponent,
     MedalCardComponent],
   //  animations: [
   //     trigger('fadeOut', [
@@ -43,7 +43,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
 export class WelcomeComponent implements OnInit {
   public subjectRoleMap: Course[] = [];
   userName = "";
-  authUser : User;
+  authUser: User;
   userMessage = "";
   nextAction = "login";
   //clean up
@@ -310,8 +310,12 @@ export class WelcomeComponent implements OnInit {
         });
         break;
 
-        case "selfRating":
+      case "selfRating":
         this.router.navigate(['/app/self-skill-rating']).then(() => {
+        });
+        break;
+      case "subjectRating":
+        this.router.navigate(['/subject-skill-rating']).then(() => {
         });
         break;
       default:

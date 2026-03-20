@@ -1,37 +1,46 @@
- @if (!data) {
-  <section class="content">
-  <div class="content-block">
-    <ng-container *ngTemplateOutlet="formContainer"></ng-container>
+@if (!data) {
+<section class="content">
+  <div class="content-block p-t-20">
+    <mat-card>
+      @if (!submitted) {
+      <mat-card-header class="header-style">
+            <mat-card-title>{{ action === 'edit' ? 'Update Question' : 'Add New Question'}}</mat-card-title>
+        </mat-card-header>
+        }
+      <mat-card-content>
+        <ng-container *ngTemplateOutlet="formContainer"></ng-container>
+      </mat-card-content>
+    </mat-card>
   </div>
 </section>
- }@else{
-  <ng-container *ngTemplateOutlet="formContainer"></ng-container>
- }
+}@else{
+<ng-container *ngTemplateOutlet="formContainer"></ng-container>
+}
 
 <ng-template #formContainer>
- @if (!submitted) {
-      <div class="block-header">
-      <h5 class="m-t-20 m-l-20">{{ action === 'edit' ? 'Update Question' : 'Add New Question'}}</h5>
-    </div>
-    }
-    <div class="row">
-      <div class="col-12">
-        @if (submitted) {
-        <div class="overlay"></div>
-        <div class="animToast loading">
-          <img src="assets/images/icons/loading.gif" class="loadingIcon">
-          <h4>{{actionText}}</h4>
-          <h5>Please wait ...</h5>
-        </div>
-        }@else {
-        <form class="register-form m-4" [formGroup]="questionForm" (ngSubmit)="submit()">
-          <ng-scrollbar visibility="hover">
+  <!-- @if (!submitted) {
+  <div class="block-header">
+    <h5 class="m-t-20 m-l-20">{{ action === 'edit' ? 'Update Question' : 'Add New Question'}}</h5>
+  </div>
+  } -->
+  <div class="row">
+    <div class="col-12">
+      @if (submitted) {
+      <div class="overlay"></div>
+      <div class="animToast loading">
+        <img src="assets/images/icons/loading.gif" class="loadingIcon">
+        <h4>{{actionText}}</h4>
+        <h5>Please wait ...</h5>
+      </div>
+      }@else {
+      <form class="register-form m-4" [formGroup]="questionForm" (ngSubmit)="submit()">
+        <ng-scrollbar visibility="hover">
           <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Question</mat-label>
                 <textarea matInput formControlName="question" rows="2" cdkTextareaAutosize
-                  #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1"
+                  #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="3" [cdkAutosizeMaxRows]="3"
                   style="resize: none; overflow: hidden;" placeholder="Enter the question" required></textarea>
                 @if (questionForm.get('question')?.hasError('minLength')) {
                 <mat-error>
@@ -134,7 +143,7 @@
               <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Answer (Optional)</mat-label>
                 <textarea matInput formControlName="answer" placeholder="Enter an answer for the question" rows="3"
-                  cdkTextareaAutosize #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="1"
+                  cdkTextareaAutosize #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="3" [cdkAutosizeMaxRows]="3"
                   style="resize: none; overflow: hidden;"></textarea>
               </mat-form-field>
             </div>
@@ -164,6 +173,7 @@
               </mat-form-field>
             </div>
 
+            @if (authData?.role === 'Admin'){
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Question Status</mat-label>
@@ -174,6 +184,7 @@
                 </mat-select>
               </mat-form-field>
             </div>
+            }
 
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
               <mat-form-field class="example-full-width" appearance="fill">
@@ -201,16 +212,16 @@
 
           </div>
           }
-          </ng-scrollbar>
+        </ng-scrollbar>
 
-          <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-              <button mat-flat-button class="btn-space" color="primary" [disabled]="!questionForm.valid">Submit</button>
-              <button mat-raised-button color="warn" (click)="onCancel()">Cancel</button>
-            </div>
+        <div class="row">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <button mat-flat-button class="btn-space" color="primary" [disabled]="!questionForm.valid">Submit</button>
+            <button mat-raised-button color="warn" (click)="onCancel()">Cancel</button>
           </div>
-        </form>
-        }
-      </div>
+        </div>
+      </form>
+      }
     </div>
+  </div>
 </ng-template>

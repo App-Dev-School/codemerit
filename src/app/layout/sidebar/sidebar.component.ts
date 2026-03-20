@@ -75,7 +75,6 @@ export class SidebarComponent
       this.renderer.removeClass(this.document.body, 'overlay-open');
       isCollapsed = true;
     }
-    this.sidebarService.setCollapsed(isCollapsed);
   }
 
   callToggleMenu(event: Event, length: number) {
@@ -106,9 +105,9 @@ export class SidebarComponent
                 this.authService.currentUserValue.firstName +
                 ' ' +
                 this.authService.currentUserValue.lastName;
-              this.userDesignation = "New Joiner";
-              if (this.authService.currentUserValue?.userDesignation?.title) {
-                this.userDesignation = this.authService.currentUserValue?.userDesignation?.title;
+              this.userDesignation = "Tell about your self";
+              if (this.authService.currentUserValue?.designation) {
+                this.userDesignation = this.authService.currentUserValue?.designation;
               }
               if (this.authService.currentUserValue.userImage) {
                 this.userImg = this.authService.currentUserValue.userImage;
@@ -150,7 +149,6 @@ export class SidebarComponent
   }
 
   initLeftSidebar() {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _this = this;
     // Set menu height
     _this.setMenuHeight();
@@ -166,7 +164,7 @@ export class SidebarComponent
     return this.bodyTag.classList.contains('overlay-open');
   }
 
-  checkStatuForResize(firstTime: boolean) {
+  checkStatuForResize(_firstTime: boolean) {
     if (window.innerWidth < 1025) {
       this.renderer.addClass(this.document.body, 'ls-closed');
     } else {

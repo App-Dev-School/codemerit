@@ -105,8 +105,10 @@ export class CourseDashboardComponent implements OnInit {
     if (course) {
       this.course = course;
     } else {
-      if (this.authService.currentUserValue && this.authService.currentUserValue?.userDesignation != null) {
-        this.course = this.authService.currentUserValue?.userDesignation?.slug;
+      if (this.authService.currentUserValue && this.authService.getUserJobRoles()?.length > 0) {
+        const userCourses = this.authService.getUserJobRoles();
+        const firstCourse = userCourses[userCourses.length - 1];
+        this.course = this.master.jobRoles.filter(role => role.id === firstCourse.jobRoleId)[0]?.slug;
         console.log(this.pageTitle, "RouteSnap course defaulted", this.course);
       } else {
         this.goToCourses();
@@ -281,5 +283,27 @@ export class CourseDashboardComponent implements OnInit {
     console.log("View Path clicked:", subject);
     if (subject && subject.slug)
       this.router.navigate(['/dashboard/learn', subject?.slug]);
+  }
+
+  /**
+   * Filter subjects that have been attempted (item.attempted > 0)
+   * Used for "In Progress" tab
+   */
+  getAttemptedSubjects(): any[] {
+    if (!this.courseData || this.courseData.length === 0) {
+      return [];
+    }
+    return this.courseData.filter(item => item.attempted && item.attempted > 0);
+  }
+
+  /**
+   * Filter subjects that have not been attempted (item.attempted === 0 or undefined)
+   * Used for "To Start" tab
+   */
+  getNotAttemptedSubjects(): any[] {
+    if (!this.courseData || this.courseData.length === 0) {
+      return [];
+    }
+    return this.courseData.filter(item => !item.attempted || item.attempted === 0);
   }
 }
