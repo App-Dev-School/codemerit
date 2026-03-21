@@ -1,3 +1,10 @@
+// =========================
+// Responsive Breakpoint Vars
+// =========================
+$breakpoint-mobile: 360px;
+$breakpoint-tablet: 800px;
+$breakpoint-desktop: 1200px;
+
 .footer-names-row {
 	display: flex;
 	flex-direction: row;
@@ -34,7 +41,10 @@
 	color: #222831;
 	font-weight: 600;
 }
-@media (max-width: 900px) {
+// =========================
+// Tablet Styles
+// =========================
+@media (max-width: #{$breakpoint-tablet}) {
 	.footer-names-row {
 		gap: 12px;
 	}
@@ -46,7 +56,10 @@
 		font-size: 0.95rem;
 	}
 }
-@media (max-width: 600px) {
+// =========================
+// Mobile Styles
+// =========================
+@media (max-width: #{$breakpoint-mobile}) {
 	.footer-names-row {
 		flex-direction: column;
 		align-items: stretch;
@@ -121,7 +134,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	margin: 24px 30px 16px 30px;
 }
 .details-row {
 	display: flex;
@@ -211,7 +223,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	margin: 24px 0 16px 0;
+	margin: 0 1rem 0 1rem;
 }
 .details-row {
 	display: flex;
@@ -307,12 +319,13 @@
 /* ===================
 	 Mobile Styles
 	 =================== */
-@media (max-width: 600px) {
+@media (max-width: #{$breakpoint-mobile}) {
 	.certificate-main {
 		padding: 8px 2px;
 		border-radius: 8px;
 	}
 	.certificate-details {
+		background-color: #aae3af;
 	margin: 24px 10px 16px 10px;
     }
 	.certificate-title {
@@ -392,19 +405,25 @@
 	margin-top: 32px;
 	opacity: 0.7;
 }
-@media (max-width: 1000px) {
-	.certificate-main {
-		//width: 98vw;
-		padding: 16px 8px;
-	}
-	.certificate-ribbon span.recipient {
-		font-size: 1.4rem;
-		padding: 10px 14px;
-	}
-	.details-row {
-		gap: 40px;
-	}
-}
+// =========================
+// Large Tablet/Small Desktop Styles
+// =========================
+// @media (max-width: 1000px) {
+// 	.certificate-main {
+// 		//width: 98vw;
+// 		padding: 16px 8px;
+// 	}
+// 	.certificate-ribbon span.recipient {
+// 		font-size: 1.4rem;
+// 		padding: 10px 14px;
+// 	}
+// 	.details-row {
+// 		gap: 40px;
+// 	}
+// }
+// =========================
+// Print Styles
+// =========================
 @media print {
 	body, html {
 		background: #fff !important;

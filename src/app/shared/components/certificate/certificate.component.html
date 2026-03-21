@@ -1,14 +1,15 @@
-
 <div class="certificate certificate-professional">
   <div class="certificate-main">
     <div class="certificate-header">
       <img src="./../../../assets/images/logo.png" alt="CodeMerit Logo" class="certificate-logo" />
+      @if(model.assessmentTitle ){
       <div class="certificate-title accent">
-        {{ model.platformName }}
-        <span *ngIf="templateId === 'internship'"> Internship Certificate</span>
+        {{ model.assessmentTitle }} Certificate
+        <!-- <span *ngIf="templateId === 'internship'"> Internship Certificate</span>
         <span *ngIf="templateId === 'work'"> Work Certificate</span>
-        <span *ngIf="templateId === 'appreciation'"> Appreciation Certificate</span>
+        <span *ngIf="templateId === 'appreciation'"> Appreciation Certificate</span> -->
       </div>
+      }
       <div class="certificate-subtitle">
         <ng-container [ngSwitch]="templateId">
           <span *ngSwitchCase="'internship'">This internship certificate is awarded to</span>
@@ -16,6 +17,7 @@
           <span *ngSwitchCase="'appreciation'">This appreciation certificate is awarded to</span>
           <span *ngSwitchDefault>This certificate is awarded to</span>
         </ng-container>
+        <p>This is just added for {{ model.platformName }} and test.</p>
       </div>
     </div>
     <div class="certificate-recipient">
@@ -32,7 +34,7 @@
           <div class="details-value">{{ model.scorePercentage }}%</div>
         </div>
       </div>
-     
+
       <div class="details-row">
         <div class="details-col">
           <div class="details-label">Issued Date</div>
