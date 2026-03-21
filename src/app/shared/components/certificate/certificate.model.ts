@@ -1,5 +1,5 @@
 export enum CertificateTemplateId {
-  InternshipCompletion = 'Internship Completion',
+  InternshipCompletion = 'Internship',
   WorkExperience = 'Work Experience',
   Appreciation = 'Appreciation',
   MilestoneCompletion = 'Milestone Completion'

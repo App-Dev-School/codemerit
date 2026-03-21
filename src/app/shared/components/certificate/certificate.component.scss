@@ -5,6 +5,13 @@ $breakpoint-mobile: 360px;
 $breakpoint-tablet: 800px;
 $breakpoint-desktop: 1200px;
 
+// .recipient-name {
+// 	font-size: 2rem;
+// 	font-weight: 700;
+// 	color: #383b40;
+// 	letter-spacing: 0.04em;
+// 	display: block;
+// }
 .footer-names-row {
 	display: flex;
 	flex-direction: row;
@@ -116,19 +123,13 @@ $breakpoint-desktop: 1200px;
 .certificate-subtitle {
 	font-size: 1.1rem;
 	color: #222831;
+	margin-top: 1.5rem;
 	margin-bottom: 1.5rem;
 	text-align: center;
 }
 .certificate-recipient {
 	text-align: center;
 	margin: 18px 0 24px 0;
-}
-.recipient-name {
-	font-size: 2rem;
-	font-weight: 700;
-	color: #222831;
-	letter-spacing: 0.04em;
-	display: inline-block;
 }
 .certificate-details {
 	display: flex;
@@ -146,20 +147,17 @@ $breakpoint-desktop: 1200px;
 /* ===================
 	 Base Styles (Desktop)
 	 =================== */
-.certificate-professional {
-	background: #fff;
-	color: #222831;
-}
 .certificate-recipient {
 	text-align: center;
-	margin: 18px 0 24px 0;
+	margin: 18px 10px 24px 10px;
 }
 .recipient-name {
 	font-size: 2rem;
 	font-weight: 700;
-	color: #222831;
+	color: #1b4f9d;
+	//color: #383b40;
 	letter-spacing: 0.04em;
-	display: inline-block;
+	display: block;
 }
 .footer-names {
 	font-size: 1rem;
@@ -175,13 +173,13 @@ $breakpoint-desktop: 1200px;
 	display: block;
 	font-family: 'Montserrat', Arial, sans-serif;
 	color: #222831;
-	background: #fff;
+	//background: #fff;
 }
 .certificate-main {
 	position: relative;
 	width: 100%;
 	//max-width: 98vw;
-	//background: #fff;
+	background: #fff;
 	border-radius: 18px;
 	box-shadow: 0 8px 32px rgba(13,59,102,0.08);
 	overflow: hidden;
@@ -210,13 +208,12 @@ $breakpoint-desktop: 1200px;
 	letter-spacing: 0.04em;
 	text-align: center;
 }
-// .certificate-title.accent {
-// 	color: #f9a825;
-// }
 .certificate-subtitle {
-	font-size: 1.1rem;
+	font-size: 1.3rem;
 	color: #222831;
+	margin-top: 1.5rem;
 	margin-bottom: 1.5rem;
+	padding: 10px;
 	text-align: center;
 }
 .certificate-details {
@@ -332,7 +329,7 @@ $breakpoint-desktop: 1200px;
 		font-size: 1.1rem;
 	}
 	.certificate-subtitle {
-		font-size: 0.9rem;
+		font-size: 1rem;
 	}
 	.recipient-name {
 		font-size: 1rem;
@@ -405,22 +402,6 @@ $breakpoint-desktop: 1200px;
 	margin-top: 32px;
 	opacity: 0.7;
 }
-// =========================
-// Large Tablet/Small Desktop Styles
-// =========================
-// @media (max-width: 1000px) {
-// 	.certificate-main {
-// 		//width: 98vw;
-// 		padding: 16px 8px;
-// 	}
-// 	.certificate-ribbon span.recipient {
-// 		font-size: 1.4rem;
-// 		padding: 10px 14px;
-// 	}
-// 	.details-row {
-// 		gap: 40px;
-// 	}
-// }
 // =========================
 // Print Styles
 // =========================

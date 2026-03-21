@@ -1,30 +1,103 @@
-<div class="certificate certificate-professional">
-  <div class="certificate-main">
-    <div class="certificate-header">
-      <img src="./../../../assets/images/logo.png" alt="CodeMerit Logo" class="certificate-logo" />
-      @if(model.assessmentTitle ){
-      <div class="certificate-title accent">
-        {{ model.assessmentTitle }} Certificate
-        <!-- <span *ngIf="templateId === 'internship'"> Internship Certificate</span>
-        <span *ngIf="templateId === 'work'"> Work Certificate</span>
-        <span *ngIf="templateId === 'appreciation'"> Appreciation Certificate</span> -->
-      </div>
-      }
-      <div class="certificate-subtitle">
-        <ng-container [ngSwitch]="templateId">
-          <span *ngSwitchCase="'internship'">This internship certificate is awarded to</span>
-          <span *ngSwitchCase="'work'">This work certificate is awarded to</span>
-          <span *ngSwitchCase="'appreciation'">This appreciation certificate is awarded to</span>
-          <span *ngSwitchDefault>This certificate is awarded to</span>
+<div class="certificate-main">
+  <div class="certificate-header">
+    <img src="{{ model.issuerLogo }}" alt="CodeMerit" class="certificate-logo" />
+    @if(model.assessmentTitle ){
+    <div class="certificate-title">
+      {{ model.assessmentTitle }} Certificate
+    </div>
+    }
+    @if(model.templateId === 'Milestone Completion') {
+    <img src="./../../../../assets/images/icons/quality.png" alt="CodeMerit" class="certificate-logo" />
+    }@else {@if(model.templateId === 'Internship') {
+    <img src="./../../../../assets/images/icons/tick.png" alt="CodeMerit" class="certificate-logo" />
+    }}
+
+    <div class="certificate-subtitle">
+      <ng-container [ngSwitch]="model.templateId">
+        <!-- Internship Completion -->
+        <ng-container *ngSwitchCase="'Internship'">
+          <p>
+            This certificate is awarded to <span class="recipient-name">{{ model.userName }}</span> for successfully
+            completing the <b>{{ model.tierDisplayName }}</b> internship in <b>{{ model.skillName }}</b> at <b>{{
+              model.issuerName }}</b> from <b>{{ model.issuedDate | date:'mediumDate' }}</b> to <b>{{ model.expiryDate |
+              date:'mediumDate' }}</b>.
+          </p>
+          <p>
+            During this period, the candidate demonstrated strong commitment, learning ability, and practical
+            application of concepts, successfully contributing to assigned tasks and projects.
+          </p>
+          <p>
+            The performance has been evaluated through the <b>{{ model.assessmentTitle }}</b>, achieving a score of
+            <b>{{ model.scorePercentage }}%</b>, qualifying for the level of <b>{{ model.tierDisplayName }}</b>.
+          </p>
         </ng-container>
-        <p>This is just added for {{ model.platformName }} and test.</p>
-      </div>
+        <!-- Work Experience -->
+        <ng-container *ngSwitchCase="'Work Experience'">
+          <p>
+            This is to certify that <span class="recipient-name"><img src="./../../../../assets/images/icons/student.png" alt="CodeMerit" class="certificate-logo" /> {{ model.userName }}</span> has worked as a <b>{{
+              model.tierDisplayName }}</b> in <b>{{ model.skillName }}</b> at <b>{{ model.issuerName }}</b> from <b>{{
+              model.issuedDate | date:'mediumDate' }}</b> to <b>{{ model.expiryDate | date:'mediumDate' }}</b>.
+          </p>
+          <p>
+            During this tenure, the individual demonstrated professionalism, technical competence, and the ability to
+            deliver quality work across assigned responsibilities.
+          </p>
+          <p>
+            Based on performance evaluation through <b>{{ model.assessmentTitle }}</b>, the candidate achieved a score
+            of <b>{{ model.scorePercentage }}%</b> and has been recognized at the level of <b>{{ model.tierDisplayName
+              }}</b>.
+          </p>
+        </ng-container>
+        <!-- Appreciation -->
+        <ng-container *ngSwitchCase="'Appreciation'">
+          <p>
+            This certificate is presented to <span class="recipient-name">{{ model.userName }}</span>
+          </p>
+          <img src="./../../../../assets/images/icons/badge.svg" alt="CodeMerit" class="certificate-logo" />
+          <p>
+             in appreciation of
+            outstanding contribution and dedication in <b>{{ model.skillName }}</b>. The individual has demonstrated exceptional effort, consistency, and a proactive approach towards achieving
+            excellence.
+          </p>
+          <p>
+            In recognition of performance in <b>{{ model.assessmentTitle }}</b>, achieving a score of <b>{{
+              model.scorePercentage }}%</b>, the candidate is awarded the level of <b>{{ model.tierDisplayName }}</b>.
+          </p>
+        </ng-container>
+        <!-- Milestone Completion -->
+        <ng-container *ngSwitchCase="'Milestone Completion'">
+          <p>
+            This certificate is awarded to <span class="recipient-name">{{ model.userName }}</span> for successfully
+            achieving an important milestone in <b>{{ model.skillName }}</b>.
+          </p>
+          <p>
+            The candidate has attained <b>{{ model.tierDisplayName ? ' the level of '+model.tierDisplayName+' with ' :
+              '' }}</b> a score of <b>{{ model.scorePercentage }}%</b>.
+          </p>
+        </ng-container>
+        <!-- Default -->
+        <ng-container *ngSwitchDefault>
+          <p>
+            This certificate is awarded to <span class="recipient-name">{{ model.userName }}</span> in recognition of
+            demonstrated proficiency in <b>{{ model.skillName }}</b>.
+          </p>
+          <p>
+            Based on the evaluation conducted through <b>{{ model.assessmentTitle }}</b>, the candidate has achieved a
+            score of <b>{{ model.scorePercentage }}%</b>, qualifying for the level of <b>{{ model.tierDisplayName
+              }}</b>.
+          </p>
+          <p>
+            We acknowledge this achievement and wish continued success in future endeavors.
+          </p>
+        </ng-container>
+      </ng-container>
     </div>
-    <div class="certificate-recipient">
+  </div>
+  <!-- <div class="certificate-recipient">
       <span class="recipient-name">{{ model.userName }}</span>
-    </div>
-    <div class="certificate-details">
-      <div class="details-row">
+    </div> -->
+  <div class="certificate-details">
+    <!-- <div class="details-row">
         <div class="details-col">
           <div class="details-label">Skill</div>
           <div class="details-value">{{ model.skillName }} {{ model.tierDisplayName }}</div>
@@ -33,33 +106,32 @@
           <div class="details-label">Score</div>
           <div class="details-value">{{ model.scorePercentage }}%</div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="details-row">
-        <div class="details-col">
-          <div class="details-label">Issued Date</div>
-          <div class="details-value">{{ model.issuedDate | date:'mediumDate' }}</div>
-        </div>
-        <div class="details-col">
-          <div class="details-label">Verification Code</div>
-          <div class="details-value">{{ model.verificationCode }}</div>
-        </div>
+    <div class="details-row">
+      <div class="details-col">
+        <div class="details-label">Issued Date</div>
+        <div class="details-value">{{ model.issuedDate | date:'mediumDate' }}</div>
+      </div>
+      <div class="details-col">
+        <div class="details-label">Verification Code</div>
+        <div class="details-value">{{ model.verificationCode }}</div>
       </div>
     </div>
-    <div class="certificate-footer">
-      <div class="footer-names-row">
-        <div class="footer-col footer-issuer">
-          <div class="footer-label">Issuer</div>
-          <img class="footer-signature" src="assets/images/icons/signature.png" alt="Issuer Signature" />
-          <div class="footer-name">{{ model.issuerName }}</div>
-        </div>
-        <div class="footer-col footer-lead">
-          <div class="footer-label">Program Lead</div>
-          <img class="footer-signature" src="assets/images/icons/signature.png" alt="Program Lead Signature" />
-          <div class="footer-name">{{ model.programLead }}</div>
-        </div>
+  </div>
+  <div class="certificate-footer">
+    <div class="footer-names-row">
+      <div class="footer-col footer-issuer">
+        <div class="footer-label">Issuer</div>
+        <img class="footer-signature" src="assets/images/icons/signature.png" alt="Issuer Signature" />
+        <div class="footer-name">{{ model.issuerName }}</div>
       </div>
-      <div class="footer-template">Certificate No. {{ model.certificateNumber }}</div>
+      <div class="footer-col footer-lead">
+        <div class="footer-label">Program Lead</div>
+        <img class="footer-signature" src="assets/images/icons/signature.png" alt="Program Lead Signature" />
+        <div class="footer-name">{{ model.programLead }}</div>
+      </div>
     </div>
+    <div class="footer-template">Certificate No. {{ model.certificateNumber }}</div>
   </div>
 </div>

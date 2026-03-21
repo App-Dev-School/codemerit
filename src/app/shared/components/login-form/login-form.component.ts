@@ -249,10 +249,8 @@ export class LoginFormComponent {
   }
 
    activateTestUserLogin() {
-    // this.loginForm.get('username')?.setValue('student@codemerit.com');
-    // this.loginForm.get('password')?.setValue('788007');
-    this.loginForm.get('username')?.setValue('user3@codemerit.com');
-    this.loginForm.get('password')?.setValue('605161');
+    this.loginForm.get('username')?.setValue('student@codemerit.com');
+    this.loginForm.get('password')?.setValue('788007');
   }
 
   dismiss(data: any) {
