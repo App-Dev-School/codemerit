@@ -1,4 +1,4 @@
-import { QuestionItem } from "src/app/admin/questions/manage/question-item.model"
+import { QuestionItem } from "src/app/lms/questions/manage/question-item.model"
 
 export interface QuestionCreate {
     id: number

@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { QuestionItem } from 'src/app/admin/questions/manage/question-item.model';
+import { QuestionItem } from 'src/app/lms/questions/manage/question-item.model';
 import { QuizConfig, QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({

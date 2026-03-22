@@ -22,13 +22,13 @@ export const APP_ROUTE: Route[] = [
                     import('./admin/admin.routes').then((m) => m.ADMIN_ROUTE),
             },
             {
-                path: 'dashboardOld',
+                path: 'lms',
                 canActivate: [AuthGuard],
                 data: {
                     role: [Role.Subscriber, Role.Manager, Role.Admin],
                 },
                 loadChildren: () =>
-                    import('./subscriber/subscriber.routes').then((m) => m.SUBSCRIBER_ROUTE),
+                    import('./lms/lms.routes').then((m) => m.LMS_ROUTE),
             },
             {
                 path: 'dashboard',
@@ -42,7 +42,7 @@ export const APP_ROUTE: Route[] = [
             {
                 path: 'users',
                 canActivate: [AuthGuard],
-                 data: {
+                data: {
                     role: [Role.Subscriber, Role.Manager, Role.Admin, Role.All],
                 },
                 loadChildren: () =>
@@ -63,12 +63,12 @@ export const APP_ROUTE: Route[] = [
         loadChildren: () =>
             import('./authentication/auth.routes').then((m) => m.AUTH_ROUTE),
     },
-     {
-        path: 'subject-skill-rating',
+    {
+        path: 'subject-skill-rating/:subjectId',
         loadComponent: () =>
             import('./shared/components/subject-skill-rating/subject-skill-rating.component')
-            .then(m => m.SubjectSkillRatingComponent)
-        },
+                .then(m => m.SubjectSkillRatingComponent)
+    },
     {
         path: "quiz",
         //component: MainLayoutComponent,

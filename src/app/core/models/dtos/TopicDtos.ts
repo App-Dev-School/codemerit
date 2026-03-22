@@ -1,4 +1,4 @@
-import { TopicItem } from "src/app/admin/topics/manage/topic-item.model"
+import { TopicItem } from "src/app/lms/topics/manage/topic-item.model"
 
 export interface TopicItemBasic {
     id?: number

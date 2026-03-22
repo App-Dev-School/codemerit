@@ -24,8 +24,8 @@ import { RecentCommentsComponent } from '@shared/components/recent-comments/rece
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { Observable, of } from 'rxjs';
-import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
 import { CertificateComponent } from '@shared/components/certificate/certificate.component';
+import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
 
 @Component({
   selector: 'app-dashboard',

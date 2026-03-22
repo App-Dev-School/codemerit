@@ -26,7 +26,7 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { NgScrollbar } from 'ngx-scrollbar';
-import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
+import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
 import { QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({

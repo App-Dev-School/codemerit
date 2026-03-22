@@ -20,7 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MasterService } from '@core/service/master.service';
 import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rating.component';
-import { TopicItem } from 'src/app/admin/topics/manage/topic-item.model';
+import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
 import { register } from 'swiper/element/bundle';
 
 

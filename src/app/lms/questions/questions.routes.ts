@@ -5,6 +5,11 @@ import { QuestionFormPage } from './question-form/question-form.component';
 import { QuestionViewerComponent } from './question-viewer/question-viewer.component';
 export const QUESTIONS_ROUTE: Route[] = [
   {
+    path: "",
+    redirectTo: "list",
+    pathMatch: "full",
+  },
+  {
     path: 'list',
     component: QuestionsComponent,
   },
