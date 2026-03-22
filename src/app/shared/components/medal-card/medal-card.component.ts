@@ -1,7 +1,7 @@
-import { Component, Input, input, output } from '@angular/core';
+import { Component, Input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-medal-card',
@@ -25,10 +25,10 @@ export class MedalCardComponent {
     "Begin Your Full-Stack Journey 🚀",
     "Start Building Your Skills",
     "Keep Growing Every Day",
-    "Level Up Your Coding Skills",
+    "Level Up Your Skills",
     "Upskill to Stay Ahead",
     "Turn Skills Into a Career",
-    "Take the Next Step in Tech"
+    "Take the Next Step"
   ];
 
   constructor() {

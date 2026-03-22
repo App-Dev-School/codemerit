@@ -17,6 +17,9 @@
         <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"
           (medalAction)="handleAction($event)"></app-medal-card>
       </div>
+        <div class="col-12 col-md-6 col-lg-12">
+        <app-subject-skill-rating [subjectId]="1"></app-subject-skill-rating>
+      </div>
     </div>
 
     <div class="row m-t-20 clearfix">

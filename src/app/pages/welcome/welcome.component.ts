@@ -15,6 +15,7 @@ import { CertificateModel, CertificateTemplateId } from '@shared/components/cert
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
+import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -28,6 +29,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
     MatIconModule,
     //LearnerWelcomeCardComponent,
     CertificateComponent,
+    SubjectSkillRatingComponent,
     CongratulationsCardComponent,
     ReportListComponent,
     MedalCardComponent],
