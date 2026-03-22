@@ -1,3 +1,12 @@
+      - name: Print GitHub Actions environment variables
+        run: env
+
+      - name: Test SSH connection and print server info
+        run: |
+          ssh -i ${{ secrets.SSH_PRIVATE }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@appdevops.in 'whoami && pwd && ls -ld /home/codemerit/www && id && env'
+        env:
+          SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
 name: Deploy Angular App to Hostinger
 
 on:
