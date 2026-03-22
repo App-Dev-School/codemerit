@@ -3,7 +3,7 @@ name: Deploy Angular App to Hostinger
 on:
   push:
     branches:
-      - main  # Change if you are using different branch
+      - main  # Change if your branch is different
 
 jobs:
   build-and-deploy:
@@ -13,19 +13,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Print Secret Value
-        env:
-          MY_SECRET: ${{ secrets.FTP_REMOTE_DIR }}
-        run: |
-          echo "The secret value is: $MY_SECRET"
+      # - name: Setup Node.js
+      #run: 'echo "$FTP_REMOTE_DIR" > key'
+      # run: echo "Logging FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}"
+      # run: echo "Logging SSH_USERNAME: ${{ secrets.SSH_USERNAME }}"
+      # run: echo "Logging SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}"
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 18
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
       - name: Build Angular app
-        run: npm run build --prod
+        #run: npm run build --prod
+        run: npm run build
 
-      - name: 📂 Deploy Genrated Files to Hostinger
+      - name: 📂 Sync Files
         uses: SamKirkland/web-deploy@v1
         with:
           target-server: appdevops.in
@@ -33,3 +37,28 @@ jobs:
           private-ssh-key: ${{ secrets.SSH_PRIVATE }}
           source-path: ./www/
           destination-path:  ${{ secrets.FTP_REMOTE_DIR }}
+          rsync-options:  --archive --verbose --compress --human-readable --progress --exclude=vendor --exclude=node_modules exclude=.github exclude=.vscode exclude=src
+      # - name: Upload to Hostinger via FTP
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      #   with:
+      #     #server: ${{ secrets.FTP_HOST }}
+      #     server: ${{ secrets.FTP_HOST }}
+      #     username: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     private-ssh-key: ${{ secrets.SSH_PRIVATE }}
+      #     local-dir: www/
+      #     server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+      #     log-level: verbose
+      #     timeout: 60000
+
+      # - name: Upload via SFTP
+      #   uses: easingthemes/ssh-deploy@main
+      #   with:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE }}
+      #     REMOTE_USER: ${{ secrets.SSH_USERNAME }}
+      #     REMOTE_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+      #     SERVER_IP: ${{ secrets.SERVER_IP }}
+      #     REMOTE_HOST: ${{ secrets.SERVER_IP }}
+      #     REMOTE_PORT: 22
+      #     TARGET: ${{ secrets.FTP_REMOTE_DIR }}
+      #     SOURCE: www/
