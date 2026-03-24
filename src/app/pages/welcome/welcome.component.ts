@@ -54,12 +54,12 @@ export class WelcomeComponent implements OnInit {
   limit: number = 10; // <==== Edit this number to limit API results
   certificateModels : CertificateModel[] = [
     {
-      platformName: 'Angular Architect',
+      platformName: 'Angular Monorepo Mastery',
       userName: 'Vishal Kumar',
       skillName: 'Angular Architect',
-      tierDisplayName: 'Expert',
+      tierDisplayName: '',
       assessmentTitle: CertificateTemplateId.MilestoneCompletion,
-      scorePercentage: 95,
+      scorePercentage: 0,
       certificateNumber: 'CM-2026-00671',
       verificationCode: 'ABCD1234',
       issuedDate: new Date('2026-03-01'),
@@ -73,12 +73,12 @@ export class WelcomeComponent implements OnInit {
       signedBy: 'Kunal Anand',
     },
     {
-      platformName: 'CodeMerit Tech Talent Search',
-      userName: 'Alex Intern',
+      platformName: '',
+      userName: 'Golda Maria',
       skillName: 'Angular Developer',
       tierDisplayName: 'Intern',
       assessmentTitle: CertificateTemplateId.InternshipCompletion,
-      scorePercentage: 100,
+      scorePercentage: 94,
       certificateNumber: 'CM-2026-INT-001',
       verificationCode: 'INT2026',
       issuedDate: new Date('2026-02-15'),
@@ -93,7 +93,7 @@ export class WelcomeComponent implements OnInit {
     },
     {
       platformName: 'Advanced Backend Certification',
-      userName: 'Sam Worker',
+      userName: 'Arjun Patel',
       skillName: 'JavaScript',
       tierDisplayName: 'Employee',
       assessmentTitle: CertificateTemplateId.WorkExperience,

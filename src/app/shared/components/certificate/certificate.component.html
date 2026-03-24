@@ -70,10 +70,12 @@
             This certificate is awarded to <span class="recipient-name">{{ model.userName }}</span> for successfully
             achieving an important milestone in <b>{{ model.skillName }}</b>.
           </p>
+          @if(model.scorePercentage >= 90) {
           <p>
             The candidate has attained <b>{{ model.tierDisplayName ? ' the level of '+model.tierDisplayName+' with ' :
               '' }}</b> a score of <b>{{ model.scorePercentage }}%</b>.
           </p>
+          }
         </ng-container>
         <!-- Default -->
         <ng-container *ngSwitchDefault>
