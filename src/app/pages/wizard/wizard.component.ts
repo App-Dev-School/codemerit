@@ -181,7 +181,7 @@ export class WizardComponent implements OnInit {
           knows: value.knows ?? false,
           level: value.level ?? '',
           rating: value.rating ?? null,
-          grade: this.utility.getGrade(value.rating)
+          grade: value.rating ? this.utility.getGrade(value.rating) : ''
         });
       }
     }
@@ -198,6 +198,7 @@ export class WizardComponent implements OnInit {
       skillRatings: flatData
     };
     console.log('Payload =>', assessment);
+    console.log('flatData =>', flatData);
     //this.loading = true;
     //this.subs.sink = 
     this.authService

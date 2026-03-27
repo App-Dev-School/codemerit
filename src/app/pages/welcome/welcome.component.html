@@ -3,7 +3,7 @@
 
     <!-- <div class="row m-t-20 clearfix">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-         <app-subject-skill-rating></app-subject-skill-rating>
+        <app-skill-rating-widget [skillRatings]="skillRatings"></app-skill-rating-widget>
       </div>
       </div> -->
 
@@ -17,8 +17,23 @@
         <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"
           (medalAction)="handleAction($event)"></app-medal-card>
       </div>
-        <div class="col-12 col-md-6 col-lg-12">
-        <app-subject-skill-rating [subjectId]="1"></app-subject-skill-rating>
+        <div class="col-12 col-md-6 col-lg-4">
+          <mat-card>
+          <mat-card-header class="header-style">
+            <mat-card-title> Skill Rating</mat-card-title>
+            <a mat-button color="primary" href="#" (click)="$event.preventDefault();">View All</a>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-scrollbar style="height: 380px" visibility="hover">
+              <div class="doc-file-type">
+                <app-skill-rating-widget [skillRatings]="skillRatings"></app-skill-rating-widget>
+              </div>
+            </ng-scrollbar>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-12 col-md-6 col-lg-8">
+        <app-subject-skill-rating [subjectId]="2"></app-subject-skill-rating>
       </div>
     </div>
 

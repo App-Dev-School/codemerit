@@ -1,21 +1,36 @@
 <ul class="list-unstyled user-progress list-unstyled-border list-unstyled-noborder">
   @for (skillRating of skillRatings(); track skillRating) {
-  <li class="lecture-list">
+  <li class="skills-list">
     <img alt="image" class="msr-3 rounded-circle" width="40" [src]="skillRating.imageUrl">
     <div class="">
       <div class="media-title font-16 font-b-500">{{ skillRating.skillName }}</div>
-      <div class="text-job text-muted mb-0 font-12">Rating: {{ skillRating.rating }}/5</div>
-      <ng-container >
+      @if (skillRating.rating > 0) {
+      <!-- <div class="text-job text-muted mb-0 font-12">Rating: {{ skillRating.rating }}/5</div> -->
+      <ng-container>
+        @for (star of [1,2,3,4,5]; track star) {
+        @if (skillRating.rating >= star) {
         <mat-icon color="warn">star</mat-icon>
-        <mat-icon color="warn">star</mat-icon>
-        <mat-icon color="warn">star</mat-icon>
-        <mat-icon color="warn">star</mat-icon>
-        <mat-icon color="warn">star</mat-icon>
+        }
+        @if (skillRating.rating < star && skillRating.rating>= star - 0.5) {
+          <mat-icon color="warn">star_half</mat-icon>
+          }
+          @if (skillRating.rating < star - 0.5) { <mat-icon color="warn">star_border</mat-icon>
+            }
+            }
       </ng-container>
+      }
+
     </div>
     <div class="ms-auto">
+      @if (skillRating.level) {
       <div class="media-title font-14 font-b-500">{{ skillRating.level }}</div>
+      }
+      @if (skillRating.grade) {
       <div class="text-job text-muted mb-0 font-12">{{ skillRating.grade }}</div>
+      }
+       @if (!skillRating.knows) {
+      <div class="text-job text-muted mb-0 font-12">Not Known</div>
+      }
     </div>
   </li>
   }

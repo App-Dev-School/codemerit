@@ -104,28 +104,6 @@
                   <mat-card-content>
                     <div class="summary-list">
                       <app-skill-rating-widget [skillRatings]="getAllSubjectEntries()"></app-skill-rating-widget>
-                      <p>Good</p>
-                      <ng-container *ngFor="let entry of getAllSubjectEntries(); let last = last">
-                        <div class="summary-item-row">
-                          <div class="summary-item-header">
-                            <mat-icon class="subject-icon">school</mat-icon>
-                            <span class="subject-title">{{ entry.skillName }}</span>
-                            <span class="subject-level" *ngIf="entry.knows">Level: <b>{{ entry.level }}</b></span>
-                            <span class="subject-level text-muted" *ngIf="!entry.knows">Not Rated</span>
-                          </div>
-                          <div class="summary-item-details" *ngIf="entry.knows">
-                            <span class="rating-label">Rating:</span>
-                            <ng-container *ngFor="let star of utility.getStarsArray(entry.rating)">
-                              <mat-icon color="warn">star</mat-icon>
-                            </ng-container>
-                            <span class="rating-value">({{ entry.rating }}/5)</span>
-                            <span class="grade-label ml-2">Grade:</span>
-                            <span class="grade-value">{{ entry.grade }}</span>
-                          </div>
-                          <div *ngIf="!entry.knows" class="not-knows">You marked as not known</div>
-                        </div>
-                        <mat-divider *ngIf="!last"></mat-divider>
-                      </ng-container>
                     </div>
                   </mat-card-content>
                 </mat-card>

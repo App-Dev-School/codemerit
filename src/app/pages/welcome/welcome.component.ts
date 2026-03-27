@@ -7,6 +7,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { AuthService, User } from '@core';
+import { RatingType } from '@core/models/rating-type';
+import { SkillRating } from '@core/models/skill-rating';
+import { SkillType } from '@core/models/skill-type';
 import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -15,12 +18,15 @@ import { CertificateModel, CertificateTemplateId } from '@shared/components/cert
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
+import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
 import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
+import { NgScrollbar } from 'ngx-scrollbar';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
   imports: [
+    NgScrollbar,
     MatCardModule,
     MatDividerModule,
     MatButtonModule,
@@ -31,6 +37,7 @@ import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-ra
     CertificateComponent,
     SubjectSkillRatingComponent,
     CongratulationsCardComponent,
+    SkillRatingWidgetComponent,
     ReportListComponent,
     MedalCardComponent],
   //  animations: [
@@ -128,6 +135,53 @@ export class WelcomeComponent implements OnInit {
       programLead: 'Sophia Turner',
       templateId: CertificateTemplateId.Appreciation,
       signedBy: 'Sophia Turner',
+    }
+  ];
+
+  skillRatings : SkillRating[] = [
+    {
+      skillId: "4",
+      skillName: "TypeScript",
+      imageUrl: "assets/images/tech/typescript.png",
+      skillType: SkillType.Subject,
+      ratingType: RatingType.Self,
+      knows: true,
+      level: "Basic",
+      rating: 4.5,
+      grade: "Good"
+    },
+    {
+      skillId: "5",
+      skillName: "Angular",
+      imageUrl: "assets/images/tech/angular.png",
+      skillType: SkillType.Subject,
+      ratingType: RatingType.Self,
+      knows: true,
+      level: "Working",
+      rating: 5,
+      grade: "Excellent"
+    },
+    {
+      skillId: "32",
+      skillName: "RxJS",
+      imageUrl: "assets/images/tech/rxjs.png",
+      skillType: SkillType.Subject,
+      ratingType: RatingType.Self,
+      knows: true,
+      level: "Basic",
+      rating: 2.5,
+      grade: "Average"
+    },
+    {
+      skillId: "34",
+      skillName: "Ionic",
+      imageUrl: "assets/images/tech/ionic.png",
+      skillType: SkillType.Subject,
+      ratingType: RatingType.Self,
+      knows: false,
+      level: "",
+      rating: null,
+      grade: ""
     }
   ];
 
