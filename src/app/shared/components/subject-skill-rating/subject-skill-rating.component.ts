@@ -79,7 +79,6 @@ export class SubjectSkillRatingComponent {
         knows: [null, Validators.required],
         level: [null],
         rating: [null]
-
       });
 
       // Make rating required only if knows = true

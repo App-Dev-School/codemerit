@@ -20,7 +20,7 @@ export const PAGES_ROUTE: Route[] = [
     component: PricingComponent,
   },
   {
-    path: "self-skill-rating",
+    path: "skill-rating/:jobRoleSlug",
     component: WizardComponent,
   },
   {

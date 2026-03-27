@@ -184,6 +184,11 @@ export class AuthService {
     return this.httpService.put(url, postData, api_key);
   }
 
+  submitSkillRatingSession(postData: any): Observable<any> {
+    const url = 'apis/skill-ratings';
+    return this.httpService.postData(url, postData);
+  }
+
   changeUserPassword(api_key: any, postData: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({

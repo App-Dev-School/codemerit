@@ -1,6 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   FormBuilder,
   FormControl,
@@ -25,10 +26,16 @@ import {
 } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { RatingType } from '@core/models/rating-type';
-import { SkillRatingSession } from '@core/models/skill-rating';
+import { SkillRating, SkillRatingSession } from '@core/models/skill-rating';
 import { UtilsService } from '@core/service/utils.service';
+import { MasterService } from '@core/service/master.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rating.component';
+import { SkillType } from '@core/models/skill-type';
+import { AuthService } from '@core/service/auth.service';
+import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatDivider } from '@angular/material/divider';
+import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
 
 @Component({
   standalone: true,
@@ -48,7 +55,9 @@ import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rati
     MatCheckboxModule,
     MatRippleModule,
     MatInputModule,
+    MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatDivider,
     SkillRatingComponent,
+    SkillRatingWidgetComponent,
     MatTableModule
   ],
   animations: [
@@ -60,110 +69,153 @@ import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rati
     ])
   ]
 })
-export class WizardComponent {
+export class WizardComponent implements OnInit {
+  @Input() jobRoleSlug!: string;
+  subjects: any[] = [];
+  steps: any[] = [];
+  skillForm: FormGroup;
+  loading = true;
   private fb = inject(FormBuilder);
 
-  // Subjects grouped into steps
-  categories = [
-    { name: 'basics', label: 'Basic Skills Rating', subjects: ['HTML', 'CSS', 'JavaScript'] },
-    { name: 'advanced', label: 'Advanced Skills Rating:', subjects: ['Angular', 'React', 'Other Framework'] },
-    { name: 'intermediate', label: 'Other Essential Skills Rating:', subjects: ['Git'] }
-  ];
-
-  skillForm = this.fb.group({});
-
-  constructor(public utility: UtilsService) {
-    this.initForm();
+  constructor(
+    public utility: UtilsService,
+    private masterService: MasterService,
+    private authService: AuthService,
+    private route: ActivatedRoute
+  ) {
+    this.skillForm = this.fb.group({});
   }
 
-  private initForm() {
-    for (const category of this.categories) {
-      const categoryGroup = this.fb.group({});
-      for (const subject of category.subjects) {
-        categoryGroup.addControl(subject, this.fb.group({
-          knows: new FormControl(null, Validators.required),
-          level: new FormControl(null),
-          rating: new FormControl(null)
-        }));
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const slug = params.get('jobRoleSlug');
+      if (slug) {
+        this.jobRoleSlug = slug;
+        this.loadSubjectsForJobRole(slug);
       }
-      this.skillForm.addControl(category.name, categoryGroup);
+    });
+  }
+
+  loadSubjectsForJobRole(slug: string) {
+    // Try to get jobRoles from masterService (assume already loaded)
+    const jobRoles = this.masterService.getJobRoleMap?.() || this.masterService.jobRoles;
+    let jobRole = null;
+    if (Array.isArray(jobRoles)) {
+      jobRole = jobRoles.find((role: any) => role.slug === slug);
     }
-  }
-
-  // Type-safe form accessors
-  getCategoryGroupNoValidation(categoryName: string): FormGroup {
-    return this.skillForm.get(categoryName) as FormGroup;
-  }
-
-  getCategoryGroup(categoryName: string): FormGroup {
-    const group = this.skillForm.get(categoryName) as FormGroup;
-
-    // Loop through all subject controls
-    for (const controlName of Object.keys(group.controls)) {
-      const subjectGroup = group.get(controlName) as FormGroup;
-      const knows = subjectGroup.get('knows')?.value;
-
-      // If user knows the subject, make rating required
-      if (knows === true) {
-        subjectGroup.get('rating')?.setValidators(Validators.required);
-      } else {
-        subjectGroup.get('rating')?.clearValidators();
-      }
-
-      subjectGroup.get('rating')?.updateValueAndValidity();
-    }
-
-    return group;
-  }
-
-
-  getSubjectGroup(categoryName: string, subject: string): FormGroup {
-    return this.skillForm.get([categoryName, subject]) as FormGroup;
-  }
-
-  knowsSubject(category: string, subject: string): boolean {
-    return this.getSubjectGroup(category, subject).get('knows')?.value === true;
-  }
-
-  getAllSubjectEntries(): { subject: string; knows: boolean; level: string; rating: number | null; grade: string; }[] {
-    const result: { subject: string; knows: boolean; level: string; rating: number | null; grade: string }[] = [];
-
-    for (const category of this.categories) {
-      const categoryGroup = this.skillForm.get(category.name) as FormGroup;
-
-      for (const subject of category.subjects) {
-        const control = categoryGroup.get(subject);
-        const value = control?.value;
-
-        if (value) {
-          result.push({
-            subject,
-            knows: value.knows ?? false,
-            level: value.level ?? '',
-            rating: value.rating ?? null,
-            grade: this.utility.getGrade(value.rating)
-          });
+    if (jobRole && Array.isArray(jobRole.subjects)) {
+      this.subjects = jobRole.subjects;
+      this.buildStepsAndForm();
+    } else {
+      console.log("Job Roles not found in MasterService, fetching from API...");
+      this.masterService.fetchJobRoleSubjectMapping().subscribe((roles: any[]) => {
+        const found = roles.find((role: any) => role.slug === slug);
+        if (found && Array.isArray(found.subjects)) {
+          this.subjects = found.subjects;
+          this.buildStepsAndForm();
         }
+      });
+    }
+  }
+
+  buildStepsAndForm() {
+    // One step per subject, plus summary
+    console.log("Building steps and form for subjects:", this.subjects);
+    this.steps = this.subjects.map((subject, idx) => ({
+      label: subject.title,
+      subject
+    }));
+    //this.steps.push({ label: 'Summary', summary: true });
+
+    // Build form: one group per subject
+    const group: any = {};
+    for (const subject of this.subjects) {
+      const subjectGroup = this.fb.group({
+        knows: [null, Validators.required],
+        level: [null],
+        rating: [null]
+      });
+
+      subjectGroup.get('knows')?.valueChanges.subscribe(val => {
+        if (val === true) {
+          subjectGroup.get('level')?.setValidators(Validators.required);
+          subjectGroup.get('rating')?.setValidators(Validators.required);
+        } else {
+          subjectGroup.get('level')?.clearValidators();
+          subjectGroup.get('rating')?.clearValidators();
+          subjectGroup.patchValue({ level: null, rating: null });
+        }
+        subjectGroup.get('level')?.updateValueAndValidity();
+        subjectGroup.get('rating')?.updateValueAndValidity();
+      });
+
+      group[subject.id] = subjectGroup;
+    }
+    this.skillForm = this.fb.group(group);
+    this.loading = false;
+  }
+
+
+
+  getSubjectGroup(subjectId: number): FormGroup {
+    return this.skillForm.get(subjectId.toString()) as FormGroup;
+  }
+
+  knowsSubject(subjectId: number): boolean {
+    return this.getSubjectGroup(subjectId)?.get('knows')?.value === true;
+  }
+
+
+  getAllSubjectEntries(): SkillRating[] {
+    const result: SkillRating[] = [];
+    for (const subject of this.subjects) {
+      const control = this.skillForm.get(subject.id.toString());
+      const value = control?.value;
+      if (value) {
+        result.push({
+          skillId: subject.id,
+          skillName: subject.title,
+          imageUrl: subject.image,
+          skillType: SkillType.Subject,
+          ratingType: RatingType.Self,
+          knows: value.knows ?? false,
+          level: value.level ?? '',
+          rating: value.rating ?? null,
+          grade: this.utility.getGrade(value.rating)
+        });
       }
     }
-
     return result;
   }
 
   onSubmit() {
-    //console.log(this.skillForm.value);
-    //send flatData to API
     const flatData = this.getAllSubjectEntries();
-    console.log(flatData);
     const assessment: Partial<SkillRatingSession> = {
       user_id: 4,
       ratedBy: 4,
       assessmentTitle: 'Self Skill Rating',
-      //skillRatings: flatData,
       notes: '',
-      skillRatings: []
-    }
-    console.log("Payload =>", assessment);
-    alert(JSON.stringify(assessment));
+      skillRatings: flatData
+    };
+    console.log('Payload =>', assessment);
+    //this.loading = true;
+    //this.subs.sink = 
+    this.authService
+      .submitSkillRatingSession(assessment)
+      .subscribe({
+        next: (res) => {
+          console.log("SubmitSkillrating API", res);
+          if (res && !res.error) {
+            setTimeout(() => {
+              console.log("SubmitSkillrating API User dashboard redirection ", res.data.role);
+              this.authService.redirectToUserDashboard();
+            }, 1000);
+          }
+          //res.data
+        },
+        error: (error) => {
+          console.error("SubmitSkillrating API error", error);
+        },
+      });
   }
 }

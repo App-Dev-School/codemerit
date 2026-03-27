@@ -2,12 +2,19 @@ import { RatingType } from "./rating-type"
 import { SkillType } from "./skill-type"
 
 export interface SkillRating {
-  id: number
-  skill_id: string
+  id?: number
+  skillId: string
   skillType: SkillType
-  rating: number
+  rating: number | null;
   ratingType: RatingType
-  createdAt: string
+
+  knows?: boolean;
+  level?: string;
+  grade?: string;
+  skillName?: string
+  imageUrl?: string
+
+  createdAt?: string
   updatedAt?: string
 }
 
