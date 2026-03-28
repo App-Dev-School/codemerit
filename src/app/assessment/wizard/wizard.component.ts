@@ -191,8 +191,8 @@ export class WizardComponent implements OnInit {
   onSubmit() {
     const flatData = this.getAllSubjectEntries();
     const assessment: Partial<SkillRatingSession> = {
-      user_id: 4,
-      ratedBy: 4,
+      user_id: this.authService.currentUserValue.id,
+      ratedBy: this.authService.currentUserValue.id,
       assessmentTitle: 'Self Skill Rating',
       notes: '',
       skillRatings: flatData

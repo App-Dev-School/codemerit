@@ -383,11 +383,14 @@ export class WelcomeComponent implements OnInit {
         break;
 
       case "selfRating":
-        this.router.navigate(['/app/self-skill-rating']).then(() => {
-        });
+        let course = 'frontend-developer';
+        this.router.navigate(['/assessment/skill-rating', course]).then(() => {
+        console.log('Navigated to Assessment Module for Skill Rating!');
+      });
         break;
       case "subjectRating":
-        this.router.navigate(['/subject-skill-rating']).then(() => {
+        this.router.navigate(['/subject-skill-rating/1']).then(() => {
+          console.log('Navigated to Subject Skill Rating!');
         });
         break;
       default:

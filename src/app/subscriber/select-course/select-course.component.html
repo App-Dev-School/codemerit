@@ -7,8 +7,8 @@
            <hr class="dim-divider">
       </div>
     </div>
-    <app-course-picker [minimal]="true" [currentCourses]="userJobRoles" (subjectSelected)="onCourseChange($event)"
-            (onSubscribe)="onSubscribe($event)"></app-course-picker>
+            <app-course-picker [minimal]="true" [currentCourses]="userJobRoles" [actionMode]="actionMode" (subjectSelected)="onCourseChange($event)"
+              (onSubscribe)="onSubscribe($event)"></app-course-picker>
   </div>
 </section>
 }

@@ -168,13 +168,7 @@ export class CourseDashboardComponent implements OnInit {
       });
     }
   }
-
-  onSubscribeAAA(subject: string) {
-    console.log("CourseDash onSubscribe", subject);
-
-    this.snackService.display('snackbar-dark', subject + ' added to learning list ++', 'bottom', 'center');
-  }
-
+  
   onSubscribe(course: any) {
     //this.onSubscribe.emit(course);
     console.log("onSubscribe Course", course);

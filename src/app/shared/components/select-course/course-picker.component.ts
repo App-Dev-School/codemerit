@@ -30,6 +30,7 @@ import { Observable, of } from 'rxjs';
 export class CoursePickerComponent implements OnInit {
   @Input() minimal = true;
   @Input() currentCourses: number[] = [];
+  @Input() actionMode: string = 'skill-rating';//enroll
   courses: Observable<any>;
   @Output() subjectSelected = new EventEmitter<string>();
   @Output() onSubscribe = new EventEmitter<string>();

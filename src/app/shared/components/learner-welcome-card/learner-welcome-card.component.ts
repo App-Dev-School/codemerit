@@ -28,7 +28,7 @@ export class LearnerWelcomeCardComponent implements OnInit {
     }
     
     startSkillRating() {
-        this.router.navigate(['/app/self-skill-rating']);
+        this.router.navigate(['/assessment/skill-rating']);
     }
 
     login() {
