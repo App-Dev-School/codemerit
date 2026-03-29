@@ -20,9 +20,10 @@ export interface SkillRating {
 
 export interface SkillRatingSession {
   id?: number
-  user_id: number        // User being rated
+  userId: number        // User being rated
   ratedBy: number        // User giving the rating
   assessmentTitle: string
+  ratingType: RatingType
   skillRatings: SkillRating[]
   notes: string
   createdAt: string

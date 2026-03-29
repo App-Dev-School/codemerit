@@ -34,6 +34,7 @@ export class SelectCourseComponent implements OnInit {
     private _bottomSheet: MatBottomSheet,
     public authService: AuthService) {
     // constructor code
+    this.actionMode = 'skill-rating';
   }
 
   ngOnInit() {
@@ -49,8 +50,6 @@ export class SelectCourseComponent implements OnInit {
         this.showContent = true;
       }
     });
-    //testing
-    this.actionMode = 'skill-rating';
   }
 
 
@@ -77,7 +76,7 @@ export class SelectCourseComponent implements OnInit {
       //this.doSetUserDesignation(subject);
     } else if (this.actionMode === 'skill-rating') {
       // Directly navigate to skill-rating for the selected course
-      this.router.navigate(['/dashboard/skill-rating', subject?.slug || subject]).then(() => {
+      this.router.navigate(['/assessment/skill-rating', subject?.slug || subject]).then(() => {
         console.log('Navigated to skill-rating!');
       });
     }

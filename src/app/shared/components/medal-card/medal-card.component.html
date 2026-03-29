@@ -3,7 +3,7 @@
     <img src="assets/images/icons/badge.svg" class="congratulation-medal text-center" alt="UpSkillr Medal" />
     <h5 class="text-center cmSubHeading m-t-20">{{title}}</h5>
     <!-- <h5 class="card-text m-t-20 font-14 text-center">{{message()}}</h5> -->
-    <h5 class="card-text m-t-20 font-14 text-center">Rate your current tech skills 💻</h5>
+    <h5 class="card-text m-t-20 font-14 text-center">Rate your confidence across the technologies you have learnt ⭐</h5>
     <div class="star-rating auto-animate">
       <span class="star rating"> ★ </span>
       <span class="star rating"> ★ </span>
@@ -12,7 +12,7 @@
       <span class="star rating"> ★ </span>
     </div>
     <!-- <h5 class="m-t-0 font-12 col-grey">Rate your skill sets</h5> -->
-    <h5 class="card-text m-t-20 font-14 text-center">Shape your journey to become a job-ready full-stack developer with practice and fun.</h5>
+    <h5 class="card-text m-t-20 font-14 text-center">Start with a quick self-evaluation to understand where you stand, identify your strongest subjects, and unlock a tracked roadmap toward certification and job readiness.</h5>
     <br>
     @if (action === 'takeQuiz') {
     <button mat-flat-button color="warn" (click)="handleAction()"><mat-icon>keyboard_arrow_left</mat-icon>
@@ -24,10 +24,10 @@
     }
     @if (action === 'selfRating') {
     <button  mat-flat-button color="warn" (click)="handleAction()" rippleEffect>
-      <mat-icon>keyboard_arrow_right</mat-icon>Start with Skill Rating</button>
+      <mat-icon>assignment</mat-icon>Start with Self Evaluation</button>
     }
-<hr class="dim-divider">
+<!-- <hr class="dim-divider">
     <button  mat-flat-button color="warn" (click)="action='subjectRating';handleAction()" rippleEffect>
       <mat-icon>keyboard_arrow_right</mat-icon> Subject Completetion Agreement</button>
-  </div>
+  </div> -->
 </div>

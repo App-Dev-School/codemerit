@@ -82,7 +82,7 @@
               </button>
               }@else{
               <button mat-stroked-button color="primary" (click)="pickJobRole(job)" class="w-100 w-md-auto">
-                Select
+                {{ actionMode == 'skill-rating' ? 'Start Evaluation' : 'Select' }}
               </button>
               }
             </div>

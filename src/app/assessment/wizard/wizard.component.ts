@@ -180,7 +180,7 @@ export class WizardComponent implements OnInit {
           ratingType: RatingType.Self,
           knows: value.knows ?? false,
           level: value.level ?? '',
-          rating: value.rating ?? null,
+          rating: value.rating ?? 0,
           grade: value.rating ? this.utility.getGrade(value.rating) : ''
         });
       }
@@ -191,10 +191,11 @@ export class WizardComponent implements OnInit {
   onSubmit() {
     const flatData = this.getAllSubjectEntries();
     const assessment: Partial<SkillRatingSession> = {
-      user_id: this.authService.currentUserValue.id,
+      userId: this.authService.currentUserValue.id,
       ratedBy: this.authService.currentUserValue.id,
       assessmentTitle: 'Self Skill Rating',
       notes: '',
+      ratingType: RatingType.Self,
       skillRatings: flatData
     };
     console.log('Payload =>', assessment);

@@ -28,7 +28,7 @@
         <app-congratulations-card [user]="userData"></app-congratulations-card>
         }
         @if (userData?.userJobRoles?.length > 0) {
-        <app-medal-card [userName]="'Hi '+userData?.firstName +'!'"
+        <app-medal-card [userName]="'Hi '+userData?.firstName +'!'" [action]="'selfRating'" 
           [message]="'Up-Skill and Evaluate Skills in '+courseItem?.title+'.'"></app-medal-card>
         }
       </div>

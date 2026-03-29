@@ -79,7 +79,7 @@ export const APP_ROUTE: Route[] = [
     {
         path: "assessment",
         component: MainLayoutComponent,
-        //component: AuthLayoutComponent,
+        canActivate: [AuthGuard],
         loadChildren: () =>
             import('./assessment/assessment.routes').then((m) => m.ASSESSMENT_ROUTE),
     },

@@ -291,20 +291,23 @@ export class WelcomeComponent implements OnInit {
     public authService: AuthService) {
     this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
-      if (sub && sub.firstName) {
-        this.authUser = sub;
-        this.userName = sub.firstName;
-        if (sub.designation) {
-          this.nextAction = "selfRating";
-          this.userMessage = "Tell us what you already know. Rate your skills, and we’ll personalize your learning path just for you.";
-        } else {
-          this.nextAction = "takeQuiz";
-          this.userMessage = "Unlock a customized roadmap to level up faster. Generate a mock exam to assess your skills.";
-        }
-      } else {
-        this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
-        this.nextAction = "selfRating";
-      }
+      // if (sub && sub.firstName) {
+      //   this.authUser = sub;
+      //   this.userName = sub.firstName;
+      //   if (sub.designation) {
+      //     this.nextAction = "selfRating";
+      //     this.userMessage = "Tell us what you already know. Rate your skills, and we’ll personalize your learning path just for you.";
+      //   } else {
+      //     this.nextAction = "takeQuiz";
+      //     this.userMessage = "Unlock a customized roadmap to level up faster. Generate a mock exam to assess your skills.";
+      //   }
+      // } else {
+      //   this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
+      //   this.nextAction = "selfRating";
+      // }
+      //Implement a smart next action card
+      this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
+      this.nextAction = "selfRating";
     });
     // Implement Master Data Relationship
     this.master.fetchJobRoleSubjectMapping().subscribe(data => {
@@ -383,8 +386,7 @@ export class WelcomeComponent implements OnInit {
         break;
 
       case "selfRating":
-        let course = 'frontend-developer';
-        this.router.navigate(['/assessment/skill-rating', course]).then(() => {
+        this.router.navigate(['/assessment/skill-rating']).then(() => {
         console.log('Navigated to Assessment Module for Skill Rating!');
       });
         break;
