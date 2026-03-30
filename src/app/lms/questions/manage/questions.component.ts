@@ -71,13 +71,55 @@ import { QuestionService } from './questions.service';
 })
 export class QuestionsComponent implements OnInit, OnDestroy {
   columnDefinitions = [
-    { def: 'question', label: 'Question', type: 'text', class: 'mat-col-question',  visible: true },
-    { def: 'subject', label: 'Subject', type: 'text', class: 'col-subject', visible: true },
-    { def: 'topics', label: 'Topic', type: 'text', class: 'col-subject', visible: true },
-    { def: 'questionType', label: 'Type', type: 'text', class: 'col-type', visible: false },
-    { def: 'status', label: 'Status', type: 'text', class: 'col-status',  visible: true },
-    { def: 'level', label: 'Level', type: 'text', class: 'col-level', visible: false },
-    { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-actions', visible: true }
+    {
+      def: 'question',
+      label: 'Question',
+      type: 'text',
+      class: 'mat-col-question',
+      visible: true,
+    },
+    {
+      def: 'subject',
+      label: 'Subject',
+      type: 'text',
+      class: 'col-subject',
+      visible: true,
+    },
+    {
+      def: 'topics',
+      label: 'Topic',
+      type: 'text',
+      class: 'col-subject',
+      visible: true,
+    },
+    {
+      def: 'questionType',
+      label: 'Type',
+      type: 'text',
+      class: 'col-type',
+      visible: false,
+    },
+    {
+      def: 'status',
+      label: 'Status',
+      type: 'text',
+      class: 'col-status',
+      visible: true,
+    },
+    {
+      def: 'level',
+      label: 'Level',
+      type: 'text',
+      class: 'col-level',
+      visible: false,
+    },
+    {
+      def: 'actions',
+      label: 'Actions',
+      type: 'actionBtn',
+      class: 'col-actions',
+      visible: true,
+    },
   ];
 
   dataSource = new MatTableDataSource<QuestionItem>([]);
@@ -94,8 +136,8 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public questionService: QuestionService,
     private snackBar: MatSnackBar,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -119,13 +161,16 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   loadData() {
     this.questionService.getAllQuestions(false).subscribe({
       next: (data) => {
-        console.log("QuestionManager data", data);
+        console.log('QuestionManager data', data);
         this.dataSource.data = data;
         this.isLoading = false;
         this.refreshTable();
-        this.dataSource.filterPredicate = (data: QuestionItem, filter: string) =>
+        this.dataSource.filterPredicate = (
+          data: QuestionItem,
+          filter: string,
+        ) =>
           Object.values(data).some((value) =>
-            value.toString().toLowerCase().includes(filter)
+            value.toString().toLowerCase().includes(filter),
           );
       },
       error: (err) => console.error(err),
@@ -143,20 +188,20 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       .trim()
       .toLowerCase();
     this.dataSource.filter = filterValue;
-    console.log("QuestionManager applyFilter applied", filterValue);
+    console.log('QuestionManager applyFilter applied', filterValue);
   }
 
   addNew() {
-    this.router.navigate(['/admin/questions/create']);
+    this.router.navigate(['/lms/questions/create']);
   }
 
   editCall(row: QuestionItem) {
-    this.router.navigate(['/admin/questions/update', row.slug]);
+    this.router.navigate(['/lms/questions/update', row.slug]);
   }
 
   private updateRecord(updatedRecord: QuestionItem) {
     const index = this.dataSource.data.findIndex(
-      (record) => record.id === updatedRecord.id
+      (record) => record.id === updatedRecord.id,
     );
     if (index !== -1) {
       this.dataSource.data[index] = updatedRecord;
@@ -164,8 +209,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  viewCall(row: QuestionItem){
-  }
+  viewCall(row: QuestionItem) {}
 
   deleteItem(row: QuestionItem) {
     const dialogRef = this.dialog.open(QuestionDeleteComponent, {
@@ -174,14 +218,14 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.dataSource.data = this.dataSource.data.filter(
-          (record) => record.id !== row.id
+          (record) => record.id !== row.id,
         );
         this.refreshTable();
         this.showNotification(
           'snackbar-danger',
           'Question deleted Successfully.',
           'bottom',
-          'center'
+          'center',
         );
       }
     });
@@ -191,7 +235,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     colorName: string,
     text: string,
     placementFrom: MatSnackBarVerticalPosition,
-    placementAlign: MatSnackBarHorizontalPosition
+    placementAlign: MatSnackBarHorizontalPosition,
   ) {
     this.snackBar.open(text, '', {
       duration: 2000,
@@ -201,8 +245,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportExcel() {
-  }
+  exportExcel() {}
 
   isAllSelected() {
     return this.selection.selected.length === this.dataSource.data.length;
@@ -217,14 +260,14 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   removeSelectedRows() {
     const totalSelect = this.selection.selected.length;
     this.dataSource.data = this.dataSource.data.filter(
-      (item) => !this.selection.selected.includes(item)
+      (item) => !this.selection.selected.includes(item),
     );
     this.selection.clear();
     this.showNotification(
       'snackbar-danger',
       `${totalSelect} Question(s) Deleted Successfully.`,
       'bottom',
-      'center'
+      'center',
     );
   }
 }

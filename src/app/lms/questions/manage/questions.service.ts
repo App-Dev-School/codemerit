@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
@@ -6,74 +10,112 @@ import { QueestionListDto } from '@core/models/dtos/QuestionDtos';
 import { HttpService } from '@core/service/http.service';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
-import { FullQuestion, QuestionItem, QuestionItemDetail, QuestionViewerResponse } from './question-item.model';
+import {
+  FullQuestion,
+  QuestionItem,
+  QuestionItemDetail,
+  QuestionViewerResponse,
+} from './question-item.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class QuestionService {
-  dataChange: BehaviorSubject<QuestionItem[]> = new BehaviorSubject<QuestionItem[]>([]);
+  dataChange: BehaviorSubject<QuestionItem[]> = new BehaviorSubject<
+    QuestionItem[]
+  >([]);
 
-  constructor(private authService: AuthService, private httpService: HttpService, private httpClient: HttpClient) { }
+  constructor(
+    private authService: AuthService,
+    private httpService: HttpService,
+    private httpClient: HttpClient,
+  ) {}
 
-   getQuestionBySlug(slug: string): Observable<QuestionItemDetail> {
+  getQuestionBySlug(slug: string): Observable<QuestionItemDetail> {
     let api_key = '';
-    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/question/'+slug;
+    const url = 'apis/question/' + slug;
     return this.httpService.get(url, api_key).pipe(
-      map((response: {error:boolean,message:string,data:QuestionItemDetail}) => {
-        return response.data;
-      })
+      map(
+        (response: {
+          error: boolean;
+          message: string;
+          data: QuestionItemDetail;
+        }) => {
+          return response.data;
+        },
+      ),
     );
   }
 
   //For specific user
-  getAllQuestions(fullData:boolean): Observable<FullQuestion[]> {
+  getAllQuestions(fullData: boolean): Observable<FullQuestion[]> {
     let api_key = '';
-    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
       api_key = this.authService.currentUserValue.token;
     }
-    const url = 'apis/question'+(fullData ? '?fullData=true' : '');
+    const url = 'apis/question' + (fullData ? '?fullData=true' : '');
     return this.httpService.get(url, api_key).pipe(
       map((response: QuestionViewerResponse) => {
         return response.data;
-      })
+      }),
     );
   }
 
-   fetchMyQuestions(payload: any): Observable<QuestionItemDetail[]> {
+  fetchMyQuestions(payload: any): Observable<QuestionItemDetail[]> {
     let api_key = '';
-    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
       api_key = this.authService.currentUserValue.token;
     }
     const url = 'apis/question/fetch';
     return this.httpService.postData(url, payload, api_key).pipe(
-      map((response: {error:boolean,message:string,data:QuestionItemDetail[]}) => {
-        return response.data;
-      })
+      map(
+        (response: {
+          error: boolean;
+          message: string;
+          data: QuestionItemDetail[];
+        }) => {
+          return response.data;
+        },
+      ),
     );
   }
 
   addQuestion(payload: any): Observable<any> {
     let api_key = '';
-    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
       api_key = this.authService.currentUserValue.token;
     }
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': api_key
-      })
+        Authorization: api_key,
+      }),
     };
     const url = 'apis/question/create';
-     return this.httpService.postWithParams(url, payload, httpOptions);
+    return this.httpService.postWithParams(url, payload, httpOptions);
   }
 
   updateQuestion(payload: any, questionId: any): Observable<any> {
     let api_key = '';
-    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
       api_key = this.authService.currentUserValue.token;
     }
     const url = 'apis/question/update?id=' + questionId;
@@ -82,26 +124,44 @@ export class QuestionService {
 
   deleteQuestion(id: number): Observable<number> {
     let api_key = '';
-    if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
       api_key = this.authService.currentUserValue.token;
     }
     const url = 'apis/question/delete?id=' + id;
     return this.httpService.delete(url, api_key).pipe(
       map((response) => {
         if (AuthConstants.DEV_MODE) {
-          console.log("Hiting ", response);
+          console.log('Hiting ', response);
         }
         return id;
       }),
-      catchError(this.handleError)
-    );;
+      catchError(this.handleError),
+    );
+  }
+
+  whitelistQuestion(questionId: number): Observable<any> {
+    let api_key = '';
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/question/approval';
+    const payload = { questionId, isWhitelisted: true };
+    return this.httpService
+      .put(url, payload, api_key)
+      .pipe(catchError(this.handleError));
   }
 
   /** Handle Http operation that failed */
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error.message);
     return throwError(
-      () => new Error('Something went wrong; please try again later.')
+      () => new Error('Something went wrong; please try again later.'),
     );
   }
 }

@@ -1,9 +1,16 @@
 import { Direction } from '@angular/cdk/bidi';
 import { CommonModule, NgClass } from '@angular/common';
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatChip } from "@angular/material/chips";
+import { MatChip } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -36,8 +43,8 @@ interface Quiz {
     MatIconModule,
     MatCardModule,
     SafePipe,
-    MatChip
-  ]
+    MatChip,
+  ],
 })
 export class QuestionViewerComponent implements OnInit, AfterViewInit {
   questions: FullQuestion[] = [];
@@ -47,15 +54,19 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   loadingText = 'Loading Questions';
   completed = false;
   mode = 0; //1 for interactive
+  whitelistStates: { [key: number]: boolean } = {};
+  private readonly whitelistStorageKey = 'questionViewerWhitelistStates';
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
 
-  constructor(private sanitizer: DomSanitizer,
+  constructor(
+    private sanitizer: DomSanitizer,
     private utility: UtilsService,
     private router: Router,
     public dialog: MatDialog,
     private snackService: SnackbarService,
-    private questionService: QuestionService) {
+    private questionService: QuestionService,
+  ) {
     register(); // Register Swiper web components
   }
 
@@ -68,21 +79,37 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   }
 
   private loadQuestions(): void {
-    this.questionService.getAllQuestions(true)
-      .subscribe(data => {
-        //this.questions = data;
-        console.log('QuestionViewer API Response', data);
-        this.loadingText = 'Question View is Ready';
-        this.loading = false;
-        data.sort((a, b) => b.id - a.id);
-        this.questions = (data || []).map(q => ({
-          ...q,
-          //rawQuestion:'Here.. '+q.question,
-          //rawQuestion: this.sanitizer.bypassSecurityTrustHtml(q.question)
-          //rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
-        }));
-        this.currentQuestion = this.questions[this.currentQuestionId];
+    this.questionService.getAllQuestions(true).subscribe((data) => {
+      //this.questions = data;
+      console.log('QuestionViewer API Response', data);
+      this.loadingText = 'Question View is Ready';
+      this.loading = false;
+      data.sort((a, b) => b.id - a.id);
+      this.questions = (data || []).map((q) => ({
+        ...q,
+        //rawQuestion:'Here.. '+q.question,
+        //rawQuestion: this.sanitizer.bypassSecurityTrustHtml(q.question)
+        //rawQuestion: this.sanitizer.bypassSecurityTrustHtml(`<p>This is same question with multi-line support experiment. See below code snippet:</p><pre><code>function add(a, b) { return a + b; }</code></pre>`)
+      }));
+
+      const localWhitelist = this.getLocalWhitelistStates();
+      this.whitelistStates = {};
+      this.questions.forEach((q) => {
+        const isWhitelistedFlag = (q as any)?.isWhitelisted;
+        const hasBackendWhitelistFlag =
+          isWhitelistedFlag !== undefined &&
+          isWhitelistedFlag !== null &&
+          isWhitelistedFlag !== '';
+        const backendWhitelisted = Number(isWhitelistedFlag) === 1;
+        const isWhitelisted = hasBackendWhitelistFlag
+          ? backendWhitelisted
+          : localWhitelist[q.id] === true;
+        this.whitelistStates[q.id] = isWhitelisted;
       });
+      this.persistWhitelistStates();
+
+      this.currentQuestion = this.questions[this.currentQuestionId];
+    });
   }
 
   /** Capture selected answer */
@@ -122,7 +149,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
 
   routeEditQuestionPage(slug: string) {
     //const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
-    this.router.navigate(['/admin/questions/update', slug]);
+    this.router.navigate(['/lms/questions/update', slug]);
   }
 
   editQuestion(slug: string) {
@@ -146,16 +173,26 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
       data: { questionItem: data, action },
       direction: varDirection,
       autoFocus: false,
-      disableClose: true
+      disableClose: true,
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         //console.log("QuestionViewer close result", result);
         if (!result.error) {
-          this.snackService.display('snackbar-dark', result.message ?? "Question updated successfully.", 'bottom', 'center');
-          //update 
+          this.snackService.display(
+            'snackbar-dark',
+            result.message ?? 'Question updated successfully.',
+            'bottom',
+            'center',
+          );
+          //update
         } else {
-          this.snackService.display('snackbar-dark', result.message ?? "Failed to update question.", 'bottom', 'center');
+          this.snackService.display(
+            'snackbar-dark',
+            result.message ?? 'Failed to update question.',
+            'bottom',
+            'center',
+          );
         }
         //this.onQuestionChange(result.data);
       }
@@ -164,5 +201,44 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
 
   isCodeQuestion(text: string): boolean {
     return this.utility.isCodeQuestion(text);
+  }
+
+  whitelistQuestion(question: FullQuestion): void {
+    this.questionService.whitelistQuestion(question.id).subscribe({
+      next: () => {
+        this.whitelistStates[question.id] = true;
+        this.persistWhitelistStates();
+        this.snackService.display(
+          'snackbar-dark',
+          'Question WhiteListed successfully',
+          'bottom',
+          'center',
+        );
+      },
+      error: () => {
+        this.snackService.display(
+          'snackbar-dark',
+          'Failed to whitelist question',
+          'bottom',
+          'center',
+        );
+      },
+    });
+  }
+
+  private getLocalWhitelistStates(): { [key: number]: boolean } {
+    try {
+      const saved = localStorage.getItem(this.whitelistStorageKey);
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  private persistWhitelistStates(): void {
+    localStorage.setItem(
+      this.whitelistStorageKey,
+      JSON.stringify(this.whitelistStates),
+    );
   }
 }
