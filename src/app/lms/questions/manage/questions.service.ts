@@ -17,6 +17,18 @@ import {
   QuestionViewerResponse,
 } from './question-item.model';
 
+export interface QuestionApiFilters {
+  subject: number[];
+  topic: number[];
+  level: string;
+  authorId: number;
+}
+
+export interface QuestionAuthor {
+  id: number;
+  name: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -68,6 +80,72 @@ export class QuestionService {
         return response.data;
       }),
     );
+  }
+
+  getQuestionsWithFilters(
+    fullData: boolean,
+    filters?: QuestionApiFilters,
+  ): Observable<FullQuestion[]> {
+    let api_key = '';
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
+      api_key = this.authService.currentUserValue.token;
+    }
+
+    const params: string[] = [];
+    if (fullData) {
+      params.push('fullData=true');
+    }
+
+    if (filters) {
+      if (filters.subject?.length) {
+        filters.subject.forEach((id) => {
+          params.push(`subjectId=${encodeURIComponent(String(id))}`);
+        });
+      }
+      if (filters.topic?.length) {
+        filters.topic.forEach((id) => {
+          params.push(`topicId=${encodeURIComponent(String(id))}`);
+        });
+      }
+      if (filters.level) {
+        const mappedLevel = this.mapLevelToCode(filters.level);
+        params.push(`level=${encodeURIComponent(mappedLevel)}`);
+      }
+      params.push(`authorId=${encodeURIComponent(String(filters.authorId))}`);
+    }
+
+    const url = `apis/question${params.length ? `?${params.join('&')}` : ''}`;
+
+    return this.httpService
+      .get(url, api_key)
+      .pipe(map((response: QuestionViewerResponse) => response.data));
+  }
+
+  private mapLevelToCode(level: string): string {
+    const levelMap: Record<string, string> = {
+      Easy: '1',
+      Intermediate: '2',
+      Advanced: '3',
+    };
+
+    return levelMap[level] ?? level;
+  }
+
+  getQuestionAuthors(): Observable<QuestionAuthor[]> {
+    let api_key = '';
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
+      api_key = this.authService.currentUserValue.token;
+    }
+
+    return this.httpService
+      .get('apis/question/authors', api_key)
+      .pipe(map((response: any) => response?.data ?? []));
   }
 
   fetchMyQuestions(payload: any): Observable<QuestionItemDetail[]> {

@@ -9,6 +9,14 @@
     </div>
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <app-quiz-questions-form
+          [mode]="'filter-only'"
+          [subjects]="subjects"
+          [topics]="topics"
+          [authors]="authors"
+          [title]="'Filter Questions'"
+          (filtersApplied)="onFiltersApplied($event)"
+        ></app-quiz-questions-form>
         <div class="card">
           <div class="materialTableHeader">
             <div class="left">
@@ -212,7 +220,7 @@
                     <h4 class="col-grey">Loading Questions</h4>
                   }
                   @if (dataSource.data.length === 0) {
-                    <h4 class="col-grey">No Question Found</h4>
+                    <h4 class="col-grey">{{ noResultsMessage }}</h4>
                   }
                 </div>
               }

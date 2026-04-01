@@ -35,11 +35,16 @@ import { Router } from '@angular/router';
 import { rowsAnimation } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
+import {
+  QuizQuestionsFormComponent,
+  QuestionFilterValue,
+} from '@shared/components/quiz-questions-form/quiz-questions-form.component';
 import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
+import { MasterService } from '@core/service/master.service';
 import { Subject } from 'rxjs';
 import { QuestionDeleteComponent } from './dialogs/delete/delete.component';
 import { QuestionItem } from './question-item.model';
-import { QuestionService } from './questions.service';
+import { QuestionAuthor, QuestionService } from './questions.service';
 @Component({
   selector: 'app-manage-questions',
   templateUrl: './questions.component.html',
@@ -66,6 +71,7 @@ import { QuestionService } from './questions.service';
     NgClass,
     MatRippleModule,
     MatPaginatorModule,
+    QuizQuestionsFormComponent,
     TableShowHideColumnComponent,
   ],
 })
@@ -123,8 +129,19 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   ];
 
   dataSource = new MatTableDataSource<QuestionItem>([]);
+  allQuestions: QuestionItem[] = [];
   selection = new SelectionModel<QuestionItem>(true, []);
   isLoading = true;
+  noResultsMessage = 'No questions found for the selected filters.';
+  subjects: any[] = [];
+  topics: any[] = [];
+  authors: QuestionAuthor[] = [];
+  currentFilters: QuestionFilterValue = {
+    subject: [],
+    topic: [],
+    level: '',
+    authorId: 0,
+  };
   private destroy$ = new Subject<void>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -135,12 +152,32 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     public httpClient: HttpClient,
     public dialog: MatDialog,
     public questionService: QuestionService,
+    private masterService: MasterService,
     private snackBar: MatSnackBar,
     private router: Router,
   ) {}
 
   ngOnInit() {
-    this.loadData();
+    this.subjects = this.masterService.subjects;
+    this.topics = this.masterService.topics;
+    this.loadAuthors();
+  }
+
+  private loadAuthors() {
+    this.questionService.getQuestionAuthors().subscribe({
+      next: (authors) => {
+        this.authors = authors;
+        if (this.authors.length > 0) {
+          this.currentFilters.authorId = this.authors[0].id;
+        }
+        this.loadData();
+      },
+      error: (err) => {
+        console.error('Failed to load question authors', err);
+        this.authors = [];
+        this.loadData();
+      },
+    });
   }
 
   ngOnDestroy() {
@@ -159,22 +196,37 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    this.questionService.getAllQuestions(false).subscribe({
-      next: (data) => {
-        console.log('QuestionManager data', data);
-        this.dataSource.data = data;
-        this.isLoading = false;
-        this.refreshTable();
-        this.dataSource.filterPredicate = (
-          data: QuestionItem,
-          filter: string,
-        ) =>
-          Object.values(data).some((value) =>
-            value.toString().toLowerCase().includes(filter),
-          );
-      },
-      error: (err) => console.error(err),
-    });
+    this.isLoading = true;
+    this.questionService
+      .getQuestionsWithFilters(false, this.currentFilters)
+      .subscribe({
+        next: (data) => {
+          console.log('QuestionManager data', data);
+          this.allQuestions = data;
+          this.dataSource.data = data;
+          this.noResultsMessage = data.length
+            ? ''
+            : 'No questions found for the selected filters.';
+          this.isLoading = false;
+          this.refreshTable();
+          this.dataSource.filterPredicate = (
+            data: QuestionItem,
+            filter: string,
+          ) =>
+            Object.values(data).some((value) =>
+              value.toString().toLowerCase().includes(filter),
+            );
+        },
+        error: (err) => {
+          console.error(err);
+          this.dataSource.data = [];
+          this.isLoading = false;
+          this.noResultsMessage =
+            err?.error?.message ??
+            err?.message ??
+            'Unable to load questions. Please try again.';
+        },
+      });
   }
 
   private refreshTable() {
@@ -189,6 +241,12 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       .toLowerCase();
     this.dataSource.filter = filterValue;
     console.log('QuestionManager applyFilter applied', filterValue);
+  }
+
+  onFiltersApplied(filters: QuestionFilterValue) {
+    this.currentFilters = filters;
+    // Apply server-side filtering through query params.
+    this.loadData();
   }
 
   addNew() {
