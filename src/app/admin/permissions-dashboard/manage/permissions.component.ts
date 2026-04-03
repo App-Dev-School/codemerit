@@ -79,7 +79,6 @@ export class permissionsComponent implements OnInit, OnDestroy {
 columnDefinitions = [
   { def: 'userFullName', label: 'User Name', type: 'text', class: 'col-default', visible: true },
   { def: 'permissionName', label: 'Permission', type: 'text', class: 'col-default', visible: true },
-  { def: 'resourceName', label: 'Resource', type: 'text', class: 'col-default', visible: true },
   { def: 'userCreatedAt', label: 'Grant Date', type: 'text', class: 'col-default', visible: true },
   { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-default', visible: true },
 ];
@@ -124,7 +123,6 @@ columnDefinitions = [
 
   loadData() {
     this.permissionsService.getAllUserPermissions().subscribe({
-
       next: (data) => {
         this.dataSource.data = data;
         this.isLoading = false;
@@ -182,10 +180,20 @@ columnDefinitions = [
       if (result) {
         console.log("permissionsManager close result", result);
         if (action === 'add') {
-          if(result.data)
-          this.dataSource.data = [result.data, ...this.dataSource.data];
-        } else {
-          this.updateRecord(result);
+          if(result.data) {
+            if (Array.isArray(result.data)) {
+              this.dataSource.data = [...result.data, ...this.dataSource.data];
+            } else {
+              this.dataSource.data = [result.data, ...this.dataSource.data];
+            }
+            this.dataSource._updateChangeSubscription();
+            // Clear filter to ensure new row is visible
+            this.dataSource.filter = '';
+            // Reset paginator to first page
+            if (this.paginator) {
+              this.paginator.firstPage();
+            }
+          }
         }
         this.refreshTable();
         this.showNotification(

@@ -52,16 +52,21 @@
                       </mat-header-cell>
                       <mat-cell *matCellDef="let row">
                         <span class="mobile-label">{{ column.label }}:</span>
-                        @if (column.def === 'userFullName') {
+                         @if (column.def === 'userFullName') {
                           <div class="p-10">
                             <div>{{ row.user?.firstName }} {{ row.user?.lastName }}</div>
-                            <div class="col-grey font-12">({{ row.user?.email }})</div>
-                            <div class="badge bg-primary">{{ row.user?.role }}</div>
+                          </div>
+                        }@else{
+                          @if (column.def === 'permissionName') {
+                          <div class="p-10">
+                            <div> {{ row.permissionName }}</div>
+                            <div class="badge bg-primary">{{ row.resourceName ? row.resourceName : (row.resourceType ? row.resourceType : 'Full Access') }}</div>
                           </div>
                         } @else if (column.def === 'userCreatedAt') {
                           <span class="truncate-text">{{ row.user?.createdAt | date:'dd/MM/yyyy' }}</span>
                         } @else {
                           <span class="truncate-text">{{ row[column.def] }}</span>
+                        }
                         }
                       </mat-cell>
                     </ng-container>
