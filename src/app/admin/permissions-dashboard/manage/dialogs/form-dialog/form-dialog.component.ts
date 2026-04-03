@@ -59,6 +59,7 @@ export class UserPermissionsFormComponent {
   filteredResources: any[] = [];
   permissionsList: Permission[];
   users: any[] = [];
+  errorMessage = '';
 
   constructor(
     public dialogRef: MatDialogRef<UserPermissionsFormComponent>,
@@ -160,6 +161,7 @@ export class UserPermissionsFormComponent {
   }
 
   submit() {
+    this.errorMessage = '';
     if (this.permissionsForm.valid) {
       const formData = this.permissionsForm.getRawValue();
       if (this.action === 'edit') {
@@ -178,12 +180,10 @@ export class UserPermissionsFormComponent {
           .updatePermissions(changedFields, formData.id)
           .subscribe({
             next: (response) => {
-              console.log('permissionsManager UpdateAPI response:', changedFields);
-              this.dialogRef.close(response); // Close dialog and return
+              this.dialogRef.close(response);
             },
             error: (error) => {
-              console.error('permissionsManager ###Update Error:', error);
-              // Optionally display an error message to the user
+              this.errorMessage = error;
             },
           });
       } else {
@@ -200,11 +200,11 @@ export class UserPermissionsFormComponent {
           .addPermissions(payload)
           .subscribe({
             next: (response) => {
-              this.dialogRef.close(response); // Close dialog and return newly added doctor data
+              console.log('permissionsManager CreateAPI response:', response);
+              this.dialogRef.close(response);
             },
             error: (error) => {
-              console.error('Add Error:', error);
-              // Optionally display an error message to the user
+              this.errorMessage = error;
             },
           });
       }
