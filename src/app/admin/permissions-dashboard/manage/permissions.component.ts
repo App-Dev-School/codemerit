@@ -38,7 +38,6 @@ import { UserPermission } from '@core/models/permission.model';
 import { rowsAnimation } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
-import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
 import { Subject } from 'rxjs';
 import { permissionsrevokeComponent } from './dialogs/delete/delete.component';
 import { UserPermissionsFormComponent } from './dialogs/form-dialog/form-dialog.component';
@@ -71,13 +70,12 @@ import { permissionsService } from './permissions.service';
     MatRippleModule,
     MatProgressSpinnerModule,
     MatMenuModule,
-    MatPaginatorModule,
-    TableShowHideColumnComponent,
+    MatPaginatorModule
   ],
 })
 export class permissionsComponent implements OnInit, OnDestroy {
 columnDefinitions = [
-  { def: 'userFullName', label: 'User Name', type: 'text', class: 'col-default', visible: true },
+  { def: 'userFullName', label: 'User', type: 'text', class: 'col-default', visible: true },
   { def: 'permissionName', label: 'Permission', type: 'text', class: 'col-default', visible: true },
   { def: 'userCreatedAt', label: 'Grant Date', type: 'text', class: 'col-default', visible: true },
   { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-default', visible: true },
@@ -147,7 +145,6 @@ columnDefinitions = [
       .trim()
       .toLowerCase();
     this.dataSource.filter = filterValue;
-    console.log("permissionsManager filter applied", filterValue);
   }
 
   addNew() {
@@ -160,7 +157,6 @@ columnDefinitions = [
   }
 
   openDialog(action: 'add' | 'edit', data?: UserPermission) {
-    console.log("permissionsManager openDialog", action, data);
     let varDirection: Direction;
     if (localStorage.getItem('isRtl') === 'true') {
       varDirection = 'rtl';
@@ -178,7 +174,6 @@ columnDefinitions = [
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log("permissionsManager close result", result);
         if (action === 'add') {
           if(result.data) {
             if (Array.isArray(result.data)) {
@@ -196,12 +191,14 @@ columnDefinitions = [
           }
         }
         this.refreshTable();
+        if(result.message){
         this.showNotification(
           action === 'add' ? 'snackbar-success' : 'black',
-          `permissions ${action === 'add' ? 'Add' : 'Edit'} Successful.`,
+          result.message,
           'bottom',
           'center'
         );
+        }
       }
     });
   }
