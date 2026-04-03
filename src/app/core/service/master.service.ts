@@ -8,6 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { HttpService } from './http.service';
 import { AdminDashboardResponse } from 'src/app/admin/dtos/admin-dashboard.model';
+import { LmsDashboardResponse } from 'src/app/lms/dtos/lms-dashboard.model';
 
 export interface MasterData {
   subjects: any[];
@@ -22,7 +23,7 @@ export interface JobSubject {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MasterService {
   private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
@@ -31,9 +32,11 @@ export class MasterService {
   private storageKey = 'masterData';
   jobRoleSubjectMap: Course[];
 
-
-  constructor(private router: Router, private httpService: HttpService,
-    public authService: AuthService) {
+  constructor(
+    private router: Router,
+    private httpService: HttpService,
+    public authService: AuthService,
+  ) {
     const stored = localStorage.getItem(this.storageKey);
     if (stored) {
       this.data = JSON.parse(stored);
@@ -46,48 +49,61 @@ export class MasterService {
    * To maintain sync using timestamp
    */
   fetchMasterDataFromAPI() {
-    console.log("fetchMasterDataFromAPI() called");
-    return this.httpService.get('apis/master/data', this.authService.currentUserValue?.token).pipe(
-      tap((res: { error: boolean, message: string, data: MasterData }) => {
-        if (!res.error) {
-          console.log('MasterDataFlow Topics', res.data.topics);
-          this.data = res.data;
-          localStorage.setItem(this.storageKey, JSON.stringify(res));
-          this.dataLoaded.next(true);
-        }
-      }),
-      catchError((err) => {
-        console.log("MasterDataFlow Error fetching master data", err);
-        return of(null);
-      })
-    );
+    console.log('fetchMasterDataFromAPI() called');
+    return this.httpService
+      .get('apis/master/data', this.authService.currentUserValue?.token)
+      .pipe(
+        tap((res: { error: boolean; message: string; data: MasterData }) => {
+          if (!res.error) {
+            console.log('MasterDataFlow Topics', res.data.topics);
+            this.data = res.data;
+            localStorage.setItem(this.storageKey, JSON.stringify(res));
+            this.dataLoaded.next(true);
+          }
+        }),
+        catchError((err) => {
+          console.log('MasterDataFlow Error fetching master data', err);
+          return of(null);
+        }),
+      );
   }
 
   fetchSubjectDashboard(slug: string) {
-    console.log("CourseDash fetchSubjectDashboard()", slug);
-    return this.httpService.get('apis/master/subjectDashboard?slug=' + slug, this.authService.currentUserValue?.token).pipe(
-      tap((res: { error: boolean, message: string, data: MasterData }) => {
-        console.log('CourseDash master subjectDashboard API response=>', res);
-        if (!res.error) {
-          //console.log('CourseDash master subjectDashboard API response=>', res.data);
-        }
-      }),
-      catchError((err) => {
-        console.log("CourseDash Error fetching subjectDashboard", err);
-        return of(null);
-      })
-    );
+    console.log('CourseDash fetchSubjectDashboard()', slug);
+    return this.httpService
+      .get(
+        'apis/master/subjectDashboard?slug=' + slug,
+        this.authService.currentUserValue?.token,
+      )
+      .pipe(
+        tap((res: { error: boolean; message: string; data: MasterData }) => {
+          console.log('CourseDash master subjectDashboard API response=>', res);
+          if (!res.error) {
+            //console.log('CourseDash master subjectDashboard API response=>', res.data);
+          }
+        }),
+        catchError((err) => {
+          console.log('CourseDash Error fetching subjectDashboard', err);
+          return of(null);
+        }),
+      );
   }
 
-  get subjects() { return this.data.subjects; }
-  get topics() { return this.data.topics; }
-  get jobRoles() { return this.data.jobRoles; }
+  get subjects() {
+    return this.data.subjects;
+  }
+  get topics() {
+    return this.data.topics;
+  }
+  get jobRoles() {
+    return this.data.jobRoles;
+  }
 
   clear() {
     this.data = { subjects: [], topics: [], jobRoles: [] };
     localStorage.removeItem(this.storageKey);
     this.dataLoaded.next(false);
-    alert("Local data cleared!");
+    alert('Local data cleared!');
   }
 
   //Not needed then clean
@@ -108,14 +124,17 @@ export class MasterService {
         catchError((err) => {
           console.error('MasterDataFlow Failed to fetch job map', err);
           return of([]); // ✅ return empty array instead of null
-        })
+        }),
       );
   }
 
   fetchCourseDashboard(): Observable<any> {
     console.log('Calling fetchCourseDashboard API');
     return this.httpService
-      .get('apis/master/myJobDashboard', this.authService.currentUserValue?.token)
+      .get(
+        'apis/master/myJobDashboard',
+        this.authService.currentUserValue?.token,
+      )
       .pipe(
         map((res: { error: boolean; message: string; data: any }) => {
           if (!res.error) {
@@ -128,17 +147,21 @@ export class MasterService {
         catchError((err) => {
           console.error('CourseAPI Failed :', err);
           return of({}); // return empty array instead of null
-        })
+        }),
       );
   }
 
   enrollSubjects(subjectIds: number[]): Observable<any> {
     const payload = {
-      subjectIds: subjectIds
-    }
+      subjectIds: subjectIds,
+    };
     console.log('Calling enrollSubjects API', payload);
     return this.httpService
-      .postData('apis/master/userSubjects', payload, this.authService.currentUserValue?.token)
+      .postData(
+        'apis/master/userSubjects',
+        payload,
+        this.authService.currentUserValue?.token,
+      )
       .pipe(
         map((res: { error: boolean; message: string; data: any }) => {
           if (!res.error) {
@@ -152,7 +175,7 @@ export class MasterService {
         catchError((err) => {
           console.error('enrollSubjects Failed', err);
           return of({});
-        })
+        }),
       );
   }
 
@@ -166,29 +189,37 @@ export class MasterService {
   }
 
   getCountries(): Observable<Country[]> {
-    return this.httpService.getLocalMock('assets/data/master/countries.json').pipe(
-      map((data: any) => data as Country[])
-    );
+    return this.httpService
+      .getLocalMock('assets/data/master/countries.json')
+      .pipe(map((data: any) => data as Country[]));
   }
 
   fetchMockSubjectDashboard(): Observable<any> {
-    return this.httpService.getLocalMock('assets/data/master/subjectDashboard.json');
-  }
-
-  getMockAdminDashboard(): Observable<any> {
-    return this.httpService.getLocalMock('assets/data/master/adminDash.json').pipe(
-      map((data: any) => data as any)
+    return this.httpService.getLocalMock(
+      'assets/data/master/subjectDashboard.json',
     );
   }
 
+  getMockAdminDashboard(): Observable<any> {
+    return this.httpService
+      .getLocalMock('assets/data/master/adminDash.json')
+      .pipe(map((data: any) => data as any));
+  }
+
   getAdminDashboard(): Observable<AdminDashboardResponse> {
-    let api_key = '';
-    if (this.authService.currentUser && this.authService.currentUser) {
-      api_key = this.authService.currentUserValue.token;
-    }
+    const api_key = this.authService.currentUserValue?.token ?? '';
     const url = 'apis/admin/dashboard';
+    return this.httpService
+      .get(url, api_key)
+      .pipe(map((res: any) => res as AdminDashboardResponse));
+  }
+
+  getLmsDashboard(): Observable<LmsDashboardResponse> {
+    const api_key = this.authService.currentUserValue?.token ?? '';
+    const url = 'apis/lms/dashboard';
     return this.httpService.get(url, api_key).pipe(
-      map((res: any) => res as AdminDashboardResponse)
+      map((res: any) => res as LmsDashboardResponse),
+      catchError(() => this.getMockAdminDashboard()),
     );
   }
 }
