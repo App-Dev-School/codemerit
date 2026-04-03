@@ -130,7 +130,9 @@
                           [ngClass]="column.class"
                           [matTooltip]="row.name"
                         >
+                        @if (!["question"].includes(column.def)) {
                           <span class="mobile-label">{{ column.label }}:</span>
+                        }
                           @if (column.def == "question") {
                             <div class="full-text">
                               {{ row[column.def] }}
