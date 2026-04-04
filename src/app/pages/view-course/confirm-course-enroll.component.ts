@@ -55,25 +55,28 @@ export class SetDesignationBottomSheetComponent {
               setTimeout(() => {
                 this.loading = false;
                 this._bottomSheetRef.dismiss(null);
-                // this.router.navigate(['/dashboard/start', this.courseItem?.slug]).then(() => {
+                // this.router.navigate(['/dashboard', this.courseItem?.slug]).then(() => {
                 //   this.snackService.display('snackbar-dark', 'Welcome as a ' + this.courseItem?.title, 'bottom', 'center');
                 // });
-                this.router.navigate(['/view', this.courseItem?.slug]).then(() => {
-                  this.snackService.display('snackbar-dark', 'New Role Started: ' + this.courseItem?.title, 'bottom', 'center');
+                this.router.navigate(['/dashboard']).then(() => {
+                  this.snackService.display('snackbar-dark', 'Welcome as a ' + this.courseItem?.title, 'bottom', 'center');
                 });
               }, 3000);
-             
+              //Route to new course dashboard
+              //this.router.navigate(['/dashboard/start', this.courseItem?.slug]);
+
             } else {
+              console.log("Error Enrolling Course");
               this.loading = false;
               this._bottomSheetRef.dismiss(null);
-              this.snackService.display('snackbar-dark', 'Error enrolling this program. Please try again later.', 'bottom', 'center');
+              this.snackService.display('snackbar-dark', 'Error Enrolling Course!', 'bottom', 'center');
             }
           }
         });
       } else {
         this.loading = false;
         this._bottomSheetRef.dismiss(null);
-        this.snackService.display('snackbar-dark', "Sign in to enroll and get started.", 'bottom', 'center');
+        this.snackService.display('snackbar-dark', "Sign in to add your designation and get started.", 'bottom', 'center');
         this.authService.redirectToLogin();
       }
       //alert("Here to call the Set Designation API. See this callback trigger in Course Dashboard. Is Requireed?");
@@ -84,5 +87,12 @@ export class SetDesignationBottomSheetComponent {
   dismiss(event: MouseEvent): void {
     this._bottomSheetRef.dismiss(null);
     event.preventDefault();
+  }
+
+  viewCourseDetails() {
+    this._bottomSheetRef.dismiss(null);
+    this.router.navigate(['/view', this.courseItem?.slug]).then(() => {
+      console.log('Navigation completed!');
+    });
   }
 }

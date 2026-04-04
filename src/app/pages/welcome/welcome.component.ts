@@ -21,45 +21,28 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
 import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
 import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
 import { NgScrollbar } from 'ngx-scrollbar';
-@Component({
-  selector: 'app-welcome',
-  templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.scss'],
-  imports: [
-    NgScrollbar,
-    MatCardModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatRippleModule,
-    MatIconModule,
-    //LearnerWelcomeCardComponent,
-    CertificateComponent,
-    SubjectSkillRatingComponent,
-    CongratulationsCardComponent,
-    SkillRatingWidgetComponent,
-    ReportListComponent,
-    MedalCardComponent],
-  //  animations: [
-  //     trigger('fadeOut', [
-  //       transition(':leave', [
-  //         style({ opacity: 1 }), // Set initial opacity
-  //         animate('1.2s', style({ opacity: 0 })) // Animate to opacity 0 over 0.5 seconds
-  //       ])
-  //     ])
-  //   ]
-})
-export class WelcomeComponent implements OnInit {
-  public subjectRoleMap: Course[] = [];
-  userName = "";
-  authUser: User;
-  userMessage = "";
-  nextAction = "login";
-  //clean up
-  subjectData: any;
-  subjectsByRole: { [role: string]: Course[] } = {};
-  limit: number = 10; // <==== Edit this number to limit API results
-  certificateModels : CertificateModel[] = [
+
+  export const certificateModels : CertificateModel[] = [
+    {
+      platformName: 'Angular Framework Foundation Certification',
+      userName: 'Vishal Kumar',
+      skillName: 'Angular Architect',
+      tierDisplayName: 'FOUNDATION',
+      assessmentTitle: CertificateTemplateId.MilestoneCompletion,
+      scorePercentage: 0,
+      certificateNumber: 'CM-2026-00671',
+      verificationCode: 'ABCD1234',
+      issuedDate: new Date('2026-03-01'),
+      expiryDate: new Date('2027-03-01'),
+      issuerName: 'CodeMerit',
+      issuerLogo: './../../../assets/images/logo.png',
+      sponsorName: '',
+      sponsorLogo: '',
+      programLead: 'Carolin Smith',
+      templateId: CertificateTemplateId.MilestoneCompletion,
+      signedBy: 'Kunal Anand',
+      flag: 'angular'
+    },
     {
       platformName: 'Angular Monorepo Mastery',
       userName: 'Vishal Kumar',
@@ -78,6 +61,7 @@ export class WelcomeComponent implements OnInit {
       programLead: 'Kunal Anand',
       templateId: CertificateTemplateId.MilestoneCompletion,
       signedBy: 'Kunal Anand',
+      flag: 'angular'
     },
     {
       platformName: '',
@@ -137,6 +121,46 @@ export class WelcomeComponent implements OnInit {
       signedBy: 'Sophia Turner',
     }
   ];
+
+@Component({
+  selector: 'app-welcome',
+  templateUrl: './welcome.component.html',
+  styleUrls: ['./welcome.component.scss'],
+  imports: [
+    NgScrollbar,
+    MatCardModule,
+    MatDividerModule,
+    MatButtonModule,
+    MatChipsModule,
+    MatRippleModule,
+    MatIconModule,
+    //LearnerWelcomeCardComponent,
+    CertificateComponent,
+    SubjectSkillRatingComponent,
+    CongratulationsCardComponent,
+    SkillRatingWidgetComponent,
+    ReportListComponent,
+    MedalCardComponent],
+  //  animations: [
+  //     trigger('fadeOut', [
+  //       transition(':leave', [
+  //         style({ opacity: 1 }), // Set initial opacity
+  //         animate('1.2s', style({ opacity: 0 })) // Animate to opacity 0 over 0.5 seconds
+  //       ])
+  //     ])
+  //   ]
+})
+export class WelcomeComponent implements OnInit {
+  public subjectRoleMap: Course[] = [];
+  userName = "";
+  authUser: User;
+  userMessage = "";
+  nextAction = "login";
+  //clean up
+  subjectData: any;
+  subjectsByRole: { [role: string]: Course[] } = {};
+  limit: number = 10; // <==== Edit this number to limit API results
+  certificateModels : CertificateModel[] = [];
 
   skillRatings : SkillRating[] = [
     {
@@ -291,6 +315,7 @@ export class WelcomeComponent implements OnInit {
     public authService: AuthService) {
     this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
+      this.certificateModels = certificateModels;
       // if (sub && sub.firstName) {
       //   this.authUser = sub;
       //   this.userName = sub.firstName;

@@ -30,7 +30,7 @@ import { Observable, of } from 'rxjs';
 export class CoursePickerComponent implements OnInit {
   @Input() minimal = true;
   @Input() currentCourses: number[] = [];
-  @Input() actionMode: string = 'skill-rating';//enroll
+  @Input() actionMode: string = 'enroll';//skill-rating
   courses: Observable<any>;
   @Output() subjectSelected = new EventEmitter<string>();
   @Output() onSubscribe = new EventEmitter<string>();
@@ -98,7 +98,7 @@ export class CoursePickerComponent implements OnInit {
     if (this.mode === 'dialog' && this.dialogRef) {
       this.dialogRef.close('Dialog Closed');
     } else {
-      this.router.navigate(['/dashboard/start']);
+      this.router.navigate(['/dashboard']);
     }
   }
 }

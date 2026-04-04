@@ -4,6 +4,7 @@ import { AuthGuard } from '@core/guard/auth.guard';
 import { Page404Component } from './authentication/page404/page404.component';
 import { AuthLayoutComponent } from './layout/app-layout/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './layout/app-layout/main-layout/main-layout.component';
+import { ViewCourseComponent } from './pages/view-course/view-course.component';
 
 export const APP_ROUTE: Route[] = [
     {
@@ -12,6 +13,10 @@ export const APP_ROUTE: Route[] = [
         canActivate: [AuthGuard],
         children: [
             { path: '', redirectTo: '/authentication/signin', pathMatch: 'full' },
+            {
+                path: 'view/:course',
+                component: ViewCourseComponent,
+            },
             {
                 path: 'admin',
                 canActivate: [AuthGuard],

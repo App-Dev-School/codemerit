@@ -3,8 +3,8 @@
   @if (loading) {
   <div class="overlay"></div>
   <div class="animToast courseLoader loading">
-    <h5>{{loadingText}}</h5>
-    <h6 class="col-grey">{{ courseItem?.title ? 'Fetching '+courseItem?.title+' Subjects': 'Fetching Details'}} </h6>
+    <h5 class="col-grey">{{loadingText}}</h5>
+    <h5>{{ courseItem?.title ? 'Loading '+courseItem?.title+' Resources': 'Fetching Details'}} </h5>
     <hr class="dim-divider">
     <!-- Stacked subject image loading effect -->
     @if (courseItem && courseItem?.subjects) {
@@ -21,18 +21,16 @@
   @if (!loading && courseItem) {
   <div class="content-block">
 
-    <!-- Should remove below code block -->
-    <!-- <div class="row m-t-20 match-height clearfix">
+
+    <div class="row m-t-20 match-height clearfix">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-        @if (userData) {
-        <app-congratulations-card [user]="userData"></app-congratulations-card>
-        }
-        @if (userData?.userJobRoles?.length > 0) {
-        <app-medal-card [userName]="'Hi '+userData?.firstName +'!'" [action]="'selfRating'" 
-          [message]="'Up-Skill and Evaluate Skills in '+courseItem?.title+'.'"></app-medal-card>
-        }
+      @for(certificate of certificateModels; track certificate) {
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <app-certificate [templateId]="certificate.templateId" [model]="certificate"></app-certificate>
       </div>
-    </div> -->
+      }
+      </div>
+    </div>
 
     <div class="row match-height m-t-10 clearfix">
       <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
@@ -74,9 +72,7 @@
             </div>
           </div>
         </div>
-        <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
         <ng-container *ngTemplateOutlet="courseAssessments"></ng-container>
-        <ng-container *ngTemplateOutlet="courseCertification"></ng-container>
         <ng-container *ngTemplateOutlet="courseAssistant"></ng-container>
       </div>
     </div>
@@ -125,31 +121,16 @@
   </mat-tab-group>
 </ng-template>
 
-<ng-template #courseCertification>
-  <mat-card>
-    <mat-card-header class="header-style">
-      <mat-card-title>Check Certifications</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-       <div class="no-data-container text-center">
-    <img src="assets/images/icons/student.png" class="loadingIcon m-t-20" />
-    <h6 class="col-grey">Keep Exploring</h6>
-    <small>Your performance and eligibility for certifications will be updated as you progress.</small>
-  </div>
-    </mat-card-content>
-  </mat-card>
-</ng-template>
-
 <ng-template #courseAssessments>
   <mat-card>
     <mat-card-header class="header-style">
-      <mat-card-title>Course Assessments</mat-card-title>
+      <mat-card-title>Book a Personalized assessment</mat-card-title>
     </mat-card-header>
     <mat-card-content>
        <div class="no-data-container11 text-center">
     <img src="assets/images/icons/certificate.png" class="loadingIcon m-t-20" />
     <h6 class="col-grey">{{courseItem?.title}}</h6>
-    <small>You have not taken any assessment yet.</small>
+    <small>Ready for your first or the next big job role? Schedule a comprehensive assessment to evaluate your skills with AI and experts.</small>
   </div>
     </mat-card-content>
   </mat-card>
@@ -157,11 +138,11 @@
 
 <ng-template #courseAssistant>
   <mat-card>
-    <mat-card-header class="header-style">
-      <mat-card-title>Welcome {{userData?.firstName}}</mat-card-title>
-    </mat-card-header>
     <mat-card-content>
         <div class="text-center m-t-20 m-b-20">
+          <h6 class="font-20 m-b-10">Meet your AI Assistant for {{courseItem?.title}}</h6>
+          <p class="col-grey">Get personalized guidance, resources, and support to help you succeed in your learning journey for {{courseItem?.title}}. Your AI assistant is here to help you navigate through the course, answer your questions, and provide tailored recommendations based on your progress and goals.</p>
+         
           <h6 class="text-center font-20 m-b-10">
             <span class="col-dark m-t-10">How are you doing as {{courseItem.title}} ?</span>
           </h6>
@@ -175,29 +156,8 @@
           <button mat-stroked-button (click)="goToCourses()" color="primary">
             <i class="material-icons">badge</i> &nbsp;Explore Other Roles</button>
 
-          <!-- @if (userData?.userJobRoles && courseItem && userData?.designation !== courseItem?.id) {
-          <hr class="dim-divider">
-          <div class="font-12 m-b-10">Are you looking to switch your current designation to {{courseItem.title}}?</div>
-          <button mat-flat-button (click)="onSubscribe(courseItem)" color="primary">
-            <i class="material-icons">card_membership</i> Get Access</button>
-          } -->
+          <!--  <i class="material-icons">smart_toy</i> &nbsp;Chat with Assistant -->
         </div>
-    </mat-card-content>
-  </mat-card>
-</ng-template>
-
-
-<ng-template #courseEnroll>
-  <mat-card>
-    <mat-card-header class="header-style">
-      <mat-card-title>Enroll Now</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-       <div class="no-data-container11 text-center">
-    <img src="assets/images/icons/hinting.gif" class="loadingIcon m-t-20" />
-    <h6 class="col-grey">Ke</h6>
-    <small>Your timeline, goals and rewards will appear as you progress.</small>
-  </div>
     </mat-card-content>
   </mat-card>
 </ng-template>

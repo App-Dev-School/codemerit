@@ -52,9 +52,6 @@
                   <mat-icon>delete_outline</mat-icon>
                 </button>
 
-                <app-table-show-hide-column
-                  [columnDefinitions]="columnDefinitions"
-                ></app-table-show-hide-column>
 
                 <button
                   mat-icon-button
@@ -134,9 +131,10 @@
                           <span class="mobile-label">{{ column.label }}:</span>
                         }
                           @if (column.def == "question") {
-                            <div class="full-text">
+                            <div class="full-text bold-text">
                               {{ row[column.def] }}
                             </div>
+                            <!-- <div class="badge bg-primary">{{ row.level ? row.level : 'N/A' }}</div> -->
                           } @else {
                             @if (column.def == "subject") {
                               <div class="full-text">

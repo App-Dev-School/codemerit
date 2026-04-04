@@ -353,7 +353,7 @@ export class QuestionFormPage implements OnInit {
       this.dialogRef.close(resultData);
     } else {
       this.snackService.display('snackbar-dark', (resultData?.message) ?? "Question added.", 'bottom', 'center');
-      this.router.navigate(['/admin/questions/list']);
+      this.router.navigate(['/lms/questions/list']);
     }
   }
 }

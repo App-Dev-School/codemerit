@@ -40,6 +40,7 @@
                 <li [routerLinkActive]="sidebarSubItem1.submenu.length > 0 ? '' : 'active'">
                   <a [routerLink]="sidebarSubItem1.submenu.length > 0 ? null : [sidebarSubItem1.path]"
                     (click)="callToggleMenu($event,sidebarSubItem1.submenu.length)" [ngClass]="[sidebarSubItem1.class]">
+                    <i [ngClass]="[sidebarItem.iconType]">{{sidebarSubItem1.icon}}</i>
                     {{sidebarSubItem1.title}}
                   </a>
                   <!-- Second level menu -->

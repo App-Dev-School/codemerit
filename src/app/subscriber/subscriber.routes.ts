@@ -1,10 +1,10 @@
 import { Route } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { SelectCourseComponent } from './select-course/select-course.component';
 export const SUBSCRIBER_ROUTE: Route[] = [
   {
-    path: 'start/:course',
+    path: '',
     component: CourseDashboardComponent,
   },
   {

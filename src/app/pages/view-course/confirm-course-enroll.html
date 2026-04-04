@@ -27,11 +27,14 @@
     </div>
   </div>
   <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 w-100">
-    <button mat-flat-button color="primary" (click)="dismiss($event)" rippleEffect class="w-100 w-md-auto">
+    <button mat-flat-button color="primary" (click)="dismiss($event)" rippleEffect>
       Cancel
     </button>
+     <button mat-stroked-button color="primary" (click)="viewCourseDetails()" class="w-100 w-md-auto">
+      View Course Details
+    </button>
     <button mat-stroked-button color="primary" (click)="doSetUserDesignation()" class="w-100 w-md-auto">
-      Start Certification
+      Enroll Me
     </button>
   </div>
   }

@@ -23,11 +23,14 @@ import { CoursePickerComponent } from '@shared/components/select-course/course-p
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 import { QuizService } from 'src/app/quiz/quiz.service';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
+import { CertificateModel } from '@shared/components/certificate/certificate.model';
+import { certificateModels } from '../welcome/welcome.component';
+import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 
 @Component({
-  selector: 'app-course-dashboard',
-  templateUrl: './course-dashboard.component.html',
-  styleUrls: ['./course-dashboard.component.scss'],
+  selector: 'app-view-course',
+  templateUrl: './view-course.component.html',
+  styleUrls: ['./view-course.component.scss'],
   animations: [fadeInAnimation],
   imports: [
     MatButtonModule,
@@ -39,14 +42,14 @@ import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.comp
     NgTemplateOutlet,
     CongratulationsCardComponent,
     MedalCardComponent,
-    SubjectTrackerCardComponent
+    SubjectTrackerCardComponent,
+    CertificateComponent
   ]
 })
-export class CourseDashboardComponent implements OnInit {
-  pageTitle = 'MainDashboard';
+export class ViewCourseComponent implements OnInit {
+  pageTitle = 'ViewCourse';
   loading = true;
-  loadingText = 'Loading your Dashboard';
-  //generatingQuiz = false;
+  loadingText = '';
   userData: User;
   showContent = true;
   course = "";
@@ -61,6 +64,7 @@ export class CourseDashboardComponent implements OnInit {
     showIcon: false,
     showLegend: false
   };
+  certificateModels : CertificateModel[] = [];
   //For displaying test data
   debugDisplay = false;
   constructor(private master: MasterService,
@@ -78,10 +82,11 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('Course Viewer: ', this.course);
+    this.certificateModels = certificateModels.filter(item => item.flag === 'angular');
     this.authService.currentUser.subscribe((localUser: User) => {
       if (localUser && localUser.email && localUser.token) {
         this.userData = localUser;
-        console.log('Course Dashboard user changed.', localUser);
         //this.snackService.display('snackbar-dark','Course Dashboard user changed.', 'bottom', 'center');
       }else{
         this.authService.logout();

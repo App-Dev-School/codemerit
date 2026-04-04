@@ -7,7 +7,7 @@ import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angul
 import { AuthService } from '@core';
 import { topToBottomAnimation } from '@shared/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { SetDesignationBottomSheetComponent } from '../course-dashboard/confirm-course-enroll.component';
+import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
 
 @Component({
   selector: 'app-select-course',
@@ -33,8 +33,6 @@ export class SelectCourseComponent implements OnInit {
   constructor(private router: Router, 
     private _bottomSheet: MatBottomSheet,
     public authService: AuthService) {
-    // constructor code
-    this.actionMode = 'skill-rating';
   }
 
   ngOnInit() {
@@ -57,7 +55,7 @@ export class SelectCourseComponent implements OnInit {
     this.subject = subject ? subject : "";
     console.log("CoursePickTest #2", subject);
     if (this.actionMode === 'enroll') {
-      this.router.navigate(['/dashboard/start', this.subject]).then(() => {
+      this.router.navigate(['/view', this.subject]).then(() => {
         console.log('Navigation completed!');
       });
     } else if (this.actionMode === 'skill-rating') {
