@@ -22,6 +22,7 @@ import { DatePipe, NgClass, NgSwitch, NgSwitchCase } from '@angular/common';
   ]
 })
 export class CertificateComponent {
+  @Input() preview: boolean = false;
   @Input() templateId: string = 'default';
   @Input() model!: CertificateModel;
 }

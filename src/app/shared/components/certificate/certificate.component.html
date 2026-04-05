@@ -1,4 +1,7 @@
 <div class="certificate-main">
+  @if(preview) {
+    <div class="certificate-watermark"></div>
+  }
   <div class="certificate-header">
     <img src="{{ model.issuerLogo }}" alt="CodeMerit" class="certificate-logo" />
     @if(model.assessmentTitle ){
@@ -121,19 +124,21 @@
       </div>
     </div>
   </div>
-  <div class="certificate-footer">
-    <div class="footer-names-row">
-      <div class="footer-col footer-issuer">
-        <div class="footer-label">Issuer</div>
-        <img class="footer-signature" src="assets/images/icons/signature.png" alt="Issuer Signature" />
-        <div class="footer-name">{{ model.issuerName }}</div>
+  @if(!preview) {
+    <div class="certificate-footer">
+      <div class="footer-names-row">
+        <div class="footer-col footer-issuer">
+          <div class="footer-label">Issuer</div>
+          <img class="footer-signature" src="assets/images/icons/signature.png" alt="Issuer Signature" />
+          <div class="footer-name">{{ model.issuerName }}</div>
+        </div>
+        <div class="footer-col footer-lead">
+          <div class="footer-label">Program Lead</div>
+          <img class="footer-signature" src="assets/images/icons/signature.png" alt="Program Lead Signature" />
+          <div class="footer-name">{{ model.programLead }}</div>
+        </div>
       </div>
-      <div class="footer-col footer-lead">
-        <div class="footer-label">Program Lead</div>
-        <img class="footer-signature" src="assets/images/icons/signature.png" alt="Program Lead Signature" />
-        <div class="footer-name">{{ model.programLead }}</div>
-      </div>
+      <div class="footer-template">Certificate No. {{ model.certificateNumber }}</div>
     </div>
-    <div class="footer-template">Certificate No. {{ model.certificateNumber }}</div>
-  </div>
+  }
 </div>
