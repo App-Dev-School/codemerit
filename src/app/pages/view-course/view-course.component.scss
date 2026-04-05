@@ -15,23 +15,46 @@
   }
 }
 
-.profile-header {
-  min-height: 150px;
-  height: max-content;
-  color: #fff;
+.p-20{
+  padding: 0px 20px 10px 20px;
 }
+.cmParagraph{
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.actionText{
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+.profile-header {
+  color: #fff;
+  background: var(--profile-header-bg, #1b4f9d);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px 10px 0 0;
+}
+
 .header-content{
-  padding: 20px;
-  height: 100% !important;
-  //background-color: cyan;
+  padding: 12px 0 10px 0;
+  width: 100%;
+  text-align: center;
 }
 
 .icon-img {
-  width: 98px;
-  margin-top: -40px;
+  width: 72px;
+  margin-top: -48px;
+  margin-bottom: 12px;
   border-radius: 50%;
-  background-color: #fff;
+  background: #faf6f6;
   box-shadow: 0px 10px 25px 0px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
 }
 
 .avatar-md {
