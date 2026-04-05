@@ -5,7 +5,16 @@ import { PricingComponent } from "./pricing/pricing.component";
 import { WelcomeComponent } from "./welcome/welcome.component";
 import { SelectSubjectComponent } from "../subscriber/select-subject/select-subject.component";
 import { SelectCourseComponent } from "../subscriber/select-course/select-course.component";
+import { ViewCourseComponent } from "./view-course/view-course.component";
 export const PAGES_ROUTE: Route[] = [
+  {
+    path: "welcome",
+    component: WelcomeComponent,
+  },
+  {
+    path: 'program/:course',
+    component: ViewCourseComponent,
+  },
   {
     path: 'select-subject',
     component: SelectSubjectComponent,
@@ -25,9 +34,5 @@ export const PAGES_ROUTE: Route[] = [
   {
     path: "faqs",
     component: FaqsComponent,
-  },
-  {
-    path: "welcome",
-    component: WelcomeComponent,
-  },
+  }
 ];

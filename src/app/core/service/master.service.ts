@@ -128,6 +128,28 @@ export class MasterService {
       );
   }
 
+    fetchCourseDetail(slug:string): Observable<any> {
+    console.log('Calling fetchCourseDetail API');
+    return this.httpService
+      .get(
+        'apis/master/programDetails/' + slug,
+        this.authService.currentUserValue?.token,
+      )
+      .pipe(
+        map((res: { error: boolean; message: string; data: any }) => {
+          if (!res.error) {
+            console.log('CourseAPI success', res.data);
+            return res.data;
+          }
+          return {};
+        }),
+        catchError((err) => {
+          console.error('CourseAPI Failed :', err);
+          return of({}); // return empty array instead of null
+        }),
+      );
+  }
+
   fetchCourseDashboard(): Observable<any> {
     console.log('Calling fetchCourseDashboard API');
     return this.httpService

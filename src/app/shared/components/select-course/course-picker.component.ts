@@ -30,17 +30,15 @@ import { Observable, of } from 'rxjs';
 export class CoursePickerComponent implements OnInit {
   @Input() minimal = true;
   @Input() currentCourses: number[] = [];
-  @Input() actionMode: string = 'enroll';//skill-rating
+  @Input() actionMode: 'view' | 'enroll' | 'skill-rating' = 'view';
   courses: Observable<any>;
   @Output() subjectSelected = new EventEmitter<string>();
-  @Output() onSubscribe = new EventEmitter<string>();
   isLoading = true;
   mode: 'dialog' | 'route' = 'route';
   userId?: string;
 
   constructor(private master: MasterService, private router: Router,
     private route: ActivatedRoute,
-    //private _bottomSheet: MatBottomSheet,
     @Optional() public dialogRef?: MatDialogRef<CoursePickerComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: any) {
     if (this.dialogRef) {
@@ -57,15 +55,8 @@ export class CoursePickerComponent implements OnInit {
 
   ngOnInit(): void {
     const allJobRoles = this.master.jobRoles;
-    console.log("CoursePicker allJobRoles", allJobRoles);
     if(allJobRoles && allJobRoles.length > 0){
     const liveJobRoles = allJobRoles.filter(item => item.isPublished);
-    console.log("CoursePicker liveJobRoles", liveJobRoles, this.userId);
-    // const myJobRoles = liveJobRoles.map(q => ({
-    //   ...q,
-    //   isSubscribed: q.id < 3 ? true : false,
-    //   progress: 61 + 3*q.id
-    // }));
     this.courses = of(liveJobRoles);
     }
     this.isLoading = false;
@@ -76,22 +67,6 @@ export class CoursePickerComponent implements OnInit {
     if (this.mode === 'dialog' && this.dialogRef) {
     this.dialogRef.close(course.slug);
     }
-  }
-
-  pickJobRole(course: any) {
-    console.log("pickJobRole", course);
-     if (this.mode === 'dialog' && this.dialogRef) {
-      this.dialogRef.close(course.slug);
-     }
-    this.onSubscribe.emit(course);
-     //refresh the component
-    //   this.dialogRef.close(course.slug);
-    //   console.log("CoursePickTest #1");
-    //   //alert("Set Designation as "+course.title);
-    //   this._bottomSheet.open(SetDesignationBottomSheetComponent);
-    // }else{
-    //   this.router.navigate(['/dashboard/start', course.slug]);
-    // }
   }
 
   close() {

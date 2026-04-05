@@ -22,7 +22,7 @@ import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 import { QuizService } from 'src/app/quiz/quiz.service';
-import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
+import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
 
 @Component({
   selector: 'app-course-dashboard',

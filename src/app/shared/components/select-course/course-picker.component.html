@@ -78,11 +78,11 @@
             <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 w-100">
               @if (currentCourses.length > 0 && currentCourses.includes(job.id)) {
               <button mat-flat-button color="primary" (click)="switchJobRole(job)" rippleEffect class="w-100 w-md-auto">
-                View
+                Continue
               </button>
               }@else{
-              <button mat-stroked-button color="primary" (click)="pickJobRole(job)" class="w-100 w-md-auto">
-                {{ actionMode == 'skill-rating' ? 'Start Evaluation' : 'Select' }}
+              <button mat-stroked-button color="primary" (click)="switchJobRole(job)" class="w-100 w-md-auto">
+                {{ actionMode == 'skill-rating' ? 'Start Evaluation' : (actionMode == 'enroll' ? 'Enroll Now' : 'Explore') }}
               </button>
               }
             </div>

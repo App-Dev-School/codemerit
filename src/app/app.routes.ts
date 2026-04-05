@@ -14,10 +14,6 @@ export const APP_ROUTE: Route[] = [
         children: [
             { path: '', redirectTo: '/authentication/signin', pathMatch: 'full' },
             {
-                path: 'view/:course',
-                component: ViewCourseComponent,
-            },
-            {
                 path: 'admin',
                 canActivate: [AuthGuard],
                 data: {
@@ -62,6 +58,13 @@ export const APP_ROUTE: Route[] = [
             }
         ],
     },
+    // {
+    //     path: 'view/:course',
+    //     component: MainLayoutComponent,
+    //     loadComponent: () =>
+    //         import('./pages/view-course/view-course.component')
+    //             .then(m => m.ViewCourseComponent)
+    // },
     {
         path: 'authentication',
         component: AuthLayoutComponent,
