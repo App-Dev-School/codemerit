@@ -35,10 +35,11 @@ export interface QuestionFilterValue {
   subject: number[];
   topic: number[];
   level: string;
-  authorId: number;
+  authorId: number | null;
 }
 
 type QuizQuestionsFormMode = 'quiz-builder' | 'filter-only';
+type AuthorFilterOption = number | 'all';
 
 interface Question {
   id: number;
@@ -76,6 +77,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   @Output() filtersApplied = new EventEmitter<QuestionFilterValue>();
   @Input() mode: QuizQuestionsFormMode = 'quiz-builder';
   @Input() title = 'Filter Questions';
+  @Input() initialFilters: QuestionFilterValue | null = null;
   showFilter = true;
   filterForm: FormGroup;
   @Input() subjects: any[] = [];
@@ -92,13 +94,14 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       subject: [[]],
       topic: [[]],
       level: [''],
-      authorId: [0],
+      authorId: ['all' as AuthorFilterOption],
     });
   }
 
   ngOnInit(): void {
     this.filteredQuestions = [...this.questions];
     this.filteredTopics = [...this.topics];
+    this.applyInitialFilters();
     this.filterForm.get('subject')?.valueChanges.subscribe((subjectIds) => {
       this.syncTopics(subjectIds ?? []);
     });
@@ -114,13 +117,20 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       this.syncTopics(selectedSubjects);
     }
 
+    if (changes['initialFilters'] && !changes['initialFilters'].firstChange) {
+      this.applyInitialFilters();
+    }
+
     if (changes['authors'] && this.mode === 'filter-only') {
       const selectedAuthor = this.filterForm.get('authorId')?.value;
       if (
-        (!selectedAuthor || selectedAuthor === 0) &&
-        this.authors.length > 0
+        selectedAuthor === null ||
+        selectedAuthor === undefined ||
+        selectedAuthor === ''
       ) {
-        this.filterForm.get('authorId')?.setValue(this.authors[0].id);
+        this.filterForm.get('authorId')?.setValue('all', {
+          emitEvent: false,
+        });
       }
     }
   }
@@ -147,7 +157,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       subject: subject ?? [],
       topic: topic ?? [],
       level: level ?? '',
-      authorId: Number(authorId) || 0,
+      authorId: authorId === 'all' ? null : Number(authorId),
     };
 
     if (this.mode === 'filter-only') {
@@ -163,10 +173,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       subject: [],
       topic: [],
       level: '',
-      authorId:
-        this.mode === 'filter-only' && this.authors.length > 0
-          ? this.authors[0].id
-          : 0,
+      authorId: 'all',
     });
     this.filteredQuestions = [...this.questions];
 
@@ -175,10 +182,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
         subject: [],
         topic: [],
         level: '',
-        authorId:
-          this.mode === 'filter-only' && this.authors.length > 0
-            ? this.authors[0].id
-            : 0,
+        authorId: null,
       });
     }
   }
@@ -251,6 +255,27 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     if (nextTopics.length !== selectedTopics.length) {
       this.filterForm.get('topic')?.setValue(nextTopics);
     }
+  }
+
+  private applyInitialFilters(): void {
+    if (!this.initialFilters) {
+      return;
+    }
+
+    this.filterForm.patchValue(
+      {
+        subject: this.initialFilters.subject ?? [],
+        topic: this.initialFilters.topic ?? [],
+        level: this.initialFilters.level ?? '',
+        authorId:
+          this.mode === 'filter-only' && this.initialFilters.authorId === null
+            ? 'all'
+            : this.initialFilters.authorId,
+      },
+      { emitEvent: false },
+    );
+
+    this.syncTopics(this.initialFilters.subject ?? []);
   }
 
   drop(event: CdkDragDrop<Question[]>): void {
