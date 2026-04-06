@@ -4,6 +4,7 @@ import { AuthGuard } from '@core/guard/auth.guard';
 import { Page404Component } from './authentication/page404/page404.component';
 import { AuthLayoutComponent } from './layout/app-layout/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './layout/app-layout/main-layout/main-layout.component';
+import { ViewCourseComponent } from './pages/view-course/view-course.component';
 
 export const APP_ROUTE: Route[] = [
     {
@@ -57,6 +58,13 @@ export const APP_ROUTE: Route[] = [
             }
         ],
     },
+    // {
+    //     path: 'view/:course',
+    //     component: MainLayoutComponent,
+    //     loadComponent: () =>
+    //         import('./pages/view-course/view-course.component')
+    //             .then(m => m.ViewCourseComponent)
+    // },
     {
         path: 'authentication',
         component: AuthLayoutComponent,

@@ -39,7 +39,6 @@ import {
   QuizQuestionsFormComponent,
   QuestionFilterValue,
 } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
-import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
 import { MasterService } from '@core/service/master.service';
 import { Subject } from 'rxjs';
 import { QuestionDeleteComponent } from './dialogs/delete/delete.component';
@@ -71,8 +70,7 @@ import { QuestionAuthor, QuestionService } from './questions.service';
     NgClass,
     MatRippleModule,
     MatPaginatorModule,
-    QuizQuestionsFormComponent,
-    TableShowHideColumnComponent,
+    QuizQuestionsFormComponent
   ],
 })
 export class QuestionsComponent implements OnInit, OnDestroy {
@@ -111,13 +109,6 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       type: 'text',
       class: 'col-status',
       visible: true,
-    },
-    {
-      def: 'level',
-      label: 'Level',
-      type: 'text',
-      class: 'col-level',
-      visible: false,
     },
     {
       def: 'actions',

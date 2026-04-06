@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
+import { register } from 'swiper/element/bundle';
 import { Direction } from '@angular/cdk/bidi';
-import { NgTemplateOutlet } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -22,14 +22,20 @@ import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 import { QuizService } from 'src/app/quiz/quiz.service';
-import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
+import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
+import { CertificateModel } from '@shared/components/certificate/certificate.model';
+import { certificateModels } from '../welcome/welcome.component';
+import { CertificateComponent } from '@shared/components/certificate/certificate.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 
 @Component({
-  selector: 'app-course-dashboard',
-  templateUrl: './course-dashboard.component.html',
-  styleUrls: ['./course-dashboard.component.scss'],
+  selector: 'app-view-course',
+  templateUrl: './view-course.component.html',
+  styleUrls: ['./view-course.component.scss'],
   animations: [fadeInAnimation],
   imports: [
+    CommonModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
@@ -39,14 +45,16 @@ import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/co
     NgTemplateOutlet,
     CongratulationsCardComponent,
     MedalCardComponent,
-    SubjectTrackerCardComponent
-  ]
+    SubjectTrackerCardComponent,
+    MeritListWidgetComponent,
+    CertificateComponent
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class CourseDashboardComponent implements OnInit {
-  pageTitle = 'MainDashboard';
+export class ViewCourseComponent implements OnInit, AfterViewInit {
+  pageTitle = 'ViewCourse';
   loading = true;
-  loadingText = 'Loading your Dashboard';
-  //generatingQuiz = false;
+  loadingText = '';
   userData: User;
   showContent = true;
   course = "";
@@ -61,6 +69,86 @@ export class CourseDashboardComponent implements OnInit {
     showIcon: false,
     showLegend: false
   };
+  certificateModels: CertificateModel[] = [];
+  @ViewChild('swiperEx') swiperRef!: ElementRef<any>;
+  meritList: any[] = [
+    {
+      "id": 1,
+      "name": "Vishal Kumar",
+      "username": "vishal-kumar",
+      "image": null,
+      "designationName": null,
+      "totalCorrect": 10,
+      "totalWrong": 0,
+      "totalAttempts": 10,
+      "avgAccuracy": 100,
+      "coverage": 4.6,
+      "baseScore": 100,
+      "score": 80.9,
+      "rank": 1
+    },
+    {
+      "id": 9,
+      "name": "Sanika ",
+      "username": "sanika",
+      "image": null,
+      "designationName": null,
+      "totalCorrect": 10,
+      "totalWrong": 0,
+      "totalAttempts": 10,
+      "avgAccuracy": 100,
+      "coverage": 4.6,
+      "baseScore": 100,
+      "score": 80.9,
+      "rank": 1
+    },
+    {
+      "id": 6,
+      "name": "Naman Jaiswal",
+      "username": "naman-jaiswal",
+      "image": null,
+      "designationName": null,
+      "totalCorrect": 50,
+      "totalWrong": 5,
+      "totalAttempts": 67,
+      "avgAccuracy": 74.6,
+      "coverage": 30.7,
+      "baseScore": 73.1,
+      "score": 64.6,
+      "rank": 3
+    },
+    {
+      "id": 19,
+      "name": "Carolin ",
+      "username": "carolin",
+      "image": null,
+      "designationName": null,
+      "totalCorrect": 10,
+      "totalWrong": 10,
+      "totalAttempts": 20,
+      "avgAccuracy": 50,
+      "coverage": 9.2,
+      "baseScore": 40,
+      "score": 33.8,
+      "rank": 4
+    },
+    {
+      "id": 5,
+      "name": "Jyoti Kumari",
+      "username": "anumpam-singh",
+      "image": null,
+      "designationName": null,
+      "totalCorrect": 2,
+      "totalWrong": 0,
+      "totalAttempts": 10,
+      "avgAccuracy": 20,
+      "coverage": 4.6,
+      "baseScore": 20,
+      "score": 16.9,
+      "rank": 5
+    }
+  ];
+
   //For displaying test data
   debugDisplay = false;
   constructor(private master: MasterService,
@@ -73,21 +161,16 @@ export class CourseDashboardComponent implements OnInit {
     private snackService: SnackbarService
   ) {
     console.log(this.pageTitle, "User ", this.authService.currentUser);
+    register();
     this.userData = this.authService.currentUserValue;
-    //this.userData.profile = localStorage.getItem(AuthConstants.CACHE_FULL_PROFILE);
+    if (this.userData) {
+      const userJobRoles = this.authService.getUserJobRoles();
+      console.log(this.pageTitle, "ngOnInit ok", userJobRoles);
+    }
   }
 
   ngOnInit() {
-    this.authService.currentUser.subscribe((localUser: User) => {
-      if (localUser && localUser.email && localUser.token) {
-        this.userData = localUser;
-        console.log('Course Dashboard user changed.', localUser);
-        //this.snackService.display('snackbar-dark','Course Dashboard user changed.', 'bottom', 'center');
-      }else{
-        this.authService.logout();
-        this.router.navigate(['/login']);
-      }
-    });
+    this.certificateModels = certificateModels.filter(item => item.flag === 'angular');
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.showContent = false; // Hide content when navigation starts
@@ -97,25 +180,15 @@ export class CourseDashboardComponent implements OnInit {
       }
     });
     this.takeRouteParams();
-    // setTimeout(() => {
-    //   this.loading = false;
-    // }, 3333);
   }
 
   takeRouteParams() {
     const course = this.route.snapshot.paramMap.get('course');
-    console.log(this.pageTitle, "RouteSnap course", course);
+    console.log(this.pageTitle, "Course", course);
     if (course) {
       this.course = course;
     } else {
-      if (this.authService.currentUserValue && this.authService.getUserJobRoles()?.length > 0) {
-        const userCourses = this.authService.getUserJobRoles();
-        const firstCourse = userCourses[userCourses.length - 1];
-        this.course = this.master.jobRoles.filter(role => role.id === firstCourse.jobRoleId)[0]?.slug;
-        console.log(this.pageTitle, "RouteSnap course defaulted", this.course);
-      } else {
-        this.goToCourses();
-      }
+      this.goToCourses();
     }
     if (this.course)
       this.onCourseChange(this.course);
@@ -133,9 +206,9 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   filterCourse(allJobRoles: any) {
-    //Display the job role map
     this.courseItem = allJobRoles.find(role => role.slug === this.course);
-    console.log(this.pageTitle, "@CourseItem", this.courseItem);
+    console.log(this.pageTitle, "filterCourse > @CourseItem", this.courseItem);
+    this.fetchCourseData();
   }
 
   onCourseChange(course: string) {
@@ -144,38 +217,46 @@ export class CourseDashboardComponent implements OnInit {
     if (this.course) {
       //get this from a service first
       const allJobs = this.master.jobRoles;
+
+      console.log(this.pageTitle, "onCourseChange checkingMaster", allJobs);
       if (allJobs) {
+        console.log(this.pageTitle, "onCourseChange master exists");
         this.filterCourse(allJobs);
       } else {
         //get this from server
         this.master.fetchJobRoleSubjectMapping().subscribe((data: any) => {
-          console.log("CourseDash #2 fetchJobRoleSubjectMapping", data);
-          if (data && !data.error && data.data) {
-            const allJobRoles = data.data;
-            this.filterCourse(allJobRoles);
+          console.log(this.pageTitle, "onCourseChange fetchJobRoleSubjectMapping", data);
+          if (data && data.length > 0) {
+            //const allJobRoles = data;
+            this.filterCourse(data);
           }
         });
       }
 
-      //we need list of all subjects in a course along with course details
-      this.master.fetchCourseDashboard().subscribe((data: any) => {
-        if (data) {
-           console.log("getAttemptedSubjects 0", data);
-          this.courseData = data;
-          this.attemptedSubjects = this.courseData.filter(item => item.attempted && item.attempted > 0);
-          this.otherSubjects = this.courseData.filter(item => !(item.attempted && item.attempted > 0));
-
-          setTimeout(() => {
-            this.loading = false;
-          }, 3000);
-        }
-      }, (err: any) => {
-        this.loading = false;
-        this.snackService.display('snackbar-dark', 'Error loading Course Dashboard.', 'bottom', 'center');
-      });
+      //this is causing infinite loop, need to optimize
+      //this.fetchCourseData();
     }
   }
-  
+
+  fetchCourseData() {
+    this.master.fetchCourseDetail(this.course).subscribe((data: any) => {
+      if (data) {
+        console.log("getAttemptedSubjects 0", data);
+        this.courseData = data;
+        if (this.courseData && this.courseData.length > 0) {
+          this.attemptedSubjects = this.courseData.filter(item => item.attempted && item.attempted > 0);
+          this.otherSubjects = this.courseData.filter(item => !(item.attempted && item.attempted > 0));
+        }
+        setTimeout(() => {
+          this.loading = false;
+        }, 2000);
+      }
+    }, (err: any) => {
+      this.loading = false;
+      this.snackService.display('snackbar-dark', 'Error loading program details.', 'bottom', 'center');
+    });
+  }
+
   onSubscribe(course: any) {
     //this.onSubscribe.emit(course);
     console.log("onSubscribe Course", course);
@@ -241,7 +322,7 @@ export class CourseDashboardComponent implements OnInit {
     this.router.navigate(['/app/select-job-role']);
   }
 
-   viewProfile() {
+  viewProfile() {
     this.router.navigate(['/users/profile']);
   }
 
@@ -286,4 +367,24 @@ export class CourseDashboardComponent implements OnInit {
       this.router.navigate(['/dashboard/learn', subject?.slug]);
   }
 
+  ngAfterViewInit(): void {
+    // Swiper is automatically initialized via web component
+  }
+
+  prevSlide(): void {
+    const swiper = this.swiperRef?.nativeElement?.swiper;
+    if (!swiper) return;
+    swiper.slidePrev();
+  }
+
+
+  nextSlide(): void {
+    const swiper = this.swiperRef?.nativeElement?.swiper;
+    if (!swiper) return;
+    swiper.slideNext();
+  }
+
+  takeQuiz() {
+    this.snackService.display('snackbar-dark', 'Feature coming soon.', 'bottom', 'center');
+  }
 }

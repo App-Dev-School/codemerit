@@ -38,7 +38,7 @@
     @if (!subjectData?.isEnrolled) {
       <div class="board-footer">
         <!-- Footer content here -->
-        <button mat-stroked-button color="primary" class="waves-effect block-btn" (click)="launchSubjectQuiz(currentSubject)">
+        <button mat-flat-button color="primary" class="waves-effect block-btn" (click)="launchSubjectQuiz(currentSubject)">
           <!-- Test {{currentSubject?.title}} Skills -->
           {{nextAction}}
         </button>

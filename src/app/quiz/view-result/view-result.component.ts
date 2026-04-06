@@ -9,11 +9,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
 import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
+import { SnackbarService } from '@core/service/snackbar.service';
 import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
 import { ShareBottomSheetComponent } from '@shared/components/share-bottom-sheet/share-bottom-sheet.component';
 import { environment } from 'src/environments/environment';
-import { QuizService } from '../quiz.service';
 import { QuizHelperService } from '../quiz-helper.service';
+import { QuizService } from '../quiz.service';
 interface Quiz {
   title: string;
   subject_icon: string;
@@ -45,6 +46,7 @@ export class ViewResultComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
+    private snackService: SnackbarService,
     private quizService: QuizService,
     private quizHelper: QuizHelperService,
     private _bottomSheet: MatBottomSheet) {
@@ -67,6 +69,7 @@ export class ViewResultComponent implements OnInit {
         }
       } else {
         //redirect to error page
+        this.snackService.display('snackbar-dark', 'Invalid quiz result code.', 'bottom', 'center');
       }
     });
   }
@@ -88,6 +91,7 @@ export class ViewResultComponent implements OnInit {
   }
 
   createResultEffect() {
+    this.snackService.display('snackbar-dark', 'Thank you for taking the quiz!', 'bottom', 'center');
     if (this.quizService.getQuizConfig().enableAudio) {
       if (this.quizResult && this.quizResult.score >= 80) {
         if (this.quizResult.score > 90) {
@@ -108,7 +112,6 @@ export class ViewResultComponent implements OnInit {
   }
 
   onShareResult(): void {
-    console.log('Quiz Result Share!');
     this.openBottomSheet();
   }
 
@@ -128,17 +131,16 @@ export class ViewResultComponent implements OnInit {
   }
 
   onContinue(): void {
-    //let designationSlug = '';
-    //if subject quiz go to subject dashboard
-    //this.router.navigate(['/dashboard/start', designationSlug]);
-    //.subjects[0].slug
     try {
       if (this.quizResult && this.quizResult.subjects) {
         const firstSubjectSlug = this.quizResult.subjects[0]?.slug;
-        this.router.navigate(['/dashboard/learn', firstSubjectSlug]);
+        const firstSubjectName = this.quizResult.subjects[0]?.title;
+        this.router.navigate(['/dashboard/learn', firstSubjectSlug]).then(() => {
+          this.snackService.display('snackbar-dark', 'Taking back to ' + firstSubjectName+' dashboard.', 'bottom', 'center');
+        });
       }
     } catch (error) {
-      this.router.navigate(['/app/select-subject']);
+      this.router.navigate(['/dashboard']);
     }
   }
   //add methods for sharing options, invite etc.

@@ -24,4 +24,5 @@ export interface CertificateModel {
   platformName: string;
   signedBy: string;
   programLead: string;
+  flag?: string;
 }

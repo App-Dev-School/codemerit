@@ -12,6 +12,13 @@
   <div>
     <form class="register-form m-4" [formGroup]="permissionsForm" (ngSubmit)="submit()">
       <div class="row">
+        @if (errorMessage) {
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
+          <div class="alert alert-danger" role="alert">
+            {{ errorMessage }}
+          </div>
+        </div>
+        }
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
           <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Select Permission</mat-label>

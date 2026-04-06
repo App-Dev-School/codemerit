@@ -1,0 +1,206 @@
+@if(showContent){
+<section class="content" [@fadeIn]>
+  @if (loading) {
+  <div class="overlay"></div>
+  <div class="animToast courseLoader loading">
+    <h5 class="col-grey">{{loadingText}}</h5>
+    <h5>{{ courseItem?.title ? 'Loading '+courseItem?.title+' Resources': 'Fetching Details'}} </h5>
+    <hr class="dim-divider">
+    <!-- Stacked subject image loading effect -->
+    @if (courseItem && courseItem?.subjects) {
+    <div class="image-group">
+      @for (item of courseItem?.subjects; track item) {
+      <img [src]="item.image ?? 'assets/images/tech/placeholder.png'" class="floating" [alt]="item.title">
+      }
+    </div>
+    }
+    <hr class="dim-divider">
+    <h6 class="col-grey">Please wait</h6>
+  </div>
+  }
+  @if (!loading && courseItem) {
+  <div class="content-block">
+
+    <div class="row match-height m-t-20 clearfix">
+      @if (userData?.id > 0) {
+      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+         <ng-container *ngTemplateOutlet="courseTabView"></ng-container>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+        <ng-container *ngTemplateOutlet="courseIntroCard"></ng-container>
+        <ng-container *ngTemplateOutlet="courseAssistant"></ng-container>
+      </div>
+      }@else{
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+        <ng-container *ngTemplateOutlet="courseIntroCard"></ng-container>
+        <ng-container *ngTemplateOutlet="courseAssistant"></ng-container>
+      </div>
+      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+        <ng-container *ngTemplateOutlet="courseTabView"></ng-container>
+      </div>
+      }
+    </div>
+
+  </div>
+  }
+</section>
+}
+
+<ng-template #courseTabView>
+  <mat-tab-group mat-align-tabs="start" class="m-t-0">
+    <mat-tab label="Leaderboard">
+            @if (userData?.id > 0) {
+      <h3>Welcome {{userData?.firstName}}!</h3>
+      }
+      <ng-container *ngTemplateOutlet="courseMeritList"></ng-container>
+    </mat-tab>
+    <mat-tab label="Explore">
+      @if (userData?.id > 0) {
+      <ng-container *ngTemplateOutlet="courseSubjectTabSummary"></ng-container>
+      }@else{
+      <ng-container *ngTemplateOutlet="courseSubjectSummary"></ng-container>
+      }
+    </mat-tab>
+    <mat-tab label="Certifications">
+      <ng-container *ngTemplateOutlet="courseCertificates"></ng-container>
+    </mat-tab>
+  </mat-tab-group>
+</ng-template>
+
+<ng-template #courseSubjectSummary>
+  <div class="row text-center m-t-20 clearfix">
+    @if (courseData && courseData?.length > 0) {
+    @for (item of courseData; track item.id) {
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+      <app-subject-tracker-card [user]="userData" [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
+        (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
+    </div>
+    }
+    }@else{
+    <div class="col-12 m-t-20">
+      <p class="col-grey">Subjects are currently not available.</p>
+    </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #courseSubjectTabSummary>
+  <div class="row text-center m-t-20 clearfix">
+        @if (attemptedSubjects && attemptedSubjects?.length > 0) {
+        @for (item of attemptedSubjects; track item.id) {
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+          <app-subject-tracker-card [user]="userData" [item]="item"
+            (launchSubjectExplorer)="launchSubjectExplorer($event)"
+            (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
+        </div>
+        }
+        }@else{
+        <div class="col-12 m-t-20">
+          <p class="col-grey">No progress yet. Start with a subject to get going!</p>
+        </div>
+        }
+      </div>
+      <div class="row text-center m-t-20 clearfix">
+        @if (otherSubjects && otherSubjects?.length > 0) {
+        @for (item of otherSubjects; track item.id) {
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+          <app-subject-tracker-card [user]="userData" [item]="item"
+            (launchSubjectExplorer)="launchSubjectExplorer($event)"
+            (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
+        </div>
+        }
+        }@else{
+        <div class="col-12 m-t-20">
+          <p class="col-grey">All subjects have been started. Keep up the good work!</p>
+        </div>
+        }
+      </div>
+</ng-template>
+
+<ng-template #courseAssistant>
+  <mat-card>
+    <mat-card-content>
+      <div class="text-center m-t-20 m-b-20">
+        <h6 class="font-20 m-b-10">Your AI Assistant for {{courseItem?.title}}</h6>
+        <p class="cmParagraph m-b-10">Get personalized guidance, resources, and support to help you succeed in your learning
+          journey for {{courseItem?.title}}. Your AI assistant is here to help you navigate through the course, answer
+          your questions, and provide tailored recommendations based on your progress and goals.</p>
+
+          <hr class="dim-divider">
+        @if (courseItem?.subjects) {
+        <button mat-flat-button (click)="takeQuiz()" color="primary" class="btn m-b-10" rippleEffect>
+          <i class="material-icons">smart_toy</i> &nbsp;Generate a Quiz</button>
+        }
+
+        <button mat-stroked-button (click)="goToCourses()" color="primary" class="btn m-b-10" rippleEffect>
+          <i class="material-icons">airplay</i> &nbsp;Explore All Roles</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-template>
+
+<ng-template #courseCertificates>
+  <swiper-container #swiperEx pagination="true" pagination-clickable="true" slides-per-view="auto" space-between="10"
+    free-mode="true" class="certificate-swiper1 h-100">
+    @for(certificate of certificateModels; track certificate) {
+    <swiper-slide class="swiper-slide m-t-20 m-b-20">
+      <app-certificate [templateId]="certificate.templateId" [model]="certificate" [preview]="true"></app-certificate>
+    </swiper-slide>
+    }
+  </swiper-container>
+</ng-template>
+
+<ng-template #courseMeritList>
+  <mat-card class="m-t-20">
+        <mat-card-header class="header-style">
+          <!-- <img mat-card-avatar src="{{topic.image}}"> -->
+          <mat-card-title>Top {{courseItem?.title}}s</mat-card-title>
+          <a mat-button color="primary">
+            <i class="material-icons col-green psr-2">trending_up</i>
+          </a>
+        </mat-card-header>
+        <mat-card-content>
+          <app-merit-list-widget [meritList]="meritList"></app-merit-list-widget>
+        </mat-card-content>
+      </mat-card>
+</ng-template>
+
+<ng-template #courseIntroCard>
+  <div class="card">
+    <div class="contact-grid">
+      <div class="profile-header">
+        <div class="header-content">
+          <h4 class="name-center">{{courseItem.title}}</h4>
+          @if (courseItem && courseItem?.subjects) {
+          <ul class="list-unstyled order-list m-b-20">
+            @for (item of courseItem?.subjects; track item) {
+            <li class="avatar avatar-md">
+              <img class="rounded-circle" [src]="item.image" alt="{{item.title}}">
+            </li>
+            }
+          </ul>
+          }
+          <h5 class="actionText m-t-10">+3 Certification Tracks</h5>
+        </div>
+      </div>
+      <img src="assets/images/users/user.jpg" class="icon-img" alt="User" />
+      @if (userData?.id > 0 && userData?.firstName) {
+      <div class="user-name">Hi {{userData?.firstName}} {{userData?.lastName}}</div>
+      }
+    </div>
+    <div class="text-center p-20">
+      <small class="cmParagraph">Ready for your next</small>
+      <h5 class="name-center">{{courseItem.title}} role?</h5>
+      <p class="cmParagraph">Enroll now to access a comprehensive Skill Assessment and Certification journey with AI and experts. Get detailed skill
+        evaluation and insights to advance your career.</p>
+      <hr class="dim-divider">
+      @if (courseItem?.subjects) {
+      <button mat-stroked-button (click)="onSubscribe(courseItem)" class="btn m-b-10" rippleEffect>
+        <i class="material-icons">badge</i> &nbsp;Apply Now</button>
+      }@else{
+      <button mat-stroked-button (click)="takeQuiz()" color="primary" class="btn m-b-10" rippleEffect>
+        <i class="material-icons">smart_toy</i> &nbsp;Generate a Quiz</button>
+      }
+    </div>
+  </div>
+</ng-template>

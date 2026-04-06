@@ -79,7 +79,7 @@ export class SigninComponent
                 } else {
                   if (role === Role.Subscriber || role === Role.Manager) {
                     if (this.authService.getUserJobRoles()?.length > 0) {
-                      this.redirectToJobDashboard();
+                      this.redirectToLearnerDashboard();
                     } else {
                       this.router.navigate(['/app/select-job-role']);
                     }
@@ -125,13 +125,13 @@ export class SigninComponent
     this.navigateToSignUp();
   }
 
-  redirectToJobDashboard() {
-    if (this.authService.currentUserValue && this.authService.getUserJobRoles()?.length > 0) {
-      const userCourses = this.authService.getUserJobRoles();
-      const lastCourse = userCourses[userCourses.length - 1];
-      const courseSlug = this.master.jobRoles.filter(role => role.id === lastCourse.jobRoleId)[0]?.slug;
-      console.log("Sign In courseSlug determined", courseSlug);
-      this.router.navigate(['/dashboard/start', courseSlug]);
+  redirectToLearnerDashboard() {
+    if(this.authService.currentUserValue){
+      if (this.authService.getUserJobRoles()?.length > 0) {
+      this.router.navigate(['/dashboard']);
+    }else{
+      this.router.navigate(['/dashboard/start']);
+    }
     }
   }
 

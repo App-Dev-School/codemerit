@@ -22,13 +22,6 @@
             </div>
             <div class="right">
               <div class="right-side-btn">
-                <button mat-icon-button [hidden]=!selection.hasValue() (click)="removeSelectedRows()"
-                  class="tbl-header-btn col-red " matTooltip="revoke">
-                  <mat-icon>delete_outline</mat-icon>
-                </button>
-
-                <app-table-show-hide-column [columnDefinitions]="columnDefinitions"></app-table-show-hide-column>
-
                 <button mat-icon-button (click)="addNew()" class="tbl-header-btn col-green" matTooltip="Add">
                   <mat-icon>add_circle_outline</mat-icon>
                 </button>
@@ -52,16 +45,21 @@
                       </mat-header-cell>
                       <mat-cell *matCellDef="let row">
                         <span class="mobile-label">{{ column.label }}:</span>
-                        @if (column.def === 'userFullName') {
+                         @if (column.def === 'userFullName') {
                           <div class="p-10">
                             <div>{{ row.user?.firstName }} {{ row.user?.lastName }}</div>
-                            <div class="col-grey font-12">({{ row.user?.email }})</div>
-                            <div class="badge bg-primary">{{ row.user?.role }}</div>
+                          </div>
+                        }@else{
+                          @if (column.def === 'permissionName') {
+                          <div class="p-10">
+                            <div> {{ row.permissionName }}</div>
+                            <div class="badge bg-primary">{{ row.resourceName ? row.resourceName : (row.resourceType ? row.resourceType : 'Full Access') }}</div>
                           </div>
                         } @else if (column.def === 'userCreatedAt') {
                           <span class="truncate-text">{{ row.user?.createdAt | date:'dd/MM/yyyy' }}</span>
                         } @else {
                           <span class="truncate-text">{{ row[column.def] }}</span>
+                        }
                         }
                       </mat-cell>
                     </ng-container>

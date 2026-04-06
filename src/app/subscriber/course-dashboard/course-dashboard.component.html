@@ -22,7 +22,7 @@
   <div class="content-block">
 
     <!-- Should remove below code block -->
-    <div class="row m-t-20 match-height clearfix">
+    <!-- <div class="row m-t-20 match-height clearfix">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
         @if (userData) {
         <app-congratulations-card [user]="userData"></app-congratulations-card>
@@ -32,13 +32,13 @@
           [message]="'Up-Skill and Evaluate Skills in '+courseItem?.title+'.'"></app-medal-card>
         }
       </div>
-    </div>
+    </div> -->
 
     <div class="row match-height m-t-10 clearfix">
       <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
         <ng-container *ngTemplateOutlet="courseSubjectSummary"></ng-container>
       </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
         <div class="card">
           <div class="m-b-20">
             <div class="contact-grid">
@@ -90,8 +90,8 @@
   <mat-tab-group mat-align-tabs="start" class="m-t-0">
     <mat-tab label="In Progress">
       <div class="row text-center m-t-20 clearfix">
-        @if (getAttemptedSubjects() && getAttemptedSubjects()?.length > 0) {
-        @for (item of getAttemptedSubjects(); track item) {
+        @if (attemptedSubjects && attemptedSubjects?.length > 0) {
+        @for (item of attemptedSubjects; track item.id) {
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
           <app-subject-tracker-card [user]="userData" [item]="item"
             (launchSubjectExplorer)="launchSubjectExplorer($event)"
@@ -107,9 +107,9 @@
     </mat-tab>
     <mat-tab label="To Start">
       <div class="row text-center m-t-20 clearfix">
-        @if (getNotAttemptedSubjects() && getNotAttemptedSubjects()?.length > 0) {
-        @for (item of getNotAttemptedSubjects(); track item) {
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+        @if (otherSubjects && otherSubjects?.length > 0) {
+        @for (item of otherSubjects; track item.id) {
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
           <app-subject-tracker-card [user]="userData" [item]="item"
             (launchSubjectExplorer)="launchSubjectExplorer($event)"
             (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>

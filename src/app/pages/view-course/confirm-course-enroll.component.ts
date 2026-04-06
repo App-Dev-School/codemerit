@@ -55,12 +55,15 @@ export class SetDesignationBottomSheetComponent {
               setTimeout(() => {
                 this.loading = false;
                 this._bottomSheetRef.dismiss(null);
-                this.router.navigate(['/dashboard/start', this.courseItem?.slug]).then(() => {
+                // this.router.navigate(['/dashboard', this.courseItem?.slug]).then(() => {
+                //   this.snackService.display('snackbar-dark', 'Welcome as a ' + this.courseItem?.title, 'bottom', 'center');
+                // });
+                this.router.navigate(['/dashboard']).then(() => {
                   this.snackService.display('snackbar-dark', 'Welcome as a ' + this.courseItem?.title, 'bottom', 'center');
                 });
               }, 3000);
               //Route to new course dashboard
-              this.router.navigate(['/dashboard/start', this.courseItem?.slug]);
+              //this.router.navigate(['/dashboard/start', this.courseItem?.slug]);
 
             } else {
               console.log("Error Enrolling Course");
@@ -84,5 +87,12 @@ export class SetDesignationBottomSheetComponent {
   dismiss(event: MouseEvent): void {
     this._bottomSheetRef.dismiss(null);
     event.preventDefault();
+  }
+
+  viewCourseDetails() {
+    this._bottomSheetRef.dismiss(null);
+    this.router.navigate(['/app/program', this.courseItem?.slug]).then(() => {
+      console.log('Navigation completed!');
+    });
   }
 }

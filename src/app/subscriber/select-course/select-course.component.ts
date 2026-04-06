@@ -7,7 +7,7 @@ import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angul
 import { AuthService } from '@core';
 import { topToBottomAnimation } from '@shared/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { SetDesignationBottomSheetComponent } from '../course-dashboard/confirm-course-enroll.component';
+import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
 
 @Component({
   selector: 'app-select-course',
@@ -22,7 +22,7 @@ import { SetDesignationBottomSheetComponent } from '../course-dashboard/confirm-
   ]
 })
 export class SelectCourseComponent implements OnInit {
-  @Input() actionMode: 'enroll' | 'skill-rating' = 'enroll';
+  @Input() actionMode: 'view' | 'enroll' | 'skill-rating' = 'view';
   showContent = true;
   subject = "";
   subjectData: any;
@@ -33,8 +33,6 @@ export class SelectCourseComponent implements OnInit {
   constructor(private router: Router, 
     private _bottomSheet: MatBottomSheet,
     public authService: AuthService) {
-    // constructor code
-    this.actionMode = 'skill-rating';
   }
 
   ngOnInit() {
@@ -56,29 +54,27 @@ export class SelectCourseComponent implements OnInit {
   onCourseChange(subject: string) {
     this.subject = subject ? subject : "";
     console.log("CoursePickTest #2", subject);
-    if (this.actionMode === 'enroll') {
-      this.router.navigate(['/dashboard/start', this.subject]).then(() => {
+    if (this.actionMode === 'view') {
+      this.router.navigate(['/app/program', this.subject]).then(() => {
         console.log('Navigation completed!');
       });
-    } else if (this.actionMode === 'skill-rating') {
+    } else {
+      if (this.actionMode === 'enroll') {
+      this.router.navigate(['/app/program', this.subject]).then(() => {
+        console.log('Navigation completed!');
+      });
+      }
+      if (this.actionMode === 'skill-rating') {
       this.router.navigate(['/assessment/skill-rating', this.subject]).then(() => {
         console.log('Navigated to skill-rating!');
       });
     }
   }
+  }
 
   onSubscribe(subject: any) {
-    if (this.actionMode === 'enroll') {
-      //take a confirmation
-      this._bottomSheet.open(SetDesignationBottomSheetComponent, {
+    this._bottomSheet.open(SetDesignationBottomSheetComponent, {
         data: subject
-      });
-      //this.doSetUserDesignation(subject);
-    } else if (this.actionMode === 'skill-rating') {
-      // Directly navigate to skill-rating for the selected course
-      this.router.navigate(['/assessment/skill-rating', subject?.slug || subject]).then(() => {
-        console.log('Navigated to skill-rating!');
-      });
-    }
+    });
   }
 }
