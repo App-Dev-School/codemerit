@@ -42,3 +42,18 @@
 .col-actions {
   width: 20%;
 }
+
+.materialTableHeader {
+  position: relative;
+}
+
+.table-filter-panel {
+  display: flex;
+  justify-content: flex-end;
+  margin: 8px 16px 12px;
+}
+
+:host ::ng-deep .table-filter-panel .quiz-questions-form {
+  width: min(420px, 100%);
+  min-height: auto;
+}
