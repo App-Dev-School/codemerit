@@ -133,6 +133,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   selection = new SelectionModel<QuestionItem>(true, []);
   isLoading = true;
   noResultsMessage = 'No questions found for the selected filters.';
+  showFilterPanel = false;
   subjects: any[] = [];
   topics: any[] = [];
   authors: QuestionAuthor[] = [];
@@ -140,7 +141,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     subject: [],
     topic: [],
     level: '',
-    authorId: 0,
+    authorId: null,
   };
   private destroy$ = new Subject<void>();
 
@@ -167,9 +168,6 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     this.questionService.getQuestionAuthors().subscribe({
       next: (authors) => {
         this.authors = authors;
-        if (this.authors.length > 0) {
-          this.currentFilters.authorId = this.authors[0].id;
-        }
         this.loadData();
       },
       error: (err) => {
@@ -243,8 +241,13 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     console.log('QuestionManager applyFilter applied', filterValue);
   }
 
+  toggleFilterPanel() {
+    this.showFilterPanel = !this.showFilterPanel;
+  }
+
   onFiltersApplied(filters: QuestionFilterValue) {
     this.currentFilters = filters;
+    this.showFilterPanel = false;
     // Apply server-side filtering through query params.
     this.loadData();
   }

@@ -21,7 +21,7 @@ export interface QuestionApiFilters {
   subject: number[];
   topic: number[];
   level: string;
-  authorId: number;
+  authorId: number | null;
 }
 
 export interface QuestionAuthor {
@@ -114,7 +114,9 @@ export class QuestionService {
         const mappedLevel = this.mapLevelToCode(filters.level);
         params.push(`level=${encodeURIComponent(mappedLevel)}`);
       }
-      params.push(`authorId=${encodeURIComponent(String(filters.authorId))}`);
+      if (filters.authorId !== null && filters.authorId !== undefined) {
+        params.push(`authorId=${encodeURIComponent(String(filters.authorId))}`);
+      }
     }
 
     const url = `apis/question${params.length ? `?${params.join('&')}` : ''}`;
