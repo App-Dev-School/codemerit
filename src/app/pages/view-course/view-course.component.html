@@ -69,8 +69,8 @@
 
 <ng-template #courseSubjectSummary>
   <div class="row text-center m-t-20 clearfix">
-    @if (otherSubjects && otherSubjects?.length > 0) {
-    @for (item of otherSubjects; track item.id) {
+    @if (courseData && courseData?.length > 0) {
+    @for (item of courseData; track item.id) {
     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
       <app-subject-tracker-card [user]="userData" [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
         (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
@@ -140,7 +140,7 @@
 </ng-template>
 
 <ng-template #courseCertificates>
-  <swiper-container #swiperEx pagination="true" pagination-clickable="true" slides-per-view="2" space-between="30"
+  <swiper-container #swiperEx pagination="true" pagination-clickable="true" slides-per-view="auto" space-between="10"
     free-mode="true" class="certificate-swiper1 h-100">
     @for(certificate of certificateModels; track certificate) {
     <swiper-slide class="swiper-slide m-t-20 m-b-20">
