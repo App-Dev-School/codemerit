@@ -64,7 +64,6 @@
           <mat-form-field appearance="fill" class="w-100">
             <mat-label>Author</mat-label>
             <mat-select formControlName="authorId">
-              <mat-option value="all">All</mat-option>
               @for (author of authors; track author.id) {
                 <mat-option [value]="author.id">{{ author.name }}</mat-option>
               }
