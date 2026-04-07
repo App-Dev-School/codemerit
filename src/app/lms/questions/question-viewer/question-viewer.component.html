@@ -28,7 +28,7 @@
                       {{ $index + 1 }} of {{ questions?.length }}
                     </p>
                     <div class="row clearfix">
-                      <div class="col-lg-8 col-md-8 col-sm-12">
+                      <div class="col-lg-8 col-md-8 col-sm-12 text-center">
                         <div class="question-card">
                           <h4 class="mb-3">#{{ question?.id }}</h4>
                           @if (question.title) {
@@ -116,6 +116,11 @@
                             }
                           }
                         </div>
+                          <hr class="dim-divider" />
+                          <small class="text-center col-grey"
+                            (click)="routeEditQuestionPage(question?.slug)"
+                          >Edit this question
+                          </small>
                       </div>
                       <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="question-card">
@@ -188,14 +193,6 @@
                             mat-raised-button
                             color="dark"
                             (click)="editQuestion(question?.slug)"
-                          >
-                            <mat-icon>edit</mat-icon> Question Editor
-                          </button>
-                          <hr class="dim-divider" />
-                          <button
-                            mat-raised-button
-                            color="dark"
-                            (click)="routeEditQuestionPage(question?.slug)"
                           >
                             <mat-icon>edit</mat-icon> Edit Question
                           </button>

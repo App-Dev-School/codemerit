@@ -6,7 +6,7 @@
         <div class="animToast loading">
           <img src="assets/images/icons/cube.gif" class="loadingIcon">
           <h4>Loading LMS Dashboad</h4>
-          <h5>Please wait </h5>
+          <small>Please wait </small>
         </div>
     }@else{
     @if (dashboard) {
@@ -55,12 +55,12 @@
             <div class="row m-t-10 text-center clearfix">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 text-center">
           <button mat-stroked-button color="primary" (click)="goToQuestions()">
-                Manage
+                View All 
               </button>
         </div>
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 text-center">
            <button mat-stroked-button color="primary" (click)="goToQuestionViewer()">
-                Review
+                Review Questions
               </button>
         </div>
         </div>
@@ -76,21 +76,21 @@
           <mat-card-content>
             <div class="text-center">
               <p class="banner-big-font">
-                {{ dashboard.quizzes.totalQuizCreated +1 }}
+                1{{ dashboard.quizzes.totalQuizCreated }}
               </p>
               <h4 class="banner-big-font2 col-blue">Published Quizzes</h4>
             </div>
             <hr class="dim-divider" />
                 <div class="row">
-                  <div class="col-4">
+                  <div class="col-4 text-center">
                     <label class="font-b-500 font-16">In Review</label>
                     <p class="value-text">0</p>
                   </div>
-                  <div class="col-4">
+                  <div class="col-4 text-center">
                     <label class="font-b-500 font-16">Draft</label>
                     <p class="value-text">1</p>
                   </div>
-                  <div class="col-4">
+                  <div class="col-4 text-center">
                     <label class="font-b-500 font-16">Plays</label>
                     <p class="value-text">131</p>
                   </div>
