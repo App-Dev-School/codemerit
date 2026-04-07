@@ -118,7 +118,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       visible: true,
     },
   ];
-
+  showFilterPanel = false;
   dataSource = new MatTableDataSource<QuestionItem>([]);
   allQuestions: QuestionItem[] = [];
   selection = new SelectionModel<QuestionItem>(true, []);
@@ -227,17 +227,24 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(event: Event) {
+    this.showFilterPanel = false;
     const filterValue = (event.target as HTMLInputElement).value
       .trim()
       .toLowerCase();
     this.dataSource.filter = filterValue;
-    console.log('QuestionManager applyFilter applied', filterValue);
+    console.log('QuestionManager applyFilter', filterValue);
   }
 
   onFiltersApplied(filters: QuestionFilterValue) {
+    console.log('QuestionManager onFiltersApplied', filters);
     this.currentFilters = filters;
+    this.showFilterPanel = false;
     // Apply server-side filtering through query params.
     this.loadData();
+
+  }
+  toggleFilterPanel() {
+    this.showFilterPanel = !this.showFilterPanel;
   }
 
   addNew() {

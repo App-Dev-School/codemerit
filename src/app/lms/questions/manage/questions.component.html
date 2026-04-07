@@ -9,14 +9,18 @@
     </div>
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <app-quiz-questions-form
-          [mode]="'filter-only'"
-          [subjects]="subjects"
-          [topics]="topics"
-          [authors]="authors"
-          [title]="'Filter Questions'"
-          (filtersApplied)="onFiltersApplied($event)"
-        ></app-quiz-questions-form>
+        @if (showFilterPanel) {
+            <div class="table-filter-panel">
+              <app-quiz-questions-form
+                [mode]="'filter-only'"
+                [subjects]="subjects"
+                [topics]="topics"
+                [authors]="authors"
+                [title]="'Filter Questions'"
+                (filtersApplied)="onFiltersApplied($event)"
+              ></app-quiz-questions-form>
+            </div>
+          } @else {
         <div class="card">
           <div class="materialTableHeader">
             <div class="left">
@@ -52,6 +56,13 @@
                   <mat-icon>delete_outline</mat-icon>
                 </button>
 
+<button mat-icon-button
+                  (click)="toggleFilterPanel()"
+                  class="tbl-header-btn col-blue"
+                  matTooltip="Filter"
+                >
+                  <mat-icon>tune</mat-icon>
+                </button>
 
                 <button
                   mat-icon-button
@@ -235,6 +246,7 @@
             </div>
           </div>
         </div>
+      }
       </div>
     </div>
   </div>
