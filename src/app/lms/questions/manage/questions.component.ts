@@ -70,7 +70,7 @@ import { QuestionAuthor, QuestionService } from './questions.service';
     NgClass,
     MatRippleModule,
     MatPaginatorModule,
-    QuizQuestionsFormComponent
+    QuizQuestionsFormComponent,
   ],
 })
 export class QuestionsComponent implements OnInit, OnDestroy {
@@ -158,9 +158,6 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     this.questionService.getQuestionAuthors().subscribe({
       next: (authors) => {
         this.authors = authors;
-        if (this.authors.length > 0) {
-          this.currentFilters.authorId = this.authors[0].id;
-        }
         this.loadData();
       },
       error: (err) => {
@@ -241,7 +238,6 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     this.showFilterPanel = false;
     // Apply server-side filtering through query params.
     this.loadData();
-
   }
   toggleFilterPanel() {
     this.showFilterPanel = !this.showFilterPanel;

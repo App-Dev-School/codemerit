@@ -111,8 +111,7 @@ export class QuestionService {
         });
       }
       if (filters.level) {
-        const mappedLevel = this.mapLevelToCode(filters.level);
-        params.push(`level=${encodeURIComponent(mappedLevel)}`);
+        params.push(`level=${encodeURIComponent(filters.level)}`);
       }
       params.push(`authorId=${encodeURIComponent(String(filters.authorId))}`);
     }
@@ -122,16 +121,6 @@ export class QuestionService {
     return this.httpService
       .get(url, api_key)
       .pipe(map((response: QuestionViewerResponse) => response.data));
-  }
-
-  private mapLevelToCode(level: string): string {
-    const levelMap: Record<string, string> = {
-      Easy: '1',
-      Intermediate: '2',
-      Advanced: '3',
-    };
-
-    return levelMap[level] ?? level;
   }
 
   getQuestionAuthors(): Observable<QuestionAuthor[]> {
