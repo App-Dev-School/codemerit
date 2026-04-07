@@ -14,7 +14,6 @@
   word-wrap: break-word;
   max-height: 100px;
   overflow: hidden;
-  padding: 8px;
 }
 
 .bold-text{
@@ -22,23 +21,17 @@
   font-weight: 500;
   display: block;
 }
-
-::ng-deep .mat-col-subject {
-  width: 50px;
-}
-
-::ng-deep .mat-col-type {
-  width: 10%;
-}
-
-::ng-deep .mat-col-status {
-  width: 10%;
-}
-
 .col-date {
   width: 15%;
 }
 
 .col-actions {
   width: 20%;
+}
+
+.table-filter-panel{
+  width: min(90%, 500px);
+  height: 300px;
+  margin: 0px auto;
+  vertical-align: middle;
 }
