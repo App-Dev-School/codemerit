@@ -69,6 +69,7 @@ export class LmsDashboardMainComponent implements OnInit {
   }
 
   loadDashboard(): void {
+    this.loading = true;
     this.masterService.getLmsDashboard().subscribe({
       next: (response) => {
         if (response && !response.error) {
@@ -94,7 +95,10 @@ export class LmsDashboardMainComponent implements OnInit {
   }
 
   private applyDashboardData(response: any): void {
-    this.loading = false;
+    //clean up on destroy
+    setTimeout(() => {
+      this.loading = false;
+    }, 2000);
     this.dashboard = response?.data ?? response;
     const daily = this.dashboard?.timeSeries?.daily;
     const weekly = this.dashboard?.timeSeries?.weekly;
