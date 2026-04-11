@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { AuthService, Role } from '@core';
 import { QuizQuestion } from '@core/models/quiz-question';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { UtilsService } from '@core/service/utils.service';
@@ -66,6 +67,7 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     private snackService: SnackbarService,
     private questionService: QuestionService,
+    private authService: AuthService,
   ) {
     register(); // Register Swiper web components
   }
@@ -76,6 +78,15 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Swiper is automatically initialized via web component
+  }
+
+  get isAdmin(): boolean {
+    const role = this.authService.currentUserValue?.role;
+    return role === Role.Admin || role === Role.All;
+  }
+
+  canEditQuestion(question: FullQuestion): boolean {
+    return this.isAdmin || !this.whitelistStates[question?.id];
   }
 
   private loadQuestions(): void {
@@ -147,15 +158,32 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/admin/dashboard/main']);
   }
 
-  routeEditQuestionPage(slug: string) {
-    //const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
+  routeEditQuestionPage(slug: string, question: FullQuestion) {
+    if (!this.canEditQuestion(question)) {
+      this.snackService.display(
+        'snackbar-dark',
+        'Whitelisted questions can only be edited by admins.',
+        'bottom',
+        'center',
+      );
+      return;
+    }
+
     this.router.navigate(['/lms/questions/update', slug]);
   }
 
-  editQuestion(slug: string) {
-    //const question = this.questions.find(ques => ques.id === this.currentQuestionId+1);
-    //this.router.navigate(['/admin/questions/update', slug]);
-    this.launchQuestionEditorModal('update', this.currentQuestion);
+  editQuestion(question: FullQuestion) {
+    if (!this.canEditQuestion(question)) {
+      this.snackService.display(
+        'snackbar-dark',
+        'Whitelisted questions can only be edited by admins.',
+        'bottom',
+        'center',
+      );
+      return;
+    }
+
+    this.launchQuestionEditorModal('update', question);
   }
 
   launchQuestionEditorModal(action: 'add' | 'update', data?: any) {
@@ -204,6 +232,16 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
   }
 
   whitelistQuestion(question: FullQuestion): void {
+    if (!this.isAdmin) {
+      this.snackService.display(
+        'snackbar-dark',
+        'Only admins can whitelist questions.',
+        'bottom',
+        'center',
+      );
+      return;
+    }
+
     this.questionService.whitelistQuestion(question.id).subscribe({
       next: () => {
         this.whitelistStates[question.id] = true;

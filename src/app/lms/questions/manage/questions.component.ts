@@ -32,6 +32,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { AuthService, Role } from '@core';
 import { rowsAnimation } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
@@ -128,8 +129,8 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   topics: any[] = [];
   authors: QuestionAuthor[] = [];
   currentFilters: QuestionFilterValue = {
-    subject: [],
-    topic: [],
+    subject: null,
+    topic: null,
     level: '',
     authorId: 0,
   };
@@ -146,7 +147,17 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     private masterService: MasterService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private authService: AuthService,
   ) {}
+
+  get isAdmin(): boolean {
+    const role = this.authService.currentUserValue?.role;
+    return role === Role.Admin || role === Role.All;
+  }
+
+  canEditQuestion(row: QuestionItem): boolean {
+    return this.isAdmin || !this.isWhitelisted(row);
+  }
 
   ngOnInit() {
     this.subjects = this.masterService.subjects;
@@ -248,6 +259,16 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   }
 
   editCall(row: QuestionItem) {
+    if (!this.canEditQuestion(row)) {
+      this.showNotification(
+        'snackbar-dark',
+        'Whitelisted questions can only be edited by admins.',
+        'bottom',
+        'center',
+      );
+      return;
+    }
+
     this.router.navigate(['/lms/questions/update', row.slug]);
   }
 
@@ -295,6 +316,16 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       horizontalPosition: placementAlign,
       panelClass: colorName,
     });
+  }
+
+  isWhitelisted(row: QuestionItem): boolean {
+    const whitelistFlag = row?.isWhitelisted;
+    const hasWhitelistFlag =
+      whitelistFlag !== undefined &&
+      whitelistFlag !== null &&
+      whitelistFlag !== '';
+
+    return hasWhitelistFlag ? Number(whitelistFlag) === 1 : false;
   }
 
   exportExcel() {}
