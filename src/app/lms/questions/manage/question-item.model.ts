@@ -7,18 +7,19 @@ export class QuestionItem {
   title?: string;
   question: string;
   questionType: QuestionType;
-  subjectId : number;
-  subjectName : string;
-  level : number;
+  subjectId: number;
+  subjectName: string;
+  level: number;
   status: string;
-  marks : number;
-  orderId : number;
-  timeAllowed : number;
+  isWhitelisted?: number | string | boolean;
+  marks: number;
+  orderId: number;
+  timeAllowed: number;
   hint?: string;
   answer?: string;
   slug: string;
   topicIds: number[];
-  createdAt : string;
+  createdAt: string;
 
   constructor(question: Partial<QuestionItem> = {}) {
     this.id = question.id || 0;
@@ -28,6 +29,7 @@ export class QuestionItem {
     this.subjectName = question.subjectName || '';
     this.level = question.level || 1;
     this.status = question.status || Status.Pending;
+    this.isWhitelisted = question.isWhitelisted ?? 0;
     this.marks = question.marks || 1;
     this.orderId = question.orderId || 1;
     this.timeAllowed = question.timeAllowed || 30;
@@ -40,18 +42,18 @@ export class QuestionItem {
 }
 
 export class QuestionItemDetail extends QuestionItem {
-  options?: {id:number;option:string;correct:boolean}[];
-  topics?: {id:number;title:string}[];
-  rawQuestion?:SafeHtml;
+  options?: { id: number; option: string; correct: boolean }[];
+  topics?: { id: number; title: string }[];
+  rawQuestion?: SafeHtml;
   hasAnswered?: boolean;
   usedHint?: boolean;
   selectedChoice?: number;
 }
 
-export class FullQuestion extends QuestionItem{
+export class FullQuestion extends QuestionItem {
   tag: string | null;
   //optional - unused
-  rawQuestion?:SafeHtml;
+  rawQuestion?: SafeHtml;
   //rawQuestion?:string;
   //Auth details
   hasAnswered?: boolean;
@@ -63,7 +65,7 @@ export class FullQuestion extends QuestionItem{
     id: number;
     title: string;
   };
-  topics: {id:number;title:string}[];
+  topics: { id: number; title: string }[];
   options: {
     id: number;
     option: string;

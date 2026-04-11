@@ -45,6 +45,7 @@ export interface LmsQuestionStats {
   totalPending: number;
   totalTrivia: number;
   totalGeneral: number;
+  totalWhitelisted?: number;
 }
 
 export interface LmsTopicStats {

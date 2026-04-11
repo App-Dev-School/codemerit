@@ -32,8 +32,8 @@ import { MatCardModule } from '@angular/material/card';
 import { NgTemplateOutlet } from '@angular/common';
 
 export interface QuestionFilterValue {
-  subject: number[];
-  topic: number[];
+  subject: number | null;
+  topic: number | null;
   level: string;
   authorId: number;
 }
@@ -90,8 +90,8 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      subject: [[]],
-      topic: [[]],
+      subject: [null],
+      topic: [null],
       level: [''],
       authorId: [0],
     });
@@ -100,8 +100,8 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.filteredQuestions = [...this.questions];
     this.filteredTopics = [...this.topics];
-    this.filterForm.get('subject')?.valueChanges.subscribe((subjectIds) => {
-      this.syncTopics(subjectIds ?? []);
+    this.filterForm.get('subject')?.valueChanges.subscribe((subjectId) => {
+      this.syncTopics(subjectId ?? null);
     });
     this.applyInitialFilters();
   }
@@ -112,8 +112,8 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     }
 
     if (changes['topics']) {
-      const selectedSubjects = this.filterForm.get('subject')?.value ?? [];
-      this.syncTopics(selectedSubjects);
+      const selectedSubject = this.filterForm.get('subject')?.value ?? null;
+      this.syncTopics(selectedSubject);
     }
 
     if (changes['initialFilters']) {
@@ -124,24 +124,29 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   applyFilters() {
     const { subject, topic, level, authorId } = this.filterForm.value;
     this.filteredQuestions = this.questions.filter((q) => {
-      // Always treat subject/topic as arrays
       const subjectMatch =
-        !subject?.length ||
-        (q.subjectId !== undefined &&
-          q.subjectId !== null &&
-          subject.includes(q.subjectId));
+        subject === null ||
+        subject === undefined ||
+        subject === '' ||
+        q.subjectId === Number(subject);
       const topicMatch =
-        !topic?.length ||
-        (q.topicId !== undefined &&
-          q.topicId !== null &&
-          topic.includes(q.topicId));
+        topic === null ||
+        topic === undefined ||
+        topic === '' ||
+        q.topicId === Number(topic);
       const levelMatch = !level || q.level === level;
       return subjectMatch && topicMatch && levelMatch;
     });
 
     const filters: QuestionFilterValue = {
-      subject: subject ?? [],
-      topic: topic ?? [],
+      subject:
+        subject === null || subject === undefined || subject === ''
+          ? null
+          : Number(subject),
+      topic:
+        topic === null || topic === undefined || topic === ''
+          ? null
+          : Number(topic),
       level: level ?? '',
       authorId: Number(authorId) || 0,
     };
@@ -156,8 +161,8 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
   resetFilters() {
     this.filterForm.reset({
-      subject: [],
-      topic: [],
+      subject: null,
+      topic: null,
       level: '',
       authorId: 0,
     });
@@ -165,8 +170,8 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
     if (this.mode === 'filter-only') {
       this.filtersApplied.emit({
-        subject: [],
-        topic: [],
+        subject: null,
+        topic: null,
         level: '',
         authorId: 0,
       });
@@ -219,27 +224,24 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     );
   }
 
-  private syncTopics(subjectIds: number[]): void {
-    if (!subjectIds?.length) {
+  private syncTopics(subjectId: number | null): void {
+    if (subjectId === null || subjectId === undefined || subjectId === 0) {
       this.filteredTopics = [...this.topics];
       return;
     }
 
     this.filteredTopics = this.topics.filter((topic: any) => {
       const topicSubjectId = topic.subjectId ?? topic.subject?.id;
-      return subjectIds.includes(topicSubjectId);
+      return topicSubjectId === Number(subjectId);
     });
 
-    const allowedTopicIds = new Set(
-      this.filteredTopics.map((topic: any) => topic.id),
-    );
-    const selectedTopics = this.filterForm.get('topic')?.value ?? [];
-    const nextTopics = selectedTopics.filter((topicId: number) =>
-      allowedTopicIds.has(topicId),
+    const selectedTopic = this.filterForm.get('topic')?.value;
+    const topicStillValid = this.filteredTopics.some(
+      (topic: any) => topic.id === selectedTopic,
     );
 
-    if (nextTopics.length !== selectedTopics.length) {
-      this.filterForm.get('topic')?.setValue(nextTopics);
+    if (!topicStillValid) {
+      this.filterForm.get('topic')?.setValue(null);
     }
   }
 
@@ -248,7 +250,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       return;
     }
 
-    const subject = this.initialFilters.subject ?? [];
+    const subject = this.initialFilters.subject ?? null;
     this.filterForm.patchValue(
       {
         subject,
@@ -262,7 +264,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
     this.filterForm.patchValue(
       {
-        topic: this.initialFilters.topic ?? [],
+        topic: this.initialFilters.topic ?? null,
       },
       { emitEvent: false },
     );

@@ -18,8 +18,8 @@ import {
 } from './question-item.model';
 
 export interface QuestionApiFilters {
-  subject: number[];
-  topic: number[];
+  subject: number | null;
+  topic: number | null;
   level: string;
   authorId: number;
 }
@@ -100,15 +100,11 @@ export class QuestionService {
     }
 
     if (filters) {
-      if (filters.subject?.length) {
-        filters.subject.forEach((id) => {
-          params.push(`subjectId=${encodeURIComponent(String(id))}`);
-        });
+      if (filters.subject !== null && filters.subject !== undefined) {
+        params.push(`subjectId=${encodeURIComponent(String(filters.subject))}`);
       }
-      if (filters.topic?.length) {
-        filters.topic.forEach((id) => {
-          params.push(`topicId=${encodeURIComponent(String(id))}`);
-        });
+      if (filters.topic !== null && filters.topic !== undefined) {
+        params.push(`topicId=${encodeURIComponent(String(filters.topic))}`);
       }
       if (filters.level) {
         params.push(`level=${encodeURIComponent(filters.level)}`);

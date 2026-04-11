@@ -116,11 +116,16 @@
                             }
                           }
                         </div>
-                          <hr class="dim-divider" />
-                          <small class="text-center col-grey"
-                            (click)="routeEditQuestionPage(question?.slug)"
-                          >Edit this question
+                        <hr class="dim-divider" />
+                        @if (canEditQuestion(question)) {
+                          <small
+                            class="text-center col-grey"
+                            (click)="
+                              routeEditQuestionPage(question?.slug, question)
+                            "
+                            >Edit this question
                           </small>
+                        }
                       </div>
                       <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="question-card">
@@ -172,6 +177,17 @@
                                 {{ question?.status }}</span
                               >
                             }
+                            @if (question?.userCreatedBy) {
+                              <span class="mb-3 icon-text"
+                                ><mat-icon>person</mat-icon>
+
+                                {{
+                                  question?.userCreatedBy?.firstName?.trim()
+                                    ? question?.userCreatedBy?.firstName
+                                    : question?.userCreatedBy?.username
+                                }}</span
+                              >
+                            }
                             @if (question.createdAt) {
                               <span class="mb-3 icon-text"
                                 ><mat-icon>access_time</mat-icon>
@@ -192,30 +208,35 @@
                           <button
                             mat-raised-button
                             color="dark"
-                            (click)="editQuestion(question?.slug)"
+                            (click)="editQuestion(question)"
+                            [disabled]="!canEditQuestion(question)"
                           >
                             <mat-icon>edit</mat-icon> Edit Question
                           </button>
-                          <hr class="dim-divider" />
-                          <button
-                            mat-raised-button
-                            [color]="
-                              whitelistStates[question?.id] ? 'accent' : 'dark'
-                            "
-                            (click)="whitelistQuestion(question)"
-                            [disabled]="whitelistStates[question?.id]"
-                          >
-                            <mat-icon>{{
-                              whitelistStates[question?.id]
-                                ? "check_circle"
-                                : "add_circle"
-                            }}</mat-icon>
-                            {{
-                              whitelistStates[question?.id]
-                                ? "WhiteListed"
-                                : "WhiteList"
-                            }}
-                          </button>
+                          @if (isAdmin) {
+                            <hr class="dim-divider" />
+                            <button
+                              mat-raised-button
+                              [color]="
+                                whitelistStates[question?.id]
+                                  ? 'accent'
+                                  : 'dark'
+                              "
+                              (click)="whitelistQuestion(question)"
+                              [disabled]="whitelistStates[question?.id]"
+                            >
+                              <mat-icon>{{
+                                whitelistStates[question?.id]
+                                  ? "check_circle"
+                                  : "add_circle"
+                              }}</mat-icon>
+                              {{
+                                whitelistStates[question?.id]
+                                  ? "WhiteListed"
+                                  : "WhiteList"
+                              }}
+                            </button>
+                          }
                         </div>
                       </div>
                     </div>
