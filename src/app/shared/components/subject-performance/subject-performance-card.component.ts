@@ -52,22 +52,25 @@ interface MeritIndicators {
   imports: [
     CommonModule,
     MatCardModule,
-    MatIconModule, MatButtonModule,
-    NgApexchartsModule
+    MatIconModule,
+    MatButtonModule,
+    NgApexchartsModule,
   ],
   templateUrl: './subject-performance-card.component.html',
-  styleUrl: './subject-performance-card.component.scss'
+  styleUrl: './subject-performance-card.component.scss',
 })
 export class SubjectPerformanceCardComponent implements OnInit {
   //@Input() subject: string = "";
   @Input() subject: any;
+  @Input() showAverageAccuracy = true;
+  @Input() compact = false;
+  @Input() chartColor = '#FFA726';
   @Input() indicators: MeritIndicators[] = [];
   @Output() exploreSubject = new EventEmitter<Subject>();
   @Output() enrollSubject = new EventEmitter<Subject>();
   public cardChartOptions!: Partial<ChartOptions>;
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.cardChart();
@@ -107,21 +110,21 @@ export class SubjectPerformanceCardComponent implements OnInit {
         },
       },
       fill: {
-        colors: ['#FFA726'], // Orange gradient
+        colors: [this.chartColor],
       },
       stroke: {
         lineCap: 'round',
       },
-      colors: ['#FFA726'],
+      colors: [this.chartColor],
       labels: ['Assessment Completion'],
     };
   }
 
   onExploreSubject(subject: Subject) {
-  this.exploreSubject.next(subject);
+    this.exploreSubject.next(subject);
   }
 
   onEnrollSubject(subject: Subject) {
-  this.enrollSubject.next(subject);
+    this.enrollSubject.next(subject);
   }
 }

@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, User } from '@core';
+import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 @Component({
   selector: 'app-user',
   templateUrl: './users.component.html',
@@ -20,88 +21,123 @@ import { AuthService, User } from '@core';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
-  ]
+    MatButtonModule,
+    SubjectPerformanceCardComponent,
+  ],
 })
 export default class UserComponent implements OnInit {
   authData: User;
-  userName = "";
+  userName = '';
   loading = true;
   selfView = true;
   userDetail: any;
   noDataView = false;
   mySubjects = [
     {
-      id:1,
+      id: 1,
       title: 'HTML',
-      image : 'assets/images/tech/html.png',
+      image: 'assets/images/tech/html.png',
       color: '#ffffff',
-      progress: 78
+      progress: 78,
     },
     {
-      id:2,
+      id: 2,
       title: 'CSS',
-      image : 'assets/images/tech/css.png',
+      image: 'assets/images/tech/css.png',
       color: '#ffffff',
-      progress: 28
+      progress: 28,
     },
     {
-      id:1,
+      id: 1,
       title: 'JS',
-      image : 'assets/images/tech/js.png',
+      image: 'assets/images/tech/js.png',
       color: '#ffffff',
-      progress: 71
+      progress: 71,
     },
     {
-      id:1,
+      id: 1,
       title: 'TypeScript',
-      image : 'assets/images/tech/typescript.png',
+      image: 'assets/images/tech/typescript.png',
       color: '#6937dcff',
-      progress: 78
+      progress: 78,
     },
     {
-      id:1,
+      id: 1,
       title: 'Angular',
-      image : 'assets/images/tech/angular.png',
+      image: 'assets/images/tech/angular.png',
       color: '#ffffff',
-      progress: 28
+      progress: 28,
     },
     {
-      id:1,
+      id: 1,
       title: 'Nest',
-      image : 'assets/images/tech/nest.png',
+      image: 'assets/images/tech/nest.png',
       color: '#ffffff',
-      progress: 28
+      progress: 28,
     },
     {
-      id:1,
+      id: 1,
       title: 'Spring',
-      image : 'assets/images/tech/spring.png',
+      image: 'assets/images/tech/spring.png',
       color: '#ffffff',
-      progress: 28
+      progress: 28,
     },
     {
-      id:1,
+      id: 1,
       title: 'Docker',
-      image : 'assets/images/tech/docker.png',
+      image: 'assets/images/tech/docker.png',
       color: '#ffffff',
-      progress: 28
-    }
+      progress: 28,
+    },
   ];
-    courseChartConfig = {
-  showTitle: false,
-  showSubtitle: false,
-  showIcon: false,
-  showLegend: false
- };
+  courseChartConfig = {
+    showTitle: false,
+    showSubtitle: false,
+    showIcon: false,
+    showLegend: false,
+  };
 
-  constructor(private route: ActivatedRoute,
+  get profileSubjects(): any[] {
+    const apiSubjects =
+      this.userDetail?.courseStats ?? this.userDetail?.mySubjects;
+    if (Array.isArray(apiSubjects) && apiSubjects.length > 0) {
+      return apiSubjects.map((subject: any) => {
+        const score = Number(subject?.score ?? subject?.progress ?? 0);
+        const coverage = Number(subject?.coverage ?? subject?.progress ?? 0);
+        const avgAccuracy = Number(
+          subject?.avgAccuracy ?? subject?.progress ?? 0,
+        );
+        return {
+          ...subject,
+          // Profile should always show performance metrics card view.
+          isSubscribed: true,
+          score,
+          avgAccuracy,
+          coverage,
+          color: subject?.color ?? '#2f6fef',
+          image: subject?.image ?? 'assets/images/tech/angular.png',
+          description: subject?.description ?? subject?.title ?? 'this track',
+        };
+      });
+    }
+
+    return this.mySubjects.map((subject: any) => ({
+      ...subject,
+      isSubscribed: true,
+      score: Number(subject?.progress ?? 0),
+      avgAccuracy: Number(subject?.progress ?? 0),
+      coverage: Number(subject?.progress ?? 0),
+      description: subject?.title ?? 'this track',
+    }));
+  }
+
+  constructor(
+    private route: ActivatedRoute,
     public ngRouter: Router,
     private snackBar: MatSnackBar,
     private authService: AuthService,
-    public dialog: MatDialog) {
-
-  }
+    public dialog: MatDialog,
+  ) {}
 
   ngOnInit() {
     this.authData = this.authService.currentUserValue;
@@ -109,13 +145,13 @@ export default class UserComponent implements OnInit {
   }
 
   takeRouteParams() {
-    this.route.paramMap.subscribe(params => {
-      if (params.get("userName")) {
-        const userNameParam = params.get("userName");
+    this.route.paramMap.subscribe((params) => {
+      if (params.get('userName')) {
+        const userNameParam = params.get('userName');
         this.userName = userNameParam;
         this.selfView = false;
       } else {
-        this.selfView = true;  
+        this.selfView = true;
         this.userName = this.authData.username;
       }
       this.loadData();
@@ -126,54 +162,56 @@ export default class UserComponent implements OnInit {
     this.loading = true;
     if (this.userName) {
       if (navigator.onLine) {
-        this.authService.getFullProfile(this.userName, this.authData.token).subscribe(
-          (data: any) => {
-            this.loading = false;
-            if (!data.error) {
-              this.userDetail = data.data;
-              if (this.userDetail == null || this.userDetail == undefined) {
-                this.noDataView = true;
-                this.authService.redirectToErrorPage();
-              }
-            } else {
-              this.noDataView = true;
+        this.authService
+          .getFullProfile(this.userName, this.authData.token)
+          .subscribe(
+            (data: any) => {
               this.loading = false;
+              if (!data.error) {
+                this.userDetail = data.data;
+                if (this.userDetail == null || this.userDetail == undefined) {
+                  this.noDataView = true;
+                  this.authService.redirectToErrorPage();
+                }
+              } else {
+                this.noDataView = true;
+                this.loading = false;
+                this.showNotification(
+                  'snackbar-danger',
+                  data.message,
+                  'bottom',
+                  'center',
+                );
+              }
+            },
+            (error: HttpErrorResponse) => {
+              this.loading = false;
+              this.authService.redirectToErrorPage();
               this.showNotification(
-                "snackbar-danger",
-                data.message,
-                "bottom",
-                "center"
+                'snackbar-danger',
+                'Error fetching user details.',
+                'bottom',
+                'center',
               );
-            }
-          },
-          (error: HttpErrorResponse) => {
-            this.loading = false;
-            this.authService.redirectToErrorPage();
-            this.showNotification(
-              "snackbar-danger",
-              "Error fetching user details.",
-              "bottom",
-              "center"
-            );
-          }
-        );
+            },
+          );
       } else {
         this.showNotification(
-          "snackbar-danger",
-          "No Internet Connection",
-          "bottom",
-          "center"
+          'snackbar-danger',
+          'No Internet Connection',
+          'bottom',
+          'center',
         );
       }
     }
   }
 
   showNotification(colorName, text, placementFrom, placementAlign) {
-    this.snackBar.open(text, "", {
+    this.snackBar.open(text, '', {
       duration: 2000,
       verticalPosition: placementFrom,
       horizontalPosition: placementAlign,
-      panelClass: colorName
+      panelClass: colorName,
     });
   }
 }
