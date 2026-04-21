@@ -131,6 +131,8 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   currentFilters: QuestionFilterValue = {
     subject: null,
     topic: null,
+    subjectIds: [],
+    topicIds: [],
     level: '',
     authorId: 0,
   };
