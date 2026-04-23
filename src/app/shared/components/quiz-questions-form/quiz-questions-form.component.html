@@ -27,7 +27,10 @@
       <div class="col-12 col-md-12">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>Subject</mat-label>
-          <mat-select formControlName="subject">
+          <mat-select
+            formControlName="subject"
+            [multiple]="mode === 'quiz-builder'"
+          >
             @for (item of subjects; track item.id) {
               <mat-option [value]="item.id">{{
                 item.name ?? item.title
@@ -39,7 +42,10 @@
       <div class="col-12 col-md-12">
         <mat-form-field appearance="fill" class="example-full-width">
           <mat-label class="mb-2">Select Topic(s)</mat-label>
-          <mat-select formControlName="topic">
+          <mat-select
+            formControlName="topic"
+            [multiple]="mode === 'quiz-builder'"
+          >
             @for (item of filteredTopics; track item.id) {
               <mat-option [value]="item.id">{{
                 item.name ?? item.title

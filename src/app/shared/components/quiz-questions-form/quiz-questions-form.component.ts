@@ -30,10 +30,22 @@ import { NgScrollbar } from 'ngx-scrollbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { NgTemplateOutlet } from '@angular/common';
+import { MasterService } from '@core/service/master.service';
+import {
+  QuestionItem,
+  FullQuestion,
+} from 'src/app/lms/questions/manage/question-item.model';
+import {
+  QuestionApiFilters,
+  QuestionService,
+} from 'src/app/lms/questions/manage/questions.service';
+import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
 
 export interface QuestionFilterValue {
   subject: number | null;
   topic: number | null;
+  subjectIds: string[];
+  topicIds: string[];
   level: string;
   authorId: number;
 }
@@ -83,12 +95,17 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   @Input() topics: any[] = [];
   @Input() authors: any[] = [];
   @Input() questions: Question[] = [];
+  allQuestions: Question[] = [];
   filteredQuestions: Question[] = [];
   filteredTopics: any[] = [];
   selectedQuestionsControl = new FormControl<Question[]>([]);
   quizQuestions: Question[] = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private masterService: MasterService,
+    private questionService: QuestionService,
+  ) {
     this.filterForm = this.fb.group({
       subject: [null],
       topic: [null],
@@ -98,16 +115,27 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.allQuestions = [...this.questions];
     this.filteredQuestions = [...this.questions];
     this.filteredTopics = [...this.topics];
     this.filterForm.get('subject')?.valueChanges.subscribe((subjectId) => {
       this.syncTopics(subjectId ?? null);
     });
     this.applyInitialFilters();
+
+    // Fetch subjects and topics from API
+    this.masterService.fetchMasterDataFromAPI().subscribe(() => {
+      this.subjects = this.masterService.subjects;
+      this.topics = this.masterService.topics;
+      this.filteredTopics = [...this.topics];
+      const selectedSubject = this.filterForm.get('subject')?.value ?? null;
+      this.syncTopics(selectedSubject);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['questions'] && !changes['questions'].firstChange) {
+      this.allQuestions = [...this.questions];
       this.filteredQuestions = [...this.questions];
     }
 
@@ -123,58 +151,62 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
   applyFilters() {
     const { subject, topic, level, authorId } = this.filterForm.value;
-    this.filteredQuestions = this.questions.filter((q) => {
-      const subjectMatch =
-        subject === null ||
-        subject === undefined ||
-        subject === '' ||
-        q.subjectId === Number(subject);
-      const topicMatch =
-        topic === null ||
-        topic === undefined ||
-        topic === '' ||
-        q.topicId === Number(topic);
-      const levelMatch = !level || q.level === level;
-      return subjectMatch && topicMatch && levelMatch;
-    });
-
+    const selectedSubjects = Array.isArray(subject)
+      ? subject.map((value) => Number(value))
+      : subject === null || subject === undefined || subject === ''
+        ? []
+        : [Number(subject)];
+    const selectedTopics = Array.isArray(topic)
+      ? topic.map((value) => Number(value))
+      : topic === null || topic === undefined || topic === ''
+        ? []
+        : [Number(topic)];
     const filters: QuestionFilterValue = {
-      subject:
-        subject === null || subject === undefined || subject === ''
-          ? null
-          : Number(subject),
-      topic:
-        topic === null || topic === undefined || topic === ''
-          ? null
-          : Number(topic),
+      subject: selectedSubjects[0] ?? null,
+      topic: selectedTopics[0] ?? null,
+      subjectIds: selectedSubjects.map((value) => String(value)),
+      topicIds: selectedTopics.map((value) => String(value)),
       level: level ?? '',
       authorId: Number(authorId) || 0,
     };
 
+    this.filtersApplied.emit(filters);
+
     if (this.mode === 'filter-only') {
-      this.filtersApplied.emit(filters);
+      this.loadQuestionsFromApi(filters);
       return;
     }
 
-    this.toggleFilter();
+    this.applyLocalFilters(filters);
+    this.showFilter = false;
   }
 
   resetFilters() {
-    this.filterForm.reset({
+    const filters: QuestionFilterValue = {
       subject: null,
       topic: null,
+      subjectIds: [],
+      topicIds: [],
+      level: '',
+      authorId: 0,
+    };
+
+    this.filterForm.reset({
+      subject: this.mode === 'quiz-builder' ? [] : null,
+      topic: this.mode === 'quiz-builder' ? [] : null,
       level: '',
       authorId: 0,
     });
-    this.filteredQuestions = [...this.questions];
+    this.filteredTopics = [...this.topics];
+    if (this.mode === 'filter-only') {
+      this.loadQuestionsFromApi(filters);
+    } else {
+      this.filteredQuestions = [...this.allQuestions];
+    }
+    this.filtersApplied.emit(filters);
 
     if (this.mode === 'filter-only') {
-      this.filtersApplied.emit({
-        subject: null,
-        topic: null,
-        level: '',
-        authorId: 0,
-      });
+      return;
     }
   }
 
@@ -224,24 +256,37 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     );
   }
 
-  private syncTopics(subjectId: number | null): void {
-    if (subjectId === null || subjectId === undefined || subjectId === 0) {
+  private syncTopics(subjectId: number | number[] | null): void {
+    if (
+      subjectId === null ||
+      subjectId === undefined ||
+      subjectId === 0 ||
+      (Array.isArray(subjectId) && subjectId.length === 0)
+    ) {
       this.filteredTopics = [...this.topics];
       return;
     }
 
+    const subjectIds = Array.isArray(subjectId)
+      ? subjectId.map((value) => Number(value))
+      : [Number(subjectId)];
+
     this.filteredTopics = this.topics.filter((topic: any) => {
       const topicSubjectId = topic.subjectId ?? topic.subject?.id;
-      return topicSubjectId === Number(subjectId);
+      return subjectIds.includes(Number(topicSubjectId));
     });
 
     const selectedTopic = this.filterForm.get('topic')?.value;
-    const topicStillValid = this.filteredTopics.some(
-      (topic: any) => topic.id === selectedTopic,
-    );
+    const topicStillValid = Array.isArray(selectedTopic)
+      ? selectedTopic.every((topicId) =>
+          this.filteredTopics.some((topic: any) => topic.id === topicId),
+        )
+      : this.filteredTopics.some((topic: any) => topic.id === selectedTopic);
 
     if (!topicStillValid) {
-      this.filterForm.get('topic')?.setValue(null);
+      this.filterForm
+        .get('topic')
+        ?.setValue(this.mode === 'quiz-builder' ? [] : null);
     }
   }
 
@@ -250,7 +295,10 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       return;
     }
 
-    const subject = this.initialFilters.subject ?? null;
+    const subject =
+      this.mode === 'quiz-builder'
+        ? this.initialFilters.subjectIds.map((value) => Number(value))
+        : (this.initialFilters.subject ?? null);
     this.filterForm.patchValue(
       {
         subject,
@@ -264,10 +312,86 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
     this.filterForm.patchValue(
       {
-        topic: this.initialFilters.topic ?? null,
+        topic:
+          this.mode === 'quiz-builder'
+            ? this.initialFilters.topicIds.map((value) => Number(value))
+            : (this.initialFilters.topic ?? null),
       },
       { emitEvent: false },
     );
+  }
+
+  private applyLocalFilters(filters: QuestionFilterValue): void {
+    const selectedSubjects = new Set(
+      filters.subjectIds.map((value) => Number(value)),
+    );
+    const selectedTopics = new Set(
+      filters.topicIds.map((value) => Number(value)),
+    );
+
+    this.filteredQuestions = this.allQuestions.filter((question) => {
+      const subjectMatch =
+        selectedSubjects.size === 0 ||
+        selectedSubjects.has(Number(question.subjectId));
+      const topicMatch =
+        selectedTopics.size === 0 ||
+        selectedTopics.has(Number(question.topicId));
+      const levelMatch =
+        !filters.level || String(question.level) === filters.level;
+
+      return subjectMatch && topicMatch && levelMatch;
+    });
+  }
+
+  private loadQuestionsFromApi(
+    filters: QuestionFilterValue,
+    onSuccess?: () => void,
+  ): void {
+    const apiFilters: QuestionApiFilters = {
+      subject: filters.subject,
+      topic: filters.topic,
+      level: filters.level,
+      authorId: filters.authorId,
+    };
+
+    this.questionService.getQuestionsWithFilters(false, apiFilters).subscribe({
+      next: (questions) => {
+        const mappedQuestions = questions.map((question) =>
+          this.mapApiQuestion(question),
+        );
+        this.questions = mappedQuestions;
+        this.filteredQuestions = mappedQuestions;
+        onSuccess?.();
+      },
+      error: () => {
+        this.questions = [];
+        this.filteredQuestions = [];
+      },
+    });
+  }
+
+  private mapApiQuestion(question: QuestionItem | FullQuestion): Question {
+    const fullQuestion = question as FullQuestion;
+    const topicTitles = Array.isArray((question as FullQuestion).topics)
+      ? ((question as FullQuestion).topics ?? []).map((topic) => topic.title)
+      : (question.topicIds ?? [])
+          .map(
+            (topicId) =>
+              this.topics.find((topic: any) => topic.id === topicId)?.title,
+          )
+          .filter((title): title is string => !!title);
+
+    return {
+      id: question.id ?? 0,
+      title: question.title?.trim()
+        ? question.title
+        : (question.question ?? ''),
+      subject: fullQuestion.subject?.title ?? question.subjectName ?? '',
+      topic: topicTitles.join(', '),
+      subjectId: fullQuestion.subject?.id ?? question.subjectId,
+      topicId: fullQuestion.topics?.[0]?.id ?? question.topicIds?.[0],
+      level: String(question.level ?? ''),
+    };
   }
 
   drop(event: CdkDragDrop<Question[]>): void {
