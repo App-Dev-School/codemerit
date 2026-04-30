@@ -20,4 +20,9 @@ export const LMS_ROUTE: Route[] = [
     loadChildren: () =>
       import('./questions/questions.routes').then((m) => m.QUESTIONS_ROUTE),
   },
+  {
+    path: 'quizzes',
+    loadChildren: () =>
+      import('./quizzes/quizzes.routes').then((m) => m.QUIZZES_ROUTE),
+  },
 ];

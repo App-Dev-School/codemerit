@@ -3,9 +3,12 @@ import {
   Component,
   EventEmitter,
   Inject,
+  Input,
+  OnChanges,
   OnInit,
   Optional,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import {
   FormsModule,
@@ -50,7 +53,8 @@ import { QuizService } from 'src/app/quiz/quiz.service';
     MatCheckboxModule,
   ],
 })
-export class QuizFormComponent implements OnInit {
+export class QuizFormComponent implements OnInit, OnChanges {
+  @Input() formData: Partial<QuizCreateModel> | null = null;
   @Output() formSubmitted = new EventEmitter<any>();
   questionSlug: string;
   action: string;
@@ -110,17 +114,19 @@ export class QuizFormComponent implements OnInit {
       label: [''],
       isPublished: [true],
       numQuestions: [
-        this.quizItem.settings?.numQuestions || 10,
+        this.quizItem.settings?.numQuestions ,
         [Validators.required, Validators.min(1), Validators.max(50)],
       ],
       ordering: [
-        this.quizItem.settings?.ordering || 'Default',
+        this.quizItem.settings?.ordering ,
         Validators.required,
       ],
     });
   }
 
   ngOnInit() {
+    this.applyFormData();
+
     // Emit value on init if valid
     if (this.quizForm.valid) {
       this.formSubmitted.emit(this.quizForm.value);
@@ -131,6 +137,12 @@ export class QuizFormComponent implements OnInit {
         this.formSubmitted.emit(this.quizForm.value);
       }
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['formData']) {
+      this.applyFormData();
+    }
   }
 
   onCancel() {
@@ -149,5 +161,29 @@ export class QuizFormComponent implements OnInit {
     if (!/^\d$/.test(key) || input.value.length >= 2) {
       event.preventDefault();
     }
+  }
+
+  private applyFormData(): void {
+    if (!this.formData) {
+      return;
+    }
+
+    const formData = this.formData as any;
+
+    this.quizForm.patchValue(
+      {
+        id: this.formData.id ?? '',
+        title: this.formData.title ?? '',
+        quizType: this.formData.quizType ?? QuizTypeEnum.Standard,
+        tag: this.formData.tag ?? '',
+        description: this.formData.description ?? '',
+        shortDesc: this.formData.shortDesc ?? '',
+        label: formData.label ?? '',
+        isPublished: this.formData.isPublished ?? true,
+        numQuestions: this.formData.settings?.numQuestions ?? formData.numQuestions ?? null,
+        ordering: this.formData.settings?.ordering ?? formData.ordering ?? null,
+      },
+      { emitEvent: false },
+    );
   }
 }

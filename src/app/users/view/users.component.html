@@ -113,12 +113,10 @@
                         track subject.id ?? subject.title
                       ) {
                         <div class="col-lg-6 col-md-6 col-sm-12 m-b-20">
-                          <app-subject-performance-card
-                            [subject]="subject"
-                            [compact]="true"
-                            [chartColor]="'#1976D2'"
-                            [showAverageAccuracy]="false"
-                          ></app-subject-performance-card>
+                          <app-subject-tracker-card
+                            [item]="subject"
+                            [profileMode]="true"
+                          ></app-subject-tracker-card>
                         </div>
                       }
                     </div>

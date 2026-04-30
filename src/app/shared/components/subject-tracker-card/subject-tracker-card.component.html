@@ -1,5 +1,5 @@
 <!--- Start Subject Tracker Card -->
-<mat-card class="subjectCard hoverCard">
+<mat-card class="subjectCard" [class.hoverCard]="!profileMode" [class.profileCard]="profileMode">
   <mat-card-content>
 
     <div class="row align-items-center">
@@ -10,15 +10,27 @@
           <span class="cmSubHeading">{{ item?.title }}</span>
         </div>
       </div>
-      @if (item?.numTrivia > 0 && item?.score >= 0) {
+      @if ((profileMode || item?.numTrivia > 0) && item?.score >= 0) {
         <div class="col-12 col-sm-6 text-center text-sm-end">
         <div class="d-flex flex-column align-items-center align-items-sm-end">
-          <app-course-progress [score]="item.score"></app-course-progress>
+          <app-course-progress
+            [score]="item.score"
+            [size]="profileMode ? 92 : 72"
+            [thickness]="profileMode ? 8 : 6"
+          ></app-course-progress>
         </div>
       </div>
       }
     </div>
 
+    @if (profileMode) {
+      <p class="m-b-0 d-flex align-items-center justify-content-center level-info">
+        <i class="material-icons me-2 level-info-icon">trending_up</i>
+        Level: {{ findUserLevel() }}
+      </p>
+    }
+
+    @if (!profileMode) {
     <div class="row">
       @if (user && user?.role === 'Admin') {
         <div class="col-12">
@@ -83,16 +95,18 @@
           </div>
         </div>
 <hr class="dim-divider">
-        <p class="m-b-5 m-t-0 font-12 d-flex align-items-center justify-content-center">
-          <i class="material-icons me-2">trending_up</i> 
+        <p class="m-b-5 m-t-0 d-flex align-items-center justify-content-center level-info">
+          <i class="material-icons me-2 level-info-icon">trending_up</i> 
           Level: {{findUserLevel()}}
       <span class="col-grey m-l-10 m-r-10"> | </span>Accuracy : {{item?.avgAccuracy}}%
         </p>
       </div>
       }
     </div>
+    }
 
 
+    @if (!profileMode) {
     <mat-card-footer>
       @if (item.coverage > 0) {
       <hr class="dim-divider">
@@ -127,6 +141,7 @@
       </div>
 
     </mat-card-footer>
+    }
   </mat-card-content>
 </mat-card>
 <!--- End Subject Tracker Card -->

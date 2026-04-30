@@ -1,79 +1,189 @@
-
 .quiz-builder-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #f5f7fa;
 }
 
+/* ── Stepper Header ── */
 .stepper-header {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 32px;
-  margin: 32px 0 24px 0;
+  justify-content: center;
+  padding: 32px 24px 20px;
+  gap: 0;
 }
 
 .step {
-  padding: 12px 32px;
-  border-radius: 24px;
-  background: #e0e0e0;
-  color: #888;
-  font-weight: 500;
-  font-size: 1.1rem;
-  transition: background 0.2s, color 0.2s;
-}
-.step.active {
-  background: #1976d2;
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: default;
+
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #9e9e9e;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e0e0e0;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .step-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #9e9e9e;
+    white-space: nowrap;
+    transition: color 0.25s;
+  }
+
+  &.active {
+    .step-circle {
+      background: #1976d2;
+      border-color: #1976d2;
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.15);
+    }
+
+    .step-label {
+      color: #1976d2;
+    }
+  }
+
+  &.completed {
+    .step-circle {
+      background: #43a047;
+      border-color: #43a047;
+      color: #fff;
+    }
+
+    .step-label {
+      color: #43a047;
+    }
+  }
 }
 
+.step-connector {
+  flex: 1;
+  max-width: 80px;
+  height: 2px;
+  background: #e0e0e0;
+  margin: 0 8px;
+  margin-bottom: 26px;
+  transition: background 0.25s;
+
+  &.active {
+    background: #43a047;
+  }
+}
+
+/* ── Content area ── */
 .builder-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 16px;
+  padding: 8px 16px 0;
 }
 
 .step-content {
   width: 100%;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  padding: 32px 24px;
-  margin-bottom: 32px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  padding: 32px 28px;
+  margin-bottom: 24px;
+  animation: fadeSlideIn 0.2s ease;
 }
 
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Actions bar ── */
 .stepper-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 16px;
-  margin: 0 24px 32px 24px;
-}
-.stepper-actions .flex-grow {
-  flex: 1;
+  gap: 12px;
+  padding: 12px 24px 28px;
+  border-top: 1px solid #ececec;
+  background: #fff;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+
+  .flex-grow {
+    flex: 1;
+  }
+
+  button {
+    min-width: 120px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
 }
 
+/* Publish button loading spinner */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Responsive ── */
 @media (max-width: 768px) {
   .stepper-header {
-    gap: 8px;
-    margin: 16px 0 12px 0;
+    padding: 20px 12px 12px;
   }
-  .step {
-    padding: 8px 12px;
-    font-size: 0.95rem;
+
+  .step-connector {
+    max-width: 32px;
+    margin: 0 4px;
+    margin-bottom: 26px;
   }
+
+  .step .step-label {
+    font-size: 0.75rem;
+  }
+
   .step-content {
-    padding: 16px 4px;
-    margin-bottom: 16px;
+    padding: 16px 12px;
   }
+
   .stepper-actions {
-    flex-direction: column;
-    gap: 8px;
-    margin: 0 8px 16px 8px;
+    padding: 10px 12px 20px;
+
+    button {
+      min-width: 90px;
+      font-size: 0.85rem;
+    }
   }
 }

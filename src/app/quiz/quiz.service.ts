@@ -104,6 +104,43 @@ export class QuizService {
     );
   }
 
+  getStandardQuizzes(): Observable<any[]> {
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const url = 'apis/quiz/standard';
+    return this.httpService.get(url, api_key).pipe(
+      map((response: any) => {
+        const data = response?.data;
+        if (Array.isArray(data)) {
+          return data;
+        }
+        if (data) {
+          return [data];
+        }
+        return [];
+      })
+    );
+  }
+
+  getMyQuizzes(): Observable<any[]> {
+    let api_key = '';
+    if (this.authService.currentUser && this.authService.currentUser) {
+      api_key = this.authService.currentUserValue.token;
+    }
+    const userId = this.authService.currentUserValue?.id;
+    const url = `apis/quiz/standard/user/${userId}`;
+    return this.httpService.get(url, api_key).pipe(
+      map((response: any) => {
+        const data = response?.data;
+        if (Array.isArray(data)) return data;
+        if (data) return [data];
+        return [];
+      })
+    );
+  }
+
   addQuiz(item: QuizCreateModel): Observable<CreateQuizResponse> {
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {

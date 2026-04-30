@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, User } from '@core';
-import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
+import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 @Component({
   selector: 'app-user',
   templateUrl: './users.component.html',
@@ -22,7 +22,7 @@ import { SubjectPerformanceCardComponent } from '@shared/components/subject-perf
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    SubjectPerformanceCardComponent,
+    SubjectTrackerCardComponent,
   ],
 })
 export default class UserComponent implements OnInit {
@@ -102,33 +102,38 @@ export default class UserComponent implements OnInit {
       this.userDetail?.courseStats ?? this.userDetail?.mySubjects;
     if (Array.isArray(apiSubjects) && apiSubjects.length > 0) {
       return apiSubjects.map((subject: any) => {
-        const score = Number(subject?.score ?? subject?.progress ?? 0);
-        const coverage = Number(subject?.coverage ?? subject?.progress ?? 0);
-        const avgAccuracy = Number(
-          subject?.avgAccuracy ?? subject?.progress ?? 0,
-        );
+        const title = subject?.title ?? subject?.name ?? subject?.courseName ?? 'Course';
+        const score = this.normalizePercentage(subject?.score ?? subject?.progress ?? 0);
+        const coverage = this.normalizePercentage(subject?.coverage ?? subject?.progress ?? 0);
+        const avgAccuracy = this.normalizePercentage(subject?.avgAccuracy ?? subject?.progress ?? score);
         return {
           ...subject,
-          // Profile should always show performance metrics card view.
-          isSubscribed: true,
+          title,
           score,
           avgAccuracy,
           coverage,
-          color: subject?.color ?? '#2f6fef',
-          image: subject?.image ?? 'assets/images/tech/angular.png',
-          description: subject?.description ?? subject?.title ?? 'this track',
+          image: subject?.image ?? 'assets/images/tech/placeholder.png',
+          numTrivia: Number(subject?.numTrivia ?? 1),
         };
       });
     }
 
     return this.mySubjects.map((subject: any) => ({
       ...subject,
-      isSubscribed: true,
-      score: Number(subject?.progress ?? 0),
-      avgAccuracy: Number(subject?.progress ?? 0),
-      coverage: Number(subject?.progress ?? 0),
-      description: subject?.title ?? 'this track',
+      score: this.normalizePercentage(subject?.progress ?? 0),
+      avgAccuracy: this.normalizePercentage(subject?.progress ?? 0),
+      coverage: this.normalizePercentage(subject?.progress ?? 0),
+      numTrivia: 1,
     }));
+  }
+
+  private normalizePercentage(value: any): number {
+    const parsed = Number(value ?? 0);
+    if (Number.isNaN(parsed)) {
+      return 0;
+    }
+
+    return Math.max(0, Math.min(100, parsed));
   }
 
   constructor(

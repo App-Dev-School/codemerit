@@ -20,6 +20,8 @@ import {
 export interface QuestionApiFilters {
   subject: number | null;
   topic: number | null;
+  subjectIds?: string[];
+  topicIds?: string[];
   level: string;
   authorId: number;
 }
@@ -117,6 +119,49 @@ export class QuestionService {
     return this.httpService
       .get(url, api_key)
       .pipe(map((response: QuestionViewerResponse) => response.data));
+  }
+
+  getQuizBuilderQuestionsWithFilters(
+    filters?: QuestionApiFilters,
+  ): Observable<FullQuestion[]> {
+    let api_key = '';
+    if (
+      this.authService.currentUserValue &&
+      this.authService.currentUserValue.token
+    ) {
+      api_key = this.authService.currentUserValue.token;
+    }
+
+    const params: string[] = [];
+    if (filters) {
+      if (filters.subjectIds?.length) {
+        params.push(
+          `subjectIds=${encodeURIComponent(filters.subjectIds.join(','))}`,
+        );
+      } else if (filters.subject !== null && filters.subject !== undefined) {
+        params.push(`subjectId=${encodeURIComponent(String(filters.subject))}`);
+      }
+
+      if (filters.topicIds?.length) {
+        params.push(
+          `topicIds=${encodeURIComponent(filters.topicIds.join(','))}`,
+        );
+      } else if (filters.topic !== null && filters.topic !== undefined) {
+        params.push(`topicId=${encodeURIComponent(String(filters.topic))}`);
+      }
+
+      if (filters.level) {
+        params.push(`level=${encodeURIComponent(filters.level)}`);
+      }
+    }
+
+    const url = `apis/question/quizBuilder${
+      params.length ? `?${params.join('&')}` : ''
+    }`;
+
+    return this.httpService
+      .get(url, api_key)
+      .pipe(map((response: QuestionViewerResponse) => response.data ?? []));
   }
 
   getQuestionAuthors(): Observable<QuestionAuthor[]> {

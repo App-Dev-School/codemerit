@@ -129,7 +129,7 @@
           <div class="scrollbar-container">
             <ng-scrollbar style="height: 300px" visibility="hover">
               <div class="question-list">
-                @for (question of getAvailableQuestions(); track question.id) {
+                @for (question of getAvailableQuestions(); track question.selectionKey) {
                   <div class="question-item">
                     <div class="d-flex align-items-center">
                       <mat-checkbox
@@ -196,7 +196,7 @@
             cdkDropList
             (cdkDropListDropped)="drop($event)"
           >
-            @for (question of quizQuestions; track question.id) {
+            @for (question of quizQuestions; track question.selectionKey) {
               <div class="question-item" cdkDrag>
                 <div class="d-flex align-items-center">
                   <div class="task-handle" cdkDragHandle>

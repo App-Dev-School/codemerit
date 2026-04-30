@@ -43,7 +43,7 @@ export class QuizBuilderComponent implements OnInit {
   quizFormData: any = {};
   quizQuestionsData: any[] = [];
   quizSettingsData: any = {};
-  quizFiltersData: any = {}; // Stores subject and topic filters
+  quizFiltersData: any = null; // Stores subject and topic filters
   subjects: any[] = [];
   topics: any[] = [];
   allQuestions: any[] = [];
@@ -87,7 +87,7 @@ export class QuizBuilderComponent implements OnInit {
   prevStep(): void {
     if (this.currentStep > 0) {
       this.currentStep--;
-      this.canProceedToNext = true;
+      this.updateCanProceedToNext();
     }
   }
 
@@ -101,13 +101,13 @@ export class QuizBuilderComponent implements OnInit {
     }
     if (this.currentStep < 2) {
       this.currentStep++;
-      this.canProceedToNext = false;
+      this.updateCanProceedToNext();
     }
   }
 
   onQuizFormSubmit(data: any): void {
     this.quizFormData = data;
-    this.canProceedToNext = true;
+    this.updateCanProceedToNext();
   }
 
   onQuestionsAdded(questions: any[]): void {
@@ -126,7 +126,7 @@ export class QuizBuilderComponent implements OnInit {
 
   onSettingsFormSubmit(data: any): void {
     this.quizSettingsData = data;
-    this.canProceedToNext = true;
+    this.updateCanProceedToNext();
   }
 
   get allStepsValid(): boolean {
@@ -147,6 +147,22 @@ export class QuizBuilderComponent implements OnInit {
         : 'Select the number of questions in Quiz Info first.';
 
     this.snackbar.display('warn', message, 'top', 'center');
+  }
+
+  private updateCanProceedToNext(): void {
+    if (this.currentStep === 0) {
+      this.canProceedToNext = !!this.quizFormData?.title;
+      return;
+    }
+
+    if (this.currentStep === 1) {
+      this.canProceedToNext =
+        this.requiredQuestionCount > 0 &&
+        this.quizQuestionsData.length === this.requiredQuestionCount;
+      return;
+    }
+
+    this.canProceedToNext = !!this.quizSettingsData?.mode;
   }
 
   publishQuiz(): void {
@@ -199,6 +215,13 @@ export class QuizBuilderComponent implements OnInit {
             }
            */
           this.loading = false;
+          this.resetBuilder();
+          this.snackbar.display(
+            'snackbar-dark',
+            'Successfully created the quiz',
+            'bottom',
+            'center',
+          );
         } else {
           this.loading = false;
           this.snackbar.display(
@@ -217,6 +240,17 @@ export class QuizBuilderComponent implements OnInit {
         this.snackbar.display('snackbar-dark', this.error, 'bottom', 'center');
       },
     });
+  }
+
+  private resetBuilder(): void {
+    this.currentStep = 0;
+    this.canProceedToNext = false;
+    this.quizFormData = {};
+    this.quizQuestionsData = [];
+    this.quizSettingsData = {};
+    this.quizFiltersData = null;
+    this.error = '';
+    this.generatedQuizCode = '';
   }
 
   private mapApiQuestion(question: FullQuestion): any {

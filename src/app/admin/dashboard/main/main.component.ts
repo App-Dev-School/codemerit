@@ -94,6 +94,10 @@ export class MainComponent implements OnInit {
     this.router.navigate(['/lms/questions/viewer']);
   }
 
+  goToQuizzes() {
+    this.router.navigate(['/lms/quizzes/list']);
+  }
+
   goToTopicManager() {
     this.router.navigate(['/lms/topics/list']);
   }
