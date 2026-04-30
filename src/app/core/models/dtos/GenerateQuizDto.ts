@@ -34,30 +34,17 @@ export class QuizCreateModel implements QuizCreateDto {
   ordering?: string = QuizOrderEnum.Default;
   settings?: QuizSettings; // Extend with specific settings properties as needed
 
-  //Creating Temporary Values to save time during dev
   constructor(quiz: Partial<QuizCreateModel> = {}) {
-    this.id = quiz.id || Number.parseInt(this.getRandomID());
-    this.quizType = QuizTypeEnum.UserQuiz;
-    this.title = quiz.title || 'Test Your Angular Skills!';
-    this.shortDesc =
-      quiz.shortDesc ||
-      'How good you are at Angular? Take this quiz to find out!';
-    this.description =
-      quiz.description ||
-      'This quiz covers various aspects of Angular, including components, services, directives, and more. It is designed to test your knowledge and understanding of Angular concepts and best practices.';
-    this.subjectIds = quiz.subjectIds || '1,2';
-    //this.jobIds = quiz.jobIds || '1';
-    //this.topicIds = quiz.topicIds || '1,2,3';
-    this.tag = quiz.tag || 'angular,frontend,webdev';
-    this.userId = quiz.userId || 1; // Default to user ID 1 for testing
-    this.isPublished = quiz.isPublished !== undefined ? quiz.isPublished : true;
-  }
-
-  public getRandomID(): string {
-    const S4 = () => {
-      return ((1 + Math.random()) * 0x10000).toString(16);
-    };
-    return S4() + S4();
+    this.id = quiz.id ?? 0;
+    this.quizType = quiz.quizType ?? QuizTypeEnum.UserQuiz;
+    this.title = quiz.title ?? '';
+    this.shortDesc = quiz.shortDesc ?? '';
+    this.description = quiz.description ?? '';
+    this.subjectIds = quiz.subjectIds ?? null;
+    this.topicIds = quiz.topicIds ?? null;
+    this.tag = quiz.tag ?? '';
+    this.userId = quiz.userId ?? 0;
+    this.isPublished = quiz.isPublished ?? false;
   }
 }
 

@@ -1,9 +1,32 @@
 <div class="quiz-builder-container">
   <!-- Stepper Header -->
   <div class="stepper-header">
-    <div class="step" [class.active]="currentStep === 0">Quiz Info</div>
-    <div class="step" [class.active]="currentStep === 1">Questions</div>
-    <div class="step" [class.active]="currentStep === 2">Settings</div>
+    <div class="step" [class.active]="currentStep === 0" [class.completed]="currentStep > 0">
+      <div class="step-circle">
+        @if (currentStep > 0) {
+          <mat-icon>check</mat-icon>
+        } @else {
+          1
+        }
+      </div>
+      <span class="step-label">Quiz Info</span>
+    </div>
+    <div class="step-connector" [class.active]="currentStep >= 1"></div>
+    <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+      <div class="step-circle">
+        @if (currentStep > 1) {
+          <mat-icon>check</mat-icon>
+        } @else {
+          2
+        }
+      </div>
+      <span class="step-label">Questions</span>
+    </div>
+    <div class="step-connector" [class.active]="currentStep >= 2"></div>
+    <div class="step" [class.active]="currentStep === 2">
+      <div class="step-circle">3</div>
+      <span class="step-label">Settings</span>
+    </div>
   </div>
 
   <!-- Stepper Content -->
@@ -19,8 +42,11 @@
     @if (currentStep === 1) {
       <div class="step-content">
         <app-quiz-questions-form
+          [mode]="'quiz-builder'"
           (questionsAdded)="onQuestionsAdded($event)"
           (filtersApplied)="onFiltersApplied($event)"
+          [initialFilters]="quizFiltersData"
+          [selectedQuestions]="quizQuestionsData"
           [subjects]="subjects"
           [topics]="topics"
           [questions]="allQuestions"
@@ -65,27 +91,17 @@
         mat-flat-button
         color="primary"
         (click)="publishQuiz()"
-        [disabled]="!allStepsValid"
+        [disabled]="!allStepsValid || loading"
       >
-        Publish
+        @if (loading) {
+          <mat-icon class="spin">sync</mat-icon>
+          Publishing...
+        } @else {
+          <mat-icon>publish</mat-icon>
+          Publish Quiz
+        }
       </button>
     }
   </div>
-  <!-- Debug: Visualize form values -->
-  <div
-    style="
-      background: #222;
-      color: #fff;
-      font-size: 13px;
-      padding: 16px;
-      border-radius: 8px;
-      margin: 24px auto;
-      max-width: 700px;
-    "
-  >
-    <b>Debug Form Values</b>
-    <pre>quizFormData: {{ quizFormData | json }}</pre>
-    <pre>quizQuestionsData: {{ quizQuestionsData | json }}</pre>
-    <pre>quizSettingsData: {{ quizSettingsData | json }}</pre>
-  </div>
 </div>
+

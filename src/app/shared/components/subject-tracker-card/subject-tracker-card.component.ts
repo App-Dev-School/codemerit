@@ -19,6 +19,7 @@ import { User } from '@core/models/user';
 export class SubjectTrackerCardComponent {
   @Input() item: any;
   @Input() user: User;
+  @Input() profileMode = false;
   @Output() launchSubjectExplorer = new EventEmitter<any>();
   @Output() takeQuiz = new EventEmitter<any>();
 

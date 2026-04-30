@@ -2,9 +2,27 @@
   border-radius: 1rem;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  &:hover {
+
+  &:not(.profileCard):hover {
     transform: translateY(-4px);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.profileCard {
+  border-radius: 28px;
+  background: #f7f9fc;
+  border: 1px solid #e7ecf4;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+
+  .subject-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .cmSubHeading {
+    font-size: 20px;
+    font-weight: 700;
   }
 }
 
@@ -57,11 +75,30 @@
     width: 150px;
     margin-top: 0.5rem;
   }
+
+  .profileCard .cmSubHeading {
+    font-size: 18px;
+  }
 }
+
 .miniTxt {
   font-size: 0.7rem;
 }
+
+.level-info {
+  font-size: 0.75rem;
+  margin-top: 6px !important;
+}
+
+.level-info-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
 .no-gutter {
-  --bs-gutter-x: 4px;   /* horizontal gap */
-  --bs-gutter-y: 4px;   /* vertical gap */
+  --bs-gutter-x: 4px;
+  /* horizontal gap */
+  --bs-gutter-y: 4px;
+  /* vertical gap */
 }

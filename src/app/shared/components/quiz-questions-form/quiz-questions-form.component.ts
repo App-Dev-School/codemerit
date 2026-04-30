@@ -54,6 +54,7 @@ type QuizQuestionsFormMode = 'quiz-builder' | 'filter-only';
 
 interface Question {
   id: number;
+  selectionKey: string;
   title: string;
   subject: string; // name
   topic: string; // name
@@ -89,6 +90,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   @Input() mode: QuizQuestionsFormMode = 'quiz-builder';
   @Input() title = 'Filter Questions';
   @Input() initialFilters: QuestionFilterValue | null = null;
+  @Input() selectedQuestions: Question[] = [];
   showFilter = true;
   filterForm: FormGroup;
   @Input() subjects: any[] = [];
@@ -118,10 +120,11 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     this.allQuestions = [...this.questions];
     this.filteredQuestions = [...this.questions];
     this.filteredTopics = [...this.topics];
+    this.restoreSelectedQuestions();
     this.filterForm.get('subject')?.valueChanges.subscribe((subjectId) => {
       this.syncTopics(subjectId ?? null);
     });
-    this.applyInitialFilters();
+    this.restoreViewState();
 
     // Fetch subjects and topics from API
     this.masterService.fetchMasterDataFromAPI().subscribe(() => {
@@ -130,6 +133,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       this.filteredTopics = [...this.topics];
       const selectedSubject = this.filterForm.get('subject')?.value ?? null;
       this.syncTopics(selectedSubject);
+      this.restoreViewState();
     });
   }
 
@@ -137,6 +141,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     if (changes['questions'] && !changes['questions'].firstChange) {
       this.allQuestions = [...this.questions];
       this.filteredQuestions = [...this.questions];
+      this.restoreViewState();
     }
 
     if (changes['topics']) {
@@ -145,7 +150,11 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     }
 
     if (changes['initialFilters']) {
-      this.applyInitialFilters();
+      this.restoreViewState();
+    }
+
+    if (changes['selectedQuestions']) {
+      this.restoreSelectedQuestions();
     }
   }
 
@@ -172,13 +181,14 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
     this.filtersApplied.emit(filters);
 
-    if (this.mode === 'filter-only') {
-      this.loadQuestionsFromApi(filters);
+    if (this.mode === 'quiz-builder') {
+      this.loadQuestionsFromApi(filters, () => {
+        this.showFilter = false;
+      });
       return;
     }
 
-    this.applyLocalFilters(filters);
-    this.showFilter = false;
+    this.loadQuestionsFromApi(filters);
   }
 
   resetFilters() {
@@ -198,16 +208,8 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       authorId: 0,
     });
     this.filteredTopics = [...this.topics];
-    if (this.mode === 'filter-only') {
-      this.loadQuestionsFromApi(filters);
-    } else {
-      this.filteredQuestions = [...this.allQuestions];
-    }
+    this.loadQuestionsFromApi(filters);
     this.filtersApplied.emit(filters);
-
-    if (this.mode === 'filter-only') {
-      return;
-    }
   }
 
   toggleFilter() {
@@ -218,7 +220,12 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     const selected = this.selectedQuestionsControl.value || [];
     this.quizQuestions = [
       ...this.quizQuestions,
-      ...selected.filter((q) => !this.quizQuestions.includes(q)),
+      ...selected.filter(
+        (q) =>
+          !this.quizQuestions.some(
+            (existing) => existing.selectionKey === q.selectionKey,
+          ),
+      ),
     ];
     this.selectedQuestionsControl.setValue([]);
     this.questionsAdded.emit(this.quizQuestions);
@@ -226,7 +233,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
   isQuestionSelected(question: Question): boolean {
     const selected = this.selectedQuestionsControl.value || [];
-    return selected.some((q) => q.id === question.id);
+    return selected.some((q) => q.selectionKey === question.selectionKey);
   }
 
   onQuestionToggle(question: Question, event: any): void {
@@ -235,24 +242,33 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
 
     if (isChecked) {
       // Add question if not already selected
-      if (!currentSelected.some((q) => q.id === question.id)) {
+      if (
+        !currentSelected.some((q) => q.selectionKey === question.selectionKey)
+      ) {
         this.selectedQuestionsControl.setValue([...currentSelected, question]);
       }
     } else {
       // Remove question if unchecked
-      const filtered = currentSelected.filter((q) => q.id !== question.id);
+      const filtered = currentSelected.filter(
+        (q) => q.selectionKey !== question.selectionKey,
+      );
       this.selectedQuestionsControl.setValue(filtered);
     }
   }
 
   removeQuestionFromQuiz(question: Question): void {
-    this.quizQuestions = this.quizQuestions.filter((q) => q.id !== question.id);
+    this.quizQuestions = this.quizQuestions.filter(
+      (q) => q.selectionKey !== question.selectionKey,
+    );
+    this.questionsAdded.emit(this.quizQuestions);
   }
 
   getAvailableQuestions(): Question[] {
-    const quizQuestionIds = this.quizQuestions.map((q) => q.id);
+    const quizQuestionIds = new Set(
+      this.quizQuestions.map((q) => q.selectionKey),
+    );
     return this.filteredQuestions.filter(
-      (q) => !quizQuestionIds.includes(q.id),
+      (q) => !quizQuestionIds.has(q.selectionKey),
     );
   }
 
@@ -291,19 +307,20 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   }
 
   private applyInitialFilters(): void {
-    if (!this.initialFilters) {
+    const filters = this.normalizeFilters(this.initialFilters);
+    if (!filters) {
       return;
     }
 
     const subject =
       this.mode === 'quiz-builder'
-        ? this.initialFilters.subjectIds.map((value) => Number(value))
-        : (this.initialFilters.subject ?? null);
+        ? filters.subjectIds.map((value) => Number(value))
+        : (filters.subject ?? null);
     this.filterForm.patchValue(
       {
         subject,
-        level: this.initialFilters.level ?? '',
-        authorId: this.initialFilters.authorId ?? 0,
+        level: filters.level ?? '',
+        authorId: filters.authorId ?? 0,
       },
       { emitEvent: false },
     );
@@ -314,11 +331,66 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       {
         topic:
           this.mode === 'quiz-builder'
-            ? this.initialFilters.topicIds.map((value) => Number(value))
-            : (this.initialFilters.topic ?? null),
+            ? filters.topicIds.map((value) => Number(value))
+            : (filters.topic ?? null),
       },
       { emitEvent: false },
     );
+  }
+
+  private restoreSelectedQuestions(): void {
+    this.quizQuestions = [...(this.selectedQuestions ?? [])];
+    this.selectedQuestionsControl.setValue([], { emitEvent: false });
+  }
+
+  private restoreViewState(): void {
+    this.restoreSelectedQuestions();
+
+    const filters = this.normalizeFilters(this.initialFilters);
+
+    if (!this.hasActiveFilters(filters)) {
+      this.showFilter = true;
+      return;
+    }
+
+    this.applyInitialFilters();
+    this.loadQuestionsFromApi(filters as QuestionFilterValue, () => {
+      this.showFilter = false;
+    });
+  }
+
+  private hasActiveFilters(filters: QuestionFilterValue | null): boolean {
+    if (!filters) {
+      return false;
+    }
+
+    return (
+      filters.subjectIds.length > 0 ||
+      filters.topicIds.length > 0 ||
+      !!filters.level ||
+      filters.authorId > 0 ||
+      filters.subject !== null ||
+      filters.topic !== null
+    );
+  }
+
+  private normalizeFilters(
+    filters: Partial<QuestionFilterValue> | null,
+  ): QuestionFilterValue | null {
+    if (!filters) {
+      return null;
+    }
+
+    const normalized: QuestionFilterValue = {
+      subject: filters.subject ?? null,
+      topic: filters.topic ?? null,
+      subjectIds: Array.isArray(filters.subjectIds) ? filters.subjectIds : [],
+      topicIds: Array.isArray(filters.topicIds) ? filters.topicIds : [],
+      level: filters.level ?? '',
+      authorId: Number(filters.authorId ?? 0),
+    };
+
+    return this.hasActiveFilters(normalized) ? normalized : null;
   }
 
   private applyLocalFilters(filters: QuestionFilterValue): void {
@@ -350,21 +422,30 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     const apiFilters: QuestionApiFilters = {
       subject: filters.subject,
       topic: filters.topic,
+      subjectIds: filters.subjectIds,
+      topicIds: filters.topicIds,
       level: filters.level,
       authorId: filters.authorId,
     };
 
-    this.questionService.getQuestionsWithFilters(false, apiFilters).subscribe({
+    const request$ =
+      this.mode === 'quiz-builder'
+        ? this.questionService.getQuizBuilderQuestionsWithFilters(apiFilters)
+        : this.questionService.getQuestionsWithFilters(false, apiFilters);
+
+    request$.subscribe({
       next: (questions) => {
         const mappedQuestions = questions.map((question) =>
           this.mapApiQuestion(question),
         );
         this.questions = mappedQuestions;
+        this.allQuestions = mappedQuestions;
         this.filteredQuestions = mappedQuestions;
         onSuccess?.();
       },
       error: () => {
         this.questions = [];
+        this.allQuestions = [];
         this.filteredQuestions = [];
       },
     });
@@ -382,7 +463,8 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
           .filter((title): title is string => !!title);
 
     return {
-      id: question.id ?? 0,
+      id: (question as any).questionid ?? question.id ?? 0,
+      selectionKey: this.getQuestionSelectionKey(question),
       title: question.title?.trim()
         ? question.title
         : (question.question ?? ''),
@@ -392,6 +474,26 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       topicId: fullQuestion.topics?.[0]?.id ?? question.topicIds?.[0],
       level: String(question.level ?? ''),
     };
+  }
+
+  private getQuestionSelectionKey(
+    question: QuestionItem | FullQuestion,
+  ): string {
+    const resolvedId = (question as any).questionid ?? question.id;
+    if (resolvedId !== null && resolvedId !== undefined) {
+      return `id:${resolvedId}`;
+    }
+
+    if (question.slug) {
+      return `slug:${question.slug}`;
+    }
+
+    return [
+      question.title ?? question.question ?? '',
+      question.subjectId ?? '',
+      (question.topicIds ?? []).join(','),
+      question.level ?? '',
+    ].join('|');
   }
 
   drop(event: CdkDragDrop<Question[]>): void {

@@ -1,0 +1,144 @@
+.quiz-list-card {
+  margin: 2rem;
+  border-radius: 14px;
+  border: 1px solid #e6e8ec;
+  box-shadow: 0 14px 35px rgba(19, 35, 70, 0.08);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.full-width-table {
+  width: 100%;
+  min-width: 860px;
+}
+
+.mobile-card-view {
+  display: none;
+}
+
+.quiz-mobile-card {
+  border: 1px solid #e5eaf3;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(19, 35, 70, 0.08);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.mobile-item {
+  margin-bottom: 10px;
+}
+
+.mobile-item:last-child {
+  margin-bottom: 0;
+}
+
+.mobile-key {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #6f7b91;
+  margin-bottom: 4px;
+}
+
+.mobile-value {
+  display: block;
+  color: #24324d;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.mobile-label {
+  display: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #6f7b91;
+  margin-bottom: 4px;
+}
+
+.quiz-table th {
+  color: #4f5d75;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #f5f8ff;
+}
+
+.quiz-table td,
+.quiz-table th {
+  padding: 14px 12px;
+}
+
+.quiz-table .mat-mdc-row:hover {
+  background: #f9fbff;
+}
+
+.title-cell {
+  font-weight: 600;
+  color: #1f2a44;
+}
+
+.desc-cell {
+  color: #4d5b74;
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-pill.published {
+  background: #e9f7ef;
+  color: #1c7f4f;
+}
+
+.status-pill.draft {
+  background: #fff1f0;
+  color: #bf4331;
+}
+
+.state-text {
+  margin: 20px 0;
+  color: #4d5b74;
+  font-weight: 500;
+}
+
+.error {
+  color: #b3261e;
+}
+
+@media (max-width: 768px) {
+  .quiz-list-card {
+    margin: 0.75rem;
+  }
+
+  .desktop-table-view {
+    display: none;
+  }
+
+  .mobile-card-view {
+    display: block;
+  }
+
+  .quiz-mobile-card {
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+}
