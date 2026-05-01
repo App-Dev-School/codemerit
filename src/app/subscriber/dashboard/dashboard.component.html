@@ -15,7 +15,7 @@
   @if (!loading && currentSubject) {
   <div class="content-block">
     <!-- <app-certificate></app-certificate> -->
-     <h5 class="text-center">Certification Tracks in {{ currentSubject?.title }}</h5>
+    <h5 class="text-center">Certification Tracks in {{ currentSubject?.title }}</h5>
     <mat-tab-group mat-align-tabs="start" class="m-t-20">
       <mat-tab label="{{ currentSubject?.title }} Dashboard">
         <ng-container *ngTemplateOutlet="subjectDashboard"></ng-container>
@@ -36,14 +36,15 @@
       </div>
     </div>
     @if (!subjectData?.isEnrolled) {
-      <div class="board-footer">
-        <!-- Footer content here -->
-        <button mat-flat-button color="primary" class="waves-effect block-btn" (click)="launchSubjectQuiz(currentSubject)">
-          <!-- Test {{currentSubject?.title}} Skills -->
-          {{nextAction}}
-        </button>
-        <ng-content select="[boardFooter]"></ng-content>
-      </div>
+    <div class="board-footer">
+      <!-- Footer content here -->
+      <button mat-flat-button color="primary" class="waves-effect block-btn"
+        (click)="launchSubjectQuiz(currentSubject)">
+        <!-- Test {{currentSubject?.title}} Skills -->
+        {{nextAction}}
+      </button>
+      <ng-content select="[boardFooter]"></ng-content>
+    </div>
     }
   </div>
   }
@@ -122,27 +123,33 @@
         </mat-card-footer>
       </mat-card>
     </div>
-    @if(subjectData?.popularTopics){
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
       <mat-card>
         <mat-card-header class="header-style">
           @if (currentSubject?.image) {
           <img mat-card-avatar [src]="currentSubject?.image" class="m-b-10">
           }
-          <mat-card-title>Popular {{currentSubject?.title}} Topics</mat-card-title>
+          <mat-card-title>My {{currentSubject?.title}} Skills</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <mat-chip-set aria-label="Tags">
+
+          <div class="text-center">
+            <p>You have not rated yourself yet!</p>
+            <button [routerLink]="['/assessment/subject-assessment', currentSubject.slug]" class="text-center"
+              mat-flat-button color="primary">
+              <mat-icon>star</mat-icon> Rate {{currentSubject?.title}} Skills
+            </button>
+          </div>
+          <!-- <mat-chip-set aria-label="Tags">
             @for(topic of subjectData.popularTopics;track topic){
             <mat-chip class="matChipSmall">{{topic.title}}
               <span class="badge col-purple">{{topic.votes}}</span>
             </mat-chip>
             }
-          </mat-chip-set>
+          </mat-chip-set> -->
         </mat-card-content>
       </mat-card>
     </div>
-    }
   </div>
 </ng-template>
 

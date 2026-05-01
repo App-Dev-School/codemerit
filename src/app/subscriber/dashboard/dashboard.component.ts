@@ -11,12 +11,13 @@ import { NgTemplateOutlet } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core';
 import { Subject } from '@core/models/subject';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
+import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
@@ -24,7 +25,6 @@ import { RecentCommentsComponent } from '@shared/components/recent-comments/rece
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { Observable, of } from 'rxjs';
-import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
 
 @Component({
@@ -33,6 +33,7 @@ import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
   styleUrls: ['./dashboard.component.scss'],
   animations: [slideInOutAnimation, fadeInAnimation],
   imports: [
+    RouterLink,
     NgTemplateOutlet,
     MatTabsModule,
     MatButtonModule,

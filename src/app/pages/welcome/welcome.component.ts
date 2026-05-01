@@ -22,105 +22,105 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
 import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 
-  export const certificateModels : CertificateModel[] = [
-    {
-      platformName: 'Angular Framework Foundation Certification',
-      userName: 'Vishal Kumar',
-      skillName: 'Angular Architect',
-      tierDisplayName: 'FOUNDATION',
-      assessmentTitle: CertificateTemplateId.MilestoneCompletion,
-      scorePercentage: 0,
-      certificateNumber: 'CM-2026-00671',
-      verificationCode: 'ABCD1234',
-      issuedDate: new Date('2026-03-01'),
-      expiryDate: new Date('2027-03-01'),
-      issuerName: 'CodeMerit',
-      issuerLogo: './../../../assets/images/logo.png',
-      sponsorName: '',
-      sponsorLogo: '',
-      programLead: 'Carolin Smith',
-      templateId: CertificateTemplateId.MilestoneCompletion,
-      signedBy: 'Kunal Anand',
-      flag: 'angular'
-    },
-    {
-      platformName: 'Angular Monorepo Mastery',
-      userName: 'Vishal Kumar',
-      skillName: 'Angular Architect',
-      tierDisplayName: '',
-      assessmentTitle: CertificateTemplateId.MilestoneCompletion,
-      scorePercentage: 0,
-      certificateNumber: 'CM-2026-00671',
-      verificationCode: 'ABCD1234',
-      issuedDate: new Date('2026-03-01'),
-      expiryDate: new Date('2027-03-01'),
-      issuerName: 'CodeMerit',
-      issuerLogo: './../../../assets/images/logo.png',
-      sponsorName: '',
-      sponsorLogo: '',
-      programLead: 'Kunal Anand',
-      templateId: CertificateTemplateId.MilestoneCompletion,
-      signedBy: 'Kunal Anand',
-      flag: 'angular'
-    },
-    {
-      platformName: '',
-      userName: 'Golda Maria',
-      skillName: 'Angular Developer',
-      tierDisplayName: 'Intern',
-      assessmentTitle: CertificateTemplateId.InternshipCompletion,
-      scorePercentage: 94,
-      certificateNumber: 'CM-2026-INT-001',
-      verificationCode: 'INT2026',
-      issuedDate: new Date('2026-02-15'),
-      expiryDate: new Date('2027-02-15'),
-      issuerName: 'CodeMerit',
-      issuerLogo: './../../../assets/images/logo.png',
-      sponsorName: '',
-      sponsorLogo: '',
-      programLead: 'Emily Clark',
-      templateId: CertificateTemplateId.InternshipCompletion,
-      signedBy: 'Emily Clark',
-    },
-    {
-      platformName: 'Advanced Backend Certification',
-      userName: 'Arjun Patel',
-      skillName: 'JavaScript',
-      tierDisplayName: 'Employee',
-      assessmentTitle: CertificateTemplateId.WorkExperience,
-      scorePercentage: 88,
-      certificateNumber: 'CM-2026-WRK-001',
-      verificationCode: 'WORK2026',
-      issuedDate: new Date('2026-01-10'),
-      expiryDate: new Date('2027-01-10'),
-      issuerName: 'CodeMerit',
-      issuerLogo: './../../../assets/images/logo.png',
-      sponsorName: '',
-      sponsorLogo: '',
-      programLead: 'Michael Lee',
-      templateId: CertificateTemplateId.WorkExperience,
-      signedBy: 'Michael Lee',
-    },
-    {
-      platformName: 'CodeMerit Community Contribution',
-      userName: 'Taylor Star',
-      skillName: 'Angular',
-      tierDisplayName: 'Contributor',
-      assessmentTitle: CertificateTemplateId.Appreciation,
-      scorePercentage: 100,
-      certificateNumber: 'CM-2026-APP-001',
-      verificationCode: 'APP2026',
-      issuedDate: new Date('2026-03-19'),
-      expiryDate: new Date('2027-03-19'),
-      issuerName: 'CodeMerit',
-      issuerLogo: './../../../assets/images/logo.png',
-      sponsorName: '',
-      sponsorLogo: '',
-      programLead: 'Sophia Turner',
-      templateId: CertificateTemplateId.Appreciation,
-      signedBy: 'Sophia Turner',
-    }
-  ];
+export const certificateModels: CertificateModel[] = [
+  {
+    platformName: 'Angular Framework Foundation Certification',
+    userName: 'Vishal Kumar',
+    skillName: 'Angular Architect',
+    tierDisplayName: 'FOUNDATION',
+    assessmentTitle: CertificateTemplateId.MilestoneCompletion,
+    scorePercentage: 0,
+    certificateNumber: 'CM-2026-00671',
+    verificationCode: 'ABCD1234',
+    issuedDate: new Date('2026-03-01'),
+    expiryDate: new Date('2027-03-01'),
+    issuerName: 'CodeMerit',
+    issuerLogo: './../../../assets/images/logo.png',
+    sponsorName: '',
+    sponsorLogo: '',
+    programLead: 'Carolin Smith',
+    templateId: CertificateTemplateId.MilestoneCompletion,
+    signedBy: 'Kunal Anand',
+    flag: 'angular'
+  },
+  {
+    platformName: 'Angular Monorepo Mastery',
+    userName: 'Vishal Kumar',
+    skillName: 'Angular Architect',
+    tierDisplayName: '',
+    assessmentTitle: CertificateTemplateId.MilestoneCompletion,
+    scorePercentage: 0,
+    certificateNumber: 'CM-2026-00671',
+    verificationCode: 'ABCD1234',
+    issuedDate: new Date('2026-03-01'),
+    expiryDate: new Date('2027-03-01'),
+    issuerName: 'CodeMerit',
+    issuerLogo: './../../../assets/images/logo.png',
+    sponsorName: '',
+    sponsorLogo: '',
+    programLead: 'Kunal Anand',
+    templateId: CertificateTemplateId.MilestoneCompletion,
+    signedBy: 'Kunal Anand',
+    flag: 'angular'
+  },
+  {
+    platformName: '',
+    userName: 'Golda Maria',
+    skillName: 'Angular Developer',
+    tierDisplayName: 'Intern',
+    assessmentTitle: CertificateTemplateId.InternshipCompletion,
+    scorePercentage: 94,
+    certificateNumber: 'CM-2026-INT-001',
+    verificationCode: 'INT2026',
+    issuedDate: new Date('2026-02-15'),
+    expiryDate: new Date('2027-02-15'),
+    issuerName: 'CodeMerit',
+    issuerLogo: './../../../assets/images/logo.png',
+    sponsorName: '',
+    sponsorLogo: '',
+    programLead: 'Emily Clark',
+    templateId: CertificateTemplateId.InternshipCompletion,
+    signedBy: 'Emily Clark',
+  },
+  {
+    platformName: 'Advanced Backend Certification',
+    userName: 'Arjun Patel',
+    skillName: 'JavaScript',
+    tierDisplayName: 'Employee',
+    assessmentTitle: CertificateTemplateId.WorkExperience,
+    scorePercentage: 88,
+    certificateNumber: 'CM-2026-WRK-001',
+    verificationCode: 'WORK2026',
+    issuedDate: new Date('2026-01-10'),
+    expiryDate: new Date('2027-01-10'),
+    issuerName: 'CodeMerit',
+    issuerLogo: './../../../assets/images/logo.png',
+    sponsorName: '',
+    sponsorLogo: '',
+    programLead: 'Michael Lee',
+    templateId: CertificateTemplateId.WorkExperience,
+    signedBy: 'Michael Lee',
+  },
+  {
+    platformName: 'CodeMerit Community Contribution',
+    userName: 'Taylor Star',
+    skillName: 'Angular',
+    tierDisplayName: 'Contributor',
+    assessmentTitle: CertificateTemplateId.Appreciation,
+    scorePercentage: 100,
+    certificateNumber: 'CM-2026-APP-001',
+    verificationCode: 'APP2026',
+    issuedDate: new Date('2026-03-19'),
+    expiryDate: new Date('2027-03-19'),
+    issuerName: 'CodeMerit',
+    issuerLogo: './../../../assets/images/logo.png',
+    sponsorName: '',
+    sponsorLogo: '',
+    programLead: 'Sophia Turner',
+    templateId: CertificateTemplateId.Appreciation,
+    signedBy: 'Sophia Turner',
+  }
+];
 
 @Component({
   selector: 'app-welcome',
@@ -160,11 +160,11 @@ export class WelcomeComponent implements OnInit {
   subjectData: any;
   subjectsByRole: { [role: string]: Course[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
-  certificateModels : CertificateModel[] = [];
+  certificateModels: CertificateModel[] = [];
 
-  skillRatings : SkillRating[] = [
+  skillRatings: SkillRating[] = [
     {
-      skillId: "4",
+      skillId: 4,
       skillName: "TypeScript",
       imageUrl: "assets/images/tech/typescript.png",
       skillType: SkillType.Subject,
@@ -175,7 +175,7 @@ export class WelcomeComponent implements OnInit {
       grade: "Good"
     },
     {
-      skillId: "5",
+      skillId: 5,
       skillName: "Angular",
       imageUrl: "assets/images/tech/angular.png",
       skillType: SkillType.Subject,
@@ -186,7 +186,7 @@ export class WelcomeComponent implements OnInit {
       grade: "Excellent"
     },
     {
-      skillId: "32",
+      skillId: 32,
       skillName: "RxJS",
       imageUrl: "assets/images/tech/rxjs.png",
       skillType: SkillType.Subject,
@@ -197,7 +197,7 @@ export class WelcomeComponent implements OnInit {
       grade: "Average"
     },
     {
-      skillId: "34",
+      skillId: 34,
       skillName: "Ionic",
       imageUrl: "assets/images/tech/ionic.png",
       skillType: SkillType.Subject,
@@ -412,8 +412,8 @@ export class WelcomeComponent implements OnInit {
 
       case "selfRating":
         this.router.navigate(['/assessment/skill-rating']).then(() => {
-        console.log('Navigated to Assessment Module for Skill Rating!');
-      });
+          console.log('Navigated to Assessment Module for Skill Rating!');
+        });
         break;
       case "subjectRating":
         this.router.navigate(['/subject-skill-rating/1']).then(() => {
