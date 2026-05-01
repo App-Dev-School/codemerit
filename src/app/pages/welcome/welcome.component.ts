@@ -5,7 +5,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '@core';
 import { RatingType } from '@core/models/rating-type';
 import { SkillRating } from '@core/models/skill-rating';
@@ -127,6 +127,7 @@ export const certificateModels: CertificateModel[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
   imports: [
+    RouterLink,
     NgScrollbar,
     MatCardModule,
     MatDividerModule,

@@ -12,6 +12,17 @@
       <div class="col-12 col-md-6 col-lg-7">
         <app-congratulations-card [user]="authUser"></app-congratulations-card>
       </div>
+
+        <button [routerLink]="['/learn/create-lesson']" class="text-center"
+              mat-flat-button color="primary">
+              Create Lesson
+            </button>
+
+       <button [routerLink]="['/learn/overview', 'angular17']" class="text-center"
+              mat-flat-button color="primary">
+              Explore Angular 17 Lesson
+            </button>
+            
       <!-- Medal Card -->
       <div class="col-12 col-md-6 col-lg-5">
         <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"

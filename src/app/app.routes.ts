@@ -93,7 +93,7 @@ export const APP_ROUTE: Route[] = [
     },
     {
         path: "learn",
-        //component: MainLayoutComponent,
+        component: MainLayoutComponent,
         //component: AuthLayoutComponent,
         loadChildren: () =>
             import('./learn/lesson.routes').then((m) => m.LESSON_ROUTE),
