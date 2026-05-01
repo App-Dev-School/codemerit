@@ -204,12 +204,8 @@
                       <button
                         mat-icon-button
                         color="accent"
-                        [disabled]="!canEditQuestion(row)"
-                        [matTooltip]="
-                          canEditQuestion(row)
-                            ? 'Edit'
-                            : 'Whitelisted questions can only be edited by admins'
-                        "
+                        [disabled]="((authService.currentUserValue?.role === userRole.Admin || authService.currentUserValue?.role === userRole.All) && row?.isWhitelisted)"
+                        [matTooltip]="'Edit'"
                         (click)="$event.stopPropagation()"
                         (click)="editCall(row)"
                         class="tbl-action-btn"

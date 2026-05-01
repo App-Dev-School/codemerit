@@ -125,6 +125,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
   selection = new SelectionModel<QuestionItem>(true, []);
   isLoading = true;
   noResultsMessage = 'No questions found for the selected filters.';
+  userRole = Role;
   subjects: any[] = [];
   topics: any[] = [];
   authors: QuestionAuthor[] = [];
@@ -149,7 +150,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     private masterService: MasterService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private authService: AuthService,
+    public authService: AuthService,
   ) {}
 
   get isAdmin(): boolean {
