@@ -6,10 +6,12 @@
       @for (topic of topics; track topic) {
       <swiper-slide>
         <div class="topic-card" [formGroup]="getTopicGroup(topic.title)">
+          <img [src]="subject ? subject?.image : 'assets/images/icons/cube.gif'"
+            class="image-pulse smallLoadingIcon m-t-20 m-b-20">
           <h5 class="text-center m-b-10 col-grey">
             Have you gone through the topic
           </h5>
-          <h2 class="text-center m-b-20">{{ topic.title }} ?</h2>
+          <h2 class="text-center m-b-20" [style.color]="subject?.color">{{ topic.title }} ?</h2>
           <mat-button-toggle-group formControlName="knows" class="center-toggle m-b-20">
             <mat-button-toggle [value]="true">Yes<span class="only-desktop">. I confirm</span></mat-button-toggle>
             <mat-button-toggle [value]="false">No<span class="only-desktop">t yet</span></mat-button-toggle>
@@ -20,7 +22,8 @@
             <h5 class="text-center">What is your expertise level?</h5>
             <mat-button-toggle-group formControlName="level" class="center-toggle m-b-30">
               <mat-button-toggle value="Basic">Basic <span class="only-desktop"> (Theory)</span></mat-button-toggle>
-              <mat-button-toggle value="Working">Working <span class="only-desktop"> (Hands-on)</span></mat-button-toggle>
+              <mat-button-toggle value="Working">Working <span class="only-desktop">
+                  (Hands-on)</span></mat-button-toggle>
               <mat-button-toggle value="Expert">Expert <span class="only-desktop"> / Mastery</span></mat-button-toggle>
             </mat-button-toggle-group>
           </div>
@@ -54,7 +57,8 @@
       Previous
     </button>
 
-    <button mat-raised-button color="primary" (click)="nextSlide()" [disabled]="isSummarySlide ? false : isCurrentSlideInvalid()">
+    <button mat-raised-button color="primary" (click)="nextSlide()"
+      [disabled]="isSummarySlide ? false : isCurrentSlideInvalid()">
       {{ isSummarySlide ? 'Submit' : (isLastSlide ? 'Finish' : 'Next') }}
     </button>
   </div>

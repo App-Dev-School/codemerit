@@ -5,9 +5,9 @@ export const ASSESSMENT_ROUTE: Route[] = [
     path: "skill-rating/:jobRoleSlug",
     loadComponent: () => import('./wizard/wizard.component').then(c => c.WizardComponent),
   },
-  //   {
-  //     path: "take/:qcode",
-  //     loadComponent: () => import('./take-quiz/take-quiz.component').then(c => c.TakeQuizComponent),
-  //   },
+  {
+    path: "subject-assessment/:subject",
+    loadComponent: () => import('./subject-assessment/subject-assessment.component').then(c => c.SubjectAssessmentComponent),
+  },
   { path: '**', component: SelectCourseComponent }
 ];

@@ -18,6 +18,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { RatingType } from '@core/models/rating-type';
+import { SkillRating } from '@core/models/skill-rating';
+import { SkillType } from '@core/models/skill-type';
 import { MasterService } from '@core/service/master.service';
 import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rating.component';
 import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
@@ -49,14 +52,12 @@ import { register } from 'swiper/element/bundle';
 })
 
 export class SubjectSkillRatingComponent {
-
   @Input() subjectId!: number;
-
   skillForm!: FormGroup;
   topics: TopicItem[] = [];
   currentIndex: number = 0;
-
-  @Output() completed = new EventEmitter<boolean>();
+  subject: any = null;
+  @Output() completed = new EventEmitter<SkillRating[]>();
   @ViewChild('swiperRef') swiperRef!: ElementRef<any>;
 
   constructor(private fb: FormBuilder, private masterSrv: MasterService) {
@@ -70,13 +71,14 @@ export class SubjectSkillRatingComponent {
   }
 
   loadTopics() {
+    this.subject = this.masterSrv.subjects.find(s => s.id === this.subjectId);
     const topics = this.masterSrv.topics;
     this.topics = topics.filter(topic => topic.subjectId == this.subjectId);
     const group: any = {};
     for (const topic of this.topics) {
 
       const subjectGroup = this.fb.group({
-        knows: [null, Validators.required],
+        knows: [false, Validators.required],
         level: [null],
         rating: [null]
       });
@@ -115,7 +117,7 @@ export class SubjectSkillRatingComponent {
     if (!swiper) return;
     if (this.isSummarySlide) {
       const payload = this.getPayload();
-      this.completed.emit(true);
+      this.completed.emit(payload);
       console.log('Final submitted payload:', payload);
     } else {
       swiper.slideNext();
@@ -126,10 +128,13 @@ export class SubjectSkillRatingComponent {
     return this.topics.map(topic => {
       const val = this.skillForm.value[topic.title] || {};
       return {
-        topicId: topic.id,
-        knows: val.knows,
-        rating: val.rating,
-        level: val.level
+        skillId: topic.id,
+        skillName: topic.title,
+        skillType: SkillType.Topic,
+        ratingType: RatingType.Self,
+        knows: val.knows ?? false,
+        level: val.level ?? '',
+        rating: val.rating ?? 0
       };
     });
   }

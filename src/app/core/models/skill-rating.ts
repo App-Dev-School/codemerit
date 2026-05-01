@@ -3,7 +3,7 @@ import { SkillType } from "./skill-type"
 
 export interface SkillRating {
   id?: number
-  skillId: string
+  skillId: number
   skillType: SkillType
   rating: number | null;
   ratingType: RatingType
