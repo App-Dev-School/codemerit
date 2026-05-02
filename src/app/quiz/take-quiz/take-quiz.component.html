@@ -101,14 +101,16 @@
                   @if (question.title) {
                   <h5 class="mb-3">{{ question.title }}</h5>
                   }
-                  @if (isCodeQuestion(question.question)) {
+                  <!-- @if (isCodeQuestion(question.question)) {
                   <small>Read the question carefully and answer.</small>
                   <div class="question m-b-10">
                     <pre><code>{{question.question}}</code></pre>
                   </div>
                   }@else {
                   <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
-                  }
+                  } -->
+
+                  <div [class.tiptap]="isCodeQuestion(question?.question)" [class.question]="!isCodeQuestion(question?.question)" [innerHTML]="question?.question"></div>
 
                   <div class="list-group-item m-b-20 d-flex align-items-center justify-content-between flex-wrap">
                     <div class="d-flex flex-wrap gap-1">

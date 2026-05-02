@@ -12,16 +12,6 @@
       <div class="col-12 col-md-6 col-lg-7">
         <app-congratulations-card [user]="authUser"></app-congratulations-card>
       </div>
-
-        <button [routerLink]="['/learn/create-lesson']" class="text-center"
-              mat-flat-button color="primary">
-              Create Lesson
-            </button>
-
-       <button [routerLink]="['/learn/overview', 'angular17']" class="text-center"
-              mat-flat-button color="primary">
-              Explore Angular 17 Lesson
-            </button>
             
       <!-- Medal Card -->
       <div class="col-12 col-md-6 col-lg-5">
@@ -43,6 +33,21 @@
           </mat-card-content>
         </mat-card>
       </div>
+    </div>
+
+     <div class="row m-t-20 clearfix">
+      <div class="col-12">
+        <h3 class="text-center m-t-20">Other Action Links</h3> 
+         <button [routerLink]="['/learn/create-lesson']" class="autoWidth text-center"
+              mat-flat-button color="primary">
+              Create Lesson
+            </button>
+
+       <button [routerLink]="['/learn/overview', 'angular17']" class="autoWidth text-center"
+              mat-flat-button color="primary">
+              Explore Angular 17 Lesson
+            </button>
+        </div>
     </div>
 
     <div class="row m-t-20 clearfix">

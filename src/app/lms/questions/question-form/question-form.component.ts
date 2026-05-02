@@ -1,5 +1,5 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, Inject, OnInit, Optional, OnDestroy } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -28,6 +28,10 @@ import { TopicItem } from '../../topics/manage/topic-item.model';
 import { QuestionItem, QuestionItemDetail } from '../manage/question-item.model';
 import { QuestionService } from '../manage/questions.service';
 import { NgTemplateOutlet } from '@angular/common';
+import { Editor } from '@tiptap/core';
+import StarterKit from '@tiptap/starter-kit';
+import Code from '@tiptap/extension-code';
+import { TiptapEditorDirective } from 'ngx-tiptap';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -51,10 +55,13 @@ import { AuthService, User } from '@core';
     MatSelectModule,
     MatDatepickerModule,
     MatCheckboxModule,
-    MatChip
+    MatChip,
+    TiptapEditorDirective
   ]
 })
-export class QuestionFormPage implements OnInit {
+export class QuestionFormPage implements OnInit, OnDestroy {
+  editor: Editor;
+  answerEditor: Editor;
   questionSlug: string;
   action: string;
   actionText: string;
@@ -84,6 +91,21 @@ export class QuestionFormPage implements OnInit {
     this.questionForm = this.createQuestionForm();
     this.subjects = this.masterSrv.subjects;
     this.topics = this.masterSrv.topics;
+    // Initialize Tiptap editor for question field
+    this.editor = new Editor({
+      extensions: [StarterKit, Code],
+      content: this.questionItem.question || '',
+      onUpdate: ({ editor }) => {
+        this.questionForm.get('question')?.setValue(editor.getHTML(), { emitEvent: false });
+      }
+    });
+    this.answerEditor = new Editor({
+      extensions: [StarterKit, Code],
+      content: this.questionItem.answer || '',
+      onUpdate: ({ editor }) => {
+        this.questionForm.get('answer')?.setValue(editor.getHTML(), { emitEvent: false });
+      }
+    });
     if (this.dialogRef) {
       //this.mode = 'dialog';
       //this.userId = data?.id;
@@ -111,6 +133,17 @@ export class QuestionFormPage implements OnInit {
   }
 
   ngOnInit() {
+    // Sync editor content if form in edit mode
+    this.questionForm.get('question')?.valueChanges.subscribe(val => {
+      if (val !== this.editor.getHTML()) {
+        this.editor.commands.setContent(val || '');
+      }
+    });
+    this.questionForm.get('answer')?.valueChanges.subscribe(val => {
+      if (val !== this.answerEditor.getHTML()) {
+        this.answerEditor.commands.setContent(val || '');
+      }
+    });
     console.log("QuestionForm Dialog Data ", this.data);
     this.questionSlug = this.route.snapshot.paramMap.get('question-slug');
     console.log("QuestionForm  ", this.questionSlug);
@@ -348,12 +381,22 @@ export class QuestionFormPage implements OnInit {
     //console.log("QuestionEditor Patch Topics", data.topicIds);
   }
 
+
   navigateToQuestionList(resultData: any) {
     if (this.data) {
       this.dialogRef.close(resultData);
     } else {
       this.snackService.display('snackbar-dark', (resultData?.message) ?? "Question added.", 'bottom', 'center');
       this.router.navigate(['/lms/questions/list']);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.editor) {
+      this.editor.destroy();
+    }
+     if (this.answerEditor) {
+      this.answerEditor.destroy();
     }
   }
 }

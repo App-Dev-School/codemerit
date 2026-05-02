@@ -14,6 +14,7 @@ import { topToBottomAnimation } from '@shared/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
 import { Subscription } from 'rxjs';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-select-course',
@@ -21,6 +22,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./select-course.component.scss'],
   animations: [topToBottomAnimation],
   imports: [
+    MatIcon,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
