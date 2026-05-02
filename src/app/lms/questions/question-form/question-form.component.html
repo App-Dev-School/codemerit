@@ -43,8 +43,8 @@
           <ng-scrollbar visibility="hover">
             <div class="row">
               <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                <!--
-                <mat-form-field class="example-full-width" appearance="fill">
+                
+                <!-- <mat-form-field class="example-full-width" appearance="fill">
                   <mat-label>Question</mat-label>
                   <textarea
                     matInput
@@ -52,14 +52,8 @@
                     rows="2"
                     cdkTextareaAutosize
                     #autosize="cdkTextareaAutosize"
-                    [cdkAutosizeMinRows]="3"
-                    [cdkAutosizeMaxRows]="3"
-                    style="resize: none; overflow: hidden"
-                    placeholder="Enter the question"
-                    required
-                  ></textarea>
-                </mat-form-field>
-                -->
+                  >{{questionSource}}</textarea>
+                </mat-form-field> -->
                 <mat-label>Question</mat-label>
                 <div class="tiptap-mat-wrapper">
                   <tiptap-editor [editor]="editor" class="tiptap-mat-textarea"></tiptap-editor>

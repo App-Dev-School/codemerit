@@ -62,6 +62,7 @@ import { AuthService, User } from '@core';
 export class QuestionFormPage implements OnInit, OnDestroy {
   editor: Editor;
   answerEditor: Editor;
+  //questionSource:any;
   questionSlug: string;
   action: string;
   actionText: string;
@@ -96,6 +97,9 @@ export class QuestionFormPage implements OnInit, OnDestroy {
       extensions: [StarterKit, Code],
       content: this.questionItem.question || '',
       onUpdate: ({ editor }) => {
+        //Switch to source view
+        //this.questionSource = editor.getHTML() || '';
+        console.log("QuestionForm Editor Content onUpdate ", this.questionSource);
         this.questionForm.get('question')?.setValue(editor.getHTML(), { emitEvent: false });
       }
     });

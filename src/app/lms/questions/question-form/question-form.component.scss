@@ -1,3 +1,22 @@
+// Tiptap editor styling for material look
+.tiptap-mat-wrapper {
+  border: 1px solid #c4c4c4;
+  border-radius: 4px;
+  padding: 8px 12px;
+  background: #e0e2ec;
+  min-height: 100px;
+  margin-top: 4px;
+}
+
+.tiptap-mat-textarea {
+  outline: none;
+  min-height: 80px;
+  width: 100%;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  resize: vertical;
+}
 ::ng-deep .mat-select-trigger {
   padding-top: 1.2em !important;
 }
