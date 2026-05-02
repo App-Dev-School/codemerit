@@ -119,7 +119,7 @@ export class QuestionsComponent implements OnInit, OnDestroy {
       visible: true,
     },
   ];
-  showFilterPanel = true;
+  showFilterPanel = false;
   dataSource = new MatTableDataSource<QuestionItem>([]);
   allQuestions: QuestionItem[] = [];
   selection = new SelectionModel<QuestionItem>(true, []);

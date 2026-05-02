@@ -69,13 +69,8 @@ getGrade(rating: number | null): string {
 
 isCodeQuestion(text: string): boolean {
   if (!text) return false;
-  // Detect HTML-like tags for code snippets
-  // Matches <tag> ... </tag>, or self-closing like <br/>
   const htmlTagPattern = /<\/?[a-z][\s\S]*?>/i;
-  // Detect typical code symbols (like `; { } function () =>`)
   const codeSymbolsPattern = /[{}();=<>&]/;
-  // Heuristic:
-  // If it contains tags OR lots of code-like symbols → treat as code
   return htmlTagPattern.test(text) || (codeSymbolsPattern.test(text) && text.length < 500);
 }
 

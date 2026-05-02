@@ -164,9 +164,11 @@
                               >
                             }
                             @if (column.def == "question") {
-                              <div class="full-text bold-text">
+                              <!-- <div class="full-text bold-text">
                                 {{ row[column.def] }}
-                              </div>
+                              </div> -->
+                               <div class="tiptap" [innerHTML]="row[column.def]"></div>
+
                               <!-- <div class="badge bg-primary">{{ row.level ? row.level : 'N/A' }}</div> -->
                             } @else {
                               @if (column.def == "subject") {

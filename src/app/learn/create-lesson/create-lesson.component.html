@@ -1,0 +1,45 @@
+<section class="content">
+  <div class="content-block p-t-20">
+    <mat-card class="lesson-form-card">
+      <mat-card-header class="header-style">
+        <mat-card-title>Create Lesson</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="lessonForm" (ngSubmit)="submit()" class="register-form m-4">
+          <div class="row">
+            <div class="col-12 mb-2">
+              <mat-form-field appearance="fill" class="example-full-width">
+                <mat-label>Title</mat-label>
+                <input matInput formControlName="title" placeholder="Enter lesson title" required />
+              </mat-form-field>
+            </div>
+            <div class="col-12 mb-2">
+              <mat-form-field appearance="fill" class="example-full-width">
+                <mat-label>Subject</mat-label>
+                <input matInput formControlName="subject" placeholder="Enter subject" required />
+              </mat-form-field>
+            </div>
+            <div class="col-12 mb-2">
+              <mat-form-field appearance="fill" class="example-full-width">
+                <mat-label>Topic</mat-label>
+                <input matInput formControlName="topic" placeholder="Enter topic" required />
+              </mat-form-field>
+            </div>
+            <div class="col-12 mb-2">
+              <mat-label>Description</mat-label>
+              <!-- <div class="tiptap-mat-wrapper">
+                <tiptap-editor [editor]="editor" class="tiptap-mat-textarea"></tiptap-editor>
+              </div> -->
+
+          <tiptap-editor [editor]="editor"></tiptap-editor>
+
+            </div>
+            <div class="col-12 mt-3">
+              <button mat-raised-button color="primary" type="submit" [disabled]="lessonForm.invalid">Create Lesson</button>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>
