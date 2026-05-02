@@ -99,7 +99,7 @@ export class QuestionFormPage implements OnInit, OnDestroy {
       onUpdate: ({ editor }) => {
         //Switch to source view
         //this.questionSource = editor.getHTML() || '';
-        console.log("QuestionForm Editor Content onUpdate ", this.questionSource);
+        //console.log("QuestionForm Editor Content onUpdate ", this.questionSource);
         this.questionForm.get('question')?.setValue(editor.getHTML(), { emitEvent: false });
       }
     });
@@ -310,7 +310,7 @@ export class QuestionFormPage implements OnInit, OnDestroy {
             },
             error: (error) => {
               this.submitted = false;
-              this.snackService.display('snackbar-dark', error? error : "Error adding question. Please try again.", 'bottom', 'center');
+              this.snackService.display('snackbar-dark', error ? error : "Error adding question. Please try again.", 'bottom', 'center');
             },
           });
       }
@@ -399,7 +399,7 @@ export class QuestionFormPage implements OnInit, OnDestroy {
     if (this.editor) {
       this.editor.destroy();
     }
-     if (this.answerEditor) {
+    if (this.answerEditor) {
       this.answerEditor.destroy();
     }
   }
