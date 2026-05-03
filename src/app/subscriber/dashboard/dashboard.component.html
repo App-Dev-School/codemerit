@@ -14,13 +14,11 @@
 
   @if (!loading && currentSubject) {
   <div class="content-block">
-    <!-- <app-certificate></app-certificate> -->
-    <h5 class="text-center">Certification Tracks in {{ currentSubject?.title }}</h5>
     <mat-tab-group mat-align-tabs="start" class="m-t-20">
       <mat-tab label="{{ currentSubject?.title }} Dashboard">
         <ng-container *ngTemplateOutlet="subjectDashboard"></ng-container>
       </mat-tab>
-      <mat-tab label="Practice">
+      <mat-tab label="Milestones">
         <ng-container *ngTemplateOutlet="subjectTopics"></ng-container>
       </mat-tab>
       <mat-tab label="Achievements">
@@ -59,71 +57,20 @@
     </div>
 
     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
-      @if(subjectData && subjectData?.syllabus?.length > 0){
-      <!-- <p>{{ subjectData?.syllabus | json}}</p> -->
-      <app-goal-path [title]="currentSubject.title" [color]="currentSubject.color" [topics]="subjectData?.syllabus"
-        (nextGoal)="onTopicQuiz($event)"></app-goal-path>
-      }
-    </div>
-  </div>
-
-  <div class="row m-t-20">
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
       <mat-card>
-        <mat-card-header class="header-style">
-          @if (currentSubject?.image) {
-          <img mat-card-avatar [src]="currentSubject?.image" class="m-b-10">
-          }
-          <mat-card-title>Learning Guidelines</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="p-l-5">
-          <!-- <img [src]="currentSubject?.image" class="text-center smallLoadingIcon m-b-20">
-              <h5 class="cmSubHeading">Master {{currentSubject?.title}}</h5> -->
-          <p class="m-t-10 font-12 m-t-0">Boost your knowledge with interactive and concept-driven assessments.</p>
-          <hr class="dim-divider">
-          <p class="m-b-8 font-12 d-flex">
-            <i class="material-icons col-blue psr-2">check_circle</i>
-            <span class="step-title">Set Your Goals </span> Begin by exploring the practice materials and defining your
-            learning objectives.
-          </p>
+          <mat-card-header class="header-style">
+            <mat-card-title> My Assessments</mat-card-title>
+            <a mat-button color="primary" href="#" (click)="$event.preventDefault();">View All</a>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-scrollbar style="height: 380px" visibility="hover">
+              <div class="doc-file-type">
+                <app-skill-rating-widget [skillRatings]="subjectData?.skillRatings"></app-skill-rating-widget>
+              </div>
+            </ng-scrollbar>
+          </mat-card-content>
+        </mat-card>
 
-          <p class="m-b-8 font-12 d-flex">
-            <i class="material-icons col-blue psr-2">check_circle</i>
-            <span class="step-title">Track Your Progress </span> Use the Subject Progress Tracker to follow structured
-            assessments and measure your growth.
-          </p>
-
-          <p class="m-b-8 font-12 d-flex">
-            <i class="material-icons col-blue psr-2">check_circle</i>
-            <span class="step-title">Revise Before You Test </span> Review topics thoroughly to ensure better
-            performance in assessments.
-          </p>
-
-          <p class="m-b-8 font-12 d-flex">
-            <i class="material-icons col-blue psr-2">check_circle</i>
-            <span class="step-title">Take Smart Assessments </span> Attempt interactive quizzes with focus; minimize
-            wrong answers, as they impact your overall score.
-          </p>
-
-          <p class="m-b-8 font-12 d-flex">
-            <i class="material-icons col-blue psr-2">check_circle</i>
-            <span class="step-title">Climb the Leaderboard </span> Maintain high accuracy and consistent scores to earn
-            badges, rewards, and a top leaderboard spot.
-          </p>
-
-          <hr class="dim-divider">
-        </mat-card-content>
-        <mat-card-footer>
-          <div class="text-center p-t-20 p-b-20">
-            <button mat-stroked-button color="primary" class="waves-effect" (click)="launchSubjectQuiz(currentSubject)">
-              <!-- Test {{currentSubject?.title}} Skills -->
-              {{nextAction}}
-            </button>
-          </div>
-        </mat-card-footer>
-      </mat-card>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
       <mat-card>
         <mat-card-header class="header-style">
           @if (currentSubject?.image) {
@@ -149,20 +96,22 @@
           </mat-chip-set> -->
         </mat-card-content>
       </mat-card>
+      @if(subjectData && subjectData?.syllabus?.length > 0){
+      <!-- <p>{{ subjectData?.syllabus | json}}</p> -->
+      <app-goal-path [title]="currentSubject.title" [color]="currentSubject.color" [topics]="subjectData?.syllabus"
+        (nextGoal)="onTopicQuiz($event)"></app-goal-path>
+      }
     </div>
   </div>
 </ng-template>
 
 <ng-template #subjectTopics>
   @if(subjectData?.syllabus && subjectData?.syllabus.length > 0){
-  <div class="text-center">
-    <h4 class="text-center m-t-20 m-b-0">
-      Get Started with {{ currentSubject?.title }}
-    </h4>
+  <!-- <div class="text-center">
     <small class="m-t-0 m-b-10"> {{ subjectData?.syllabus.length }} Milestones to level up your {{
       currentSubject?.title }} skills</small>
   </div>
-  <hr class="dim-divider">
+  <hr class="dim-divider"> -->
   <app-topics-list [subjectTopics]="subjectData?.syllabus" (topicExplore)="onTopicExplore($event)"
     (topicQuiz)="onTopicQuiz($event)"></app-topics-list>
   }@else{
