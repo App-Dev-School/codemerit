@@ -1,9 +1,9 @@
 <div class="card hoverCard card-congratulation-medal">
   <div class="card-body text-center">
     <img src="assets/images/icons/badge.svg" class="congratulation-medal text-center" alt="UpSkillr Medal" />
-    <h5 class="text-center cmSubHeading m-t-20">{{title}}</h5>
-    <!-- <h5 class="card-text m-t-20 font-14 text-center">{{message()}}</h5> -->
-    <h5 class="card-text m-t-20 font-14 text-center">Rate your confidence across the technologies you have learnt ⭐</h5>
+    <h5 class="text-center cmSubHeading m-t-10 m-b-5">{{title}}</h5>
+    <!-- <h5 class="m-t-20 font-11 text-center">{{message()}}</h5> -->
+    <!-- <h5 class="card-text m-t-20 font-14 text-center">Rate your confidence across the technologies you have learnt ⭐</h5> -->
     <div class="star-rating auto-animate">
       <span class="star rating"> ★ </span>
       <span class="star rating"> ★ </span>
@@ -11,9 +11,9 @@
       <span class="star rating"> ★ </span>
       <span class="star rating"> ★ </span>
     </div>
-    <!-- <h5 class="m-t-0 font-12 col-grey">Rate your skill sets</h5> -->
-    <h5 class="card-text m-t-20 font-14 text-center">Start with a quick self-evaluation to understand where you stand, identify your strongest subjects, and unlock a tracked roadmap toward certification and job readiness.</h5>
-    <br>
+    <h5 class="card-text m-t-0 font-14 text-center">
+     Discover your strengths, uncover gaps, and unlock a guided roadmap to certification and career readiness.</h5>
+    <hr class="dim-divider">
     @if (action === 'takeQuiz') {
     <button mat-flat-button color="warn" (click)="handleAction()"><mat-icon>keyboard_arrow_left</mat-icon>
       Assess My Skill</button>

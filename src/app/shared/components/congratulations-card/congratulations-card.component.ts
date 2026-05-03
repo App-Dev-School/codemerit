@@ -26,10 +26,10 @@ export class CongratulationsCardComponent implements OnInit {
   ngOnInit(): void {
     console.log("Congratulations Component", this.user);
     if (this.user && !this.user?.userJobRoles?.length) {
-      this.message = 'You are now registered with CodeMerit. Please select a Tech Role to get started.';
+      this.message = 'Please select an aspiring Tech Role to get started.';
       this.action = "Select Your Role";
     } else {
-      this.message = 'Hope you are doing well! Happy Learning!';
+      this.message = 'Browse our courses and skill assessments to continue your learning journey.';
       this.action = "";
     }
   }

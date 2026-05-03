@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class MedalCardComponent {
   @Input() userName = 'Guest';
-  title = 'Upskill to Stay Ahead!';
+  title = 'Quick Self Skill Evaluation';
   @Input() message = 'You have won the Explorer badge for completing the self skill rating.';
   @Input() action = 'selfRating';
   medalAction = output<string>();
@@ -32,7 +32,7 @@ export class MedalCardComponent {
   ];
 
   constructor() {
-    this.title = this.getRandomMessage();
+    //this.title = this.getRandomMessage();
   }
 
   getRandomMessage() {

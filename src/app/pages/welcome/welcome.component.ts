@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -21,6 +21,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
 import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
 import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
 import { NgScrollbar } from 'ngx-scrollbar';
+import { register } from 'swiper/element/bundle';
 
 export const certificateModels: CertificateModel[] = [
   {
@@ -141,7 +142,9 @@ export const certificateModels: CertificateModel[] = [
     CongratulationsCardComponent,
     SkillRatingWidgetComponent,
     ReportListComponent,
-    MedalCardComponent],
+    MedalCardComponent
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
   //  animations: [
   //     trigger('fadeOut', [
   //       transition(':leave', [
@@ -310,27 +313,30 @@ export class WelcomeComponent implements OnInit {
     }
   ];
 
+  @ViewChild('swiperEx') swiperRef!: ElementRef<any>;
+
   constructor(private router: Router,
     private master: MasterService,
     private snackService: SnackbarService,
     public authService: AuthService) {
+    register();
     this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
       this.certificateModels = certificateModels;
-      // if (sub && sub.firstName) {
-      //   this.authUser = sub;
-      //   this.userName = sub.firstName;
-      //   if (sub.designation) {
-      //     this.nextAction = "selfRating";
-      //     this.userMessage = "Tell us what you already know. Rate your skills, and we’ll personalize your learning path just for you.";
-      //   } else {
-      //     this.nextAction = "takeQuiz";
-      //     this.userMessage = "Unlock a customized roadmap to level up faster. Generate a mock exam to assess your skills.";
-      //   }
-      // } else {
-      //   this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
-      //   this.nextAction = "selfRating";
-      // }
+      if (sub && sub.firstName) {
+        this.authUser = sub;
+        this.userName = sub.firstName;
+        if (sub.designation) {
+          this.nextAction = "selfRating";
+          this.userMessage = "Tell us what you already know. Rate your skills, and we’ll personalize your learning path just for you.";
+        } else {
+          this.nextAction = "takeQuiz";
+          this.userMessage = "Unlock a customized roadmap to level up faster. Generate a mock exam to assess your skills.";
+        }
+      } else {
+        this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
+        this.nextAction = "selfRating";
+      }
       //Implement a smart next action card
       this.userMessage = "Start by listing your skills and rating yourself. We’ll adapt your journey to match your strengths and goals.";
       this.nextAction = "selfRating";
