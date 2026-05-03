@@ -11,8 +11,9 @@
       <span class="star rating"> ★ </span>
       <span class="star rating"> ★ </span>
     </div>
+
     <h5 class="card-text m-t-0 font-14 text-center">
-     Discover your strengths, uncover gaps, and unlock a guided roadmap to certification and career readiness.</h5>
+      Discover your strengths, uncover gaps, and unlock a guided roadmap to certification and career readiness.</h5>
     <hr class="dim-divider">
     @if (action === 'takeQuiz') {
     <button mat-flat-button color="warn" (click)="handleAction()"><mat-icon>keyboard_arrow_left</mat-icon>
@@ -23,11 +24,12 @@
       Sign Up / Login <mat-icon>keyboard_arrow_right</mat-icon></button>
     }
     @if (action === 'selfRating') {
-    <button  mat-flat-button color="warn" (click)="handleAction()" rippleEffect>
+    <button mat-flat-button color="warn" (click)="handleAction()" rippleEffect>
       <mat-icon>assignment</mat-icon>Start with Self Evaluation</button>
     }
-<!-- <hr class="dim-divider">
+    <!-- <hr class="dim-divider">
     <button  mat-flat-button color="warn" (click)="action='subjectRating';handleAction()" rippleEffect>
       <mat-icon>keyboard_arrow_right</mat-icon> Subject Completetion Agreement</button>
   </div> -->
+  </div>
 </div>

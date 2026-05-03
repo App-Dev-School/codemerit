@@ -2,7 +2,6 @@ import { Component, Input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-
 @Component({
   selector: 'app-medal-card',
   imports: [

@@ -133,7 +133,7 @@ export class QuizCreateComponent implements OnInit {
   }
 
   close() {
-    this.dialogRef.close(this.saveQuizConfig());
+    this.dialogRef.close(null);
   }
 
   saveQuizConfig() : QuizConfig {

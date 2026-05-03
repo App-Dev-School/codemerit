@@ -26,6 +26,7 @@ import { SubjectPerformanceCardComponent } from '@shared/components/subject-perf
 import { NgScrollbar } from 'ngx-scrollbar';
 import { Observable, of } from 'rxjs';
 import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
+import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -47,6 +48,7 @@ import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
     MeritListWidgetComponent,
     RecentCommentsComponent,
     SubjectPerformanceCardComponent,
+    SkillRatingWidgetComponent,
     GoalPathComponent,
     CertificateComponent
   ]
@@ -147,17 +149,6 @@ export class DashboardComponent implements OnInit {
       this.subject = subject;
       this.onSubjectChange(this.subject);
     }
-    // this.route.paramMap.subscribe(params => {
-    //   if (params.get("subject")) {
-    //     this.subject = params.get("subject");
-    //     if (this.subject) {
-    //       this.onSubjectChange(this.subject);
-    //     }
-    //   } else {
-    //     this.subject = "";
-    //   }
-    //   console.log(this.pageTitle, "@RouteParam changed =>", this.subject);
-    // });
   }
 
   onSubjectChange(subject: string) {

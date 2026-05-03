@@ -47,8 +47,8 @@ export class SigninComponent
       password: ['', Validators.required],
     });
     if (!environment.production) {
-      this.authForm.get('username')?.setValue('admin@codemerit.com');
-      this.authForm.get('password')?.setValue('756272');
+      this.authForm.get('username')?.setValue('carolinjoannasheryl@gmail.com');
+      this.authForm.get('password')?.setValue('180099');
     }
   }
   get f() {

@@ -14,9 +14,9 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row m-t-10 clearfix">
       <div class="col-12 col-md-6 col-lg-4">
-        <mat-card>
+        <mat-card class="m-t-20">
           <mat-card-header class="header-style">
             <mat-card-title> My Assessments</mat-card-title>
             <a mat-button color="primary" href="#" (click)="$event.preventDefault();">View All</a>
@@ -31,15 +31,25 @@
         </mat-card>
       </div>
       <div class="col-12 col-md-6 col-lg-8">
-        <swiper-container #swiperEx pagination="true" slides-per-view="auto"
-          space-between="10" free-mode="true" class="certificate-swiper">
-          @for(certificate of certificateModels; track certificate) {
-          <swiper-slide class="swiper-slide m-t-20 m-b-20">
-            <app-certificate [templateId]="certificate.templateId" [model]="certificate"
-              [preview]="true"></app-certificate>
-          </swiper-slide>
-          }
-        </swiper-container>
+        <div class="swiper-wrapper-container">
+          <!-- <swiper-container #swiperEx [pagination]="{ el: '.custom-pagination', clickable: true }"
+            slides-per-view="auto" space-between="10" [loop]="true" [speed]="4000" [autoplay]="{
+    delay: 0,
+    disableOnInteraction: false
+  }" class="certificate-swiper"> -->
+  <swiper-container #swiperEx [pagination]="{ el: '.custom-pagination', clickable: true }" 
+            slides-per-view="auto" space-between="10" [loop]="true" [speed]="4000" class="certificate-swiper">
+            @for(certificate of certificateModels; track certificate) {
+            <swiper-slide class="swiper-slide m-t-20 m-b-20">
+              <app-certificate [templateId]="certificate.templateId" [model]="certificate"
+                [preview]="true"></app-certificate>
+            </swiper-slide>
+            }
+            <div class="custom-pagination"></div>
+          </swiper-container>
+          <!-- Custom pagination outside -->
+
+        </div>
       </div>
     </div>
 

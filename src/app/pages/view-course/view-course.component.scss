@@ -226,3 +226,12 @@
     padding: 0;
   }
 }
+
+::ng-deep .swiper-horizontal>.swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal, .swiper-pagination-custom, .swiper-pagination-fraction {
+    bottom: 20px !important;
+    background-color: #1b4f9d;
+}
+
+::ng-deep .swiper-pagination {
+    position: relative!important;
+}

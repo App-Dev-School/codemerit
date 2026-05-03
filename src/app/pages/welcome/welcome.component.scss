@@ -53,3 +53,23 @@
   font-weight: 500;
   margin-top: 0px!important;
 }
+
+.swiper-wrapper-container {
+  position: relative;
+}
+
+.custom-pagination {
+  position: absolute;
+  bottom: 10px; /* move wherever you want */
+  left: 50%;
+  transform: translateX(-50%);
+  background: gray;
+}
+
+// ::ng-deep swiper-container::part(pagination) {
+//   bottom: 10px;
+//   top: auto;
+// }
+// ::ng-deep swiper-container::part(bullet) {
+//   background-color: #000;
+// }
