@@ -231,6 +231,19 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
     return this.utility.isCodeQuestion(text);
   }
 
+  getLevelDisplay(level: number | string | undefined): string {
+    switch (Number(level)) {
+      case 1:
+        return 'Easy';
+      case 2:
+        return 'Intermediate';
+      case 3:
+        return 'Advanced';
+      default:
+        return level ? String(level) : '';
+    }
+  }
+
   whitelistQuestion(question: FullQuestion): void {
     if (!this.isAdmin) {
       this.snackService.display(
