@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { QuizService } from 'src/app/quiz/quiz.service';
 
 interface QuizListItem {
@@ -11,13 +13,14 @@ interface QuizListItem {
   label: string | null;
   status: string;
   isPublished: boolean;
+  slug: string;
 }
 
 @Component({
   selector: 'app-my-quiz-list',
   templateUrl: './my-quiz-list.component.html',
   styleUrls: ['./my-quiz-list.component.scss'],
-  imports: [CommonModule, MatCardModule, MatTableModule],
+  imports: [CommonModule, MatCardModule, MatTableModule, MatButtonModule],
 })
 export class MyQuizListComponent implements OnInit {
   displayedColumns: string[] = [
@@ -26,12 +29,13 @@ export class MyQuizListComponent implements OnInit {
     'numQuestions',
     'label',
     'status',
+    'edit',
   ];
   quizzes: QuizListItem[] = [];
   loading = true;
   errorMessage = '';
 
-  constructor(private quizService: QuizService) {}
+  constructor(private quizService: QuizService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadMyQuizzes();
@@ -50,6 +54,7 @@ export class MyQuizListComponent implements OnInit {
           label: quiz?.label ?? '-',
           status: quiz?.status ?? (quiz?.isPublished ? 'Published' : 'Draft'),
           isPublished: !!quiz?.isPublished,
+          slug: quiz?.slug ?? '',
         }));
         this.loading = false;
       },
@@ -58,5 +63,9 @@ export class MyQuizListComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  editQuiz(quiz: QuizListItem): void {
+    this.router.navigate(['/quiz/builder', quiz.slug]);
   }
 }

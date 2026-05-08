@@ -60,6 +60,15 @@
                     </td>
                   </ng-container>
 
+                  <ng-container matColumnDef="edit">
+                    <th mat-header-cell *matHeaderCellDef>Edit</th>
+                    <td mat-cell *matCellDef="let quiz">
+                      <button mat-raised-button color="primary" (click)="editQuiz(quiz)">
+                        Edit
+                      </button>
+                    </td>
+                  </ng-container>
+
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                   <tr mat-row *matRowDef="let row; columns: displayedColumns" class="quiz-row"></tr>
                 </table>
@@ -91,6 +100,11 @@
                         [class.draft]="!quiz.isPublished">
                         {{ quiz.status }}
                       </span>
+                    </div>
+                    <div class="mobile-item">
+                      <button mat-raised-button color="primary" (click)="editQuiz(quiz)">
+                        Edit Quiz
+                      </button>
                     </div>
                   </div>
                 }

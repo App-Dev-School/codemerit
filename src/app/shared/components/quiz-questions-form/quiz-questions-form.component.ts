@@ -153,6 +153,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       this.restoreViewState();
     }
 
+    // Update selected questions whenever they change from parent
     if (changes['selectedQuestions']) {
       this.restoreSelectedQuestions();
     }
