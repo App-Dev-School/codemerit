@@ -55,6 +55,11 @@ export class QuizBuilderComponent implements OnInit {
   error: string = '';
   generatedQuizCode = '';
 
+
+  get isDraftMode(): boolean {
+  return !this.quizFormData?.isPublished;
+}
+
   get requiredQuestionCount(): number {
     return Number(this.quizFormData?.numQuestions ?? 0);
   }
@@ -164,8 +169,9 @@ export class QuizBuilderComponent implements OnInit {
 
   nextStep(): void {
     if (
-      this.currentStep === 1 &&
-      this.quizQuestionsData.length !== this.requiredQuestionCount
+     this.currentStep === 1 &&
+  !this.isDraftMode &&
+  this.quizQuestionsData.length !== this.requiredQuestionCount
     ) {
       this.showRequiredQuestionsMessage();
       return;
@@ -197,6 +203,10 @@ export class QuizBuilderComponent implements OnInit {
 
   onQuestionsAdded(questions: any[]): void {
     this.quizQuestionsData = questions;
+    if (this.isDraftMode) {
+    this.canProceedToNext = true;
+    return;
+  }
     if (questions && questions.length === this.requiredQuestionCount) {
       this.canProceedToNext = true;
     } else {
@@ -220,12 +230,16 @@ export class QuizBuilderComponent implements OnInit {
 }
   get allStepsValid(): boolean {
     // Add more robust validation as needed
-    return (
-      !!this.quizFormData &&
-      this.requiredQuestionCount > 0 &&
-      this.quizQuestionsData.length === this.requiredQuestionCount &&
-      !!this.quizSettingsData
-    );
+    if (this.isDraftMode) {
+    return !!this.quizFormData;
+  }
+
+  return (
+    !!this.quizFormData &&
+    this.requiredQuestionCount > 0 &&
+    this.quizQuestionsData.length === this.requiredQuestionCount &&
+    !!this.quizSettingsData
+  );
   }
 
   private showRequiredQuestionsMessage(): void {
@@ -245,9 +259,13 @@ export class QuizBuilderComponent implements OnInit {
     }
 
     if (this.currentStep === 1) {
-      this.canProceedToNext =
-        this.requiredQuestionCount > 0 &&
-        this.quizQuestionsData.length === this.requiredQuestionCount;
+      if (this.isDraftMode) {
+    this.canProceedToNext = true;
+  } else {
+    this.canProceedToNext =
+      this.requiredQuestionCount > 0 &&
+      this.quizQuestionsData.length === this.requiredQuestionCount;
+  }
       return;
     }
 

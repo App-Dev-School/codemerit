@@ -273,6 +273,19 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     );
   }
 
+  getLevelDisplay(level: number | string | undefined): string {
+    switch (Number(level)) {
+      case 1:
+        return 'Easy';
+      case 2:
+        return 'Intermediate';
+      case 3:
+        return 'Advanced';
+      default:
+        return level ? String(level) : '';
+    }
+  }
+
   private syncTopics(subjectId: number | number[] | null): void {
     if (
       subjectId === null ||

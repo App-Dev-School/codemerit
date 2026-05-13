@@ -95,10 +95,24 @@
       >
         @if (loading) {
           <mat-icon class="spin">sync</mat-icon>
-          {{ editMode ? 'Updating...' : 'Publishing...' }}
+          {{
+  isDraftMode
+    ? (editMode ? 'Saving Changes...' : 'Saving Draft...')
+    : (editMode ? 'Updating...' : 'Publishing...')
+}}
         } @else {
-          <mat-icon>{{ editMode ? 'edit' : 'publish' }}</mat-icon>
-          {{ editMode ? 'Edit Quiz' : 'Publish Quiz' }}
+          <mat-icon>
+  {{
+    isDraftMode
+      ? 'save'
+      : (editMode ? 'edit' : 'publish')
+  }}
+</mat-icon>
+        {{
+  isDraftMode
+    ? (editMode ? 'Save Changes' : 'Save Draft')
+    : (editMode ? 'Edit Quiz' : 'Publish Quiz')
+}}
         }
       </button>
     }
