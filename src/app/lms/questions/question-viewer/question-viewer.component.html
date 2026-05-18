@@ -124,10 +124,10 @@
                     }
                     @if (question.level) {
                     <span class="mb-3 icon-text"><mat-icon>school</mat-icon>
-                      {{ question?.level }}</span>
+                      {{ getLevelDisplay(question?.level) }}</span>
                     }
-                    <span class="mb-3 icon-text"><mat-icon>beenhere</mat-icon>
-                      #{{ question?.id }}</span>
+                    <!-- <span class="mb-3 icon-text"><mat-icon>beenhere</mat-icon>
+                      #{{ question?.id }}</span> -->
 
                     @if (question.timeAllowed) {
                     <span class="mb-3 icon-text"><mat-icon>alarm_on</mat-icon>

@@ -191,7 +191,7 @@ export class QuizService {
         'Authorization': api_key
       })
     };
-    const url = 'apis/quiz/update/' + topicId;
+    const url = 'apis/quiz/standard/' + topicId;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(topic) + " via Token " + api_key);
     }

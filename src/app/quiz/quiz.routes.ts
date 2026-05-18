@@ -5,6 +5,10 @@ export const QUIZ_ROUTE: Route[] = [
     loadComponent: () => import('./quiz-builder/quiz-builder.component').then(c => c.QuizBuilderComponent),
   },
   {
+    path: "builder/:slug",
+    loadComponent: () => import('./quiz-builder/quiz-builder.component').then(c => c.QuizBuilderComponent),
+  },
+  {
     path: "take/:qcode",
     loadComponent: () => import('./take-quiz/take-quiz.component').then(c => c.TakeQuizComponent),
   },

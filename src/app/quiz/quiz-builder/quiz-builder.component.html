@@ -57,7 +57,7 @@
       <div class="step-content" style="max-width: 500px; margin: 0 auto">
         <app-quiz-settings-form
           (formSubmitted)="onSettingsFormSubmit($event)"
-          [settings]="quizSettingsData"
+          [initialSettings]="quizSettingsData"
         ></app-quiz-settings-form>
       </div>
     }
@@ -90,15 +90,29 @@
       <button
         mat-flat-button
         color="primary"
-        (click)="publishQuiz()"
+        (click)="editMode ? editQuiz() : publishQuiz()"
         [disabled]="!allStepsValid || loading"
       >
         @if (loading) {
           <mat-icon class="spin">sync</mat-icon>
-          Publishing...
+          {{
+  isDraftMode
+    ? (editMode ? 'Saving Changes...' : 'Saving Draft...')
+    : (editMode ? 'Updating...' : 'Publishing...')
+}}
         } @else {
-          <mat-icon>publish</mat-icon>
-          Publish Quiz
+          <mat-icon>
+  {{
+    isDraftMode
+      ? 'save'
+      : (editMode ? 'edit' : 'publish')
+  }}
+</mat-icon>
+        {{
+  isDraftMode
+    ? (editMode ? 'Save Changes' : 'Save Draft')
+    : (editMode ? 'Edit Quiz' : 'Publish Quiz')
+}}
         }
       </button>
     }

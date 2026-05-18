@@ -127,22 +127,26 @@ export class QuizFormComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.applyFormData();
 
-    // Emit value on init if valid
-    if (this.quizForm.valid) {
-      this.formSubmitted.emit(this.quizForm.value);
-    }
-    // Emit value on every valid change
-    this.quizForm.valueChanges.subscribe(() => {
-      if (this.quizForm.valid) {
-        this.formSubmitted.emit(this.quizForm.value);
-      }
-    });
+    this.formSubmitted.emit(this.quizForm.getRawValue());
+
+  this.quizForm.valueChanges.subscribe((value) => {
+    this.formSubmitted.emit(value);
+  });
+
+   
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['formData']) {
-      this.applyFormData();
-    }
+    
+     const formData = changes['formData']?.currentValue;
+
+  if (!formData) {
+    return;
+  }
+
+  if (!this.quizForm.dirty) {
+    this.applyFormData();
+  }
   }
 
   onCancel() {

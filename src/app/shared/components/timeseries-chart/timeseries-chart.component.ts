@@ -4,6 +4,22 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardHeader, MatCardModule } from '@angular/material/card';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexFill,
+  ApexGrid,
+  ApexLegend,
+  ApexPlotOptions,
+  ApexResponsive,
+  ApexStroke,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis
+} from 'ng-apexcharts';
+
+
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart & { type: 'line' | 'area' | 'bar' | 'scatter' | 'candlestick' | 'heatmap' | 'rangeBar' };

@@ -153,6 +153,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       this.restoreViewState();
     }
 
+    // Update selected questions whenever they change from parent
     if (changes['selectedQuestions']) {
       this.restoreSelectedQuestions();
     }
@@ -270,6 +271,19 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     return this.filteredQuestions.filter(
       (q) => !quizQuestionIds.has(q.selectionKey),
     );
+  }
+
+  getLevelDisplay(level: number | string | undefined): string {
+    switch (Number(level)) {
+      case 1:
+        return 'Easy';
+      case 2:
+        return 'Intermediate';
+      case 3:
+        return 'Advanced';
+      default:
+        return level ? String(level) : '';
+    }
   }
 
   private syncTopics(subjectId: number | number[] | null): void {

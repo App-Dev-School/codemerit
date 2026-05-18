@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input , SimpleChanges, OnChanges, } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -43,7 +43,7 @@ interface QuizSettings {
     NgScrollbar
   ]
 })
-export class QuizSettingsFormComponent implements OnInit {
+export class QuizSettingsFormComponent implements OnInit,OnChanges {
   @Input() initialSettings: Partial<QuizSettings> = {};
   @Output() settingsChanged = new EventEmitter<QuizSettings>();
   @Output() formSubmitted = new EventEmitter<QuizSettings>();
@@ -70,6 +70,29 @@ export class QuizSettingsFormComponent implements OnInit {
       }
     });
   }
+  ngOnChanges(changes: SimpleChanges): void {
+  const settings = changes['initialSettings']?.currentValue;
+
+  if (!settings || !this.settingsForm) {
+    return;
+  }
+
+  if (!this.settingsForm.dirty) {
+    this.settingsForm.patchValue(
+      {
+        mode: settings.mode ?? 'Default',
+        showHint: settings.showHint ?? true,
+        showAnswers: settings.showAnswers ?? false,
+        enableNavigation: settings.enableNavigation ?? true,
+        enableAudio: settings.enableAudio ?? false,
+        enableTimer: settings.enableTimer ?? true,
+      },
+      { emitEvent: false }
+    );
+  }
+}
+
+  
 
   initializeForm(): void {
     this.settingsForm = this.fb.group({
