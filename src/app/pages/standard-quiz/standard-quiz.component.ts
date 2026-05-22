@@ -239,35 +239,9 @@ export class StandardQuizComponent
 
     const takeQuizUrl =
       `/quiz/take/${slug}`;
-
-    const user =
-      this.authService.currentUserValue;
-
-    if (
-      user?.id &&
-      user?.token
-    ) {
-
+  
       this.router.navigateByUrl(
         takeQuizUrl,
       );
-
-      return;
-    }
-
-    localStorage.setItem(
-      AuthConstants.REDIRECT_URL,
-      takeQuizUrl,
-    );
-
-    this.router.navigate(
-      ['/authentication/signin'],
-      {
-        queryParams: {
-          redirectUrl:
-            takeQuizUrl,
-        },
-      },
-    );
   }
 }

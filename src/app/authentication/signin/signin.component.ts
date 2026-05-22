@@ -52,18 +52,6 @@ export class SigninComponent
       this.authForm.get('username')?.setValue('admin@codemerit.com');
       this.authForm.get('password')?.setValue('756272');
     }
-
-    const redirectUrl =
-      this.route.snapshot.queryParamMap.get(
-        'redirectUrl',
-      );
-
-    if (redirectUrl) {
-      localStorage.setItem(
-        AuthConstants.REDIRECT_URL,
-        redirectUrl,
-      );
-    }
   }
   get f() {
     return this.authForm.controls;
@@ -98,7 +86,7 @@ export class SigninComponent
                   );
 
                   this.router.navigateByUrl(
-                    redirectUrl,
+                    redirectUrl
                   );
 
                   this.loading = false;
@@ -119,6 +107,8 @@ export class SigninComponent
                   }
                 }
                 this.loading = false;
+                //Need to verify this call
+                //Yes master data is required in many places and if we don't fetch here then it may create issue in those places
                 this.master.fetchMasterDataFromAPI();
               }, 1000);
             } else {

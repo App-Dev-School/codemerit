@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-
 import { AuthService } from '../service/auth.service';
 import { AuthConstants } from '@config/AuthConstants';
 
@@ -29,16 +28,8 @@ export class AuthGuard {
       AuthConstants.REDIRECT_URL,
       state.url,
     );
-
-    this.router.navigate(
-      ['/authentication/signin'],
-      {
-        queryParams: {
-          redirectUrl:
-            state.url,
-        },
-      },
-    );
+    console.log("REDIRECT_URL saved:", state.url);
+    this.router.navigate(['/authentication/signin']);
     return false;
   }
 }
