@@ -6,6 +6,7 @@ import { WelcomeComponent } from "./welcome/welcome.component";
 import { SelectSubjectComponent } from "../subscriber/select-subject/select-subject.component";
 import { SelectCourseComponent } from "../subscriber/select-course/select-course.component";
 import { ViewCourseComponent } from "./view-course/view-course.component";
+import { StandardQuizComponent } from "./standard-quiz/standard-quiz.component";
 export const PAGES_ROUTE: Route[] = [
   {
     path: "welcome",
@@ -34,5 +35,9 @@ export const PAGES_ROUTE: Route[] = [
   {
     path: "faqs",
     component: FaqsComponent,
-  }
+  },
+  {
+    path: "standard-quiz",
+    component: StandardQuizComponent,
+  },
 ];
