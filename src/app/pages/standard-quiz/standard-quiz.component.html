@@ -19,111 +19,33 @@
   @if(!isLoading){
 
   <div class="quiz-wrapper">
-   <div class="filter-section">
+    <!-- <button mat-stroked-button class="open-filter-btn" type="button" (click)="openSidebar()">
+      <mat-icon>filter_list</mat-icon>
+      Filter Quizzes
+    </button> -->
+    <quiz-filter-sidebar
+      [selectedSubjectId]="selectedSubjectId"
+      [selectedTopicId]="selectedTopicId"
+      (selectedSubjectIdChange)="selectedSubjectId = $event"
+      (selectedTopicIdChange)="selectedTopicId = $event"
+      (apply)="applyFilter()"
+      (reset)="resetFilters()"
+      (close)="closeSidebar()"
+    ></quiz-filter-sidebar>
 
-  <mat-form-field appearance="fill" floatLabel="always">
-
-    <mat-label>
-      Subject
-    </mat-label>
-
-    <mat-select
-      [(ngModel)]="selectedSubjectId"
-      (selectionChange)="onSubjectChange()"
-    >
-
-      <mat-option [value]="0">
-        All Subjects
-      </mat-option>
-
-      @for (
-        subject of subjects;
-        track subject.id
-      ) {
-
-      <mat-option
-        [value]="subject.id"
-      >
-        {{ subject.title }}
-      </mat-option>
-
-      }
-
-    </mat-select>
-    
-
-  </mat-form-field>
-  <mat-form-field appearance="fill" floatLabel="always">
-
-  <mat-label>
-    Select Topic(s)
-  </mat-label>
-
-  <mat-select
-    [(ngModel)]="selectedTopicId"
-  >
-
-    <mat-option [value]="0">
-      All Topics
-    </mat-option>
-
-    @for (
-      topic of filteredTopics;
-      track topic.id
-    ) {
-
-    <mat-option
-      [value]="topic.id"
-    >
-      {{ topic.title }}
-    </mat-option>
-
-    }
-
-  </mat-select>
-
-</mat-form-field>
-
-<div class="filter-actions">
-  <button
-    mat-stroked-button
-    type="button"
-    class="reset-btn"
-    (click)="resetFilters()"
-  >
-    Reset
-  </button>
-
-  <button
-    mat-flat-button
-    color="primary"
-    type="button"
-    class="apply-btn"
-    (click)="applyFilter()"
-  >
-    Apply
-  </button>
-</div>
-
-</div>
-
-   @if(selectedSubjectId !== null && selectedSubjectId !== undefined){
+    @if(selectedSubjectId !== null && selectedSubjectId !== undefined){
     <div class="row g-4">
 
       @for(quiz of quizzes; track quiz.id){
 
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
 
         <mat-card class="hoverCard quiz-card">
 
           <mat-card-content>
 
             @if(quiz.isPublished){
-            <img
-              src="assets/images/icons/badge.svg"
-              class="job-badge"
-              alt="Quiz Badge"
-            />
+            <img src="assets/images/icons/badge.svg" class="job-badge" alt="Quiz Badge" />
             }
 
             <div class="subjectHeader">
@@ -212,12 +134,7 @@
 
             <div class="footer-btn">
 
-              <button
-                mat-flat-button
-                color="primary"
-                class="take-btn"
-                (click)="takeQuiz(quiz.slug)"
-              >
+              <button mat-flat-button color="primary" class="take-btn" (click)="takeQuiz(quiz.slug)">
                 Take Quiz
               </button>
 
@@ -232,7 +149,7 @@
       }
 
     </div>
-  }
+    }
 
   </div>
 

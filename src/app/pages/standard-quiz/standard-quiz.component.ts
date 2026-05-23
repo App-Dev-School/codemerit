@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  inject,
   OnInit,
 } from '@angular/core';
 
@@ -18,7 +19,11 @@ import { FormsModule } from '@angular/forms';
 
 import { MatSelectModule } from '@angular/material/select';
 
+
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { QuizFilterSidebarComponent } from './quiz-filter-sidebar.component';
+import { MatIcon } from '@angular/material/icon';
+import { RightSidebarService } from '@core/service/rightsidebar.service';
 
 @Component({
   selector: 'app-standard-quiz',
@@ -28,9 +33,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatCardModule,
     MatButtonModule,
     FormsModule,
+    MatIcon,
     MatSelectModule,
     MatFormFieldModule,
+    QuizFilterSidebarComponent,
   ],
+  providers: [RightSidebarService],
 
   templateUrl:
     './standard-quiz.component.html',
@@ -39,15 +47,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     './standard-quiz.component.scss',
   ],
 })
-export class StandardQuizComponent
-  implements OnInit
-{
+export class StandardQuizComponent implements OnInit {
+  private rightSidebarService = inject(RightSidebarService);
   quizzes: any[] = [];
-
   subjects: any[] = [];
-
-  // All topics from API
   allTopics: any[] = [];
+
+  openSidebar() {
+    this.rightSidebarService.setRightSidebar(true);
+  }
+
+  closeSidebar() {
+    this.rightSidebarService.setRightSidebar(false);
+  }
 
   // Filtered topics for selected subject
   topics: any[] = [];
@@ -57,6 +69,8 @@ export class StandardQuizComponent
   selectedTopicId: number = 0;
 
   selectedSubjectId: number = 0;
+
+  filterSidebarOpen = false;
 
   isLoading = false;
 
@@ -243,5 +257,10 @@ export class StandardQuizComponent
       this.router.navigateByUrl(
         takeQuizUrl,
       );
+  }
+
+  toggleRightSidebar(): void {
+    // Toggle sidebar open/close using the service only
+    this.rightSidebarService.setRightSidebar(true);
   }
 }
