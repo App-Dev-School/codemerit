@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -57,21 +57,22 @@ export class QuizBuilderComponent implements OnInit {
 
 
   get isDraftMode(): boolean {
-  return !this.quizFormData?.isPublished;
-}
+    return !this.quizFormData?.isPublished;
+  }
 
   get requiredQuestionCount(): number {
     return Number(this.quizFormData?.numQuestions ?? 0);
   }
 
   constructor(
+    private router: Router,
     private snackbar: SnackbarService,
     private authService: AuthService,
     private quizService: QuizService,
     private masterService: MasterService,
     private questionService: QuestionService,
     private route: ActivatedRoute,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const slug = this.route.snapshot.paramMap.get('slug');
@@ -106,22 +107,22 @@ export class QuizBuilderComponent implements OnInit {
         // Use the actual quiz ID for edit API calls when available
         this.quizId = quiz.id ? String(quiz.id) : slug;
 
-        
+
 
         this.quizFormData = {
-  title: quiz.title,
-  shortDesc: quiz.shortDesc,
-  description: quiz.description,
-  tag: quiz.tag,
-  isPublished: quiz.isPublished,
-  quizType: quiz.quizType,
-  numQuestions: quiz.settings?.numQuestions || quiz.questions?.length || 0,
-  ordering: quiz.settings?.ordering,
-  settings: {
-    numQuestions: quiz.settings?.numQuestions || quiz.questions?.length || 0,
-    ordering: quiz.settings?.ordering,
-  },
-};
+          title: quiz.title,
+          shortDesc: quiz.shortDesc,
+          description: quiz.description,
+          tag: quiz.tag,
+          isPublished: quiz.isPublished,
+          quizType: quiz.quizType,
+          numQuestions: quiz.settings?.numQuestions || quiz.questions?.length || 0,
+          ordering: quiz.settings?.ordering,
+          settings: {
+            numQuestions: quiz.settings?.numQuestions || quiz.questions?.length || 0,
+            ordering: quiz.settings?.ordering,
+          },
+        };
 
         // Populate questions data
         this.quizQuestionsData = (quiz.questions || []).map((question) =>
@@ -147,7 +148,7 @@ export class QuizBuilderComponent implements OnInit {
           };
         }
 
-        
+
 
         this.loading = false;
         this.updateCanProceedToNext();
@@ -169,9 +170,9 @@ export class QuizBuilderComponent implements OnInit {
 
   nextStep(): void {
     if (
-     this.currentStep === 1 &&
-  !this.isDraftMode &&
-  this.quizQuestionsData.length !== this.requiredQuestionCount
+      this.currentStep === 1 &&
+      !this.isDraftMode &&
+      this.quizQuestionsData.length !== this.requiredQuestionCount
     ) {
       this.showRequiredQuestionsMessage();
       return;
@@ -188,25 +189,25 @@ export class QuizBuilderComponent implements OnInit {
   // }
 
   onQuizFormSubmit(data: any): void {
-  this.quizFormData = {
-    ...this.quizFormData,
-    ...data,
-    settings: {
-      ...(this.quizFormData?.settings || {}),
-      numQuestions: data.numQuestions,
-      ordering: data.ordering,
-    },
-  };
+    this.quizFormData = {
+      ...this.quizFormData,
+      ...data,
+      settings: {
+        ...(this.quizFormData?.settings || {}),
+        numQuestions: data.numQuestions,
+        ordering: data.ordering,
+      },
+    };
 
-  this.updateCanProceedToNext();
-}
+    this.updateCanProceedToNext();
+  }
 
   onQuestionsAdded(questions: any[]): void {
     this.quizQuestionsData = questions;
     if (this.isDraftMode) {
-    this.canProceedToNext = true;
-    return;
-  }
+      this.canProceedToNext = true;
+      return;
+    }
     if (questions && questions.length === this.requiredQuestionCount) {
       this.canProceedToNext = true;
     } else {
@@ -219,27 +220,27 @@ export class QuizBuilderComponent implements OnInit {
     this.quizFiltersData = filters;
   }
 
-  
- onSettingsFormSubmit(data: any): void {
-  this.quizSettingsData = {
-    ...this.quizSettingsData,
-    ...data,
-  };
 
-  this.updateCanProceedToNext();
-}
+  onSettingsFormSubmit(data: any): void {
+    this.quizSettingsData = {
+      ...this.quizSettingsData,
+      ...data,
+    };
+
+    this.updateCanProceedToNext();
+  }
   get allStepsValid(): boolean {
     // Add more robust validation as needed
     if (this.isDraftMode) {
-    return !!this.quizFormData;
-  }
+      return !!this.quizFormData;
+    }
 
-  return (
-    !!this.quizFormData &&
-    this.requiredQuestionCount > 0 &&
-    this.quizQuestionsData.length === this.requiredQuestionCount &&
-    !!this.quizSettingsData
-  );
+    return (
+      !!this.quizFormData &&
+      this.requiredQuestionCount > 0 &&
+      this.quizQuestionsData.length === this.requiredQuestionCount &&
+      !!this.quizSettingsData
+    );
   }
 
   private showRequiredQuestionsMessage(): void {
@@ -260,12 +261,12 @@ export class QuizBuilderComponent implements OnInit {
 
     if (this.currentStep === 1) {
       if (this.isDraftMode) {
-    this.canProceedToNext = true;
-  } else {
-    this.canProceedToNext =
-      this.requiredQuestionCount > 0 &&
-      this.quizQuestionsData.length === this.requiredQuestionCount;
-  }
+        this.canProceedToNext = true;
+      } else {
+        this.canProceedToNext =
+          this.requiredQuestionCount > 0 &&
+          this.quizQuestionsData.length === this.requiredQuestionCount;
+      }
       return;
     }
 
@@ -311,16 +312,6 @@ export class QuizBuilderComponent implements OnInit {
         console.log('QuizBuilder CreateQuizAPI Response:', response);
 
         if (response && !response.error && response?.data) {
-          /*
-           const slug = response?.data?.slug;
-            if (slug && slug !== '') {
-              setTimeout(() => {
-                this.generatedQuizCode = slug;
-                //this.launchQuiz(this.generatedQuizCode);
-                this.loading = false;
-              }, 2000);
-            }
-           */
           this.loading = false;
           this.resetBuilder();
           const successMsg = this.editMode ? 'Successfully updated the quiz' : 'Successfully created the quiz';
@@ -330,12 +321,13 @@ export class QuizBuilderComponent implements OnInit {
             'bottom',
             'center',
           );
+          this.router.navigate(['lms/quizzes/list']);
         } else {
           this.loading = false;
           this.snackbar.display(
             'snackbar-dark',
             response?.message ??
-              'Failed to process your Quiz request. Please try again later.',
+            'Failed to process your request. Please try again later.',
             'bottom',
             'center',
           );
@@ -390,7 +382,7 @@ export class QuizBuilderComponent implements OnInit {
           this.snackbar.display(
             'snackbar-dark',
             response?.message ??
-              'Failed to update the quiz. Please try again later.',
+            'Failed to update the quiz. Please try again later.',
             'bottom',
             'center',
           );

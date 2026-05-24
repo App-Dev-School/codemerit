@@ -1,55 +1,38 @@
-
 .open-filter-btn {
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .filter-actions {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     grid-column: 1 / -1;
-
     margin-top: 4px;
 }
 
 .reset-btn {
     min-width: 112px;
-
     height: 46px;
-
     border-radius: 24px !important;
-
     border-color: #7b8190 !important;
-
     color: #0d5dbd !important;
-
     font-size: 16px;
-
     font-weight: 700;
 }
 
 .apply-btn {
     min-width: 112px;
-
     height: 46px;
-
     border-radius: 24px !important;
-
     background: #0b63c6 !important;
-
     color: #ffffff !important;
-
     font-size: 16px;
-
     font-weight: 700;
 }
 
@@ -65,7 +48,6 @@
 .quiz-page {
     background: #f0f3fb;
     min-height: 100vh;
-
     padding-left: 270px;
     padding-right: 24px;
     padding-top: 24px;

@@ -18,7 +18,7 @@
 
   @if(!isLoading){
 
-  <div class="quiz-wrapper">
+  <div class="quiz-wrapper m-t-20">
     <!-- <button mat-stroked-button class="open-filter-btn" type="button" (click)="openSidebar()">
       <mat-icon>filter_list</mat-icon>
       Filter Quizzes
@@ -35,39 +35,26 @@
 
     @if(selectedSubjectId !== null && selectedSubjectId !== undefined){
     <div class="row g-4">
-
       @for(quiz of quizzes; track quiz.id){
-
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-
         <mat-card class="hoverCard quiz-card">
-
           <mat-card-content>
-
             @if(quiz.isPublished){
             <img src="assets/images/icons/badge.svg" class="job-badge" alt="Quiz Badge" />
             }
-
             <div class="subjectHeader">
-
               <small>
                 {{quiz.label}}
               </small>
-
               <mat-card-title class="text">
                 {{quiz.title}}
               </mat-card-title>
-
             </div>
-
             <p class="font-12 description">
               {{quiz.description}}
             </p>
-
             <hr class="dim-divider">
-
             <div class="quiz-meta">
-
               <div class="meta-item">
                 <span class="meta-label">
                   Questions
@@ -91,68 +78,45 @@
             </div>
 
             @if (quiz.settings) {
-
             <div class="quiz-settings">
-
               @if(quiz.settings.enableTimer){
               <span>
                 ⏱ Timer
               </span>
               }
-
               @if(quiz.settings.showHint){
               <span>
                 💡 Hint
               </span>
               }
-
               @if(quiz.settings.enableNavigation){
               <span>
                 🧭 Navigation
               </span>
               }
-
             </div>
-
             }
-
             <div class="created-by">
-
               <span>
                 Created By
               </span>
-
               <strong>
                 {{ quiz.createdBy?.name }}
               </strong>
-
             </div>
-
           </mat-card-content>
-
           <mat-card-footer>
-
             <div class="footer-btn">
-
               <button mat-flat-button color="primary" class="take-btn" (click)="takeQuiz(quiz.slug)">
                 Take Quiz
               </button>
-
             </div>
-
           </mat-card-footer>
-
         </mat-card>
-
       </div>
-
       }
-
     </div>
     }
-
   </div>
-
   }
-
 </div>
