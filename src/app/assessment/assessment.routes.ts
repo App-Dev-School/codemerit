@@ -9,5 +9,9 @@ export const ASSESSMENT_ROUTE: Route[] = [
     path: "subject-assessment/:subject",
     loadComponent: () => import('./subject-assessment/subject-assessment.component').then(c => c.SubjectAssessmentComponent),
   },
+  {
+    path: "report/:assessmentId",
+    loadComponent: () => import('./report/assessment-report.component').then(c => c.AssessmentReportComponent),
+  },
   { path: '**', component: SelectCourseComponent }
 ];

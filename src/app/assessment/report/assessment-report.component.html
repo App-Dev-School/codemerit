@@ -1,0 +1,72 @@
+
+<section class="content assessment-report">
+  <div class="content-block">
+    <!-- Assessment Title and Details -->
+    <div class="row mb-4">
+      <div class="col-12 col-md-8">
+        <h2 class="assessment-title">{{ currentSubject?.title || 'Assessment Title' }}</h2>
+        <p class="assessment-description">{{ currentSubject?.description }}</p>
+      </div>
+      <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+        <div class="candidate-details">
+          <div class="candidate-info">
+            <img [src]="authService.currentUserValue.userImage" alt="Candidate" class="candidate-img">
+            <div>
+              <div class="candidate-name">{{ authService.currentUserValue.firstName }} {{ authService.currentUserValue.lastName }}</div>
+              <div class="candidate-role">Candidate</div>
+            </div>
+          </div>
+          <div class="interviewer-info mt-2">
+            <img src="assets/images/users/user.jpg" alt="Interviewer" class="candidate-img">
+            <div>
+              <div class="candidate-name">Interviewer Name</div>
+              <div class="candidate-role">Interviewer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Ratings by Subject -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="section-title">Skill Ratings by Subject</h4>
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3" *ngFor="let skill of skillRatings">
+            <div class="skill-rating-card">
+              <div class="skill-title">{{ skill.skillName }}</div>
+              <app-skill-rating [rating]="skill.rating" [readOnly]="true"></app-skill-rating>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Other Metrics -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="section-title">Other Metrics</h4>
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3" *ngFor="let metric of otherMetrics">
+            <div class="skill-rating-card">
+              <div class="skill-title">{{ metric.name }}</div>
+              <app-skill-rating [rating]="metric.rating" [readOnly]="true"></app-skill-rating>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print and Share Area (excluded from print) -->
+    <div class="row no-print">
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <button class="btn btn-outline-primary" (click)="printReport()">
+          <i class="fa fa-print"></i> Print
+        </button>
+        <button class="btn btn-outline-secondary" (click)="shareReport()">
+          <i class="fa fa-share-alt"></i> Share
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

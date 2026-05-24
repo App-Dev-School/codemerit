@@ -8,7 +8,7 @@
             @if (data && data?.title) {
             <h6 class="welcome-msg text-center"> {{data?.title}} </h6>
             }@else {
-            <h6 class="welcome-msg text-center"> isNewUser ? 'Create CodeMerit Account' : 'Login to your CodeMerit Account' </h6>
+            <h6 class="welcome-msg text-center">{{isNewUser ? 'Create CodeMerit Account' : 'Login to your CodeMerit Account'}}</h6>
             }
 
             @if (data && data?.message) {
