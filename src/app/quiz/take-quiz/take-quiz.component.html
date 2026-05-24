@@ -17,7 +17,8 @@
 
         <div class="d-flex align-items-center">
           <!-- Settings Icon -->
-          <button mat-icon-button (click)="openSettingsDialog()" matTooltip="Settings" style="color: #fff; opacity: 0.8;">
+          <button mat-icon-button (click)="openSettingsDialog()" matTooltip="Settings"
+            style="color: #fff; opacity: 0.8;">
             <mat-icon>settings</mat-icon>
           </button>
           @if (quiz.image) {
@@ -27,7 +28,7 @@
         </div>
 
         @if(!questions[currentQuestionId]?.hasAnswered) {
-         <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center">
           <img src="assets/images/icons/ic_watch.png" class="timerIcon" alt="timer">
 
           <!-- Keep cd-timer for exams i.e. a variation of quiz -->
@@ -97,21 +98,15 @@
             <div class="question-card">
               <ng-scrollbar class="questionScroller" visibility="hover">
                 <div class="card-content">
-                  <h5 class="col-grey">#{{question.id}}</h5>
+                  <p class="font-11 col-grey">#{{question.id}}</p>
                   @if (question.title) {
                   <h5 class="mb-3">{{ question.title }}</h5>
                   }
-                  <!-- @if (isCodeQuestion(question.question)) {
-                  <small>Read the question carefully and answer.</small>
-                  <div class="question m-b-10">
-                    <pre><code>{{question.question}}</code></pre>
-                  </div>
-                  }@else {
-                  <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
-                  } -->
 
-                  <div [class.tiptap]="isCodeQuestion(question?.question)" [class.question]="!isCodeQuestion(question?.question)" [innerHTML]="question?.question"></div>
+                  <div [class.tiptap]="isCodeQuestion(question?.question)"
+                    [class.question]="!isCodeQuestion(question?.question)" [innerHTML]="question?.question"></div>
 
+                  <hr class="dim-divider">
                   <div class="list-group-item m-b-20 d-flex align-items-center justify-content-between flex-wrap">
                     <div class="d-flex flex-wrap gap-1">
                       @for (topic of question?.topicsArr; track topic) {

@@ -49,6 +49,8 @@ interface Quiz {
   ]
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
+    private subscriptions: any[] = [];
+    private destroyed = false;
   quiz!: QuizEntity;
   questions: QuizQuestion[] = [];
   currentQuestionId = 0;
@@ -90,6 +92,28 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     register(); // Register Swiper web components
   }
 
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    // Clear question timer interval
+    if (this.questionTimerInterval) {
+      clearInterval(this.questionTimerInterval);
+    }
+    // Clear scheduled auto next timeout
+    if (this.scheduledAutoNext) {
+      clearTimeout(this.scheduledAutoNext);
+    }
+    // Unsubscribe from all subscriptions
+    this.subscriptions.forEach(sub => {
+      if (sub && typeof sub.unsubscribe === 'function') {
+        sub.unsubscribe();
+      }
+    });
+    // Close all open dialogs
+    if (this.dialog && this.dialog.openDialogs && this.dialog.openDialogs.length > 0) {
+      this.dialog.openDialogs.forEach(d => d.close());
+    }
+  }
+
   ngOnInit(): void {
     this.userData = this.authService.currentUserValue;
     this.quizSlug = this.route.snapshot.paramMap.get('qcode');
@@ -107,7 +131,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   private loadQuiz(): void {
-    this.quizService.getQuiz(this.quizSlug)
+    const quizSub = this.quizService.getQuiz(this.quizSlug)
       .subscribe(data => {
         this.quiz = data;
         this.loadingText = 'Loading Assessment Panel';
@@ -126,10 +150,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           this.startQuestionTimer(this.questions[0]);
           this.disableOptionClickTemporarily();
         }
-        setTimeout(() => {
+        const loadingTimeout = setTimeout(() => {
           this.loading = false;
         }, 3000);
+        // Store timeout for cleanup
+        this.scheduledAutoNext = loadingTimeout;
       });
+    this.subscriptions.push(quizSub);
   }
 
   startQuestionTimer(question: QuizQuestion) {
@@ -239,11 +266,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           },
           disableClose: true
         });
-        dialogRef.afterClosed().subscribe((result) => {
+        const sub = dialogRef.afterClosed().subscribe((result) => {
           this.onSlideNext();
           this.onSelectionPhase = false;
           this.showingInteractiveDialog = false;
         });
+        this.subscriptions.push(sub);
     }
   }
 
@@ -367,14 +395,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.loadingText = 'Submitting Quiz';
     const analytics = this.quizService.processAndSaveResults(this.questions, this.quiz.id);
-    this.quizService.submitQuiz(analytics).subscribe(
+    const sub = this.quizService.submitQuiz(analytics).subscribe(
       (data: any) => {
-        console.log("QuizPlayer Quiz", data);
         this.quizResult = data.data;
-        setTimeout(() => {
+        const completeTimeout = setTimeout(() => {
           this.completed = true;
           this.navigateToResult(this.quizResult.resultCode);
-        }, 2000);
+        }, 3000);
+        this.scheduledAutoNext = completeTimeout;
       }, (error: any) => {
         this.showNotification(
           "snackbar-danger",
@@ -384,6 +412,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         );
       }
     );
+    this.subscriptions.push(sub);
   }
 
   isCodeQuestion(text: string): boolean {
@@ -403,7 +432,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       },
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe((result) => {
+    const sub = dialogRef.afterClosed().subscribe((result) => {
       console.log("Take Quiz QuickAuth Complete", result);
       this.displayingAuthDialog = false;
       if (result && result?.id) {
@@ -420,6 +449,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         }
       }
     });
+    this.subscriptions.push(sub);
   }
 
   showNotification(colorName, text, placementFrom, placementAlign) {
@@ -440,7 +470,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       const rect = (event.target as HTMLElement).getBoundingClientRect();
       this.celebrationTrigger = {
         x: event.clientX,
-        y: event.clientY - rect.height / 2 // slightly above click
+        y: event.clientY - rect.height / 2
       };
     } catch (error) {
       console.log("optionSelected() triggerCelebration error", error);
