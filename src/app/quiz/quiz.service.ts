@@ -141,6 +141,104 @@ export class QuizService {
     );
   }
 
+ getPublishedQuizzes(
+  subjectId?: number | null,
+  topicId?: number | null,
+): Observable<any[]> {
+
+  let api_key = '';
+
+  if (
+    this.authService.currentUser &&
+    this.authService.currentUserValue
+  ) {
+
+    api_key =
+      this.authService.currentUserValue.token;
+  }
+
+  let url =
+    'apis/quiz/standard/published';
+
+  const params: string[] = [];
+
+  // Subject Filter
+  if (
+    subjectId !== null &&
+    subjectId !== undefined &&
+    Number(subjectId) !== 0
+  ) {
+
+    params.push(
+      `subjectId=${subjectId}`,
+    );
+  }
+
+  // Topic Filter
+  if (
+    topicId !== null &&
+    topicId !== undefined &&
+    Number(topicId) !== 0
+  ) {
+
+    params.push(
+      `topicId=${topicId}`,
+    );
+  }
+
+  // Append query params
+  if (params.length > 0) {
+
+    url += '?' + params.join('&');
+  }
+
+  return this.httpService
+    .get(url, api_key)
+    .pipe(
+
+      map((response: any) => {
+
+        const data =
+          response?.data;
+
+        if (
+          Array.isArray(data)
+        ) {
+
+          return data;
+        }
+
+        if (data) {
+
+          return [data];
+        }
+
+        return [];
+      }),
+    );
+}
+
+getSubjectsTopics(): Observable<any> {
+
+  let api_key = '';
+
+  if (
+    this.authService.currentUser &&
+    this.authService.currentUserValue
+  ) {
+    api_key =
+      this.authService.currentUserValue.token;
+  }
+
+  const url =
+    'apis/master/data';
+
+  return this.httpService.get(
+    url,
+    api_key,
+  );
+}
+
   addQuiz(item: QuizCreateModel): Observable<CreateQuizResponse> {
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {

@@ -1,6 +1,7 @@
 export class AuthConstants {
     public static readonly PLATFORM = 'platform';
     public static readonly AUTH = 'userData';
+    public static readonly REDIRECT_URL = 'redirectUrl';
     public static readonly CACHE_FULL_PROFILE = "myProfile";
     public static readonly CATEGORIES = 'categories';
     public static readonly SUBJECTS = 'subjects';
