@@ -1,4 +1,6 @@
 import { Route } from "@angular/router";
+import { AuthGuard } from "@core/guard/auth.guard";
+
 export const QUIZ_ROUTE: Route[] = [
   {
     path: "builder",
@@ -11,6 +13,7 @@ export const QUIZ_ROUTE: Route[] = [
   {
     path: "take/:qcode",
     loadComponent: () => import('./take-quiz/take-quiz.component').then(c => c.TakeQuizComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: "result/:qcode",

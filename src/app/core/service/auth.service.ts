@@ -49,7 +49,7 @@ export class AuthService {
 
   constructor(private httpService: HttpService, private router: Router) {
     this.currentUserSubject = new BehaviorSubject<User>(
-      JSON.parse(localStorage.getItem('currentUser') || '{}')
+      JSON.parse(localStorage.getItem(AuthConstants.AUTH) || '{}')
     );
     this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -129,7 +129,7 @@ export class AuthService {
 
   logout(debug="") {
     console.log("CodeMeritApp Log out =>", debug);
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem(AuthConstants.AUTH);
     this.currentUserSubject.next(this.currentUserValue);
     return of({ success: false });
   }

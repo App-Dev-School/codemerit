@@ -1,0 +1,56 @@
+<div class="settingSidebar" [ngClass]="isOpenSidebar ? 'showSettingPanel' : ''">
+    <a href="javascript:void(0)" class="settingPanelToggle" (click)="toggleRightSidebar()">
+        <mat-icon [class]="'setting-sidebar-icon'">filter_list</mat-icon>
+    </a>
+    <ng-scrollbar [style.height]="maxHeight + 'px'" visibility="hover">
+        <div class="settingSidebar-body ps-container ps-theme-default">
+            <div class=" fade show active">
+                <div class="setting-panel-header">Filter Quizzes</div>
+            </div>
+            <div class="rightSetting">
+                <p class="font-medium m-b-10">Quiz Type</p>
+                <mat-button-toggle-group class="mt-2" [value]="isDarkSidebar ? 'dark' : 'light'">
+                    <mat-button-toggle (click)="testClick()" value="light">Free</mat-button-toggle>
+                    <mat-button-toggle (click)="testClick()" value="dark">Premium</mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+
+            <div class="rightSetting">
+                <mat-form-field appearance="fill" floatLabel="always">
+                    <mat-label>Subject</mat-label>
+                    <mat-select [(ngModel)]="selectedSubjectId" (selectionChange)="onSubjectChange()">
+                        <mat-option [value]="0">All Subjects</mat-option>
+                        <mat-option [value]="900">test</mat-option>
+                        @for (
+                        subject of subjects;
+                        track subject.id
+                        ) {
+
+                        <mat-option [value]="subject.id">
+                            {{ subject.title }}
+                        </mat-option>
+
+                        }
+                        <!-- <ng-container *ngFor="let subject of subjects; trackBy: trackById">
+          <mat-option [value]="subject.id">{{ subject.title }}</mat-option>
+        </ng-container> -->
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill" floatLabel="always">
+                    <mat-label>Select Topic(s)</mat-label>
+                    <mat-select [(ngModel)]="selectedTopicId">
+                        <mat-option [value]="0">All Topics</mat-option>
+                        <ng-container *ngFor="let topic of filteredTopics; trackBy: trackById">
+                            <mat-option [value]="topic.id">{{ topic.title }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+        </div>
+    </ng-scrollbar>
+    <div class="filter-actions rightSetting sticky-bottom">
+        <button mat-stroked-button type="button" class="reset-btn" (click)="resetFilters()">Reset</button>
+        <button mat-flat-button color="primary" type="button" class="apply-btn" (click)="applyFilter()">Apply</button>
+    </div>
+</div>

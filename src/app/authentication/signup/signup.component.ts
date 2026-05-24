@@ -3,7 +3,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AuthConstants } from '@config/AuthConstants';
 import { User } from '@core';
 import { Status } from '@core/models/status.enum';
 import { AuthService } from '@core/service/auth.service';
@@ -31,12 +32,25 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    public route: ActivatedRoute,
     private snackbar: SnackbarService,
     public authService: AuthService
   ) {
   }
 
   ngOnInit() {
+    const redirectUrl =
+      this.route.snapshot.queryParamMap.get(
+        'redirectUrl',
+      );
+
+    if (redirectUrl) {
+      localStorage.setItem(
+        AuthConstants.REDIRECT_URL,
+        redirectUrl,
+      );
+    }
+
     this.authData = this.authService.currentUserValue;
     this.authService.currentUser.subscribe((res) => {
       if (res) {
@@ -86,7 +100,20 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   navigateToLogin() {
-    this.router.navigate(['/authentication/signin']);
+    const redirectUrl =
+      localStorage.getItem(
+        AuthConstants.REDIRECT_URL,
+      );
+
+    this.router.navigate(
+      ['/authentication/signin'],
+      {
+        queryParams:
+          redirectUrl
+            ? { redirectUrl }
+            : undefined,
+      },
+    );
   }
 
   onLoginLink() {

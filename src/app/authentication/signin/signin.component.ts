@@ -4,8 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService, Role } from '@core';
+import { AuthConstants } from '@config/AuthConstants';
 import { MasterService } from '@core/service/master.service';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { environment } from 'src/environments/environment';
@@ -36,6 +37,7 @@ export class SigninComponent
     private formBuilder: UntypedFormBuilder,
     private master: MasterService,
     private router: Router,
+    public route: ActivatedRoute,
     private authService: AuthService
   ) {
     super();
@@ -73,6 +75,25 @@ export class SigninComponent
           next: (res) => {
             if (res && !res.error && res.data) {
               setTimeout(() => {
+                const redirectUrl =
+                  localStorage.getItem(
+                    AuthConstants.REDIRECT_URL,
+                  );
+
+                if (redirectUrl) {
+                  localStorage.removeItem(
+                    AuthConstants.REDIRECT_URL,
+                  );
+
+                  this.router.navigateByUrl(
+                    redirectUrl
+                  );
+
+                  this.loading = false;
+                  this.master.fetchMasterDataFromAPI();
+                  return;
+                }
+
                 const role = this.authService.currentUserValue.role;
                 if (role === Role.All || role === Role.Admin) {
                   this.router.navigate(['/admin/dashboard/main']);
@@ -86,6 +107,8 @@ export class SigninComponent
                   }
                 }
                 this.loading = false;
+                //Need to verify this call
+                //Yes master data is required in many places and if we don't fetch here then it may create issue in those places
                 this.master.fetchMasterDataFromAPI();
               }, 1000);
             } else {
