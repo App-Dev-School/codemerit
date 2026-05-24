@@ -35,11 +35,8 @@ export class QuizProgressComponent implements OnInit{
   public cardChartOptions!: Partial<ChartOptions>;
   @Input() score : number = 0;
 
-  constructor() {
-    console.log("Quiz Progress Score: ", this.score);
-  }
-
   ngOnInit(): void {
+    this.score = Math.floor(this.score);
     this.cardChart();
   }
 
