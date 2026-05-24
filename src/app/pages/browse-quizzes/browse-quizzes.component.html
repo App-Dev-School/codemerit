@@ -1,5 +1,6 @@
-<div class="quiz-page">
-
+@if(showContent){
+<section class="content" [@topToBottom]>
+  <div class="content-block">
   @if(isLoading){
   <div class="progress-container">
     <div class="preloader pl-size-sm">
@@ -17,8 +18,7 @@
   }
 
   @if(!isLoading){
-
-  <div class="quiz-wrapper m-t-20">
+  <div class="m-t-20">
     <!-- <button mat-stroked-button class="open-filter-btn" type="button" (click)="openSidebar()">
       <mat-icon>filter_list</mat-icon>
       Filter Quizzes
@@ -120,3 +120,5 @@
   </div>
   }
 </div>
+</section>
+}

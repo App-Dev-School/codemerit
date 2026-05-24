@@ -4,30 +4,22 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-
-import { MatButtonModule } from '@angular/material/button';
-
-import { MatCardModule } from '@angular/material/card';
-
-import { Router } from '@angular/router';
-
-import { QuizService } from 'src/app/quiz/quiz.service';
-import { AuthConstants } from '@config/AuthConstants';
-import { AuthService } from '@core/service/auth.service';
-
 import { FormsModule } from '@angular/forms';
-
-import { MatSelectModule } from '@angular/material/select';
-
-
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { QuizFilterSidebarComponent } from './quiz-filter-sidebar.component';
 import { MatIcon } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { AuthService } from '@core/service/auth.service';
 import { RightSidebarService } from '@core/service/rightsidebar.service';
+import { QuizService } from 'src/app/quiz/quiz.service';
+import { QuizFilterSidebarComponent } from './quiz-filter-sidebar.component';
+import { topToBottomAnimation } from '@shared/animations';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-standard-quiz',
-
   imports: [
     CommonModule,
     MatCardModule,
@@ -39,41 +31,26 @@ import { RightSidebarService } from '@core/service/rightsidebar.service';
     QuizFilterSidebarComponent,
   ],
   providers: [RightSidebarService],
-
-  templateUrl:
-    './standard-quiz.component.html',
-
+  templateUrl: './browse-quizzes.component.html',
   styleUrls: [
-    './standard-quiz.component.scss',
+    './browse-quizzes.component.scss',
   ],
+  animations: [topToBottomAnimation]
 })
 export class StandardQuizComponent implements OnInit {
+  showContent = true;
   private rightSidebarService = inject(RightSidebarService);
   quizzes: any[] = [];
   subjects: any[] = [];
   allTopics: any[] = [];
-
-  openSidebar() {
-    this.rightSidebarService.setRightSidebar(true);
-  }
-
-  closeSidebar() {
-    this.rightSidebarService.setRightSidebar(false);
-  }
-
   // Filtered topics for selected subject
   topics: any[] = [];
-
   filteredTopics: any[] = [];
-
   selectedTopicId: number = 0;
-
   selectedSubjectId: number = 0;
-
   filterSidebarOpen = false;
-
-  isLoading = false;
-
+  isLoading = true;
+  private subscriptions = new Subscription();
   constructor(
     private quizService: QuizService,
     private router: Router,
@@ -81,9 +58,20 @@ export class StandardQuizComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
+    this.subscriptions.add(
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationStart) {
+          this.showContent = false;
+        }
+        if (
+          event instanceof NavigationEnd ||
+          event instanceof NavigationCancel
+        ) {
+          this.showContent = true;
+        }
+      }),
+    );
     this.loadSubjects();
-
     this.loadQuizzes();
   }
 
@@ -182,13 +170,19 @@ export class StandardQuizComponent implements OnInit {
     );
 
   if (!topicStillValid) {
-
     this.selectedTopicId = 0;
   }
 }
 
-  applyFilter(): void {
+  openSidebar() {
+    this.rightSidebarService.setRightSidebar(true);
+  }
 
+  closeSidebar() {
+    this.rightSidebarService.setRightSidebar(false);
+  }
+
+  applyFilter(): void {
     this.loadQuizzes();
   }
 
@@ -198,27 +192,21 @@ export class StandardQuizComponent implements OnInit {
   }
 
   resetFilters(): void {
-
     this.selectedSubjectId = 0;
     this.selectedTopicId = 0;
-
     this.syncTopics(this.selectedSubjectId);
     this.applyFilter();
   }
 
   loadQuizzes(): void {
-
     this.isLoading = true;
-
     this.quizService
       .getPublishedQuizzes(
         this.selectedSubjectId,
         this.selectedTopicId,
       )
       .subscribe({
-
         next: (res: any) => {
-
           console.log(
             'Filtered Quiz Response:',
             res,
@@ -236,24 +224,19 @@ export class StandardQuizComponent implements OnInit {
 
           this.isLoading = false;
         },
-
         error: (error) => {
-
           console.error(
             'Failed to load quizzes',
             error,
           );
-
           this.isLoading = false;
         },
       });
   }
 
   takeQuiz(slug: string): void {
-
     const takeQuizUrl =
       `/quiz/take/${slug}`;
-  
       this.router.navigateByUrl(
         takeQuizUrl,
       );
