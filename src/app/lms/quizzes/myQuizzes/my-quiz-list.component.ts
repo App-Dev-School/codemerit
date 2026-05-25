@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { AuthService } from '@core/service/auth.service';
 
 interface QuizListItem {
   title: string;
@@ -44,6 +45,7 @@ interface QuizListItem {
 export class MyQuizListComponent
   implements OnInit, AfterViewInit
 {
+  isAdmin = false;
   displayedColumns: string[] = [
     'title',
     'description',
@@ -63,10 +65,24 @@ export class MyQuizListComponent
 
   constructor(
     private quizService: QuizService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin =
+    this.authService.currentUserValue?.role ===
+    'Admin';
+
+  this.displayedColumns = [
+    'title',
+    'description',
+    'numQuestions',
+    'label',
+    ...(this.isAdmin ? ['author'] : []),
+    'status',
+    'edit',
+  ];
     this.loadMyQuizzes();
   }
 
@@ -91,6 +107,7 @@ export class MyQuizListComponent
             (quiz?.isPublished ? 'Published' : 'Draft'),
           isPublished: !!quiz?.isPublished,
           slug: quiz?.slug ?? '',
+          author: quiz?.author ?? '-',
         }));
 
         this.dataSource.data = quizzes;
