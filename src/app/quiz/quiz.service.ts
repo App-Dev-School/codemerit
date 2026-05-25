@@ -104,33 +104,13 @@ export class QuizService {
     );
   }
 
-  getStandardQuizzes(): Observable<any[]> {
-    let api_key = '';
-    if (this.authService.currentUser && this.authService.currentUser) {
-      api_key = this.authService.currentUserValue.token;
-    }
-    const url = 'apis/quiz/standard';
-    return this.httpService.get(url, api_key).pipe(
-      map((response: any) => {
-        const data = response?.data;
-        if (Array.isArray(data)) {
-          return data;
-        }
-        if (data) {
-          return [data];
-        }
-        return [];
-      })
-    );
-  }
-
   getMyQuizzes(): Observable<any[]> {
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
     }
     const userId = this.authService.currentUserValue?.id;
-    const url = `apis/quiz/standard/user/${userId}`;
+    const url = `apis/quiz/${userId}`;
     return this.httpService.get(url, api_key).pipe(
       map((response: any) => {
         const data = response?.data;
@@ -158,7 +138,7 @@ export class QuizService {
   }
 
   let url =
-    'apis/quiz/standard/published';
+    'apis/quiz/quizzes';
 
   const params: string[] = [];
 
@@ -289,7 +269,7 @@ getSubjectsTopics(): Observable<any> {
         'Authorization': api_key
       })
     };
-    const url = 'apis/quiz/standard/' + topicId;
+    const url = 'apis/quiz/update/' + topicId;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(topic) + " via Token " + api_key);
     }
