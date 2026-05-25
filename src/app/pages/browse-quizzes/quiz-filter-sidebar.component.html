@@ -16,8 +16,9 @@
             </div>
 
             <div class="rightSetting">
-                <mat-form-field appearance="fill" floatLabel="always">
-                    <mat-label>Subject</mat-label>
+                <p class="font-medium m-b-0">Select a Subject</p>
+                <mat-form-field appearance="fill">
+                    <!-- <mat-label>Subject</mat-label> -->
                     <mat-select [(ngModel)]="selectedSubjectId" (selectionChange)="onSubjectChange()">
                         <mat-option [value]="0">All Subjects</mat-option>
                         <mat-option [value]="900">test</mat-option>
@@ -25,19 +26,18 @@
                         subject of subjects;
                         track subject.id
                         ) {
-
                         <mat-option [value]="subject.id">
                             {{ subject.title }}
                         </mat-option>
-
                         }
                         <!-- <ng-container *ngFor="let subject of subjects; trackBy: trackById">
           <mat-option [value]="subject.id">{{ subject.title }}</mat-option>
         </ng-container> -->
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="fill" floatLabel="always">
-                    <mat-label>Select Topic(s)</mat-label>
+
+                <p class="font-medium m-b-0">Select a Topic</p>
+                <mat-form-field appearance="fill">
                     <mat-select [(ngModel)]="selectedTopicId">
                         <mat-option [value]="0">All Topics</mat-option>
                         <ng-container *ngFor="let topic of filteredTopics; trackBy: trackById">

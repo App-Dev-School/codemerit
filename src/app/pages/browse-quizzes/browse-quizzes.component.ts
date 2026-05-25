@@ -17,6 +17,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
 import { QuizFilterSidebarComponent } from './quiz-filter-sidebar.component';
 import { topToBottomAnimation } from '@shared/animations';
 import { Subscription } from 'rxjs';
+import { QuizThumbnailComponent } from '@shared/components/quiz-thumbnail/quiz-thumbnail.component';
 
 @Component({
   selector: 'app-standard-quiz',
@@ -29,6 +30,7 @@ import { Subscription } from 'rxjs';
     MatSelectModule,
     MatFormFieldModule,
     QuizFilterSidebarComponent,
+    QuizThumbnailComponent
   ],
   providers: [RightSidebarService],
   templateUrl: './browse-quizzes.component.html',

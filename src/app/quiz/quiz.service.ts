@@ -132,7 +132,6 @@ export class QuizService {
     this.authService.currentUser &&
     this.authService.currentUserValue
   ) {
-
     api_key =
       this.authService.currentUserValue.token;
   }

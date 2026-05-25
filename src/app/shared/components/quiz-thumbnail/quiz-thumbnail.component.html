@@ -1,0 +1,44 @@
+<mat-card class="hoverCard quiz-thumbnail-card">
+  <div class="thumbnail-image-container">
+    <img class="thumbnail-image" [src]="quiz.image || 'assets/images/quiz-placeholder.jpg'" alt="Quiz Image" />
+    <span *ngIf="quiz.isPublished" class="quiz-badge">
+      <img src="assets/images/icons/badge.svg" alt="Quiz Badge" />
+    </span>
+  </div>
+  <mat-card-content class="thumbnail-content">
+    <div class="quiz-title-row">
+      <mat-card-title class="quiz-title">{{ quiz.title }}</mat-card-title>
+    </div>
+    <div class="quiz-description">{{ quiz.description }}</div>
+    <div class="quiz-meta-row">
+      <div class="meta-item">
+        <mat-icon class="meta-icon">help_outline</mat-icon>
+        <span>{{ quiz.totalQuestions }}</span>
+      </div>
+      <div class="meta-item">
+        <mat-icon class="meta-icon">repeat</mat-icon>
+        <span>{{ quiz.totalAttempts }}</span>
+      </div>
+      <ng-container *ngIf="quiz.settings">
+        <div class="meta-item" *ngIf="quiz.settings.enableTimer">
+          <mat-icon class="meta-icon">timer</mat-icon>
+        </div>
+        <div class="meta-item" *ngIf="quiz.settings.showHint">
+          <mat-icon class="meta-icon">lightbulb</mat-icon>
+        </div>
+        <div class="meta-item" *ngIf="quiz.settings.enableNavigation">
+          <mat-icon class="meta-icon">explore</mat-icon>
+        </div>
+      </ng-container>
+    </div>
+    <div class="quiz-footer-row">
+      <div class="created-by">
+        <mat-icon class="created-by-icon">person</mat-icon>
+        <span>{{ quiz.createdBy?.name }}</span>
+      </div>
+      <button mat-flat-button color="primary" class="take-btn hoverCard" (click)="$event.stopPropagation(); takeQuiz(quiz.slug)">
+        {{ quiz.isQuizTaken ? 'View Result' : 'Start Test' }}
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

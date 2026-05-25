@@ -1,46 +1,43 @@
 @if(showContent){
 <section class="content" [@topToBottom]>
   <div class="content-block">
-  @if(isLoading){
-  <div class="progress-container">
-    <div class="preloader pl-size-sm">
-      <div class="spinner-layer pl-purple">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div>
+    @if(isLoading){
+    <div class="progress-container">
+      <div class="preloader pl-size-sm">
+        <div class="spinner-layer pl-purple">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
 
-        <div class="circle-clipper right">
-          <div class="circle"></div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  }
+    }
 
-  @if(!isLoading){
-  <div class="m-t-20">
-    <!-- <button mat-stroked-button class="open-filter-btn" type="button" (click)="openSidebar()">
+    @if(!isLoading){
+    <div class="m-t-10">
+      <!-- <button mat-stroked-button class="open-filter-btn" type="button" (click)="openSidebar()">
       <mat-icon>filter_list</mat-icon>
       Filter Quizzes
     </button> -->
-    <quiz-filter-sidebar
-      [selectedSubjectId]="selectedSubjectId"
-      [selectedTopicId]="selectedTopicId"
-      (selectedSubjectIdChange)="selectedSubjectId = $event"
-      (selectedTopicIdChange)="selectedTopicId = $event"
-      (apply)="applyFilter()"
-      (reset)="resetFilters()"
-      (close)="closeSidebar()"
-    ></quiz-filter-sidebar>
+      <quiz-filter-sidebar [selectedSubjectId]="selectedSubjectId" [selectedTopicId]="selectedTopicId"
+        (selectedSubjectIdChange)="selectedSubjectId = $event" (selectedTopicIdChange)="selectedTopicId = $event"
+        (apply)="applyFilter()" (reset)="resetFilters()" (close)="closeSidebar()"></quiz-filter-sidebar>
 
-    @if(selectedSubjectId !== null && selectedSubjectId !== undefined){
-    <div class="row g-4">
-      @for(quiz of quizzes; track quiz.id){
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+      @if(selectedSubjectId !== null && selectedSubjectId !== undefined){
+      <div class="row m-t-10 g-4">
+        @for(quiz of quizzes; track quiz.id){
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+          <!-- <app-quiz-thumbnail [quiz]="quiz" (takeQuiz)="takeQuiz($event)"></app-quiz-thumbnail> -->
+          <app-quiz-thumbnail [quiz]="quiz"></app-quiz-thumbnail>
+          <!--- Legacy Quiz Item UI
         <mat-card class="hoverCard quiz-card">
           <mat-card-content>
-            @if(quiz.isPublished){
-            <img src="assets/images/icons/badge.svg" class="job-badge" alt="Quiz Badge" />
+            @if(quiz.isQuizTaken){
+            <img src="assets/images/icons/ic_correct.png" class="job-badge" alt="Quiz Badge" />
             }
             <div class="subjectHeader">
               <small>
@@ -107,18 +104,24 @@
           </mat-card-content>
           <mat-card-footer>
             <div class="footer-btn">
+               @if (quiz.isQuizTaken) {
+              <button mat-stroked-button color="primary" rippleEffect class="w-100 w-md-auto">
+                View Result
+              </button>
+              }@else{
               <button mat-flat-button color="primary" class="take-btn" (click)="takeQuiz(quiz.slug)">
                 Take Quiz
               </button>
+              }
             </div>
           </mat-card-footer>
-        </mat-card>
+        </mat-card>-->
+        </div>
+        }
       </div>
       }
     </div>
     }
   </div>
-  }
-</div>
 </section>
 }
