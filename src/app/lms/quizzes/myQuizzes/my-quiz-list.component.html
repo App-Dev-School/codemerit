@@ -98,6 +98,17 @@
                     {{ quiz.label || '-' }}
                   </mat-cell>
                 </ng-container>
+                
+                 <!-- Author -->
+                <ng-container matColumnDef="author">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Author
+                  </mat-header-cell>
+
+                  <mat-cell *matCellDef="let quiz">
+                    {{ quiz.author }}
+                  </mat-cell>
+                </ng-container>
 
                 <!-- Status -->
                 <ng-container matColumnDef="status">
