@@ -1,15 +1,71 @@
+// 4:3 aspect ratio banner for quiz thumbnail
+.banner-43-bg {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  min-height: 120px;
+  max-height: 260px;
+  background: linear-gradient(120deg, rgb(201, 205, 212) 0%, rgb(74, 67, 74) 100%);
+  //background: linear-gradient(120deg, rgb(34, 38, 46) 0%, rgb(119, 40, 113) 100%);
+  //background: #99218f;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.banner-43-icons {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+  align-items: center;
+}
+.banner-43-icon {
+  //background-color: white;
+  height: 36px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 20%;
+  box-shadow: 0 1px 4px 0 rgba(60,72,100,0.10);
+  padding: 3px;
+}
+.banner-43-title {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  font-size: 1.22rem;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(60,72,100,0.18);
+  padding: 0 20px 18px 20px;
+  line-height: 1.2;
+  max-width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .quiz-thumbnail-card {
   position: relative;
   overflow: hidden;
   border-radius: 14px;
-  box-shadow: 0 2px 12px 0 rgba(60,72,100,0.07);
-  min-width: 260px;
-  max-width: 100%;
-  margin: 0 auto;
+  box-shadow: 0 2px 12px 0 rgba(199, 210, 235, 0.07);
+  width: 100%;
+  margin: 0;
   background: #fff;
   display: flex;
   flex-direction: column;
   padding: 0;
+  transition: box-shadow 0.2s;
+}
+
+@media (min-width: 600px) {
+  .quiz-thumbnail-card {
+    max-width: 380px;
+    margin: 0 auto;
+  }
 }
 
 .thumbnail-image-container {
@@ -30,10 +86,10 @@
 }
 
 .quiz-badge {
-  position: absolute;
   top: 10px;
-  right: 14px;
-  height: 28px;
+  right: 24px;
+  width: 20px;
+  height: 20px;
   z-index: 2;
 }
 
@@ -74,7 +130,6 @@
   margin: 6px 0 0 0;
   flex-wrap: wrap;
 }
-
 
 .meta-item {
   display: flex;

@@ -1,44 +1,68 @@
-<mat-card class="hoverCard quiz-thumbnail-card">
-  <div class="thumbnail-image-container">
-    <img class="thumbnail-image" [src]="quiz.image || 'assets/images/quiz-placeholder.jpg'" alt="Quiz Image" />
-    <span *ngIf="quiz.isPublished" class="quiz-badge">
-      <img src="assets/images/icons/badge.svg" alt="Quiz Badge" />
-    </span>
-  </div>
-  <mat-card-content class="thumbnail-content">
-    <div class="quiz-title-row">
-      <mat-card-title class="quiz-title">{{ quiz.title }}</mat-card-title>
-    </div>
-    <div class="quiz-description">{{ quiz.description }}</div>
-    <div class="quiz-meta-row">
-      <div class="meta-item">
-        <mat-icon class="meta-icon">help_outline</mat-icon>
-        <span>{{ quiz.totalQuestions }}</span>
-      </div>
-      <div class="meta-item">
-        <mat-icon class="meta-icon">repeat</mat-icon>
-        <span>{{ quiz.totalAttempts }}</span>
-      </div>
-      <ng-container *ngIf="quiz.settings">
-        <div class="meta-item" *ngIf="quiz.settings.enableTimer">
-          <mat-icon class="meta-icon">timer</mat-icon>
+<mat-card class="quiz-thumbnail-card">
+    <!-- <div class="banner-43-bg" [ngStyle]="{'background': quiz.bgColor || 'linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)'}"> -->
+    <div class="banner-43-bg">
+        <div class="banner-43-icons">
+            @if(quiz.subjects && quiz.subjects.length){
+            @for(subj of quiz.subjects; track subj){
+            <img class="banner-43-icon" [src]="subj.icon" [alt]="subj.name" />
+            }
+            }
+            <!-- placeholder icons  -->
+            <img class="banner-43-icon" [src]="'assets/images/tech/cicd.png'" />
+            <img class="banner-43-icon" [src]="'assets/images/tech/quality-assurance.png'" />
+            <img class="banner-43-icon" [src]="'assets/images/tech/project-management.png'" />
+
+            @if(quiz.isQuizTaken){
+            <span class="quiz-badge">
+                <img src="assets/images/icons/ic_correct.png" alt="Quiz Badge" />
+            </span>
+            }
         </div>
-        <div class="meta-item" *ngIf="quiz.settings.showHint">
-          <mat-icon class="meta-icon">lightbulb</mat-icon>
-        </div>
-        <div class="meta-item" *ngIf="quiz.settings.enableNavigation">
-          <mat-icon class="meta-icon">explore</mat-icon>
-        </div>
-      </ng-container>
+        <div class="banner-43-title">{{ quiz.title }}</div>
     </div>
-    <div class="quiz-footer-row">
-      <div class="created-by">
-        <mat-icon class="created-by-icon">person</mat-icon>
-        <span>{{ quiz.createdBy?.name }}</span>
-      </div>
-      <button mat-flat-button color="primary" class="take-btn hoverCard" (click)="$event.stopPropagation(); takeQuiz(quiz.slug)">
-        {{ quiz.isQuizTaken ? 'View Result' : 'Start Test' }}
-      </button>
-    </div>
-  </mat-card-content>
+    <mat-card-content class="thumbnail-content">
+        <!-- <div class="quiz-title-row">
+            <mat-card-title class="quiz-title">{{ quiz.title }}</mat-card-title>
+        </div> -->
+        <div class="quiz-description">{{ quiz.description }}</div>
+        <div class="quiz-meta-row">
+            <div class="meta-item">
+                <mat-icon class="meta-icon">help_outline</mat-icon>
+                <span>{{ quiz.totalQuestions }}</span>
+            </div>
+            <div class="meta-item">
+                <mat-icon class="meta-icon">repeat</mat-icon>
+                <span>{{ quiz.totalAttempts }}</span>
+            </div>
+            <ng-container *ngIf="quiz.settings">
+                <div class="meta-item" *ngIf="quiz.settings.enableTimer">
+                    <mat-icon class="meta-icon">timer</mat-icon>
+                </div>
+                <div class="meta-item" *ngIf="quiz.settings.showHint">
+                    <mat-icon class="meta-icon">lightbulb</mat-icon>
+                </div>
+                <div class="meta-item" *ngIf="quiz.settings.enableNavigation">
+                    <mat-icon class="meta-icon">explore</mat-icon>
+                </div>
+            </ng-container>
+        </div>
+        <div class="quiz-footer-row">
+            <div class="created-by">
+                <mat-icon class="created-by-icon">person</mat-icon>
+                <span>{{ quiz.createdBy?.name }}</span>
+            </div>
+
+            
+             @if (quiz.isQuizTaken) {
+              <button mat-stroked-button color="primary" class="take-btn" rippleEffect>
+                View Result
+              </button>
+              }@else{
+              <button mat-flat-button color="primary" class="take-btn hoverCard" (click)="takeQuiz(quiz.slug)">
+                Take Quiz
+              </button>
+              }
+
+        </div>
+    </mat-card-content>
 </mat-card>
