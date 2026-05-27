@@ -17,11 +17,18 @@
 .sidebar-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  //justify-content: space-between;
   padding: 1rem;
   border-bottom: 1px solid #eee;
   font-weight: 600;
   font-size: 1.1rem;
+}
+.filter{
+  align-items: start;
+  flex:1;
+}
+.close{
+  align-items: end;
 }
 .sidebar-content {
   flex: 1;

@@ -1,5 +1,5 @@
-import { CommonModule, NgClass } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -26,14 +26,18 @@ import { NgScrollbar } from 'ngx-scrollbar';
         MatSelectModule,
         MatFormFieldModule
     ],
+
 })
-export class QuizFilterSidebarComponent extends UnsubscribeOnDestroyAdapter
-    implements OnInit {
+
+export class QuizFilterSidebarComponent extends UnsubscribeOnDestroyAdapter implements OnInit {
+    skillType: 'Job' | 'Subject' = 'Job';
     @Input() open = false;
     @Input() selectedSubjectId: number | null = null;
     @Input() selectedTopicId: number | null = null;
+    @Input() selectedJobId: number | null = 1;
     @Output() selectedSubjectIdChange = new EventEmitter<number>();
     @Output() selectedTopicIdChange = new EventEmitter<number>();
+    @Output() selectedJobIdChange = new EventEmitter<number>();
     @Output() apply = new EventEmitter<void>();
     @Output() reset = new EventEmitter<void>();
     @Output() close = new EventEmitter<void>();
@@ -41,6 +45,7 @@ export class QuizFilterSidebarComponent extends UnsubscribeOnDestroyAdapter
     subjects: any[] = [];
     topics: any[] = [];
     filteredTopics: any[] = [];
+    filteredJobs: any[] = [];
 
     private rightSidebarService = inject(RightSidebarService);
     selectedBgColor = 'white';
@@ -60,9 +65,11 @@ export class QuizFilterSidebarComponent extends UnsubscribeOnDestroyAdapter
     ngOnInit(): void {
         this.subjects = this.master.subjects || [];
         this.topics = this.master.topics || [];
-        this.filterTopics();
-        console.log('[Sidebar] Subjects:', this.subjects);
-        console.log('[Sidebar] Topics:', this.topics);
+        //filter if needed
+        this.filteredJobs = this.master.jobRoles || [];
+        console.log('[Sidebar] Jobs loaded:', this.filteredJobs);
+        console.log('[Sidebar] Subjects loaded:', this.subjects);
+        console.log('[Sidebar] Topics loaded:', this.topics);
         this.subs.sink = this.rightSidebarService.sidebarState.subscribe(
             (isRunning) => {
                 this.isOpenSidebar = isRunning;
@@ -86,6 +93,24 @@ export class QuizFilterSidebarComponent extends UnsubscribeOnDestroyAdapter
         console.log('[Sidebar] Filtered topics:', this.filteredTopics);
     }
 
+
+    onJobChange() {
+        // Find the selected job
+        const selectedJob = this.filteredJobs.find(job => job.id === this.selectedJobId);
+        if (selectedJob && selectedJob.subjects && selectedJob.subjects.length > 0) {
+            this.subjects = selectedJob.subjects;
+        } else {
+            this.subjects = this.master.subjects || [];
+        }
+        // Reset subject and topic selection
+        this.selectedSubjectId = 0;
+        this.selectedTopicId = 0;
+        this.filterTopics();
+        this.selectedJobIdChange.emit(this.selectedJobId!);
+        this.selectedSubjectIdChange.emit(this.selectedSubjectId);
+        this.selectedTopicIdChange.emit(this.selectedTopicId);
+    }
+
     filterTopics() {
         if (
             this.selectedSubjectId === null ||
@@ -103,10 +128,11 @@ export class QuizFilterSidebarComponent extends UnsubscribeOnDestroyAdapter
     resetFilters() {
         this.selectedSubjectId = 0;
         this.selectedTopicId = 0;
-        this.filterTopics();
+        this.selectedJobId = 1;
         this.reset.emit();
         this.selectedSubjectIdChange.emit(this.selectedSubjectId);
         this.selectedTopicIdChange.emit(this.selectedTopicId);
+        this.selectedJobIdChange.emit(this.selectedJobId);
         this.rightSidebarService.setRightSidebar(false);
         console.log('[Sidebar] Filters reset');
     }
@@ -134,6 +160,14 @@ export class QuizFilterSidebarComponent extends UnsubscribeOnDestroyAdapter
                 this.toggleRightSidebar();
             }
         }
+    }
+
+    skillTypeChanged(event: any) {
+        console.log('Skill type changed:', this.skillType);
+        if(this.skillType === 'Subject') {
+        this.subjects = this.master.subjects || [];
+        }
+        // You can add additional logic here if needed when the skill type changes
     }
 
     toggleRightSidebar(): void {

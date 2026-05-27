@@ -4,16 +4,37 @@
     </a>
     <ng-scrollbar [style.height]="maxHeight + 'px'" visibility="hover">
         <div class="settingSidebar-body ps-container ps-theme-default">
-            <div class=" fade show active">
-                <div class="setting-panel-header">Filter Quizzes</div>
+            <div class="fade show active">
+                <div class="setting-panel-header">
+                    <span class="filter">Filter Quizzes</span>
+                    <button class="close" mat-icon-button (click)="closeSidebar()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
             </div>
+
             <div class="rightSetting">
-                <p class="font-medium m-b-10">Quiz Type</p>
-                <mat-button-toggle-group class="mt-2" [value]="isDarkSidebar ? 'dark' : 'light'">
-                    <mat-button-toggle (click)="testClick()" value="light">Free</mat-button-toggle>
-                    <mat-button-toggle (click)="testClick()" value="dark">Premium</mat-button-toggle>
+                <p class="font-medium">Skill Type</p>
+                <mat-button-toggle-group class="mt-2" [(ngModel)]="skillType">
+                    <mat-button-toggle value="Job" (click)="skillTypeChanged($event)">Tech Jobs</mat-button-toggle>
+                    <mat-button-toggle value="Subject" (click)="skillTypeChanged($event)">Skills</mat-button-toggle>
                 </mat-button-toggle-group>
             </div>
+            <hr class="dim-divider">
+
+            @if (skillType === 'Job') {
+            <div class="rightSetting">
+                <p class="font-medium m-b-0">Select a Job</p>
+                <mat-form-field appearance="fill">
+                    <mat-select [(ngModel)]="selectedJobId" (selectionChange)="onJobChange()">
+                        <!-- <mat-option [value]="0">All Jobs</mat-option> -->
+                        @for (job of filteredJobs; track job.id) {
+                        <mat-option [value]="job.id">{{ job.title }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            }
 
             <div class="rightSetting">
                 <p class="font-medium m-b-0">Select a Subject</p>
@@ -21,7 +42,6 @@
                     <!-- <mat-label>Subject</mat-label> -->
                     <mat-select [(ngModel)]="selectedSubjectId" (selectionChange)="onSubjectChange()">
                         <mat-option [value]="0">All Subjects</mat-option>
-                        <mat-option [value]="900">test</mat-option>
                         @for (
                         subject of subjects;
                         track subject.id
@@ -30,27 +50,48 @@
                             {{ subject.title }}
                         </mat-option>
                         }
-                        <!-- <ng-container *ngFor="let subject of subjects; trackBy: trackById">
-          <mat-option [value]="subject.id">{{ subject.title }}</mat-option>
-        </ng-container> -->
                     </mat-select>
                 </mat-form-field>
+            </div>
 
+            @if (skillType === 'Subject' && selectedSubjectId && selectedSubjectId !== 0) {
+            <hr class="dim-divider">
+            <div class="rightSetting">
                 <p class="font-medium m-b-0">Select a Topic</p>
                 <mat-form-field appearance="fill">
                     <mat-select [(ngModel)]="selectedTopicId">
                         <mat-option [value]="0">All Topics</mat-option>
-                        <ng-container *ngFor="let topic of filteredTopics; trackBy: trackById">
-                            <mat-option [value]="topic.id">{{ topic.title }}</mat-option>
-                        </ng-container>
+                        @for (topic of filteredTopics; track topic.id) {
+                        <mat-option [value]="topic.id">{{ topic.title }}</mat-option>
+                        }
                     </mat-select>
                 </mat-form-field>
-
             </div>
+            }
+
+            <hr class="dim-divider">
+            <div class="rightSetting">
+                <p class="font-medium">Supported Mode</p>
+                <mat-button-toggle-group class="mt-2" [value]="isDarkSidebar ? 'dark' : 'light'">
+                    <mat-button-toggle (click)="testClick()" value="light">All</mat-button-toggle>
+                    <mat-button-toggle (click)="testClick()" value="dark">Interactive</mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+
+            <!-- <div class="rightSetting">
+                <p class="font-medium m-b-10">Difficulty Level</p>
+                <mat-button-toggle-group class="mt-2" [value]="isDarkSidebar ? 'dark' : 'light'">
+                    <mat-button-toggle (click)="testClick()" value="light">Beginner</mat-button-toggle>
+                    <mat-button-toggle (click)="testClick()" value="dark">Intermediate</mat-button-toggle>
+                    <mat-button-toggle (click)="testClick()" value="dark">Advanced</mat-button-toggle>
+                </mat-button-toggle-group>
+            </div> -->
+
+            <!-- <button mat-stroked-button type="button" class="reset-btn m-t-20 m-b-20" (click)="resetFilters()">Reset</button> -->
         </div>
     </ng-scrollbar>
     <div class="filter-actions rightSetting sticky-bottom">
-        <button mat-stroked-button type="button" class="reset-btn" (click)="resetFilters()">Reset</button>
-        <button mat-flat-button color="primary" type="button" class="apply-btn" (click)="applyFilter()">Apply</button>
+        <button mat-flat-button color="primary" type="button" class="apply-btn fullWidth"
+            (click)="applyFilter()">Apply</button>
     </div>
 </div>
