@@ -1,13 +1,5 @@
-<div class="auth-container">
-  <div class="row auth-main">
-    <div class="col-sm-6 px-0 d-none d-sm-block">
-      <div class="left-img" style="background-image: url(assets/images/pages/bg-signup.jpg);">
-        <!-- <div class="d-flex justify-content-between lbl-alert mb-3" routerLink="/app/welcome">
-        </div> -->
-      </div>
-    </div>
-    <div class="col-sm-6 auth-form-section">
-        <app-login-form (onSignUp)="onLoginFormSubmitted($event)" (onLoginLink)="onLoginLink()"></app-login-form>
-    </div>
+<div class="signup-center-wrapper">
+  <div class="login-container custom-card">
+    <app-login-form (onSignUp)="onLoginFormSubmitted($event)" (onLoginLink)="onLoginLink()"></app-login-form>
   </div>
 </div>

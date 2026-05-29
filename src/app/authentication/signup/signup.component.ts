@@ -39,18 +39,6 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const redirectUrl =
-      this.route.snapshot.queryParamMap.get(
-        'redirectUrl',
-      );
-
-    if (redirectUrl) {
-      localStorage.setItem(
-        AuthConstants.REDIRECT_URL,
-        redirectUrl,
-      );
-    }
-
     this.authData = this.authService.currentUserValue;
     this.authService.currentUser.subscribe((res) => {
       if (res) {
@@ -68,8 +56,7 @@ export class SignupComponent implements OnInit, OnDestroy {
       this.authService.logout("Sign Up").subscribe((res) => {
         if (res) {
           console.log("Logged out :: authData", this.authData);
-          //this.router.navigate(['/authentication/signin']);
-          this.snackbar.display("snackbar-danger", "Logged you out! Please login again.", "bottom", "center");
+          this.router.navigate(['/authentication/signin']);
         }
       });
     }
