@@ -125,6 +125,28 @@
       @if (showFilter) {
         <ng-container *ngTemplateOutlet="questionFilterForm"></ng-container>
       } @else {
+        @if (filteredQuestions.length > 0) {
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Search filtered questions</mat-label>
+            <input
+              matInput
+              type="search"
+              [formControl]="questionSearchControl"
+              placeholder="Search by question"
+            />
+            @if (questionSearchControl.value) {
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                aria-label="Clear search"
+                (click)="questionSearchControl.setValue('')"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </mat-form-field>
+        }
         @if (getAvailableQuestions().length > 0) {
           <div class="scrollbar-container">
             <ng-scrollbar style="height: 300px" visibility="hover">

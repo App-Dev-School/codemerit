@@ -100,6 +100,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   allQuestions: Question[] = [];
   filteredQuestions: Question[] = [];
   filteredTopics: any[] = [];
+  questionSearchControl = new FormControl('');
   selectedQuestionsControl = new FormControl<Question[]>([]);
   quizQuestions: Question[] = [];
 
@@ -208,6 +209,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       level: '',
       authorId: 0,
     });
+    this.questionSearchControl.setValue('', { emitEvent: false });
     this.filteredTopics = [...this.topics];
     this.loadQuestionsFromApi(filters);
     this.filtersApplied.emit(filters);
@@ -268,9 +270,26 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     const quizQuestionIds = new Set(
       this.quizQuestions.map((q) => q.selectionKey),
     );
-    return this.filteredQuestions.filter(
-      (q) => !quizQuestionIds.has(q.selectionKey),
-    );
+    const searchText = (this.questionSearchControl.value ?? '')
+      .toString()
+      .trim()
+      .toLowerCase();
+
+    return this.filteredQuestions.filter((question) => {
+      const isNotSelected = !quizQuestionIds.has(question.selectionKey);
+
+      if (!searchText) {
+        return isNotSelected;
+      }
+
+      const searchableText = [
+        question.title
+      ]
+        .join(' ')
+        .toLowerCase();
+
+      return isNotSelected && searchableText.includes(searchText);
+    });
   }
 
   getLevelDisplay(level: number | string | undefined): string {

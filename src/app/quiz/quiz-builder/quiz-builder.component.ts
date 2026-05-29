@@ -54,6 +54,7 @@ export class QuizBuilderComponent implements OnInit {
   quizId: string = ''; // Stores quiz slug/ID for edit mode
   error: string = '';
   generatedQuizCode = '';
+   questionCountAlertMessage = '';
 
 
   get isDraftMode(): boolean {
@@ -245,12 +246,11 @@ export class QuizBuilderComponent implements OnInit {
 
   private showRequiredQuestionsMessage(): void {
     const requiredCount = this.requiredQuestionCount;
-    const message =
+    const  questionCountAlertMessage =
       requiredCount > 0
         ? `${requiredCount} questions should be added.`
         : 'Select the number of questions in Quiz Info first.';
-
-    this.snackbar.display('warn', message, 'top', 'center');
+    this.questionCountAlertMessage = questionCountAlertMessage;
   }
 
   private updateCanProceedToNext(): void {
