@@ -76,9 +76,9 @@ export class AuthService {
       // if (user.myProfile) {
       //   localStorage.setItem(AuthConstants.CACHE_FULL_PROFILE, JSON.stringify(user.myProfile));
       // }
-      if(user.data?.userJobRoles){
-      console.log("SelectCourseComponent ! $$$$", user.data?.userJobRoles);
-      this.setUserJobRoles(user.data?.userJobRoles);
+      if (user.data?.userJobRoles) {
+        console.log("SelectCourseComponent ! $$$$", user.data?.userJobRoles);
+        this.setUserJobRoles(user.data?.userJobRoles);
       }
       return user;
     }));
@@ -108,7 +108,7 @@ export class AuthService {
     return this.httpService.postWithParams(url, postData, httpOptions);
   }
 
-   verifyAccount(postData: any): Observable<any> {
+  verifyAccount(postData: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -117,7 +117,7 @@ export class AuthService {
     const url = 'auth/verify';
     return this.httpService.post(url, postData, httpOptions);
   }
-  
+
   setLocalData(userData: any) {
     console.log("CodeMeritApp @setLocalData =>", userData);
     //talk to storage service
@@ -127,10 +127,11 @@ export class AuthService {
     }
   }
 
-  logout(debug="") {
+  logout(debug = "") {
     console.log("CodeMeritApp Log out =>", debug);
     localStorage.removeItem(AuthConstants.AUTH);
-    this.currentUserSubject.next(this.currentUserValue);
+    //this.currentUserSubject.next(this.currentUserValue);
+    this.currentUserSubject.next(null);
     return of({ success: false });
   }
 
@@ -169,7 +170,7 @@ export class AuthService {
   }
 
   updateUserAccount(api_key: any, user_name: any, postData: any): Observable<any> {
-    const url = 'apis/users/update?userId='+user_name;
+    const url = 'apis/users/update?userId=' + user_name;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
     }
@@ -235,7 +236,7 @@ export class AuthService {
     return this.httpService.get(url, api_key);
   }
 
-   getFilteredUsers(postData: any): Observable<any> {
+  getFilteredUsers(postData: any): Observable<any> {
     const api_key = this.currentUserValue.token;
     const httpOptions = {
       headers: new HttpHeaders({

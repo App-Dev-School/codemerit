@@ -83,11 +83,11 @@
 
 <ng-template #courseSubjectTabSummary>
   <div class="row text-center m-t-20 clearfix">
-    @if (userData?.id > 0) {
+    <!-- @if (userData?.id > 0) {
     <div class="col text-start">
       <h3>Welcome {{userData?.firstName}}!</h3>
     </div>
-    }
+    } -->
     @if (attemptedSubjects && attemptedSubjects?.length > 0) {
     @for (item of attemptedSubjects; track item.id) {
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">

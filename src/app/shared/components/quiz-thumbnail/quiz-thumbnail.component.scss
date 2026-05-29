@@ -5,8 +5,7 @@
   aspect-ratio: 4 / 3;
   min-height: 120px;
   max-height: 260px;
-  background: linear-gradient(120deg, rgb(201, 205, 212) 0%, rgb(74, 67, 74) 100%);
-  //background: linear-gradient(120deg, rgb(34, 38, 46) 0%, rgb(119, 40, 113) 100%);
+  background: linear-gradient(120deg, rgb(108, 110, 112) 0%, rgb(226, 215, 255) 100%);
   //background: #99218f;
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
@@ -15,6 +14,7 @@
   flex-direction: column;
   justify-content: flex-end;
 }
+
 .banner-43-icons {
   position: absolute;
   top: 12px;
@@ -34,18 +34,24 @@
   padding: 3px;
 }
 .banner-43-title {
-  position: relative;
+  position: absolute;
+  left: 20px;
+  right: 120px;
+  bottom: 24px;
   z-index: 2;
   color: #fff;
-  font-size: 1.22rem;
+  font-size: 1.3rem;
   font-weight: 700;
   text-shadow: 0 2px 8px rgba(60,72,100,0.18);
-  padding: 0 20px 18px 20px;
-  line-height: 1.2;
-  max-width: 90%;
-  white-space: nowrap;
+  line-height: 1.45rem;
+  max-width: 70%;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  //-webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+  padding: 0;
 }
 .quiz-thumbnail-card {
   position: relative;
@@ -110,14 +116,14 @@
 .quiz-title {
   font-size: 1.08rem;
   font-weight: 600;
-  color: #232b3b;
+  color: var(--text-color);
   margin: 0;
   line-height: 1.2;
 }
 
 .quiz-description {
   font-size: 0.97rem;
-  color: #5a6270;
+  color: var(--text-color);
   margin-bottom: 2px;
   min-height: 36px;
   line-height: 1.4;
@@ -136,21 +142,23 @@
   align-items: center;
   gap: 4px;
   font-size: 0.97rem;
-  color: #3b4256;
+  color: var(--primary);
   background: #f2f4f8;
   border-radius: 6px;
   padding: 2px 8px;
   line-height: 1.5;
 }
+
 .meta-item .meta-icon {
   font-size: 1.18rem;
-  color: #7b809a;
+  color: var(--text-color);
   line-height: 1;
   vertical-align: middle;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
+
 .meta-item span {
   display: inline-flex;
   align-items: center;
@@ -164,17 +172,20 @@
   margin-top: 12px;
   gap: 8px;
 }
+
 .created-by {
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 0.93rem;
-  color: #7b809a;
+  color: var(--text-color);
 }
+
 .created-by-icon {
   font-size: 1.1rem;
-  color: #b0b4c3;
+  color: var(--text-color);
 }
+
 .take-btn {
   min-width: 100px;
   font-size: 0.97rem;

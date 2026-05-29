@@ -38,4 +38,7 @@ export class QuizResultComponent {
   doOnContinue() {
     this.onContinue.emit("");
   }
+
+   downloadReport() {
+  }
 }
