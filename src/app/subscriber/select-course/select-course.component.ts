@@ -10,7 +10,7 @@ import {
   Router,
 } from '@angular/router';
 import { AuthService } from '@core';
-import { topToBottomAnimation } from '@shared/animations';
+import { slideInOutAnimation, topToBottomAnimation } from '@shared/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
 import { Subscription } from 'rxjs';
@@ -20,7 +20,7 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'app-select-course',
   templateUrl: './select-course.component.html',
   styleUrls: ['./select-course.component.scss'],
-  animations: [topToBottomAnimation],
+  animations: [slideInOutAnimation, topToBottomAnimation],
   imports: [
     MatIcon,
     MatFormFieldModule,
@@ -34,7 +34,7 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
   showContent = true;
   subject = '';
   subjectData: any;
-  loading = false;
+  isLoading = false;
   loadingTxt = '';
   userJobRoles: number[] = [];
   private subscriptions = new Subscription();
@@ -80,6 +80,7 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
   private syncUserJobRoles(): void {
     const currentUserRoles = this.authService.currentUserValue?.userJobRoles;
     const cachedRoles = this.authService.getUserJobRoles();
+    //who did this?
     const roles =
       Array.isArray(currentUserRoles) && currentUserRoles.length
         ? currentUserRoles
@@ -87,6 +88,10 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
     this.userJobRoles = Array.isArray(roles)
       ? roles.map((r: any) => r.jobRoleId)
       : [];
+    //  setTimeout(() => {
+    //   this.isLoading = false;
+    //   this.loadingTxt = '';
+    //  }, 2000); 
   }
 
   onCourseChange(subject: string) {
@@ -116,5 +121,13 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
     this._bottomSheet.open(SetDesignationBottomSheetComponent, {
       data: subject,
     });
+  }
+
+  onCancel() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
   }
 }

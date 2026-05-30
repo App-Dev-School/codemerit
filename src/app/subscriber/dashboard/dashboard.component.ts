@@ -295,7 +295,7 @@ export class DashboardComponent implements OnInit {
   }
 
   goToSubjects() {
-    this.router.navigate(['/app/select-subject']);
+    this.router.navigate(['/select-subject']);
   }
 
   fetchDashboardData() {

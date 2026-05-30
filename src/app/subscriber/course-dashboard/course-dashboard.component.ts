@@ -238,7 +238,7 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   goToCourses() {
-    this.router.navigate(['/app/select-job-role']);
+    this.router.navigate(['/select-job-role']);
   }
 
    viewProfile() {

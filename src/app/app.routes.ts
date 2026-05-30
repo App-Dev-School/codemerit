@@ -4,7 +4,6 @@ import { AuthGuard } from '@core/guard/auth.guard';
 import { Page404Component } from './authentication/page404/page404.component';
 import { AuthLayoutComponent } from './layout/app-layout/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './layout/app-layout/main-layout/main-layout.component';
-import { ViewCourseComponent } from './pages/view-course/view-course.component';
 
 export const APP_ROUTE: Route[] = [
     {
@@ -75,6 +74,26 @@ export const APP_ROUTE: Route[] = [
         loadComponent: () =>
             import('./shared/components/subject-skill-rating/subject-skill-rating.component')
                 .then(m => m.SubjectSkillRatingComponent)
+    },
+    {
+        path: "select-subject",
+        //component: AuthLayoutComponent,
+        loadComponent: () =>
+            import('./subscriber/select-subject/select-subject.component')
+                .then(m => m.SelectSubjectComponent)
+    },
+    {
+        path: "select-job-role",
+        //component: AuthLayoutComponent,
+        loadComponent: () =>
+            import('./subscriber/select-course/select-course.component')
+                .then(m => m.SelectCourseComponent)
+    },
+    {
+        path: "select-job-role-error",
+        loadComponent: () =>
+            import('./subscriber/select-course/select-course.component')
+                .then(m => m.SelectCourseComponent)
     },
     {
         path: "quiz",

@@ -16,14 +16,14 @@ export const PAGES_ROUTE: Route[] = [
     path: 'program/:course',
     component: ViewCourseComponent,
   },
-  {
-    path: 'select-subject',
-    component: SelectSubjectComponent,
-  },
-  {
-    path: 'select-job-role',
-    component: SelectCourseComponent,
-  },
+  // {
+  //   path: 'select-subject',
+  //   component: SelectSubjectComponent,
+  // },
+  // {
+  //   path: 'select-job-role',
+  //   component: SelectCourseComponent,
+  // },
   {
     path: "subscription",
     component: PricingComponent,

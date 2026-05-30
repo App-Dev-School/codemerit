@@ -102,7 +102,7 @@ export class SigninComponent
                     if (this.authService.getUserJobRoles()?.length > 0) {
                       this.redirectToLearnerDashboard();
                     } else {
-                      this.router.navigate(['/app/select-job-role']);
+                      this.router.navigate(['/select-job-role']);
                     }
                   }
                 }

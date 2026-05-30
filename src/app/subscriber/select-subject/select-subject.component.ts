@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { MasterService } from '@core/service/master.service';
@@ -14,6 +15,7 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./select-subject.component.scss'],
   animations: [slideInOutAnimation],
   imports: [
+    MatIcon,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -26,7 +28,7 @@ export class SelectSubjectComponent implements OnInit {
   subjectData: any;
 
   subjects: Observable<any>;
-  isLoading = false;
+  isLoading = true;
 
   constructor(private router: Router, private master: MasterService) {
     // constructor code
@@ -75,5 +77,12 @@ export class SelectSubjectComponent implements OnInit {
   onSubscribe(subject: string) {
     console.log("SelectSubject @onSubscribe", subject);
     //this.snackService.display('snackbar-success',subject+' added to learning list!','bottom','center');
+  }
+  onCancel() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
   }
 }

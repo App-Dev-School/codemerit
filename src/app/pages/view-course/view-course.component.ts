@@ -319,7 +319,7 @@ export class ViewCourseComponent implements OnInit, AfterViewInit {
   }
 
   goToCourses() {
-    this.router.navigate(['/app/select-job-role']);
+    this.router.navigate(['/select-job-role']);
   }
 
   viewProfile() {
