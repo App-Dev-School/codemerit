@@ -1,5 +1,4 @@
 import { Route } from "@angular/router";
-import { SelectCourseComponent } from "../subscriber/select-course/select-course.component";
 export const ASSESSMENT_ROUTE: Route[] = [
   {
     path: "skill-rating/:jobRoleSlug",
@@ -13,5 +12,5 @@ export const ASSESSMENT_ROUTE: Route[] = [
     path: "report/:assessmentId",
     loadComponent: () => import('./report/assessment-report.component').then(c => c.AssessmentReportComponent),
   },
-  { path: '**', component: SelectCourseComponent }
+  //{ path: '**', component: SelectCourseComponent }
 ];

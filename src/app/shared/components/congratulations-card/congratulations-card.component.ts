@@ -27,14 +27,14 @@ export class CongratulationsCardComponent implements OnInit {
     console.log("Congratulations Component", this.user);
     if (this.user && !this.user?.userJobRoles?.length) {
       this.message = 'Please select an aspiring Tech Role to get started.';
-      this.action = "Select Your Role";
+      this.action = "Pick your Role";
     } else {
-      this.message = 'Browse our courses and skill assessments to continue your learning journey.';
-      this.action = "";
+      this.message = 'Select a Tech Role to take assessments and get certified.';
+      this.action = "Browse Tech Roles";
     }
   }
 
   handleAction() {
-    this.router.navigate(['/app/select-job-role']);
+    this.router.navigate(['/select-job-role']);
   }
 }

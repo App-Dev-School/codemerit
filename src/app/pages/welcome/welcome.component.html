@@ -3,14 +3,19 @@
 
     <div class="row match-height m-t-20 clearfix">
       <!-- Congratulations Card -->
-      <div class="col-12 col-md-8 col-lg-8">
-        <app-congratulations-card [user]="authUser"></app-congratulations-card>
-      </div>
-
-      <!-- Medal Card -->
+      @if(authUser?.firstName) {
       <div class="col-12 col-md-4 col-lg-4">
         <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"
           (medalAction)="handleAction($event)"></app-medal-card>
+      </div>
+      }@else{
+      <div class="col-12 col-md-6 col-lg-4">
+        <app-congratulations-card [user]="authUser"></app-congratulations-card>
+      </div>
+      }
+
+      <div class="col-12 col-md-8 col-lg-8">
+        <app-learner-welcome-card></app-learner-welcome-card>
       </div>
     </div>
 
@@ -37,7 +42,7 @@
     delay: 0,
     disableOnInteraction: false
   }" class="certificate-swiper"> -->
-  <swiper-container #swiperEx [pagination]="{ el: '.custom-pagination', clickable: true }" 
+          <swiper-container #swiperEx [pagination]="{ el: '.custom-pagination', clickable: true }"
             slides-per-view="auto" space-between="10" [loop]="true" [speed]="4000" class="certificate-swiper">
             @for(certificate of certificateModels; track certificate) {
             <swiper-slide class="swiper-slide m-t-20 m-b-20">

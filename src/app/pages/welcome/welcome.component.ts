@@ -1,3 +1,4 @@
+import { JsonPipe } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -16,6 +17,7 @@ import { SnackbarService } from '@core/service/snackbar.service';
 import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { CertificateModel, CertificateTemplateId } from '@shared/components/certificate/certificate.model';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
+import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
 import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
@@ -128,6 +130,7 @@ export const certificateModels: CertificateModel[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
   imports: [
+    JsonPipe,
     RouterLink,
     NgScrollbar,
     MatCardModule,
@@ -136,7 +139,7 @@ export const certificateModels: CertificateModel[] = [
     MatChipsModule,
     MatRippleModule,
     MatIconModule,
-    //LearnerWelcomeCardComponent,
+    LearnerWelcomeCardComponent,
     CertificateComponent,
     SubjectSkillRatingComponent,
     CongratulationsCardComponent,

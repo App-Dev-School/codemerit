@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthService, User } from '@core';
-import { SkillRatingComponent } from '../skill-rating/skill-rating.component';
-import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { AuthService, User } from '@core';
 @Component({
     selector: 'app-learner-welcome-card',
     imports: [MatButtonModule, MatIcon],
@@ -32,6 +30,6 @@ export class LearnerWelcomeCardComponent implements OnInit {
     }
 
     login() {
-        this.router.navigate(['/authentication/signin']);
+        this.router.navigate(['/authentication/signup']);
     }
 }
