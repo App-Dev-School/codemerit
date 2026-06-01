@@ -126,14 +126,17 @@ export class QuizFormComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.applyFormData();
+    this.updatePublishValidators();
+
+    this.quizForm.get('isPublished')?.valueChanges.subscribe(() => {
+      this.updatePublishValidators();
+    });
 
     this.formSubmitted.emit(this.quizForm.getRawValue());
 
-  this.quizForm.valueChanges.subscribe((value) => {
-    this.formSubmitted.emit(value);
-  });
-
-   
+    this.quizForm.valueChanges.subscribe((value) => {
+      this.formSubmitted.emit(value);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -189,5 +192,31 @@ export class QuizFormComponent implements OnInit, OnChanges {
       },
       { emitEvent: false },
     );
+  }
+
+  private updatePublishValidators(): void {
+    const isPublished = !!this.quizForm.get('isPublished')?.value;
+    const tagControl = this.quizForm.get('tag');
+    const descriptionControl = this.quizForm.get('description');
+    const numQuestionsControl = this.quizForm.get('numQuestions');
+    const orderingControl = this.quizForm.get('ordering');
+
+    tagControl?.setValidators(isPublished ? [Validators.required] : []);
+    descriptionControl?.setValidators(
+      isPublished
+        ? [Validators.required, Validators.minLength(10), Validators.maxLength(200)]
+        : [Validators.minLength(10), Validators.maxLength(200)],
+    );
+    numQuestionsControl?.setValidators(
+      isPublished
+        ? [Validators.required, Validators.min(1), Validators.max(50)]
+        : [Validators.min(1), Validators.max(50)],
+    );
+    orderingControl?.setValidators(isPublished ? [Validators.required] : []);
+
+    tagControl?.updateValueAndValidity({ emitEvent: false });
+    descriptionControl?.updateValueAndValidity({ emitEvent: false });
+    numQuestionsControl?.updateValueAndValidity({ emitEvent: false });
+    orderingControl?.updateValueAndValidity({ emitEvent: false });
   }
 }

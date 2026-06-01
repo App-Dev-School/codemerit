@@ -65,6 +65,24 @@ export class QuizBuilderComponent implements OnInit {
     return Number(this.quizFormData?.numQuestions ?? 0);
   }
 
+  get isQuizInfoValid(): boolean {
+    const hasTitle = !!this.quizFormData?.title?.trim();
+    const hasShortDesc = !!this.quizFormData?.shortDesc?.trim();
+
+    if (this.isDraftMode) {
+      return hasTitle && hasShortDesc;
+    }
+
+    return (
+      hasTitle &&
+      hasShortDesc &&
+      !!this.quizFormData?.tag?.trim() &&
+      !!this.quizFormData?.description?.trim() &&
+      this.requiredQuestionCount > 0 &&
+      !!this.quizFormData?.ordering
+    );
+  }
+
   constructor(
     private router: Router,
     private snackbar: SnackbarService,
@@ -233,7 +251,7 @@ export class QuizBuilderComponent implements OnInit {
   get allStepsValid(): boolean {
     // Add more robust validation as needed
     if (this.isDraftMode) {
-      return !!this.quizFormData;
+      return this.isQuizInfoValid;
     }
 
     return (
@@ -255,7 +273,7 @@ export class QuizBuilderComponent implements OnInit {
 
   private updateCanProceedToNext(): void {
     if (this.currentStep === 0) {
-      this.canProceedToNext = !!this.quizFormData?.title;
+      this.canProceedToNext = this.isQuizInfoValid;
       return;
     }
 
