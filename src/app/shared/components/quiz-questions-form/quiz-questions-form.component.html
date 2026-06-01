@@ -115,9 +115,9 @@
         }}</mat-card-title
       >
       @if (!showFilter) {
-        <a mat-button color="primary" href="#" (click)="toggleFilter()"
-          >Filter</a
-        >
+        <button mat-button color="primary" type="button" (click)="toggleFilter()">
+          Filter
+        </button>
       }
     </mat-card-header>
     <mat-card-content>
