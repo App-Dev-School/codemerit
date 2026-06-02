@@ -56,6 +56,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
 export class QuizFormComponent implements OnInit, OnChanges {
   @Input() formData: Partial<QuizCreateModel> | null = null;
   @Output() formSubmitted = new EventEmitter<any>();
+  @Output() formValidityChanged = new EventEmitter<boolean>();
   questionSlug: string;
   action: string;
   actionText: string;
@@ -130,26 +131,28 @@ export class QuizFormComponent implements OnInit, OnChanges {
 
     this.quizForm.get('isPublished')?.valueChanges.subscribe(() => {
       this.updatePublishValidators();
+      this.emitFormState();
     });
 
-    this.formSubmitted.emit(this.quizForm.getRawValue());
+    this.emitFormState();
 
-    this.quizForm.valueChanges.subscribe((value) => {
-      this.formSubmitted.emit(value);
+    this.quizForm.valueChanges.subscribe(() => {
+      this.emitFormState();
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    
-     const formData = changes['formData']?.currentValue;
+    const formData = changes['formData']?.currentValue;
 
-  if (!formData) {
-    return;
-  }
+    if (!formData) {
+      return;
+    }
 
-  if (!this.quizForm.dirty) {
-    this.applyFormData();
-  }
+    if (!this.quizForm.dirty) {
+      this.applyFormData();
+      this.updatePublishValidators();
+      this.emitFormState();
+    }
   }
 
   onCancel() {
@@ -218,5 +221,10 @@ export class QuizFormComponent implements OnInit, OnChanges {
     descriptionControl?.updateValueAndValidity({ emitEvent: false });
     numQuestionsControl?.updateValueAndValidity({ emitEvent: false });
     orderingControl?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private emitFormState(): void {
+    this.formSubmitted.emit(this.quizForm.getRawValue());
+    this.formValidityChanged.emit(this.quizForm.valid);
   }
 }

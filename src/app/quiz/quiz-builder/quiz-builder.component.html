@@ -42,6 +42,7 @@
       <div class="step-content" style="max-width: 600px; margin: 0 auto">
         <app-quiz-form
           (formSubmitted)="onQuizFormSubmit($event)"
+          (formValidityChanged)="onQuizFormValidityChanged($event)"
           [formData]="quizFormData"
         ></app-quiz-form>
       </div>

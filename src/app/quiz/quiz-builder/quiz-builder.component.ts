@@ -45,6 +45,7 @@ export class QuizBuilderComponent implements OnInit {
   quizQuestionsData: any[] = [];
   quizSettingsData: any = {};
   quizFiltersData: any = null; // Stores subject and topic filters
+  quizInfoValid = false;
   subjects: any[] = [];
   topics: any[] = [];
   allQuestions: any[] = [];
@@ -63,24 +64,6 @@ export class QuizBuilderComponent implements OnInit {
 
   get requiredQuestionCount(): number {
     return Number(this.quizFormData?.numQuestions ?? 0);
-  }
-
-  get isQuizInfoValid(): boolean {
-    const hasTitle = !!this.quizFormData?.title?.trim();
-    const hasShortDesc = !!this.quizFormData?.shortDesc?.trim();
-
-    if (this.isDraftMode) {
-      return hasTitle && hasShortDesc;
-    }
-
-    return (
-      hasTitle &&
-      hasShortDesc &&
-      !!this.quizFormData?.tag?.trim() &&
-      !!this.quizFormData?.description?.trim() &&
-      this.requiredQuestionCount > 0 &&
-      !!this.quizFormData?.ordering
-    );
   }
 
   constructor(
@@ -221,6 +204,11 @@ export class QuizBuilderComponent implements OnInit {
     this.updateCanProceedToNext();
   }
 
+  onQuizFormValidityChanged(isValid: boolean): void {
+    this.quizInfoValid = isValid;
+    this.updateCanProceedToNext();
+  }
+
   onQuestionsAdded(questions: any[]): void {
     this.quizQuestionsData = questions;
     if (this.isDraftMode) {
@@ -249,13 +237,12 @@ export class QuizBuilderComponent implements OnInit {
     this.updateCanProceedToNext();
   }
   get allStepsValid(): boolean {
-    // Add more robust validation as needed
     if (this.isDraftMode) {
-      return this.isQuizInfoValid;
+      return this.quizInfoValid;
     }
 
     return (
-      !!this.quizFormData &&
+      this.quizInfoValid &&
       this.requiredQuestionCount > 0 &&
       this.quizQuestionsData.length === this.requiredQuestionCount &&
       !!this.quizSettingsData
@@ -273,7 +260,7 @@ export class QuizBuilderComponent implements OnInit {
 
   private updateCanProceedToNext(): void {
     if (this.currentStep === 0) {
-      this.canProceedToNext = this.isQuizInfoValid;
+      this.canProceedToNext = this.quizInfoValid;
       return;
     }
 
@@ -419,6 +406,7 @@ export class QuizBuilderComponent implements OnInit {
     this.currentStep = 0;
     this.canProceedToNext = false;
     this.quizFormData = {};
+    this.quizInfoValid = false;
     this.quizQuestionsData = [];
     this.quizSettingsData = {};
     this.quizFiltersData = null;
