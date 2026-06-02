@@ -45,6 +45,7 @@ export class QuizBuilderComponent implements OnInit {
   quizQuestionsData: any[] = [];
   quizSettingsData: any = {};
   quizFiltersData: any = null; // Stores subject and topic filters
+  quizInfoValid = false;
   subjects: any[] = [];
   topics: any[] = [];
   allQuestions: any[] = [];
@@ -54,6 +55,7 @@ export class QuizBuilderComponent implements OnInit {
   quizId: string = ''; // Stores quiz slug/ID for edit mode
   error: string = '';
   generatedQuizCode = '';
+   questionCountAlertMessage = '';
 
 
   get isDraftMode(): boolean {
@@ -202,6 +204,11 @@ export class QuizBuilderComponent implements OnInit {
     this.updateCanProceedToNext();
   }
 
+  onQuizFormValidityChanged(isValid: boolean): void {
+    this.quizInfoValid = isValid;
+    this.updateCanProceedToNext();
+  }
+
   onQuestionsAdded(questions: any[]): void {
     this.quizQuestionsData = questions;
     if (this.isDraftMode) {
@@ -230,13 +237,12 @@ export class QuizBuilderComponent implements OnInit {
     this.updateCanProceedToNext();
   }
   get allStepsValid(): boolean {
-    // Add more robust validation as needed
     if (this.isDraftMode) {
-      return !!this.quizFormData;
+      return this.quizInfoValid;
     }
 
     return (
-      !!this.quizFormData &&
+      this.quizInfoValid &&
       this.requiredQuestionCount > 0 &&
       this.quizQuestionsData.length === this.requiredQuestionCount &&
       !!this.quizSettingsData
@@ -245,17 +251,16 @@ export class QuizBuilderComponent implements OnInit {
 
   private showRequiredQuestionsMessage(): void {
     const requiredCount = this.requiredQuestionCount;
-    const message =
+    const  questionCountAlertMessage =
       requiredCount > 0
         ? `${requiredCount} questions should be added.`
         : 'Select the number of questions in Quiz Info first.';
-
-    this.snackbar.display('warn', message, 'top', 'center');
+    this.questionCountAlertMessage = questionCountAlertMessage;
   }
 
   private updateCanProceedToNext(): void {
     if (this.currentStep === 0) {
-      this.canProceedToNext = !!this.quizFormData?.title;
+      this.canProceedToNext = this.quizInfoValid;
       return;
     }
 
@@ -401,6 +406,7 @@ export class QuizBuilderComponent implements OnInit {
     this.currentStep = 0;
     this.canProceedToNext = false;
     this.quizFormData = {};
+    this.quizInfoValid = false;
     this.quizQuestionsData = [];
     this.quizSettingsData = {};
     this.quizFiltersData = null;

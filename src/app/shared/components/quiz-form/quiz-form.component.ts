@@ -56,6 +56,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
 export class QuizFormComponent implements OnInit, OnChanges {
   @Input() formData: Partial<QuizCreateModel> | null = null;
   @Output() formSubmitted = new EventEmitter<any>();
+  @Output() formValidityChanged = new EventEmitter<boolean>();
   questionSlug: string;
   action: string;
   actionText: string;
@@ -90,7 +91,7 @@ export class QuizFormComponent implements OnInit, OnChanges {
         [
           Validators.required,
           Validators.minLength(10),
-          Validators.maxLength(50),
+          Validators.maxLength(60),
         ],
       ],
       quizType: [QuizTypeEnum.Standard, [Validators.required]],
@@ -126,27 +127,32 @@ export class QuizFormComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.applyFormData();
+    this.updatePublishValidators();
 
-    this.formSubmitted.emit(this.quizForm.getRawValue());
+    this.quizForm.get('isPublished')?.valueChanges.subscribe(() => {
+      this.updatePublishValidators();
+      this.emitFormState();
+    });
 
-  this.quizForm.valueChanges.subscribe((value) => {
-    this.formSubmitted.emit(value);
-  });
+    this.emitFormState();
 
-   
+    this.quizForm.valueChanges.subscribe(() => {
+      this.emitFormState();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    
-     const formData = changes['formData']?.currentValue;
+    const formData = changes['formData']?.currentValue;
 
-  if (!formData) {
-    return;
-  }
+    if (!formData) {
+      return;
+    }
 
-  if (!this.quizForm.dirty) {
-    this.applyFormData();
-  }
+    if (!this.quizForm.dirty) {
+      this.applyFormData();
+      this.updatePublishValidators();
+      this.emitFormState();
+    }
   }
 
   onCancel() {
@@ -189,5 +195,36 @@ export class QuizFormComponent implements OnInit, OnChanges {
       },
       { emitEvent: false },
     );
+  }
+
+  private updatePublishValidators(): void {
+    const isPublished = !!this.quizForm.get('isPublished')?.value;
+    const tagControl = this.quizForm.get('tag');
+    const descriptionControl = this.quizForm.get('description');
+    const numQuestionsControl = this.quizForm.get('numQuestions');
+    const orderingControl = this.quizForm.get('ordering');
+
+    tagControl?.setValidators(isPublished ? [Validators.required] : []);
+    descriptionControl?.setValidators(
+      isPublished
+        ? [Validators.required, Validators.minLength(10), Validators.maxLength(200)]
+        : [Validators.minLength(10), Validators.maxLength(200)],
+    );
+    numQuestionsControl?.setValidators(
+      isPublished
+        ? [Validators.required, Validators.min(1), Validators.max(50)]
+        : [Validators.min(1), Validators.max(50)],
+    );
+    orderingControl?.setValidators(isPublished ? [Validators.required] : []);
+
+    tagControl?.updateValueAndValidity({ emitEvent: false });
+    descriptionControl?.updateValueAndValidity({ emitEvent: false });
+    numQuestionsControl?.updateValueAndValidity({ emitEvent: false });
+    orderingControl?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private emitFormState(): void {
+    this.formSubmitted.emit(this.quizForm.getRawValue());
+    this.formValidityChanged.emit(this.quizForm.valid);
   }
 }

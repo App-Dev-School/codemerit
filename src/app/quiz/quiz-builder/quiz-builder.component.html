@@ -29,12 +29,20 @@
     </div>
   </div>
 
+  @if (currentStep === 1 && questionCountAlertMessage) {
+    <div class="alert alert-warning">
+      <mat-icon>info</mat-icon>
+      <span>{{ questionCountAlertMessage }}</span>
+    </div>
+  }
+
   <!-- Stepper Content -->
   <div class="builder-content">
     @if (currentStep === 0) {
       <div class="step-content" style="max-width: 600px; margin: 0 auto">
         <app-quiz-form
           (formSubmitted)="onQuizFormSubmit($event)"
+          (formValidityChanged)="onQuizFormValidityChanged($event)"
           [formData]="quizFormData"
         ></app-quiz-form>
       </div>
@@ -118,4 +126,3 @@
     }
   </div>
 </div>
-
