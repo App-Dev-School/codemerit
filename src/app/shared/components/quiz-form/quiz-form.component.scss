@@ -1,29 +1,37 @@
 ::ng-deep .mat-select-trigger {
   padding-top: 1.2em !important;
 }
+
 .chip-spacing {
   margin-right: 4px;
 }
+
 .option-item {
   mat-checkbox {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
+  }
 }
-}
+
 mat-form-field {
   margin: 0;
 }
+
+.quiz-title-field {
+  margin-bottom: 10px;
+}
+
 .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 24px;
-            gap: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  gap: 12px;
 
-            .flex-grow {
-              flex: 1;
-            }
+  .flex-grow {
+    flex: 1;
+  }
 
-            button {
-              min-width: 120px;
-            }
-          }
+  button {
+    min-width: 120px;
+  }
+}
