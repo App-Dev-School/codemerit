@@ -98,18 +98,18 @@
 
     </mat-card-footer>
   </mat-card>
-  <hr class="dim-divider">
+  <!-- <hr class="dim-divider"> -->
       <div class="d-flex flex-column flex-sm-row justify-content-center text-center">
-        <button (click)="downloadReport()" mat-stroked-button color="primary" class="mb-2 mb-sm-0 me-sm-2">
-          <mat-icon>download</mat-icon> Download Report
-        </button>
-
-        <button (click)="doOnShareResult()" class="hoverCard" mat-flat-button color="accent">
+        <button (click)="doOnShareResult()" class="margin-8 hoverCard" mat-flat-button color="accent">
           <mat-icon>share</mat-icon> Share Result
         </button>
 
+        <button (click)="downloadReport()" mat-stroked-button color="primary" class="margin-8">
+          <mat-icon>download</mat-icon> Download Report
+        </button>
+
         @if (result?.quiz?.id) {
-          <button (click)="doOnContinue()" class="hoverCard m-l-10" mat-flat-button color="primary">
+          <button (click)="doOnContinue()" class="margin-8" mat-flat-button color="primary">
             <mat-icon>play_arrow</mat-icon> Continue
           </button>
          }

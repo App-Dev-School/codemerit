@@ -20,13 +20,13 @@
             quizForm.get("title")?.hasError("required") &&
             (quizForm.get("title")?.touched || quizForm.get("title")?.dirty)
           ) {
-            <mat-error>Quiz title is required</mat-error>
+            <mat-error class="m-b-10">Quiz title is required</mat-error>
           }
           @if (
             quizForm.get("title")?.hasError("minlength") &&
             (quizForm.get("title")?.touched || quizForm.get("title")?.dirty)
           ) {
-            <mat-error>Quiz title is too short</mat-error>
+            <mat-error class="m-b-10">Quiz title is too short</mat-error>
           }
           @if (
             quizForm.get("title")?.hasError("maxlength") &&
@@ -136,8 +136,8 @@
     </div>
 
     <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
-        <mat-form-field class="example-full-width m-b-10" appearance="fill">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
+        <mat-form-field class="example-full-width" appearance="fill">
           <mat-label>Number of Questions</mat-label>
           <input
             type="number"
@@ -171,8 +171,8 @@
         </mat-form-field>
       </div>
 
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
-        <mat-form-field class="example-full-width m-b-10" appearance="fill">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
+        <mat-form-field class="example-full-width" appearance="fill">
           <mat-label>Question Ordering</mat-label>
           <mat-select formControlName="ordering" required>
             @for (option of orderingOptions; track option.value) {

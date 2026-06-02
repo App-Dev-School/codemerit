@@ -95,24 +95,21 @@
         (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
     </div>
     }
-    }@else{
+    }
+    <!-- @else{
     <div class="col-12 m-t-20">
       <p class="col-grey">No progress yet. Start with a subject to get going!</p>
     </div>
-    }
+    } -->
   </div>
   <div class="row text-center m-t-20 clearfix">
     @if (otherSubjects && otherSubjects?.length > 0) {
     @for (item of otherSubjects; track item.id) {
-    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
       <app-subject-tracker-card [user]="userData" [item]="item" (launchSubjectExplorer)="launchSubjectExplorer($event)"
         (takeQuiz)="openQuizLauncher(item)"></app-subject-tracker-card>
     </div>
     }
-    }@else{
-    <div class="col-12 m-t-20">
-      <p class="col-grey">All subjects have been started. Keep up the good work!</p>
-    </div>
     }
   </div>
 </ng-template>

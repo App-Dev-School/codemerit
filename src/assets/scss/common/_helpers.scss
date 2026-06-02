@@ -23,6 +23,10 @@
   margin: 0;
 }
 
+.margin-8 {
+  margin: 8px;
+}
+
 @for $i from 0 through 25 {
   .p-l-#{$i * 5} {
     padding-left: #{$i * 5}px;

@@ -81,6 +81,24 @@
 @include meta.load-css("browser/_ie10.scss");
 @include meta.load-css("browser/_ie11.scss");
 
+:root {
+    --primary: #3f51b5;
+    --secondary: #88e68b;
+    --bg-color: #833cf6;
+    --bg-color-secondary: #461597;
+    --profile-bg: #ffd471;
+    --bg-white: #fff;
+    --transparent: rgba(0, 0, 0, 0);
+    --text-dark: #3c3c3d;
+    --text-color: #1a1b1f;
+    --text-light2: #acafaf;
+    --text-white: #fff;
+    --text-black: #000;
+    --border-line-color: #eaeaf1;
+    --input-bg: #fcfcfc;
+    --item-bg: #eff7fb;
+}
+
 .dim-divider {
   border: none;
   height: 1px;

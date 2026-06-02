@@ -10,7 +10,7 @@
           <span class="cmSubHeading">{{ item?.title }}</span>
         </div>
       </div>
-      @if ((profileMode || item?.numTrivia > 0) && item?.score >= 0) {
+      @if ((profileMode || item?.numTrivia > 0) && item?.score > 0) {
         <div class="col-12 col-sm-6 text-center text-sm-end">
         <div class="d-flex flex-column align-items-center align-items-sm-end">
           <app-course-progress
