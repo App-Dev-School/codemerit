@@ -90,7 +90,7 @@ export class QuizFormComponent implements OnInit, OnChanges {
         [
           Validators.required,
           Validators.minLength(10),
-          Validators.maxLength(50),
+          Validators.maxLength(60),
         ],
       ],
       quizType: [QuizTypeEnum.Standard, [Validators.required]],
