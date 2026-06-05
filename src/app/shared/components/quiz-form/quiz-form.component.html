@@ -184,6 +184,97 @@
     </div>
 
     <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Difficulty Level</mat-label>
+          <mat-select formControlName="level" required>
+            @for (option of difficultyOptions; track option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Category</mat-label>
+          <input
+            matInput
+            formControlName="category"
+            type="text"
+            maxLength="100"
+            required
+          />
+          @if (
+            quizForm.get("category")?.hasError("required") &&
+            (quizForm.get("category")?.touched || quizForm.get("category")?.dirty)
+          ) {
+            <mat-error>Category is required</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Pass Marks</mat-label>
+          <input
+            type="number"
+            matInput
+            formControlName="passMarks"
+            min="0"
+            max="100"
+            required
+          />
+          @if (
+            quizForm.get("passMarks")?.hasError("required") &&
+            (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)
+          ) {
+            <mat-error>Pass marks is required</mat-error>
+          }
+          @if (
+            quizForm.get("passMarks")?.hasError("min") &&
+            (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)
+          ) {
+            <mat-error>Minimum pass marks is 0</mat-error>
+          }
+          @if (
+            quizForm.get("passMarks")?.hasError("max") &&
+            (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)
+          ) {
+            <mat-error>Maximum pass marks is 100</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Max Attempts</mat-label>
+          <input
+            type="number"
+            matInput
+            formControlName="maxAttempts"
+            min="1"
+            required
+          />
+          @if (
+            quizForm.get("maxAttempts")?.hasError("required") &&
+            (quizForm.get("maxAttempts")?.touched || quizForm.get("maxAttempts")?.dirty)
+          ) {
+            <mat-error>Max attempts is required</mat-error>
+          }
+          @if (
+            quizForm.get("maxAttempts")?.hasError("min") &&
+            (quizForm.get("maxAttempts")?.touched || quizForm.get("maxAttempts")?.dirty)
+          ) {
+            <mat-error>Minimum 1 attempt required</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
         <mat-checkbox
           class="example-margin"

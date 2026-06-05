@@ -21,6 +21,7 @@ interface QuizSettings {
   enableNavigation: boolean;
   enableAudio: boolean;
   enableTimer: boolean;
+  enableReview: boolean;
 }
 
 @Component({
@@ -86,6 +87,7 @@ export class QuizSettingsFormComponent implements OnInit,OnChanges {
         enableNavigation: settings.enableNavigation ?? true,
         enableAudio: settings.enableAudio ?? false,
         enableTimer: settings.enableTimer ?? true,
+        enableReview: settings.enableReview ?? false,
       },
       { emitEvent: false }
     );
@@ -101,7 +103,8 @@ export class QuizSettingsFormComponent implements OnInit,OnChanges {
       showAnswers: [this.initialSettings.showAnswers !== undefined ? this.initialSettings.showAnswers : false],
       enableNavigation: [this.initialSettings.enableNavigation !== undefined ? this.initialSettings.enableNavigation : true],
       enableAudio: [this.initialSettings.enableAudio !== undefined ? this.initialSettings.enableAudio : false],
-      enableTimer: [this.initialSettings.enableTimer !== undefined ? this.initialSettings.enableTimer : true]
+      enableTimer: [this.initialSettings.enableTimer !== undefined ? this.initialSettings.enableTimer : true],
+      enableReview: [this.initialSettings.enableReview !== undefined ? this.initialSettings.enableReview : false]
     });
 
     // Emit settings changes on value change
