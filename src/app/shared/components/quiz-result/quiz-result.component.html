@@ -12,6 +12,12 @@
 <ng-template #scoreChart>
   <mat-card class="cardPadding">
     <mat-card-content id="quizResultCard">
+      <div class="status-pill" [ngClass]="{ 'status-pass': isPassed, 'status-fail': !isPassed }" style="margin-left:12px">
+            <span class="status-pill__circle">
+              <mat-icon aria-hidden="true">{{ isPassed ? 'check' : 'close' }}</mat-icon>
+            </span>
+            <span class="status-pill__label">{{ statusLabel }}</span>
+          </div>
       <div class="row align-items-center text-center text-sm-center text-md-start m-b-10">
         <!-- Left text -->
         <div class="col-12 col-md-4 order-2 order-md-1">
