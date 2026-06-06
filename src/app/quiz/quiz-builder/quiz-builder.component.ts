@@ -116,13 +116,21 @@ export class QuizBuilderComponent implements OnInit {
           shortDesc: quiz.shortDesc,
           description: quiz.description,
           tag: quiz.tag,
+          category: quiz.category,
+          level: quiz.level,
           isPublished: quiz.isPublished,
           quizType: quiz.quizType,
           numQuestions: quiz.settings?.numQuestions || quiz.questions?.length || 0,
           ordering: quiz.settings?.ordering,
+          passMarks: quiz.settings?.passMarks,
+          maxAttempts: quiz.settings?.maxAttempts,
+          enableReview: quiz.settings?.enableReview,
           settings: {
             numQuestions: quiz.settings?.numQuestions || quiz.questions?.length || 0,
             ordering: quiz.settings?.ordering,
+            passMarks: quiz.settings?.passMarks,
+            maxAttempts: quiz.settings?.maxAttempts,
+            enableReview: quiz.settings?.enableReview,
           },
         };
 
@@ -140,6 +148,9 @@ export class QuizBuilderComponent implements OnInit {
           enableNavigation: quiz.settings?.enableNavigation,
           enableAudio: quiz.settings?.enableAudio,
           enableTimer: quiz.settings?.enableTimer,
+          passMarks: quiz.settings?.passMarks,
+          maxAttempts: quiz.settings?.maxAttempts,
+          enableReview: quiz.settings?.enableReview,
         };
 
         // Populate filters if available
@@ -198,6 +209,8 @@ export class QuizBuilderComponent implements OnInit {
         ...(this.quizFormData?.settings || {}),
         numQuestions: data.numQuestions,
         ordering: data.ordering,
+        passMarks: data.passMarks,
+        maxAttempts: data.maxAttempts,
       },
     };
 
@@ -294,6 +307,8 @@ export class QuizBuilderComponent implements OnInit {
     payload.subjectIds = this.quizFiltersData.subjectIds ?? [];
     payload.topicIds = this.quizFiltersData.topicIds ?? [];
     payload.tag = this.quizFormData.tag;
+    payload.category = this.quizFormData.category;
+    payload.level = this.quizFormData.level;
     payload.questionIds = this.quizQuestionsData.map((q) => q.id);
     payload.isPublished = this.quizFormData.isPublished;
     //payload.questionsCount = this.quizQuestionsData.length;
@@ -307,6 +322,9 @@ export class QuizBuilderComponent implements OnInit {
       enableNavigation: this.quizSettingsData.enableNavigation,
       enableAudio: this.quizSettingsData.enableAudio,
       enableTimer: this.quizSettingsData.enableTimer,
+      passMarks: this.quizFormData.passMarks,
+      maxAttempts: this.quizFormData.maxAttempts,
+      enableReview: this.quizSettingsData.enableReview,
     };
     console.log('QuizBuilder Payload:', payload);
 
@@ -356,6 +374,8 @@ export class QuizBuilderComponent implements OnInit {
     payload.subjectIds = this.quizFiltersData?.subjectIds?.join(',') ?? '';
     payload.topicIds = this.quizFiltersData?.topicIds?.join(',') ?? '';
     payload.tag = this.quizFormData.tag;
+    payload.category = this.quizFormData.category;
+    payload.level = this.quizFormData.level;
     payload.questionIds = this.quizQuestionsData.map((q) => Number(q.id));
     payload.isPublished = this.quizFormData.isPublished;
     payload.quizType = this.quizFormData.quizType;
@@ -368,6 +388,9 @@ export class QuizBuilderComponent implements OnInit {
       enableNavigation: this.quizSettingsData.enableNavigation,
       enableAudio: this.quizSettingsData.enableAudio,
       enableTimer: this.quizSettingsData.enableTimer,
+      passMarks: this.quizFormData.passMarks,
+      maxAttempts: this.quizFormData.maxAttempts,
+      enableReview: this.quizSettingsData.enableReview,
     };
 
     this.loading = true;

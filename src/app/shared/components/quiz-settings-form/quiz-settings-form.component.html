@@ -81,4 +81,17 @@
         </mat-button-toggle-group>
       </div>
     </div>
+
+    <!-- Enable Review -->
+    <div class="row settingRow align-items-center">
+      <div class="col-6 d-flex align-items-center text-start">
+        <h5 class="cmHeading2">Enable Review</h5>
+      </div>
+      <div class="col-6 text-end">
+        <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableReview" appearance="standard">
+          <mat-button-toggle [value]="true">ON</mat-button-toggle>
+          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
 </form>

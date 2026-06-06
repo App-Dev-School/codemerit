@@ -41,4 +41,18 @@ export class QuizResultComponent {
 
    downloadReport() {
   }
+
+  // Pass/fail helpers (minimal, safe access)
+  get passMarks(): number {
+    return (this.result?.quiz as any)?.settings?.passMarks ?? (this.result as any)?.passMarks ?? 60;
+  }
+
+  get isPassed(): boolean {
+    const score = Number(this.result?.score ?? 0);
+    return score >= this.passMarks;
+  }
+
+  get statusLabel(): string {
+    return this.isPassed ? 'Passed' : 'Failed';
+  }
 }

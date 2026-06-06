@@ -70,6 +70,11 @@ export class QuizFormComponent implements OnInit, OnChanges {
     { label: 'Default', value: 'Default' },
     { label: 'Random', value: 'Random' },
   ];
+  difficultyOptions = [
+    { label: 'Easy', value: 1 },
+    { label: 'Intermediate', value: 2 },
+    { label: 'Advanced', value: 3 },
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -113,6 +118,8 @@ export class QuizFormComponent implements OnInit, OnChanges {
         ],
       ],
       label: [''],
+      level: [1, [Validators.required]],
+      category: ['Default', [Validators.required]],
       isPublished: [true],
       numQuestions: [
         this.quizItem.settings?.numQuestions ,
@@ -122,6 +129,8 @@ export class QuizFormComponent implements OnInit, OnChanges {
         this.quizItem.settings?.ordering ,
         Validators.required,
       ],
+      passMarks: [60, [Validators.required, Validators.min(0), Validators.max(100)]],
+      maxAttempts: [1, [Validators.required, Validators.min(1)]],
     });
   }
 
@@ -189,9 +198,13 @@ export class QuizFormComponent implements OnInit, OnChanges {
         description: this.formData.description ?? '',
         shortDesc: this.formData.shortDesc ?? '',
         label: formData.label ?? '',
+        level: formData.level ?? 1,
+        category: formData.category ?? 'Default',
         isPublished: this.formData.isPublished ?? true,
         numQuestions: this.formData.settings?.numQuestions ?? formData.numQuestions ?? null,
         ordering: this.formData.settings?.ordering ?? formData.ordering ?? null,
+        passMarks: this.formData.settings?.passMarks ?? formData.passMarks ?? 60,
+        maxAttempts: this.formData.settings?.maxAttempts ?? formData.maxAttempts ?? 1,
       },
       { emitEvent: false },
     );
@@ -203,6 +216,8 @@ export class QuizFormComponent implements OnInit, OnChanges {
     const descriptionControl = this.quizForm.get('description');
     const numQuestionsControl = this.quizForm.get('numQuestions');
     const orderingControl = this.quizForm.get('ordering');
+    const passMarksControl = this.quizForm.get('passMarks');
+    const maxAttemptsControl = this.quizForm.get('maxAttempts');
 
     tagControl?.setValidators(isPublished ? [Validators.required] : []);
     descriptionControl?.setValidators(
@@ -216,11 +231,23 @@ export class QuizFormComponent implements OnInit, OnChanges {
         : [Validators.min(1), Validators.max(50)],
     );
     orderingControl?.setValidators(isPublished ? [Validators.required] : []);
+    passMarksControl?.setValidators(
+      isPublished
+        ? [Validators.required, Validators.min(0), Validators.max(100)]
+        : [Validators.min(0), Validators.max(100)],
+    );
+    maxAttemptsControl?.setValidators(
+      isPublished
+        ? [Validators.required, Validators.min(1)]
+        : [Validators.min(1)],
+    );
 
     tagControl?.updateValueAndValidity({ emitEvent: false });
     descriptionControl?.updateValueAndValidity({ emitEvent: false });
     numQuestionsControl?.updateValueAndValidity({ emitEvent: false });
     orderingControl?.updateValueAndValidity({ emitEvent: false });
+    passMarksControl?.updateValueAndValidity({ emitEvent: false });
+    maxAttemptsControl?.updateValueAndValidity({ emitEvent: false });
   }
 
   private emitFormState(): void {

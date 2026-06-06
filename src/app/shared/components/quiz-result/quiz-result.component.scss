@@ -77,3 +77,62 @@
     margin-top: 2px;
   }
 }
+
+/* Pill-with-circle badge (compact, component-scoped) */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  line-height: 1;
+  min-height: 36px;
+}
+
+.status-pill__circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.status-pass {
+  background-color: rgba(76, 175, 80, 0.14);
+  color: #276d27;
+}
+
+.status-pass .status-pill__circle {
+  background-color: #4caf50;
+}
+
+.status-fail {
+  background-color: rgba(244, 67, 54, 0.14);
+  color: #a32b28;
+}
+
+.status-fail .status-pill__circle {
+  background-color: #f44336;
+}
+
+/* Icon inside circle */
+.status-pill__circle mat-icon {
+  color: #fff;
+}
+
+@media (max-width: 575px) {
+  .status-pill {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .status-pill__circle {
+    width: 28px;
+    height: 28px;
+  }
+}

@@ -14,6 +14,8 @@ export interface QuizCreateDto {
   jobIds?: string;
   topicIds?: string | string[] | null;
   tag?: string;
+  category?: string;
+  level?: number;
   quizType: QuizTypeEnum;
 }
 
@@ -27,6 +29,8 @@ export class QuizCreateModel implements QuizCreateDto {
   jobIds?: string;
   topicIds?: string | string[] | null;
   tag?: string;
+  category?: string;
+  level?: number;
   quizType: QuizTypeEnum;
   questionIds?: number[];
   isPublished: boolean;
@@ -43,6 +47,8 @@ export class QuizCreateModel implements QuizCreateDto {
     this.subjectIds = quiz.subjectIds ?? null;
     this.topicIds = quiz.topicIds ?? null;
     this.tag = quiz.tag ?? '';
+    this.category = quiz.category ?? 'Default';
+    this.level = quiz.level ?? 1;
     this.userId = quiz.userId ?? 0;
     this.isPublished = quiz.isPublished ?? false;
   }
@@ -73,6 +79,8 @@ export interface QuizEntity {
   shortDesc: string | null;
   description: string | null;
   goal: string | null;
+  category: string;
+  level: number;
   createdBy: number | null;
   updatedBy: number | null;
   label: string;
