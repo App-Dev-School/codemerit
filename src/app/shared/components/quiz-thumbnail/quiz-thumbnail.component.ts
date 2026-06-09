@@ -20,8 +20,13 @@ import { MatIcon } from '@angular/material/icon';
 export class QuizThumbnailComponent {
     @Input() quiz: any;
     @Output() quizSelected = new EventEmitter<string>();
+    @Output() viewAttempts = new EventEmitter<string>();
 
     takeQuiz(slug: string) {
         this.quizSelected.emit(slug);
+    }
+
+    viewResult(resultCode: string) {
+        this.viewAttempts.emit(resultCode);
     }
 }

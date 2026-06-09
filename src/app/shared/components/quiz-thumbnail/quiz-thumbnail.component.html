@@ -54,7 +54,7 @@
 
             
              @if (quiz.isQuizTaken) {
-              <button mat-stroked-button color="primary" class="take-btn" rippleEffect>
+              <button mat-stroked-button color="primary" (click)="viewResult(quiz.resultCode)" class="take-btn" rippleEffect>
                 View Result
               </button>
               }@else{
