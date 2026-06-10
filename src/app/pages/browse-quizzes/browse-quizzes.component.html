@@ -31,7 +31,7 @@
       <div class="row m-t-10 g-4">
         @for(quiz of quizzes; track quiz.id){
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-          <app-quiz-thumbnail [quiz]="quiz" (quizSelected)="takeQuiz($event)"></app-quiz-thumbnail>
+          <app-quiz-thumbnail [quiz]="quiz" (quizSelected)="takeQuiz($event)" (viewAttempts)="viewAttempts($event)"></app-quiz-thumbnail>
         </div>
         }
       </div>
