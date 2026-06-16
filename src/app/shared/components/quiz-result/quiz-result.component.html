@@ -9,6 +9,17 @@
   </div>
 </div>
 
+@if (reviewQuestions.length > 0) {
+<mat-card class="cardPadding" style="margin-top: 20px;">
+  <mat-card-header>
+    <mat-card-title>Attempt Review</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-quiz-attempts [questions]="reviewQuestions"></app-quiz-attempts>
+  </mat-card-content>
+</mat-card>
+} 
+
 <ng-template #scoreChart>
   <mat-card class="cardPadding">
     <mat-card-content id="quizResultCard">

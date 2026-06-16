@@ -244,6 +244,12 @@ export class StandardQuizComponent implements OnInit {
       );
   }
 
+  viewAttempts(resultCode: string): void {
+    if (resultCode) {
+      this.router.navigate(['/quiz/result', resultCode]);
+    }
+  }
+
   toggleRightSidebar(): void {
     // Toggle sidebar open/close using the service only
     this.rightSidebarService.setRightSidebar(true);

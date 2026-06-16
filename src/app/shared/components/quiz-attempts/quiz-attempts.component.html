@@ -1,0 +1,37 @@
+<div class="quiz-attempts-container">
+  @if (questions?.length > 0) {
+    @for (question of questions; track $index) {
+    
+      <mat-card class="attempt-card">
+        <div class="attempt-header">
+          <div>
+            <h4>Question {{ $index + 1 }} of {{ questions.length }}</h4>
+            <div class="question-text" [innerHTML]="question.text"></div>
+          </div>
+          <span class="status-pill" [ngClass]="getStatusClass(question)">{{ getStatusLabel(question) }}</span>
+        </div>
+
+        <div class="options-list">
+          @for (option of question.options; track option.id) {
+          <mat-card class="option-card" [ngClass]="{
+            correct: option.correct,
+            selected: option.selected,
+            wrong: option.selected && !option.correct
+          }">
+            <mat-icon *ngIf="option.correct">check_circle</mat-icon>
+            <mat-icon *ngIf="option.selected && !option.correct">radio_button_checked</mat-icon>
+            <span>{{ option.text }}</span>
+          </mat-card>
+          }
+        </div>
+      </mat-card>
+    
+    }
+  } @else {
+  <mat-card class="empty-card">
+    <mat-card-content>
+      <p>No attempt questions are available for review.</p>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>
