@@ -1,6 +1,6 @@
 
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
@@ -28,8 +28,10 @@ import { QuizAttemptsComponent } from '../quiz-attempts/quiz-attempts.component'
     QuizAttemptsComponent
   ]
 })
-export class QuizResultComponent {
-  @Input() result: QuizResult;
+export class QuizResultComponent implements OnDestroy {
+  // Controls temporary celebration overlay shown when user passes
+  showCelebration = false;
+  private celebrationTimer: any = null;
   @Output() onShareResult = new EventEmitter<string>();
   @Output() onContinue = new EventEmitter<string>();
 
@@ -72,5 +74,40 @@ export class QuizResultComponent {
       }
     }
     return [];
+  }
+
+
+    private _result: QuizResult;
+    @Input()
+    set result(val: QuizResult) {
+      this._result = val;
+      this.handleResultChange();
+    }
+    get result(): QuizResult { return this._result; }
+
+    private handleResultChange(): void {
+      if (this.isPassed) {
+        this.showCelebration = true;
+        if (this.celebrationTimer) {
+          clearTimeout(this.celebrationTimer);
+        }
+        this.celebrationTimer = setTimeout(() => {
+          this.showCelebration = false;
+          this.celebrationTimer = null;
+        }, 10000);
+      } else {
+        this.showCelebration = false;
+        if (this.celebrationTimer) {
+          clearTimeout(this.celebrationTimer);
+          this.celebrationTimer = null;
+        }
+      }
+    }
+
+  ngOnDestroy() {
+    if (this.celebrationTimer) {
+      clearTimeout(this.celebrationTimer);
+      this.celebrationTimer = null;
+    }
   }
 }

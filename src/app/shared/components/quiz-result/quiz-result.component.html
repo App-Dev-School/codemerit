@@ -1,34 +1,31 @@
-<div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
+<!-- Full-viewport centered Score section -->
+<section class="score-viewport">
+  <div class="score-card-wrap">
+    <div *ngIf="showCelebration" class="celebration-overlay" aria-hidden="true"></div>
     <ng-container *ngTemplateOutlet="scoreChart"></ng-container>
   </div>
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
-    @if (result?.topics && result?.topics.length > 0) {
-   <ng-container *ngTemplateOutlet="topicWiseChart"></ng-container>
-    }
-  </div>
-</div>
+</section>
 
-@if (reviewQuestions.length > 0) {
-<mat-card class="cardPadding" style="margin-top: 20px;">
-  <mat-card-header>
-    <mat-card-title>Attempt Review</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <app-quiz-attempts [questions]="reviewQuestions"></app-quiz-attempts>
-  </mat-card-content>
-</mat-card>
-} 
+<!-- Details row: left = attempts (2), right = topics (1) -->
+<section class="quiz-details" style="padding:1.5rem 1rem;">
+  <div class="row">
+    <div class="col-12 col-md-8">
+      @if (reviewQuestions.length > 0) {
+      <h2>Attempt Review</h2>
+      <app-quiz-attempts [questions]="reviewQuestions"></app-quiz-attempts>
+      }
+    </div>
+    <div class="col-12 col-md-4">
+      @if (result?.topics && result?.topics.length > 0) {
+      <ng-container *ngTemplateOutlet="topicWiseChart"></ng-container>
+      }
+    </div>
+  </div>
+</section>
 
 <ng-template #scoreChart>
   <mat-card class="cardPadding">
     <mat-card-content id="quizResultCard">
-      <div class="status-pill" [ngClass]="{ 'status-pass': isPassed, 'status-fail': !isPassed }" style="margin-left:12px">
-            <span class="status-pill__circle">
-              <mat-icon aria-hidden="true">{{ isPassed ? 'check' : 'close' }}</mat-icon>
-            </span>
-            <span class="status-pill__label">{{ statusLabel }}</span>
-          </div>
       <div class="row align-items-center text-center text-sm-center text-md-start m-b-10">
         <!-- Left text -->
         <div class="col-12 col-md-4 order-2 order-md-1">
@@ -37,8 +34,7 @@
 
         <!-- Center image -->
         <div class="col-12 col-md-4 order-1 m-b-10 order-md-2 d-flex justify-content-center">
-          <img src="/assets/images/logo.png" alt="CodeMerit Assessment Report" class="img-fluid"
-            style="max-width: 164px;">
+          <img src="/assets/images/logo.png" alt="CodeMerit Assessment Report" class="img-fluid cm-logo">
         </div>
 
         <!-- Right text -->
@@ -52,7 +48,7 @@
         <div class="cm-result-text">
           <h5>
             {{ result?.user?.firstName + ' ' + result?.user?.lastName }}
-             completed the {{ result?.quiz?.title ?? 'CodeMerit Assessment' }}
+            completed the {{ result?.quiz?.title ?? 'CodeMerit Assessment' }}
             with {{ result?.score }}% score.
           </h5>
         </div>
@@ -61,14 +57,22 @@
         </div>
       </div>
 
-@if (result?.remarks) {
-  <hr class="dim-divider">
-  <div class="row">
+      @if (result?.remarks) {
+      <hr class="dim-divider">
+      <div class="row">
         <div class="col-12 text-center cmSmallTitle">
           {{result.remarks}}
-          </div></div>
-}
+        </div>
+      </div>
+      }
       <hr class="dim-divider">
+       <div class="result-status" [ngClass]="{ 'status-pass': isPassed, 'status-fail': !isPassed }">
+            <span class="result-status__icon">
+              <mat-icon aria-hidden="true">{{ isPassed ? 'check' : 'close' }}</mat-icon>
+            </span>
+            <span class="result-status__label">{{ statusLabel }}</span>
+          </div>
+       <hr class="dim-divider">    
       <div class="row">
         <div class="col-3 col-sm-3 col-md-3 col-lg-3">
           <p class="text-muted font-15 text-truncate">Total</p>
@@ -76,7 +80,7 @@
             <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.total}}
           </p>
         </div>
-         <div class="col-3 col-sm-3 col-md-3 col-lg-3">
+        <div class="col-3 col-sm-3 col-md-3 col-lg-3">
           <p class="text-muted">Answered</p>
           <p class="font-b-600 font-24">
             <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.correct + result.wrong}}
@@ -116,21 +120,21 @@
     </mat-card-footer>
   </mat-card>
   <!-- <hr class="dim-divider"> -->
-      <div class="d-flex flex-column flex-sm-row justify-content-center text-center">
-        <button (click)="doOnShareResult()" class="margin-8 hoverCard" mat-flat-button color="accent">
-          <mat-icon>share</mat-icon> Share Result
-        </button>
+  <div class="d-flex flex-column flex-sm-row justify-content-center text-center actions">
+    <button (click)="doOnShareResult()" class="margin-8 hoverCard" mat-flat-button color="accent">
+      <mat-icon>share</mat-icon> Share Result
+    </button>
 
-        <button (click)="downloadReport()" mat-stroked-button color="primary" class="margin-8">
-          <mat-icon>download</mat-icon> Download Report
-        </button>
+    <button (click)="downloadReport()" mat-stroked-button color="primary" class="margin-8">
+      <mat-icon>download</mat-icon> Download Report
+    </button>
 
-        @if (result?.quiz?.id) {
-          <button (click)="doOnContinue()" class="margin-8" mat-flat-button color="primary">
-            <mat-icon>play_arrow</mat-icon> Continue
-          </button>
-         }
-      </div>
+    @if (result?.quiz?.id) {
+    <button (click)="doOnContinue()" class="margin-8" mat-flat-button color="primary">
+      <mat-icon>play_arrow</mat-icon> Continue
+    </button>
+    }
+  </div>
 </ng-template>
 
 <ng-template #topicWiseChart>

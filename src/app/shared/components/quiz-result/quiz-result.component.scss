@@ -1,43 +1,20 @@
-.center-header {
-  justify-content: center;
-}
+/* Minimal, component-scoped styles for quiz result */
 
-.totalScore {
-  text-align: center;
-  padding: 6px;
-  color: #ff9800;
-  font-size: 2rem;
-}
-
-.earningProgress .progress {
-  height: 9px;
-}
-
+/* card padding used on mat-card */
 .cardPadding {
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 1rem;
 }
 
-@media (max-width: 480px) {}
-
-.quizUserImg {
-  width: 118px;
-  height: 118px;
-  border-radius: 8%;
-  object-fit: cover;
-}
-
-/* Parent wrapper (optional, for scoping) */
+/* compact result row: avatar, text and progress */
 .cm-result-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  flex-wrap: nowrap;
 }
 
-/* Avatar stays small */
 .cm-avatar {
   width: 64px;
   height: 64px;
@@ -46,93 +23,106 @@
   border-radius: 50%;
 }
 
-/* Text expands to take maximum space */
 .cm-result-text {
   flex: 1 1 auto;
-  /* allow it to grow */
   min-width: 0;
-  /* prevents overflow */
 }
 
-/* Progress block stays tight */
 .cm-result-progress {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
 }
 
-/* Mobile: stack everything */
 @media (max-width: 575px) {
   .cm-result-row {
     flex-direction: column;
     text-align: center;
   }
-
-  .cm-result-text {
-    width: 100%;
-    margin-top: 2px;
-  }
-
-  .cm-result-progress {
-    margin-top: 2px;
-  }
 }
 
-/* Pill-with-circle badge (compact, component-scoped) */
-.status-pill {
-  display: inline-flex;
+/* Result status: simple centered label with icon */
+.result-status {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 8px 14px;
-  border-radius: 999px;
+  justify-content: center;
+  gap: 6px;
   font-weight: 700;
-  font-size: 13px;
-  text-transform: uppercase;
-  line-height: 1;
-  min-height: 36px;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: inherit;
+  position: relative;
+  z-index: 10010; /* show above card content if needed */
 }
 
-.status-pill__circle {
+.result-status__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  color: #fff;
 }
 
-.status-pass {
-  background-color: rgba(76, 175, 80, 0.14);
-  color: #276d27;
+.result-status__icon mat-icon {
+  font-size: 3.6rem; /* larger so icon shows fully */
 }
 
-.status-pass .status-pill__circle {
-  background-color: #4caf50;
+/* Make sure any image/svg placed inside the icon wrapper fits fully */
+.result-status__icon {
+  min-width: 80px;
+  min-height: 80px;
+  padding: 2px;
+  overflow: visible;
 }
 
-.status-fail {
-  background-color: rgba(244, 67, 54, 0.14);
-  color: #a32b28;
+.result-status__icon img,
+.result-status__icon svg,
+.result-status__icon mat-icon {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
 }
 
-.status-fail .status-pill__circle {
-  background-color: #f44336;
+/* pass / fail color indicators */
+.status-pass { color: #276d27; }
+.status-fail { color: #a32b28; }
+
+/* celebration overlay confined to the card wrapper */
+.score-viewport { position: relative; }
+.score-card-wrap { position: relative; max-width: 900px; width: 100%; margin: 0 auto; }
+
+/* allow mat-card and children to show overflowed icons/overlay */
+.score-card-wrap > mat-card { overflow: visible; }
+
+/* logo sizing moved from inline */
+.cm-logo { max-width: 164px; height: auto; }
+
+/* actions/buttons wrapper (moved from inline) */
+.actions { width: 100%; margin-top: 1rem; }
+
+.celebration-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/images/celebration.gif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 9999;
+  animation: celebrateFade 10s forwards;
 }
 
-/* Icon inside circle */
-.status-pill__circle mat-icon {
-  color: #fff;
+@keyframes celebrateFade {
+  0% { opacity: 0.9; transform: scale(1); }
+  90% { opacity: 0.9; }
+  100% { opacity: 0; transform: scale(1.02); }
 }
 
-@media (max-width: 575px) {
-  .status-pill {
-    padding: 8px 12px;
-    font-size: 12px;
-  }
-
-  .status-pill__circle {
-    width: 28px;
-    height: 28px;
-  }
+@media (max-width: 576px) {
+  .celebration-overlay { opacity: 0.5; background-position: top center; }
+  .result-status { font-size: 1.1rem; }
+  .result-status__icon mat-icon { font-size: 1.6rem; }
+  .result-status__icon { min-width: 48px; min-height: 48px; }
 }
