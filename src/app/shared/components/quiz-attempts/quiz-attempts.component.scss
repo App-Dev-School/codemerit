@@ -72,7 +72,26 @@
         font-weight: 500;
         display: flex;
         flex-direction: row;
-        align-items: left;
+        align-items: center;
+        gap: 0.5rem;
+
+        .option-text {
+            flex: 1;
+        }
+
+        .icon-right {
+            width: 22px;
+            height: 22px;
+            flex: 0 0 auto;
+            margin-left: auto;
+        }
+
+        .selected-label {
+            flex: 0 0 auto;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #455a64;
+        }
     }
 
     .option-card:hover,

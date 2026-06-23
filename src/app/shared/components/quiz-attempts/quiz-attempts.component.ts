@@ -30,20 +30,6 @@ export class QuizAttemptsComponent implements AfterViewInit {
     }
   }
 
-  onSlideNext(): void {
-    if (this.swiperEx?.nativeElement?.swiper) {
-      this.swiperEx.nativeElement.swiper.slideNext();
-      this.updateCurrentIndex();
-    }
-  }
-
-  onSlidePrev(): void {
-    if (this.swiperEx?.nativeElement?.swiper) {
-      this.swiperEx.nativeElement.swiper.slidePrev();
-      this.updateCurrentIndex();
-    }
-  }
-
   private updateCurrentIndex(): void {
     if (this.swiperEx?.nativeElement?.swiper) {
       this.currentQuestionId = this.swiperEx.nativeElement.swiper.activeIndex;
