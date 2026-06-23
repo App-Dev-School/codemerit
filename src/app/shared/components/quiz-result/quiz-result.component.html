@@ -1,17 +1,22 @@
-<!-- Full-viewport centered Score section -->
+<!-- Full screen centered Score section -->
 <section class="score-viewport">
+  <!-- <app-celebration-overlay *ngIf="showCelebration" [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> -->
   <div class="score-card-wrap">
-    <div *ngIf="showCelebration" class="celebration-overlay" aria-hidden="true"></div>
+    <!-- <app-celebration-overlay *ngIf="showCelebration" [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> -->
+    @if (showCelebration) {
+      <app-celebration-overlay [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> 
+    }
     <ng-container *ngTemplateOutlet="scoreChart"></ng-container>
   </div>
 </section>
 
-<!-- Details row: left = attempts (2), right = topics (1) -->
-<section class="quiz-details" style="padding:1.5rem 1rem;">
+<!-- Details row: left = attempts, right = topics -->
+<section class="quiz-details">
+  <hr class="dim-divider"> 
   <div class="row">
     <div class="col-12 col-md-8">
       @if (reviewQuestions.length > 0) {
-      <h2>Attempt Review</h2>
+      <h4>Review Attempt Summary</h4>
       <app-quiz-attempts [questions]="reviewQuestions"></app-quiz-attempts>
       }
     </div>

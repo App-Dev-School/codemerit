@@ -1,15 +1,16 @@
 
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuizResult } from '@core/models/quiz';
 import { NgScrollbar } from 'ngx-scrollbar';
+import { CelebrationOverlayComponent } from '../celebration-overlay/celebration-overlay.component';
+import { QuizAttemptsComponent } from '../quiz-attempts/quiz-attempts.component';
 import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
 import { TopicsScore } from '../topic-wise-score/topics-score.component';
-import { QuizAttemptsComponent } from '../quiz-attempts/quiz-attempts.component';
 
 @Component({
   selector: 'app-quiz-result',
@@ -25,13 +26,17 @@ import { QuizAttemptsComponent } from '../quiz-attempts/quiz-attempts.component'
     NgTemplateOutlet,
     TopicsScore,
     QuizProgressComponent,
-    QuizAttemptsComponent
+    QuizAttemptsComponent,
+    CelebrationOverlayComponent
   ]
 })
 export class QuizResultComponent implements OnDestroy {
   // Controls temporary celebration overlay shown when user passes
   showCelebration = false;
-  private celebrationTimer: any = null;
+  // tune panel state for celebration overlay
+  celebrationControlsEnabled = false;
+
+  @ViewChild('celebs') celebs?: CelebrationOverlayComponent;
   @Output() onShareResult = new EventEmitter<string>();
   @Output() onContinue = new EventEmitter<string>();
 
@@ -86,28 +91,9 @@ export class QuizResultComponent implements OnDestroy {
     get result(): QuizResult { return this._result; }
 
     private handleResultChange(): void {
-      if (this.isPassed) {
-        this.showCelebration = true;
-        if (this.celebrationTimer) {
-          clearTimeout(this.celebrationTimer);
-        }
-        this.celebrationTimer = setTimeout(() => {
-          this.showCelebration = false;
-          this.celebrationTimer = null;
-        }, 10000);
-      } else {
-        this.showCelebration = false;
-        if (this.celebrationTimer) {
-          clearTimeout(this.celebrationTimer);
-          this.celebrationTimer = null;
-        }
-      }
+      // Show celebration only when passed; child handles auto-hide
+      this.showCelebration = !!this.isPassed;
     }
 
-  ngOnDestroy() {
-    if (this.celebrationTimer) {
-      clearTimeout(this.celebrationTimer);
-      this.celebrationTimer = null;
-    }
-  }
+  ngOnDestroy() {}
 }

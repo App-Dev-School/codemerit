@@ -1,0 +1,36 @@
+<div class="celebration-wrap" [attr.aria-hidden]="!enabled">
+  <canvas #canvas class="overlay-canvas" (mousedown)="triggerBurst($event.clientX, $event.clientY)" (touchstart)="triggerBurst($event.touches?.[0]?.clientX, $event.touches?.[0]?.clientY)"></canvas>
+
+  <div class="controls" [class.locked]="!controlsEnabled">
+    <div class="preset-row">
+      <button (click)="applyPreset('golden_star')" [disabled]="!controlsEnabled" class="preset">Gold Prestige</button>
+      <button (click)="applyPreset('cyber_matrix')" [disabled]="!controlsEnabled" class="preset">Cyber Matrix</button>
+      <button (click)="applyPreset('cyber_sparks')" [disabled]="!controlsEnabled" class="preset">Neon Sparks</button>
+      <button (click)="applyPreset('classic_confetti')" [disabled]="!controlsEnabled" class="preset">Confetti</button>
+    </div>
+
+    <div class="sliders">
+      <label>Density: <strong>{{localMaxParticles}}</strong></label>
+      <input type="range" min="20" max="400" [value]="localMaxParticles" (input)="onChange('maxParticles', $any($event.target).value)" [disabled]="!controlsEnabled">
+
+      <label>Speed: <strong>{{localSpeed}}</strong></label>
+      <input type="range" min="0.5" max="8" step="0.1" [value]="localSpeed" (input)="onChange('speed', $any($event.target).value)" [disabled]="!controlsEnabled">
+
+      <label>Wind: <strong>{{localWind}}</strong></label>
+      <input type="range" min="0" max="5" step="0.1" [value]="localWind" (input)="onChange('wind', $any($event.target).value)" [disabled]="!controlsEnabled">
+
+      <label>Glow: <strong>{{localGlow}}</strong></label>
+      <input type="range" min="0" max="30" [value]="localGlow" (input)="onChange('glow', $any($event.target).value)" [disabled]="!controlsEnabled">
+
+      <label>Scale: <strong>{{localScale}}</strong></label>
+      <input type="range" min="0.4" max="2" step="0.05" [value]="localScale" (input)="onChange('scale', $any($event.target).value)" [disabled]="!controlsEnabled">
+    </div>
+
+    <div class="controls-foot">
+      <label class="lock">
+        <input type="checkbox" [checked]="!controlsEnabled" (change)="toggleLock()"> Lock Settings
+      </label>
+      <button class="btn-burst" (click)="triggerBurst()">Trigger Burst</button>
+    </div>
+  </div>
+</div>
