@@ -13,14 +13,10 @@
 
         <div class="options-list">
           @for (option of question.options; track option.id) {
-          <mat-card class="option-card" [ngClass]="{
-            correct: option.correct,
-            selected: option.selected,
-            wrong: option.selected && !option.correct
-          }">
-            <mat-icon *ngIf="option.correct">check_circle</mat-icon>
-            <mat-icon *ngIf="option.selected && !option.correct">radio_button_checked</mat-icon>
-            <span>{{ option.text }}</span>
+          <mat-card class="option-card" [ngClass]="{ correct: option.correct }">
+            <span class="option-text">{{ option.text }}</span>
+            <img *ngIf="option.correct" src="assets/images/icons/ic_correct.png" class="icon-right" />
+            <span *ngIf="option.selected" class="selected-label">Selected</span>
           </mat-card>
           }
         </div>
