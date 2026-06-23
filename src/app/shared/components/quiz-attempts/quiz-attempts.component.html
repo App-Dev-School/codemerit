@@ -1,7 +1,6 @@
 <div class="quiz-attempts-container">
   @if (questions?.length > 0) {
     @for (question of questions; track $index) {
-    
       <mat-card class="attempt-card">
         <div class="attempt-header">
           <div>
@@ -21,7 +20,6 @@
           }
         </div>
       </mat-card>
-    
     }
   } @else {
   <mat-card class="empty-card">

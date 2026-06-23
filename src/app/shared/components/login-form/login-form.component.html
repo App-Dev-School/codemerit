@@ -8,14 +8,16 @@
             @if (data && data?.title) {
             <h6 class="welcome-msg text-center"> {{data?.title}} </h6>
             }@else {
-            <h6 class="welcome-msg text-center">{{isNewUser ? 'Create CodeMerit Account' : 'Login to your CodeMerit Account'}}</h6>
+            <h6 class="welcome-msg text-center">{{isNewUser ? 'Create CodeMerit Account' : 'Login to your CodeMerit
+                Account'}}</h6>
             }
 
             @if (data && data?.message) {
             <p class="auth-signup-text text-center">{{data?.message}}</p>
             }@else {
-            <p class="auth-signup-text text-center">
-                {{ isNewUser ? 'Quick Register to get Started' : 'Access your personalized Learning and Skill Assessment Dashboard'}}
+            <p class="auth-signup-text text-center floating">
+                {{ isNewUser ? 'Choose Your Career Goal. Track Your Progress.' : 'Access your personalized Skill
+                Assessment Dashboard.'}}
             </p>
             }
         </div>
@@ -123,8 +125,8 @@
                 </button>
             </div>
         </form>
-       }@else{
-         <form [@fadeIn] class="validate-form" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+        }@else{
+        <form [@fadeIn] class="validate-form" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
                     <mat-form-field class="example-full-width" appearance="fill">
@@ -172,10 +174,10 @@
                 <div style="text-align:center">
                     <button mat-flat-button color="accent" [class.auth-spinner]="loading" [disabled]="loading"
                         class="auth-form-btn" [disabled]="!loginForm.valid " type="submit">Login</button>
-                </div>  
+                </div>
             </div>
         </form>
-    }
+        }
 
         @if (isNewUser) {
         <h6 class="social-login-title">OR</h6>
