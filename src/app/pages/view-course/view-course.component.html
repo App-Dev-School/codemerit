@@ -192,10 +192,10 @@
         evaluation and insights to advance your career.</p>
       <hr class="dim-divider">
       @if (courseItem?.subjects) {
-      <button mat-flat-button (click)="onSubscribe(courseItem)" class="btn m-b-10" rippleEffect>
+      <button mat-flat-button (click)="onSubscribe(courseItem)" class="btn floating m-b-10" rippleEffect>
         <i class="material-icons">badge</i> &nbsp;Apply Now</button>
       }@else{
-      <button mat-stroked-button (click)="takeQuiz()" color="primary" class="btn m-b-10" rippleEffect>
+      <button mat-stroked-button (click)="takeQuiz()" color="primary" class="btn floating m-b-10" rippleEffect>
         <i class="material-icons">smart_toy</i> &nbsp;Generate a Quiz</button>
       }
     </div>

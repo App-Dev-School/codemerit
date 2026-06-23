@@ -4,7 +4,7 @@
       <mat-card class="attempt-card">
         <div class="attempt-header">
           <div>
-            <h4>Question {{ $index + 1 }} of {{ questions.length }}</h4>
+            <!-- <h4>Question {{ $index + 1 }} of {{ questions.length }}</h4> -->
             <div class="question-text" [innerHTML]="question.text"></div>
           </div>
           <span class="status-pill" [ngClass]="getStatusClass(question)">{{ getStatusLabel(question) }}</span>
