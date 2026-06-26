@@ -10,6 +10,31 @@
   width: 100%;
 }
 
+.description-header,
+.description-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.description-header {
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.description-row {
+  margin-bottom: 12px;
+}
+
+.description-editor {
+  flex: 1;
+}
+
+.description-editor label {
+  display: block;
+  margin-bottom: 6px;
+}
+
 .tiptap-mat-wrapper {
   border: 1px solid #c4c4c4;
   border-radius: 4px;
