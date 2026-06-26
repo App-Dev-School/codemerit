@@ -387,4 +387,13 @@ export class ViewCourseComponent implements OnInit, AfterViewInit {
   takeQuiz() {
     this.snackService.display('snackbar-dark', 'Feature coming soon.', 'bottom', 'center');
   }
+
+  isJobEnrolled(userId: number, jobId: number): boolean {
+    if (userId && jobId) {
+      // Implement logic to check if user is enrolled in the job
+      const enrolledJobs = this.authService.getUserJobRoles();
+      return enrolledJobs.some(job => job.userId === userId && job.jobRoleId === jobId);
+    }
+    return false;
+  }
 }

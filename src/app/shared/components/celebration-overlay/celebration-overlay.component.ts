@@ -10,11 +10,11 @@ export class CelebrationOverlayComponent implements AfterViewInit, OnDestroy, On
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
   @Input() enabled = true;
   @Input() theme: 'classic_confetti' | 'cyber_matrix' | 'golden_star' | 'cyber_sparks' = 'golden_star';
-  @Input() maxParticles = 100;
-  @Input() speed = 2;
+  @Input() maxParticles = 80;
+  @Input() speed = 1;
   @Input() wind = 0.8;
-  @Input() glow = 15;
-  @Input() scale = 1;
+  @Input() glow = 5;
+  @Input() scale = 0.3;
 
   private ctx!: CanvasRenderingContext2D | null;
   private particles: any[] = [];
@@ -108,7 +108,7 @@ export class CelebrationOverlayComponent implements AfterViewInit, OnDestroy, On
   private randomColorForTheme() {
     const palettes: Record<string, string[]> = {
       cyber_matrix: ['#06b6d4','#10b981','#6366f1','#3b82f6','#a7f3d0','#ffffff'],
-      golden_star: ['#fbbf24','#f59e0b','#d97706','#fef08a','#ffffff','#eab308'],
+      golden_star: ['#fbbf24','#f59e0b','#d97706','#fef08a','#eab308'],
       cyber_sparks: ['#ec4899','#06b6d4','#f43f5e','#a855f7','#38bdf8'],
       classic_confetti: ['#f43f5e','#10b981','#3b82f6','#eab308','#a855f7','#ff7849','#ffc82c']
     };
@@ -125,10 +125,11 @@ export class CelebrationOverlayComponent implements AfterViewInit, OnDestroy, On
 
   // UI methods
   applyPreset(name: string) {
+    alert(`Preset "${name}" applied! (This is a demo; in a real app, you would apply the preset to the overlay settings.)`);
     if (!this.controlsEnabled) return;
     switch(name) {
       case 'golden_star':
-        this.localMaxParticles = 200; this.localSpeed = 2.5; this.localWind = 0.8; this.localGlow = 15; this.localScale = 0.95; this.theme = 'golden_star';
+        this.localMaxParticles = 8; this.localSpeed = 1; this.localWind = 0.8; this.localGlow = 5; this.localScale = 0.25; this.theme = 'golden_star';
         break;
       case 'cyber_matrix':
         this.localMaxParticles = 150; this.localSpeed = 3; this.localWind = 1.2; this.localGlow = 10; this.localScale = 1; this.theme = 'cyber_matrix';

@@ -200,10 +200,12 @@ export class QuizCreateComponent implements OnInit {
                 this.generatedQuizCode = slug;
                 //this.launchQuiz(this.generatedQuizCode);
                 this.loading = false;
+                this.close();
               }, 6000);
             }
           } else {
             this.loading = false;
+            this.close();
             //#Task: handle error well. Determine eligibilty etc.
             this.requestConfirmed = false;
             this.snackService.display('snackbar-dark', response?.message ?? 'Failed to process your Quiz request. Please try again later.', 'bottom', 'center');
@@ -215,6 +217,7 @@ export class QuizCreateComponent implements OnInit {
           this.error = 'Error generating Quiz. Please try again.';
           console.error('QuizManager CreateAPI Error:', error);
           this.snackService.display('snackbar-dark', this.error, 'bottom', 'center');
+          this.close();
         },
       });
   }

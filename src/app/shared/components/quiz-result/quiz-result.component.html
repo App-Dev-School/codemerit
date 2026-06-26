@@ -1,11 +1,14 @@
-<!-- Full screen centered Score section -->
+@if (showCelebration) {
+      <app-celebration-overlay [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> 
+    }
+    <!-- Full screen centered Score section -->
 <section class="score-viewport">
   <!-- <app-celebration-overlay *ngIf="showCelebration" [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> -->
   <div class="score-card-wrap">
     <!-- <app-celebration-overlay *ngIf="showCelebration" [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> -->
-    @if (showCelebration) {
+    <!-- @if (showCelebration) {
       <app-celebration-overlay [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> 
-    }
+    } -->
     <ng-container *ngTemplateOutlet="scoreChart"></ng-container>
   </div>
 </section>
