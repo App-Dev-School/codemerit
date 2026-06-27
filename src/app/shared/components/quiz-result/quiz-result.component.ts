@@ -34,7 +34,7 @@ export class QuizResultComponent implements OnDestroy {
   // Controls temporary celebration overlay shown when user passes
   showCelebration = false;
   // tune panel state for celebration overlay
-  celebrationControlsEnabled = false;
+  celebrationControlsEnabled = true;
 
   @ViewChild('celebs') celebs?: CelebrationOverlayComponent;
   @Output() onShareResult = new EventEmitter<string>();

@@ -1,0 +1,29 @@
+<div class="landing-shell">
+  <app-particle-canvas></app-particle-canvas>
+
+  <div class="landing-loader" *ngIf="!isReady">
+    <div class="landing-loader-card">
+      <div class="loader-brand">InterViewHub</div>
+      <div class="loader-title">Preparing the landing experience</div>
+      <div class="loader-bar">
+        <div class="loader-progress" [style.width.%]="loaderProgress"></div>
+      </div>
+      <div class="loader-note">Fetching landing assets and interactive UI...</div>
+    </div>
+  </div>
+
+  <div class="landing-root">
+    <div id="systemNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none max-w-sm w-full"></div>
+    <app-landing-header></app-landing-header>
+    <main>
+      <app-hero></app-hero>
+      <app-assessment-dashboard></app-assessment-dashboard>
+      <app-scheduler></app-scheduler>
+      <app-marksheet></app-marksheet>
+      <!-- <app-sandbox></app-sandbox> -->
+      <app-quiz-zone></app-quiz-zone>
+      <!-- <app-playground></app-playground> -->
+    </main>
+    <app-landing-footer></app-landing-footer>
+  </div>
+</div>

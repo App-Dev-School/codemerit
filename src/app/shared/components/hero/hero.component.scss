@@ -1,0 +1,23 @@
+section {
+  padding-top: 1rem;
+}
+
+input[type="date"] {
+  color: #e2e8f0;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) grayscale(1) contrast(1.2);
+}
+
+input[type="date"]::-ms-clear,
+input[type="date"]::-ms-expand {
+  color: #e2e8f0;
+}
+
+select {
+  padding-right: 2.5rem;
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+}
+

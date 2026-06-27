@@ -1,0 +1,134 @@
+.landing-footer {
+  position: relative;
+  background: #020617;
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
+  color: #94a3b8;
+  padding: 3rem 0;
+  overflow: hidden;
+}
+
+.landing-footer-glow {
+  position: absolute;
+  left: -8rem;
+  bottom: -8rem;
+  width: 20rem;
+  height: 20rem;
+  background: rgba(56, 189, 248, 0.08);
+  border-radius: 9999px;
+  filter: blur(4rem);
+}
+
+.landing-footer-inner {
+  position: relative;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.landing-footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.landing-footer-brand {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.landing-footer-logo {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.16), rgba(168, 85, 247, 0.16));
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.landing-footer-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 0.5rem;
+}
+
+.landing-footer-copy {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: #94a3b8;
+}
+
+.landing-footer-column h4 {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #cbd5e1;
+  margin-bottom: 0.75rem;
+}
+
+.landing-footer-column ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.landing-footer-column li a,
+.landing-footer-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.82rem;
+  transition: color 0.2s ease;
+}
+
+.landing-footer-column li a:hover,
+.landing-footer-links a:hover {
+  color: #38bdf8;
+}
+
+.landing-footer-card {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.65rem;
+  font-size: 0.82rem;
+}
+
+.landing-footer-card span {
+  color: #7dd3fc;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.landing-footer-bottom {
+  margin-top: 2rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.landing-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .landing-footer-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .landing-footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

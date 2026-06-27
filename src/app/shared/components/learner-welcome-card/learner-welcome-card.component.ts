@@ -30,6 +30,6 @@ export class LearnerWelcomeCardComponent implements OnInit {
     }
 
     login() {
-        this.router.navigate(['/authentication/signup']);
+        this.router.navigate(['/test/landing']);
     }
 }

@@ -1,0 +1,144 @@
+<section id="hero" class="relative pt-12 pb-14 overflow-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <div class="lg:col-span-7 flex flex-col space-y-6">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.1]">
+        Prepare for Every <br>
+        <span class="bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          Tech Skills Assessment
+        </span>
+      </h1>
+
+      <!-- Terminal / Code preview retained -->
+      <div class="mt-6 bg-[#0b0f19] border-2 border-slate-850 rounded-3xl p-5 shadow-2xl text-slate-100 font-mono overflow-hidden max-w-2xl">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2 text-slate-300">
+            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+            <span class="text-xs uppercase tracking-[0.3em]">Assessment Workflow Preview</span>
+          </div>
+          <button type="button" class="text-[11px] uppercase tracking-[0.25em] px-3 py-1 rounded-full bg-slate-800/80 text-sky-300 hover:bg-slate-800">Run</button>
+        </div>
+        <pre class="text-sm leading-6 text-slate-200 bg-slate-950 border border-slate-800 rounded-2xl p-4 overflow-x-auto">
+<span class="text-slate-500">const</span> board = <span class="text-sky-300">await</span> getAssessmentBoard(<span class="text-emerald-300">'SME_PANEL'</span>);
+<span class="text-slate-500">const</span> session = board.createSession(&#123;
+  track: <span class="text-purple-300">'ui-engineering-angular'</span>,
+  focus: <span class="text-amber-300">'interview-readiness'</span>,
+  credential: <span class="text-sky-300">'expert-badge'</span>
+&#125;);
+
+session.on(<span class="text-sky-300">'ready'</span>, () =&gt; &#123;
+  console.log(<span class="text-emerald-300">'Assessment session active'</span>);
+&#125;);
+        </pre>
+        <div class="mt-3 text-[12px] text-slate-400">
+          <span class="inline-flex items-center gap-2">
+            <i data-lucide="activity" class="w-4 h-4 text-sky-400"></i>
+            Real-time scheduling, SME coordination and credential readiness in one place.
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:flex-wrap">
+        <a href="#scheduler" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 text-white px-6 py-3 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+          Book Your Tech Assessment
+        </a>
+        <button id="heroNotifyBtn" type="button" class="inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-100 hover:bg-slate-800 transition">
+          Show Notification
+        </button>
+      </div>
+    </div>
+    <div class="lg:col-span-5">
+      <div class="bg-[#0b0f19] p-6 rounded-3xl border-2 border-slate-800 shadow-2xl text-slate-100">
+        <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider pb-2 border-b border-slate-800">Book Your Tech Assessment</h3>
+        <form id="bookingForm" onsubmit="handleScheduleCommit(event)" class="space-y-4 mt-5">
+          <div class="space-y-1">
+            <label class="text-xs text-slate-300 block font-bold">Assessment Track</label>
+            <select id="scheduleRole" onchange="handleSchedulerRoleChange(this.value)" class="w-full bg-[#0b0f19] border-2 border-slate-700 hover:border-sky-500 text-slate-100 font-semibold rounded-xl px-3 py-2.5 text-xs outline-none">
+              <option value="js-programmer">JavaScript Programmer</option>
+              <option value="python-programmer">Python Programmer</option>
+              <option value="web-designer">Web Designer</option>
+              <option value="ui-engineering-foundation">UI Engineering Foundation</option>
+              <option value="ui-engineering-angular">UI Engineering with Angular</option>
+              <option value="node-backend">Backend Programming with Node</option>
+              <option value="ai-ml-engineer">AI/ML Engineer</option>
+              <option value="devops-engineer">DevOps Engineer</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs text-slate-300 block font-bold">Assessment Focus</label>
+            <select id="scheduleTopic" class="w-full bg-[#0b0f19] border-2 border-slate-700 hover:border-sky-500 text-slate-100 font-semibold rounded-xl px-3 py-2.5 text-xs outline-none">
+              <option value="coding-challenge">Coding Challenge & Problem Solving</option>
+              <option value="system-design">System Design / Architecture</option>
+              <option value="technical-quiz">Quiz: Concepts & Interview Prep</option>
+              <option value="role-play">Mock Interview / Role Play</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs text-slate-300 block font-bold">Recognition / Credential Path</label>
+            <select id="scheduleTrack" class="w-full bg-[#0b0f19] border-2 border-slate-700 hover:border-sky-500 text-slate-100 font-semibold rounded-xl px-3 py-2.5 text-xs outline-none">
+              <option value="foundation-badge">Foundation Badge</option>
+              <option value="professional-certificate">Professional Credential</option>
+              <option value="expert-badge">SME Recommendation</option>
+            </select>
+          </div>
+          <div class="space-y-1 relative" id="smeMultiSelectContainer">
+            <label class="text-xs text-slate-300 block font-bold">Subject Matter Experts (SME Panel - Multi-select)</label>
+            <button type="button" onclick="toggleSmeDropdown()" class="w-full bg-[#0b0f19] border-2 border-slate-700 hover:border-sky-500 text-slate-300 font-semibold rounded-xl px-3 py-2.5 text-xs outline-none flex items-center justify-between">
+              <span id="selectedSmesLabel" class="truncate text-slate-100">Select Experts...</span>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+            </button>
+            <div id="smeDropdownMenu" class="hidden absolute left-0 right-0 mt-1 bg-[#0b0f19] border-2 border-slate-700 rounded-xl p-3 z-50 shadow-2xl max-h-48 overflow-y-auto space-y-1.5">
+              <label class="flex items-center gap-2.5 text-xs text-slate-300 hover:text-white cursor-pointer py-1.5 px-1 hover:bg-[#111827] rounded transition-all">
+                <input type="checkbox" name="smeCheckbox" value="SME Devendra - Staff Engineer @ NetApp" class="accent-sky-500 h-3.5 w-3.5 rounded border-slate-700 bg-slate-900" onchange="updateSelectedSmes()">
+                <span>SME Devendra (Staff NetApp)</span>
+              </label>
+              <label class="flex items-center gap-2.5 text-xs text-slate-300 hover:text-white cursor-pointer py-1.5 px-1 hover:bg-[#111827] rounded transition-all">
+                <input type="checkbox" name="smeCheckbox" value="SME Priya - Lead Cloud Dev @ IBM" class="accent-sky-500 h-3.5 w-3.5 rounded border-slate-700 bg-slate-900" onchange="updateSelectedSmes()">
+                <span>SME Priya (Lead IBM)</span>
+              </label>
+              <label class="flex items-center gap-2.5 text-xs text-slate-300 hover:text-white cursor-pointer py-1.5 px-1 hover:bg-[#111827] rounded transition-all">
+                <input type="checkbox" name="smeCheckbox" value="SME Rohan - Principal AI Architect @ NVIDIA" class="accent-sky-500 h-3.5 w-3.5 rounded border-slate-700 bg-slate-900" onchange="updateSelectedSmes()">
+                <span>SME Rohan (Principal NVIDIA)</span>
+              </label>
+              <label class="flex items-center gap-2.5 text-xs text-slate-300 hover:text-white cursor-pointer py-1.5 px-1 hover:bg-[#111827] rounded transition-all">
+                <input type="checkbox" name="smeCheckbox" value="SME Anjali - Staff Engineer Google" class="accent-sky-500 h-3.5 w-3.5 rounded border-slate-700 bg-slate-900" onchange="updateSelectedSmes()">
+                <span>SME Anjali (Staff Google)</span>
+              </label>
+              <label class="flex items-center gap-2.5 text-xs text-slate-300 hover:text-white cursor-pointer py-1.5 px-1 hover:bg-[#111827] rounded transition-all">
+                <input type="checkbox" name="smeCheckbox" value="SME Keith - Lead DevOps Cloudflare" class="accent-sky-500 h-3.5 w-3.5 rounded border-slate-700 bg-slate-900" onchange="updateSelectedSmes()">
+                <span>SME Keith (Lead Cloudflare)</span>
+              </label>
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs text-slate-300 block font-bold">Candidate Experience Level</label>
+            <div class="grid grid-cols-2 gap-2" id="proficiencyTagsContainer">
+              <button type="button" onclick="toggleProficiencyTag('Beginner')" id="tag-Beginner" class="py-2 text-[11px] font-bold rounded-lg border-2 border-slate-800 bg-slate-950 text-slate-400">Beginner</button>
+              <button type="button" onclick="toggleProficiencyTag('Initiated')" id="tag-Initiated" class="py-2 text-[11px] font-bold rounded-lg border-2 border-slate-800 bg-slate-950 text-slate-400">Initiated</button>
+              <button type="button" onclick="toggleProficiencyTag('Intermediate')" id="tag-Intermediate" class="py-2 text-[11px] font-bold rounded-lg border-2 border-slate-800 bg-slate-950 text-slate-400">Intermediate</button>
+              <button type="button" onclick="toggleProficiencyTag('Expert')" id="tag-Expert" class="py-2 text-[11px] font-bold rounded-lg border-2 border-slate-800 bg-slate-950 text-slate-400">Expert</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs text-slate-300 block font-bold">Select Date</label>
+              <input type="date" id="scheduleDate" required class="w-full bg-[#0b0f19] border-2 border-slate-700 hover:border-sky-500 text-slate-100 font-semibold rounded-xl px-3 py-2.5 text-xs outline-none">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs text-slate-300 block font-bold">Select Time Slot</label>
+              <select id="scheduleTime" class="w-full bg-[#0b0f19] border-2 border-slate-700 hover:border-sky-500 text-slate-100 font-semibold rounded-xl px-3 py-2.5 text-xs outline-none">
+                <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                <option value="04:30 PM - 05:30 PM">04:30 PM - 05:30 PM</option>
+                <option value="08:00 PM - 09:00 PM">08:00 PM - 09:00 PM</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="w-full py-3 bg-gradient-to-r from-sky-500 to-indigo-500 text-slate-950 font-extrabold rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-1.5 mt-2">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            Schedule Assessment Session
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

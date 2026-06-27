@@ -1,0 +1,53 @@
+<section id="marksheet" class="bg-[#0b0f19] border-2 border-indigo-950/80 rounded-2xl p-6 md:p-8 shadow-2xl text-slate-100 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-10">
+  <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-6 border-b border-slate-850 gap-4">
+    <div>
+      <span class="text-xs font-mono text-emerald-400 font-bold tracking-widest uppercase">OFFICIAL SME EVALUATION RECORD</span>
+      <h2 class="text-2xl font-extrabold text-white flex items-center gap-2 mt-1">
+        <i data-lucide="clipboard-list" class="w-6 h-6 text-emerald-400"></i>
+        Detailed Multi-SME Marksheet Report
+      </h2>
+      <p class="text-slate-400 text-sm mt-1 font-medium">Review candidate performance across SME-reviewed competencies, learning readiness and interview-stage outcomes.</p>
+    </div>
+    <div class="flex items-center gap-2.5 bg-[#111827] px-4 py-2 rounded-xl border-2 border-slate-800">
+      <label class="text-xs font-bold text-slate-300">Select Completed Assessment:</label>
+      <select id="marksheetSelector" onchange="loadMarksheetRecord(this.value)" class="bg-[#0b0f19] border-2 border-slate-700 text-white font-bold rounded-lg px-3 py-1.5 text-xs outline-none cursor-pointer"></select>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+    <div class="lg:col-span-6 space-y-6">
+      <h3 class="font-extrabold text-sm text-slate-300 uppercase tracking-wider pb-1 border-b border-slate-850">Evaluation Competencies Breakdown</h3>
+      <div class="space-y-4" id="marksheetMetricsContainer"></div>
+    </div>
+    <div class="lg:col-span-6 bg-[#111827] p-5 rounded-xl border-2 border-slate-800 flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+          <span class="text-[10px] text-sky-400 font-mono font-bold tracking-wider uppercase">SME PANEL SIGN-OFF</span>
+          <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-400/20 text-[10px] font-mono px-2 py-0.5 rounded font-bold">Consensus Validated</span>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <h4 class="text-xs font-bold text-slate-400 uppercase">Panel Auditor Panelists</h4>
+            <p id="marksheetAuditors" class="text-sm font-bold text-white mt-1">SME Anjali (Google Lead), Priya (IBM SME)</p>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-slate-400 uppercase">Assessment Target Track</h4>
+            <p id="marksheetTrack" class="text-xs font-bold text-purple-400 mt-1 font-mono">Foundation Badge</p>
+          </div>
+          <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800">
+            <h4 class="text-xs font-bold text-slate-300 uppercase flex items-center gap-1.5 mb-2">
+              <i data-lucide="message-square" class="w-4 h-4 text-purple-400"></i>
+              Auditor Assessment Notes
+            </h4>
+            <p id="marksheetSmeComments" class="text-xs text-slate-400 leading-relaxed italic">
+              "The candidate explained trade-offs clearly, demonstrated strong debugging discipline, and delivered a robust design. Further focus on scalability patterns will elevate readiness for senior engineering interviews."
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
+        <span id="marksheetIdTag">Assessment ID: loop-101</span>
+        <span class="flex items-center gap-1 text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> Official SME Endorsement Secure</span>
+      </div>
+    </div>
+  </div>
+</section>

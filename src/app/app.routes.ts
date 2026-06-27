@@ -70,6 +70,13 @@ export const APP_ROUTE: Route[] = [
             import('./authentication/auth.routes').then((m) => m.AUTH_ROUTE),
     },
     {
+        path: 'landing',
+        loadComponent: () =>
+            import('./pages/landing/landing.component').then(
+                (m) => m.LandingComponent
+            ),
+    },
+    {
         path: 'subject-skill-rating/:subjectId',
         loadComponent: () =>
             import('./shared/components/subject-skill-rating/subject-skill-rating.component')
