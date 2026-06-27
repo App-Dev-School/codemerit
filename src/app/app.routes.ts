@@ -116,5 +116,15 @@ export const APP_ROUTE: Route[] = [
         loadChildren: () =>
             import('./learn/lesson.routes').then((m) => m.LESSON_ROUTE),
     },
+    {
+        path: 'interview-panel/:id',
+        //component: AuthLayoutComponent,
+        loadChildren: () =>
+            import('./pages/interview-panel-container/interview.routes').then((m) => m.INTERVIEW_ROUTE),
+        // loadComponent: () =>
+        //     import('./pages/interview-panel-container/interview-panel-container.component').then(
+        //         (m) => m.InterviewPanelContainerComponent
+        //     ),
+    },
     { path: '**', component: Page404Component },
 ];

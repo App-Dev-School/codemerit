@@ -23,6 +23,7 @@ import { ReportListComponent } from '@shared/components/report-list/report-list.
 import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
 import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
 import { NgScrollbar } from 'ngx-scrollbar';
+import { InterviewPanelComponent } from 'src/app/shared/components/interview-panel/interview-panel.component';
 import { register } from 'swiper/element/bundle';
 
 export const certificateModels: CertificateModel[] = [
@@ -145,7 +146,8 @@ export const certificateModels: CertificateModel[] = [
     CongratulationsCardComponent,
     SkillRatingWidgetComponent,
     ReportListComponent,
-    MedalCardComponent
+    MedalCardComponent,
+    InterviewPanelComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
   //  animations: [

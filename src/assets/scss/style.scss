@@ -2,7 +2,7 @@
 /*
  *  Document   : style.css
  *  Author     : AppDev Theme
- *  Description: This is main style scss file
+ *  Description: This is main style scss file. Bootstrap to Tailwind css migration
 */
 @import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @include meta.load-css("common/_variables");
@@ -47,7 +47,6 @@
 @include meta.load-css("pages/_inbox.scss");
 @include meta.load-css("pages/_pricing.scss");
 @include meta.load-css("pages/_profile.scss");
-@include meta.load-css("pages/_timeline.scss");
 // @import "pages/_extra_pages.scss";
 @include meta.load-css("pages/_auth.scss");
 @include meta.load-css("pages/_payslip.scss");
