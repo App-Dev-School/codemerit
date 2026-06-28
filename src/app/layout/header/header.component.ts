@@ -1,67 +1,36 @@
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { DOCUMENT, NgClass } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import {
-  Component,
-  Inject,
-  ElementRef,
-  OnInit,
-  Renderer2,
+  Component, ElementRef, Inject, OnInit, Renderer2,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ConfigService } from '@config';
-import {
-  AuthService,
-  InConfiguration,
-  Role,
-} from '@core';
+import { AuthService, InConfiguration, Role } from '@core';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
-import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
-import { NgScrollbar } from 'ngx-scrollbar';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { SidebarService } from '../sidebar/sidebar.service';
 
-interface Notifications {
-  message: string;
-  time: string;
-  icon: string;
-  color: string;
-  status: string;
-}
-
 @Component({
-    selector: 'app-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss'],
-    imports: [
-        RouterLink,
-        NgClass,
-        MatButtonModule,
-        MatMenuModule,
-        NgScrollbar,
-        FeatherIconsComponent,
-        MatIconModule,
-        MatToolbarModule,
-    ]
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
+  imports: [RouterLink],
 })
 export class HeaderComponent
   extends UnsubscribeOnDestroyAdapter
   implements OnInit
 {
-  public config!: InConfiguration;
-  userName?:string = "Dev";
+  config!: InConfiguration;
+  userName?: string;
   userImg?: string;
   homePage?: string;
-  isNavbarCollapsed = true;
-  flagvalue: string | string[] | undefined;
-  countryName: string | string[] = [];
-  langStoreValue?: string;
-  defaultFlag?: string;
-  isOpenSidebar?: boolean;
-  docElement?: HTMLElement;
   isFullScreen = false;
   isMobileMenuOpen = false;
+  isSidebarCollapsed = false;
+
+  // Full wordmark shown when sidebar is expanded
+  logoFull = 'assets/images/logo-dark.png';
+  // Icon/favicon mark shown when sidebar is collapsed to 60px
+  logoIcon = 'assets/icon/favicon.png';
+
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
@@ -69,65 +38,20 @@ export class HeaderComponent
     public sidebarService: SidebarService,
     private configService: ConfigService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     super();
   }
 
-  notifications: Notifications[] = [
-    {
-      message: 'You earned 15 merit points for taking Angular Material Quiz.',
-      time: '14 mins ago',
-      icon: 'mail',
-      color: 'nfc-green',
-      status: 'msg-unread',
-    },
-    {
-      message: 'New Badge Unlocked - Angular Adept',
-      time: '22 mins ago',
-      icon: 'person_add',
-      color: 'nfc-blue',
-      status: 'msg-read',
-    },
-    {
-      message: 'New Badge Unlocked - TypeScript Aware',
-      time: '3 hours ago',
-      icon: 'event_available',
-      color: 'nfc-orange',
-      status: 'msg-read',
-    },
-    {
-      message: '10 Merit Points added for solving coding problems.',
-      time: '5 hours ago',
-      icon: 'lunch_dining',
-      color: 'nfc-blue',
-      status: 'msg-read',
-    },
-    {
-      message: 'New Badge Unlocked - Consistent Performer',
-      time: '14 mins ago',
-      icon: 'description',
-      color: 'nfc-green',
-      status: 'msg-read',
-    },
-    {
-      message: 'New Badge Unlocked - Asynchronous Aware',
-      time: '22 mins ago',
-      icon: 'mail',
-      color: 'nfc-red',
-      status: 'msg-read',
-    }
-  ];
   ngOnInit() {
     this.config = this.configService.configData;
     const userRole = this.authService.currentUserValue.role;
-    this.userName = this.authService.currentUserValue.firstName;
-    this.userImg = this.authService.currentUserValue.userImage;
-    if(!this.userImg){
-        this.userImg = 'assets/images/users/user.jpg';
-      }
-    this.docElement = document.documentElement;
-    //Check1
+    this.userName = this.authService.currentUserValue.firstName ?? 'Dev';
+    this.userImg = this.authService.currentUserValue.userImage
+      || 'assets/images/users/user.jpg';
+
+    this.isSidebarCollapsed = localStorage.getItem('collapsed_menu') === 'true';
+
     if (userRole === Role.Admin) {
       this.homePage = 'admin/dashboard/main';
     } else if (userRole === Role.Subscriber) {
@@ -139,19 +63,15 @@ export class HeaderComponent
 
   callFullscreen() {
     if (!this.isFullScreen) {
-      if (this.docElement?.requestFullscreen != null) {
-        this.docElement?.requestFullscreen();
-      }
+      this.document.documentElement?.requestFullscreen?.();
     } else {
-      document.exitFullscreen();
+      this.document.exitFullscreen?.();
     }
     this.isFullScreen = !this.isFullScreen;
   }
 
   mobileMenuSidebarOpen(event: Event, className: string) {
-    const hasClass = (event.target as HTMLInputElement).classList.contains(
-      className
-    );
+    const hasClass = (event.target as HTMLElement).classList.contains(className);
     if (hasClass) {
       this.isMobileMenuOpen = true;
       this.renderer.removeClass(this.document.body, className);
@@ -159,27 +79,28 @@ export class HeaderComponent
       this.isMobileMenuOpen = false;
       this.renderer.addClass(this.document.body, className);
     }
-    console.log("Header mobileMenuSidebarOpen :: className => ", className);
   }
+
   callSidemenuCollapse() {
-    const hasClass = this.document.body.classList.contains('side-closed');
-    if (hasClass) {
+    const isCollapsed = this.document.body.classList.contains('side-closed');
+    if (isCollapsed) {
       this.renderer.removeClass(this.document.body, 'side-closed');
       this.renderer.removeClass(this.document.body, 'submenu-closed');
       localStorage.setItem('collapsed_menu', 'false');
+      this.isSidebarCollapsed = false;
     } else {
       this.renderer.addClass(this.document.body, 'side-closed');
       this.renderer.addClass(this.document.body, 'submenu-closed');
       localStorage.setItem('collapsed_menu', 'true');
+      this.isSidebarCollapsed = true;
     }
-    console.log("Header callSidemenuCollapse :: hasClass side-closed? ", hasClass);
   }
 
   logout() {
-    this.subs.sink = this.authService.logout("Logging out for now.").subscribe((res) => {
-      if (!res.success) {
-        this.router.navigate(['/authentication/signin']);
-      }
-    });
+    this.subs.sink = this.authService
+      .logout('Logging out.')
+      .subscribe((res) => {
+        if (!res.success) this.router.navigate(['/authentication/signin']);
+      });
   }
 }

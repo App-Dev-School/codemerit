@@ -1,56 +1,106 @@
-<nav #navbar class="navbar active">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a href="#" onClick="return false;" class="navbar-toggle collapsed"
-        (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-expanded="false"></a>
-      <a href="#" onClick="return false;" class="bars" (click)="mobileMenuSidebarOpen($event,'overlay-open')"></a>
-      <a class="navbar-brand" routerLink={{homePage}}>
-        <img src="assets/images/logo.png" alt="Codemerit" />
-      </a>
-    </div>
-    <div class="collapse navbar-collapse" [ngClass]="isNavbarCollapsed ? '' : 'show'">
-      <ul class="float-start collapse-menu-icon">
-        <li>
-          <button mat-icon-button (click)="callSidemenuCollapse()" class="sidemenu-collapse nav-notification-icons"> <i
-              class="material-icons-outlined icon-color">
-              menu
-            </i></button>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <!-- Full Screen Button -->
-        <li class="fullscreen">
-          <button mat-icon-button class="nav-notification-icons" (click)="callFullscreen()"> <i
-              class="material-icons-outlined icon-color">
-              fullscreen
-            </i></button>
-        </li>
-        <!-- #END# Full Screen Button -->
-        <!-- #START# Notifications-->
-         
-        <!-- <li>
-          <app-notification-list [notifications]="notifications" (markAllAsRead)="onMarkAllNotificationsRead()"
-            (readAll)="onReadAllNotifications()" (closeNotification)="onRemoveNotification($event)"
-            (actionClick)="onNotificationActionClick($event)">
-          </app-notification-list>
-        </li> -->
-        <!-- #END# Notifications-->
-        <!-- #START# Multi Language-->
-        <!-- <li class="nav-item">
-          <app-language-list [flagvalue]="flagvalue" [defaultFlag]="defaultFlag" [listLang]="listLang"
-            [langStoreValue]="langStoreValue" (languageSelected)="onLanguageChange($event)">
-          </app-language-list>
-        </li> -->
-        <!-- #END# Multi Language-->
-        <li class="nav-item user_profile">
-          <button mat-button [routerLink]="'users/profile'">
-            <div class="chip1 dropdown-toggle1">
-              <span>{{userName}}</span>
-              <img src="{{userImg}}" class="user_img" width="32" height="32" alt="User">
-            </div>
-          </button>
-        </li>
-      </ul>
-    </div>
+<header class="fixed top-0 left-0 right-0 z-[999] h-[60px] flex items-stretch
+               bg-slate-900 border-b border-slate-800/80 shadow-md">
+
+  <!-- ─── LEFT ZONE: Brand logo — width transitions on sidebar collapse ─── -->
+  <div [class]="isSidebarCollapsed ? 'w-[60px]' : 'w-[260px]'"
+       class="flex items-center flex-shrink-0 overflow-hidden
+              transition-[width] duration-500 ease-in-out
+              bg-slate-950 border-r border-slate-800">
+
+    <a [routerLink]="homePage"
+       class="relative flex items-center w-full h-full overflow-hidden group">
+
+      <!-- Favicon icon mark — visible only when collapsed (60 px zone) -->
+      <div [class]="isSidebarCollapsed
+                      ? 'opacity-100 translate-x-0 pointer-events-auto'
+                      : 'opacity-0 -translate-x-2 pointer-events-none'"
+           class="absolute inset-0 flex items-center justify-center
+                  transition-all duration-300 ease-in-out">
+        <img [src]="logoIcon" alt="CM"
+             class="w-8 h-8 object-contain rounded-lg">
+      </div>
+
+      <!-- Full wordmark — visible only when expanded -->
+      <div [class]="isSidebarCollapsed
+                      ? 'opacity-0 translate-x-2 pointer-events-none'
+                      : 'opacity-100 translate-x-0 pointer-events-auto'"
+           class="absolute inset-0 flex items-center px-4
+                  transition-all duration-300 ease-in-out">
+        <img [src]="logoFull" alt="CodeMerit"
+             class="h-8 w-auto object-contain max-w-full">
+      </div>
+
+    </a>
   </div>
-</nav>
+
+  <!-- ─── CENTER ZONE: Sidebar toggle + live status indicator ─── -->
+  <div class="flex items-center flex-1 px-4 gap-4 min-w-0">
+
+    <!-- Mobile overlay sidebar open -->
+    <button (click)="mobileMenuSidebarOpen($event, 'overlay-open')"
+            class="flex md:hidden items-center justify-center w-9 h-9 rounded-lg
+                   bg-slate-800 hover:bg-slate-700 border border-slate-700/50
+                   text-slate-400 hover:text-white transition-colors duration-150"
+            title="Open navigation">
+      <i class="material-icons-outlined select-none" style="font-size:20px">menu</i>
+    </button>
+
+    <!-- Desktop sidebar collapse toggle -->
+    <button (click)="callSidemenuCollapse()"
+            class="hidden md:flex items-center justify-center w-9 h-9 rounded-lg
+                   bg-slate-800 hover:bg-slate-700 border border-slate-700/50
+                   text-slate-400 hover:text-white transition-colors duration-150"
+            title="Toggle sidebar">
+      <i class="material-icons-outlined select-none" style="font-size:20px">menu</i>
+    </button>
+
+    <!-- Live session pill -->
+    <div class="hidden md:flex items-center gap-2 bg-slate-950 px-3 py-1.5
+                rounded-lg border border-slate-800 text-xs select-none">
+      <span class="h-2 w-2 rounded-full bg-emerald-500 animate-ping flex-shrink-0"></span>
+      <span class="text-slate-400 font-medium">Workspace</span>
+      <span class="text-indigo-400 font-bold tracking-wide">Active</span>
+    </div>
+
+  </div>
+
+  <!-- ─── RIGHT ZONE: Actions — flex, never floated, always visible ─── -->
+  <div class="flex items-center gap-2 px-4 shrink-0">
+
+    <!-- Fullscreen toggle -->
+    <button (click)="callFullscreen()"
+            class="flex items-center justify-center w-9 h-9 rounded-lg
+                   bg-slate-800 hover:bg-slate-700 border border-slate-700/50
+                   text-slate-400 hover:text-white transition-colors duration-150"
+            title="Toggle fullscreen">
+      <i class="material-icons-outlined select-none" style="font-size:20px">
+        {{ isFullScreen ? 'fullscreen_exit' : 'fullscreen' }}
+      </i>
+    </button>
+
+    <!-- Thin divider -->
+    <span class="w-px h-6 bg-slate-700/60 flex-shrink-0"></span>
+
+    <!-- User profile chip -->
+    <button [routerLink]="'users/profile'"
+            class="flex items-center gap-2.5 pl-2 pr-3 h-9 rounded-full
+                   bg-slate-800 hover:bg-indigo-500/10
+                   border border-slate-700 hover:border-indigo-500/40
+                   transition-colors duration-150 shrink-0 group"
+            title="My profile">
+      <img [src]="userImg" [alt]="userName"
+           class="w-7 h-7 rounded-full object-cover border-2 border-slate-600
+                  group-hover:border-indigo-500/50 flex-shrink-0 transition-colors">
+      <span class="text-sm font-medium text-slate-300 group-hover:text-white
+                   hidden sm:block whitespace-nowrap leading-none transition-colors">
+        {{ userName }}
+      </span>
+      <i class="material-icons-outlined text-slate-500 group-hover:text-indigo-400
+                hidden sm:block select-none transition-colors" style="font-size:16px">
+        expand_more
+      </i>
+    </button>
+
+  </div>
+
+</header>
