@@ -1,6 +1,6 @@
 import { Direction, BidiModule } from '@angular/cdk/bidi';
 import { AfterViewInit, Component, Renderer2, inject } from '@angular/core';
-import { DirectionService, InConfiguration } from '@core';
+import { DirectionService, InConfiguration, ThemeService } from '@core';
 import { ConfigService } from '@config';
 
 import { RouterOutlet } from '@angular/router';
@@ -27,6 +27,7 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
   private document = inject<Document>(DOCUMENT);
   private renderer = inject(Renderer2);
   private localStorageService = inject(StorageService);
+  private themeService = inject(ThemeService);
 
   direction!: Direction;
   public config!: InConfiguration;
@@ -58,6 +59,9 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
     });
   }
   ngAfterViewInit(): void {
+    // Apply saved dark/light preference to <html> for Tailwind dark: variants
+    this.themeService.init(this.document, this.renderer);
+
     //------------ set varient start----------------
     if (this.localStorageService.has('theme')) {
       this.renderer.removeClass(this.document.body, this.config.layout.variant);

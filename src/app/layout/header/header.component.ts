@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ConfigService } from '@config';
-import { AuthService, InConfiguration, Role } from '@core';
+import { AuthService, InConfiguration, Role, ThemeService } from '@core';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { SidebarService } from '../sidebar/sidebar.service';
 
@@ -39,6 +39,7 @@ export class HeaderComponent
     private configService: ConfigService,
     private authService: AuthService,
     private router: Router,
+    public themeService: ThemeService,
   ) {
     super();
   }
@@ -94,6 +95,10 @@ export class HeaderComponent
       localStorage.setItem('collapsed_menu', 'true');
       this.isSidebarCollapsed = true;
     }
+  }
+
+  toggleTheme() {
+    this.themeService.toggle(this.document, this.renderer);
   }
 
   logout() {

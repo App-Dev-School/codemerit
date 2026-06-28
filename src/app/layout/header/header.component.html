@@ -78,6 +78,17 @@
       </i>
     </button>
 
+    <!-- Dark / light mode toggle -->
+    <button (click)="toggleTheme()"
+            [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+            class="flex items-center justify-center w-9 h-9 rounded-lg
+                   bg-slate-800 hover:bg-slate-700 border border-slate-700/50
+                   text-slate-400 hover:text-white transition-colors duration-150">
+      <i class="material-icons-outlined select-none" style="font-size:20px">
+        {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+      </i>
+    </button>
+
     <!-- Thin divider -->
     <span class="w-px h-6 bg-slate-700/60 flex-shrink-0"></span>
 
