@@ -4,31 +4,24 @@ aside{
 
 /* Target your specific scrollable div */
 .scrollable-div {
-  //overflow-y: auto;
-  /* Modern Standard Syntax (Firefox) */
-  scrollbar-width: thin; /* Options: auto, thin, none */
-  scrollbar-color: #888888 #f1f1f1; /* Format: thumb_color track_color */
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #0f172a;
 }
 
-/* WebKit-based Syntax (Chrome, Safari, Edge) */
 .scrollable-div::-webkit-scrollbar {
-  width: 8px; /* Width of the vertical scrollbar */
-  height: 8px; /* Height of the horizontal scrollbar */
+  width: 6px;
+  height: 6px;
 }
 
-/* Style the scrollbar track (background) */
 .scrollable-div::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-  border-radius: 4px;
+  background: #0f172a;
 }
 
-/* Style the scrollbar thumb (draggable handle) */
 .scrollable-div::-webkit-scrollbar-thumb {
-  background: #888888; 
+  background: #334155;
   border-radius: 4px;
 }
 
-/* Style the thumb on hover */
 .scrollable-div::-webkit-scrollbar-thumb:hover {
-  background: #555555; 
+  background: #475569;
 }
