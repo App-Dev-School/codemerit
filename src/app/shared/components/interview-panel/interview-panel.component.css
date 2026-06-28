@@ -1,11 +1,10 @@
-aside{
-    background-color: #151516;
+aside {
+  background-color: var(--cm-sidebar-bg);
 }
 
-/* Target your specific scrollable div */
 .scrollable-div {
   scrollbar-width: thin;
-  scrollbar-color: #334155 #0f172a;
+  scrollbar-color: var(--cm-scrollbar-thumb) var(--cm-scrollbar-track);
 }
 
 .scrollable-div::-webkit-scrollbar {
@@ -14,14 +13,14 @@ aside{
 }
 
 .scrollable-div::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: var(--cm-scrollbar-track);
 }
 
 .scrollable-div::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: var(--cm-scrollbar-thumb);
   border-radius: 4px;
 }
 
 .scrollable-div::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: var(--cm-scrollbar-hover);
 }

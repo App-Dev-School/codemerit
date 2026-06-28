@@ -1,8 +1,10 @@
 import {
   AfterViewInit, Component, ElementRef, EventEmitter,
-  OnDestroy, OnInit, Output, ViewChild
+  OnDestroy, OnInit, Output, Renderer2, ViewChild, inject
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ThemeService } from '@core';
 
 interface Question {
   id: number;
@@ -36,21 +38,66 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('celebCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('tagInputEl') tagInputRef!: ElementRef<HTMLTextAreaElement>;
 
+  // ── Theme ──────────────────────────────────────────────────────────────────
+  readonly themeService = inject(ThemeService);
+  private renderer      = inject(Renderer2);
+  private document      = inject<Document>(DOCUMENT);
+
+  toggleTheme(): void {
+    this.themeService.toggle(this.document, this.renderer);
+  }
+
+  // ── Assessment state ───────────────────────────────────────────────────────
+  assessmentStarted = false;
+
+  startAssessment(): void {
+    this.assessmentStarted = true;
+    this.startTimer();
+  }
+
+  // ── Sidebar (mobile drawer) ─────────────────────────────────────────────────
+  sidebarOpen = false;
+
+  toggleSidebar(): void { this.sidebarOpen = !this.sidebarOpen; }
+  closeSidebar(): void  { this.sidebarOpen = false; }
+
+  get asideClass(): string {
+    const base    = 'bg-cm-surface border-r border-cm-border flex flex-col transition-transform duration-300 ease-in-out shrink-0';
+    const mobile  = `fixed inset-y-0 left-0 z-50 w-80 h-screen ${this.sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`;
+    const desktop = 'md:relative md:translate-x-0 md:w-96 md:h-full md:z-10';
+    return `${base} ${mobile} ${desktop}`;
+  }
+
+  // ── Fullscreen ─────────────────────────────────────────────────────────────
+  isFullScreen = false;
+
+  callFullscreen(): void {
+    if (!this.isFullScreen) {
+      this.document.documentElement?.requestFullscreen?.();
+    } else {
+      this.document.exitFullscreen?.();
+    }
+    this.isFullScreen = !this.isFullScreen;
+  }
+
   // ── Ratings ────────────────────────────────────────────────────────────────
   ratings = { coding: 8, system: 7, problem: 8, comm: 7 };
   averageScore = '7.5';
   averageColorClass = 'text-indigo-400';
 
   // ── Subject / Slides ───────────────────────────────────────────────────────
-  activeSubject = 'frontend';
+  activeSubject = 'web_foundations';
   activeSlideIndex = 0;
   openRubricIds = new Set<number>();
 
   readonly subjectLabels: Record<string, string> = {
-    frontend: 'Frontend & JavaScript Core',
-    system_design: 'System Architecture Design',
-    data_structures: 'Algorithms & Data Structures',
-    behavioral: 'Behavioral & Leadership'
+    web_foundations:  'Web Foundations — HTML5, CSS3 & Responsiveness',
+    javascript_es6:   'JavaScript & ES6+ Programming',
+    angular_rxjs:     'Angular Framework & RxJS',
+    nestjs_backend:   'NestJS & Node.js Backend',
+    rest_auth:        'REST APIs & Authentication',
+    database_orm:     'Database Design & TypeORM',
+    system_design:    'System Design & Architecture',
   };
 
   // ── Milestone preset active state ──────────────────────────────────────────
@@ -58,7 +105,7 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
 
   // ── Candidate status badge ─────────────────────────────────────────────────
   candidateStatusText = 'In Progress';
-  candidateStatusClass = 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300';
+  candidateStatusClass = 'bg-cm-brand-dim border-cm-brand text-cm-brand-text';
 
   // ── Tags ───────────────────────────────────────────────────────────────────
   tags: string[] = ['Analytical', 'Fast Thinker', 'System Architecture'];
@@ -73,8 +120,8 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   private toastTimer?: ReturnType<typeof setTimeout>;
 
   // ── Timer ──────────────────────────────────────────────────────────────────
-  timeRemaining = 42 * 60 + 15;
-  timerDisplay = '42:15';
+  private elapsedSeconds = 0;
+  timerDisplay = '00:00';
   private timerInterval?: ReturnType<typeof setInterval>;
 
   // ── Canvas / Particles ─────────────────────────────────────────────────────
@@ -84,84 +131,174 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   activeCelebTheme = 'cyber_matrix';
   private readonly onResize = () => this.resizeCanvas();
 
-  // ── Questions Database ─────────────────────────────────────────────────────
+  // ── Questions Database — Full Stack Developer Track (Angular + NestJS) ──────
   readonly questionsDatabase: Record<string, Question[]> = {
-    frontend: [
+
+    web_foundations: [
+      {
+        id: 1, difficulty: 'Easy', time: '8 min',
+        title: 'Explain CSS Specificity, Cascade, and the Stacking Context',
+        description: 'Evaluate the candidate\'s understanding of how browsers resolve conflicting CSS rules — specificity weight (inline > ID > class > element), cascade order, and when a new stacking context is formed.',
+        instruction: 'Ask them to resolve a live CSS conflict on the whiteboard. Watch for confusion between class vs attribute selectors and how !important interacts with cascade layers.',
+        rubric: '1. Correctly ranks specificity: inline style > #id > .class > element.\n2. Explains cascade order: origin, specificity, source order.\n3. Names at least two properties that create a new stacking context (e.g. position + z-index, opacity < 1, transform).'
+      },
+      {
+        id: 2, difficulty: 'Medium', time: '10 min',
+        title: 'Build a fully responsive 3-column card layout using CSS Grid or Flexbox',
+        description: 'Test practical CSS layout skills — whether the candidate can produce a responsive grid that collapses from 3 → 2 → 1 columns at standard breakpoints without any framework.',
+        instruction: 'Let them write the HTML + CSS live. Pay attention to how they handle gutters, equal-height cards, and media query breakpoints. Prompt with: "Make it work on a 320px screen."',
+        rubric: '1. Uses grid-template-columns: repeat(auto-fit, minmax()) or flex-wrap correctly.\n2. Avoids fixed pixel widths for columns.\n3. Applies appropriate media query breakpoints (768px, 480px).\n4. Cards stretch to equal height without explicit height values.'
+      },
+      {
+        id: 3, difficulty: 'Medium', time: '10 min',
+        title: 'Describe the Critical Rendering Path — from HTML bytes to painted pixels',
+        description: 'Assess awareness of what the browser does between receiving raw bytes and displaying the first meaningful paint: parsing HTML → DOM, parsing CSS → CSSOM, constructing the render tree, layout, and paint phases.',
+        instruction: 'Ask: "If a large CSS file is in <head>, how does it affect Time to First Byte vs First Contentful Paint?" Look for awareness of render-blocking resources and async/defer strategies.',
+        rubric: '1. Correctly sequences: DOM → CSSOM → Render Tree → Layout → Paint.\n2. Identifies CSS as render-blocking; JS as parser-blocking by default.\n3. Mentions async, defer, and preload as mitigation strategies.\n4. Aware of Cumulative Layout Shift (CLS) as a Web Core Vital.'
+      }
+    ],
+
+    javascript_es6: [
+      {
+        id: 1, difficulty: 'Hard', time: '12 min',
+        title: 'Trace execution order through the Event Loop, Call Stack, and Microtask Queue',
+        description: 'Evaluate deep understanding of JavaScript\'s single-threaded concurrency model — how synchronous code, Promises (.then), and setTimeout(fn, 0) are queued and executed.',
+        instruction: 'Present a code snippet mixing setTimeout, Promise.resolve().then, and queueMicrotask. Ask them to predict exact console.log output order. Then ask: "Why are Promises faster than setTimeout even at 0ms?"',
+        rubric: '1. Correctly identifies: sync → microtask queue → macrotask queue execution order.\n2. Knows Promises resolve via the microtask queue (PromiseJobs).\n3. Can explain why nested .then() chains still resolve before any setTimeout.\n4. Mentions requestAnimationFrame fits between macro and render tasks.'
+      },
+      {
+        id: 2, difficulty: 'Medium', time: '10 min',
+        title: 'Explain Closures, Lexical Scope, and the IIFE pattern with practical use cases',
+        description: 'Test whether the candidate truly understands how functions capture their surrounding scope — not just definition-level knowledge but real use: data privacy, factory functions, module patterns.',
+        instruction: 'Ask them to implement a counter factory with increment/decrement/reset using closures — no class or global variable allowed. Then ask: "How does this differ from a class instance?"',
+        rubric: '1. Correctly defines closure as function + its captured lexical environment.\n2. Factory function encapsulates private state correctly.\n3. Distinguishes closure scope from prototype chain.\n4. Identifies memory implications of long-lived closures.'
+      },
+      {
+        id: 3, difficulty: 'Medium', time: '10 min',
+        title: 'Rewrite a callback pyramid using Promises and then async/await — with error handling',
+        description: 'Assess ES6+ fluency: converting legacy callback-based async code to Promise chains, then to async/await, with correct try/catch boundaries and Promise.all parallelism where applicable.',
+        instruction: 'Provide a 3-level nested callback (e.g. readFile → parseJSON → fetchAPI). Ask them to convert it twice: first with .then().catch(), then with async/await. Bonus: "Can you run steps 2 and 3 in parallel?"',
+        rubric: '1. Correctly wraps callback in new Promise() constructor.\n2. Chain returns new value from each .then().\n3. async/await version uses try/catch for all rejections.\n4. Uses Promise.all([step2, step3]) for parallelism where dependencies allow.'
+      }
+    ],
+
+    angular_rxjs: [
       {
         id: 1, difficulty: 'Hard', time: '15 min',
-        title: 'Implement a custom Debounce with leading & trailing edge configurations',
-        description: "Assess the candidate's control over JavaScript lexical scoping, high-order functions, execution contexts, and asynchronous scheduling API execution timings.",
-        instruction: 'Ask them to draft the code structure on a whiteboard. Pay careful attention to boundary conditions (e.g., immediate invokes, argument preservation, and teardown callbacks).',
-        rubric: '1. Handles multiple parameter streams accurately.\n2. Includes proper clearTimeout cleaning cycles.\n3. Understands leading/trailing execution configurations.'
+        title: 'Compare Default vs OnPush Change Detection — when and why to switch',
+        description: 'Assess understanding of Angular\'s change detection tree, zone.js triggering, and the performance implications of running checks on every DOM event across the entire component tree.',
+        instruction: 'Ask: "You have a data table with 5,000 rows that re-renders on every keystroke elsewhere in the page — what do you do?" Expect mention of OnPush, immutable inputs, and markForCheck vs detectChanges.',
+        rubric: '1. Explains zone.js tick() and how Angular knows when to check.\n2. Correctly identifies OnPush only fires on: reference-changed Input, async pipe, manual markForCheck.\n3. Uses immutable data or Immer.js to work with OnPush.\n4. Knows ChangeDetectorRef.detach() for fully manual control.'
       },
       {
         id: 2, difficulty: 'Medium', time: '10 min',
-        title: 'Advanced DOM Event Delegation and Performance scaling issues',
-        description: 'The applicant needs to demonstrate the mechanics of the event propagation loop (Capturing, Targeting, and Bubbling phases).',
-        instruction: 'Discuss design choices of listening to events at document/root container node vs individual leaf DOM components inside heavily nested lists.',
-        rubric: '1. Differentiates e.target vs e.currentTarget.\n2. Safely utilises .matches() or node targeting filters.\n3. Explains visual performance gains in memory footprint optimisation.'
+        title: 'Walk through the Angular Component lifecycle hook sequence and practical use cases',
+        description: 'Verify the candidate knows each lifecycle hook\'s timing, what is/isn\'t available at each stage, and typical real-world patterns (init API calls, ViewChild timing, cleanup).',
+        instruction: 'Ask them to sequence all hooks on a whiteboard. Then ask: "Why do some developers put HTTP calls in ngOnInit instead of the constructor? What happens if you access a ViewChild in ngOnInit?"',
+        rubric: '1. Correct order: constructor → ngOnChanges → ngOnInit → ngDoCheck → ngAfterContentInit → ngAfterContentChecked → ngAfterViewInit → ngAfterViewChecked → ngOnDestroy.\n2. Knows ViewChild/ContentChild are only available after AfterViewInit.\n3. HTTP in constructor is an anti-pattern — DI happens before ngOnInit.\n4. Always unsubscribes or uses takeUntilDestroyed in ngOnDestroy.'
       },
       {
-        id: 3, difficulty: 'Hard', time: '15 min',
-        title: 'Construct dynamic render reconciliation logic (Virtual DOM)',
-        description: "Examine understanding of React's fiber architecture or general declarative Virtual DOM comparison mechanisms.",
-        instruction: 'Identify what happens under the hood when state mutations call render trees. Walk through component key assignments and diff arrays.',
-        rubric: "1. Mentions tree depth comparison limitations.\n2. Explains the purpose of structural unique 'keys'.\n3. Details DOM commit phase optimisation."
+        id: 3, difficulty: 'Medium', time: '12 min',
+        title: 'Describe RxJS Subject variants and when to choose each in an Angular service',
+        description: 'Test practical RxJS state-sharing knowledge: plain Subject vs BehaviorSubject vs ReplaySubject vs AsyncSubject — and common patterns like sharing a single HTTP request via shareReplay.',
+        instruction: 'Ask: "Build a notification service that (a) emits to current and future subscribers, and (b) new subscribers should see the last 3 notifications immediately on subscribe." Which Subject do you pick and why?',
+        rubric: '1. Subject — hot, no initial value, misses emissions before subscribe.\n2. BehaviorSubject — always emits current value on subscribe; requires initial value.\n3. ReplaySubject(3) — correct choice for "last 3 notifications" scenario.\n4. Knows shareReplay(1) on HTTP Observables avoids duplicate network calls.'
       }
     ],
-    system_design: [
+
+    nestjs_backend: [
       {
-        id: 1, difficulty: 'Expert', time: '20 min',
-        title: 'Design a High-Throughput Notification Engine',
-        description: 'Structure a system capable of handling 100K notification events/sec across multiple conduits (Push alerts, SMS buffers, Email queues).',
-        instruction: 'Focus design layout towards reliability mechanics, dynamic load balancing, rate limiting bottlenecks, and redundant broker setups.',
-        rubric: '1. Leverages reliable message brokers (Kafka/RabbitMQ).\n2. Integrates user-preference caching databases (Redis).\n3. Solves double delivery concerns using deduplication keys.'
+        id: 1, difficulty: 'Medium', time: '12 min',
+        title: 'Explain NestJS Dependency Injection and how the Module system organises layers',
+        description: 'Assess understanding of NestJS\'s IoC container — how providers are registered, scoped (singleton/request/transient), exported from modules, and injected into controllers and services.',
+        instruction: 'Ask them to design a UserModule with UserController, UserService, and TypeORM UserRepository. Ask: "If AuthModule needs UserService, how do you share it?" Look for module imports/exports knowledge.',
+        rubric: '1. Correctly defines @Module({ providers, controllers, exports }).\n2. Knows forwardRef() for circular module dependencies.\n3. Explains provider scopes: DEFAULT (singleton per module), REQUEST, TRANSIENT.\n4. Uses exports: [UserService] so other modules can import it cleanly.'
       },
       {
-        id: 2, difficulty: 'Expert', time: '25 min',
-        title: 'Scalable Real-time Chat & Collaboration Server Design',
-        description: 'Outline a real-time messaging system showing instant message propagation, typing indicators, and message delivery confirmations.',
-        instruction: 'Evaluate deep routing strategies, persistent WebSocket connection pooling protocols, and microservice separations.',
-        rubric: '1. Explains Redis Pub/Sub backplane integration.\n2. Proposes solid database schemas (NoSQL DB scaling).\n3. Handles dead-letter queues and offline delivery push setups.'
+        id: 2, difficulty: 'Hard', time: '15 min',
+        title: 'Implement JWT Authentication using Guards and Passport strategy in NestJS',
+        description: 'Test practical auth implementation knowledge: designing a LocalStrategy for login, JwtStrategy for protected routes, and applying AuthGuard at controller and global levels.',
+        instruction: 'Walk through the full flow: POST /auth/login → validates credentials → returns JWT. GET /users/me → JwtAuthGuard validates token → returns user. Ask: "How do you attach the decoded user to the request object?"',
+        rubric: '1. Uses PassportModule, JwtModule.register({ secret, signOptions }).\n2. LocalStrategy extends PassportStrategy — validates user in validate().\n3. JwtStrategy reads Authorization header, decodes payload, returns user.\n4. @UseGuards(JwtAuthGuard) at controller or global guard in main.ts.\n5. Attaches user via request.user automatically through Passport.'
       },
       {
-        id: 3, difficulty: 'Hard', time: '15 min',
-        title: 'Distributed Rate Limiter Implementation Strategy',
-        description: 'Architect a rate limiter to act as a security gateway shielding corporate APIs from cascading high-traffic denial-of-service attempts.',
-        instruction: 'Compare the strengths of token bucket algorithms, leaky buckets, and sliding log calculation implementations.',
-        rubric: '1. Solves synchronisation race conditions (Redis Lua scripting).\n2. Understands fail-open vs fail-close API gateway strategies.\n3. Balances processing overhead latency footprints.'
+        id: 3, difficulty: 'Medium', time: '10 min',
+        title: 'Explain the role of DTOs, Pipes, and class-validator in a NestJS request pipeline',
+        description: 'Verify the candidate understands the input validation layer — how DTOs define the shape of incoming data, class-validator decorators enforce rules, and ValidationPipe auto-rejects malformed requests.',
+        instruction: 'Ask them to define a CreateUserDto with: required email (valid format), password (min 8 chars, has uppercase + number), and optional displayName. Then ask: "How does NestJS know to validate it automatically?"',
+        rubric: '1. Uses class-validator decorators: @IsEmail(), @MinLength(8), @Matches().\n2. Registers ValidationPipe globally in main.ts: app.useGlobalPipes(new ValidationPipe({ whitelist: true })).\n3. whitelist: true strips unknown properties automatically.\n4. transform: true converts plain objects to class instances.'
       }
     ],
-    data_structures: [
+
+    rest_auth: [
+      {
+        id: 1, difficulty: 'Medium', time: '12 min',
+        title: 'Design a RESTful API for a Job Listings platform — endpoints, verbs, status codes',
+        description: 'Test REST design discipline: correct HTTP verb selection, resource-oriented URL structure, nested resources, and appropriate status codes for each scenario (200, 201, 400, 401, 403, 404, 409, 422).',
+        instruction: 'Ask them to design the API for: list jobs, get a single job, create a job posting (authenticated employer only), update, soft-delete, and apply to a job. Ask: "What status code for a duplicate application?"',
+        rubric: '1. GET /jobs, GET /jobs/:id, POST /jobs, PATCH /jobs/:id, DELETE /jobs/:id.\n2. POST /jobs/:id/applications for applying (nested resource).\n3. 201 for creation, 409 for duplicate application, 403 for non-owner edit attempt.\n4. Uses query params for filtering: GET /jobs?location=remote&page=2&limit=20.\n5. Consistent plural nouns, no verbs in URLs (/jobs not /getJobs).'
+      },
+      {
+        id: 2, difficulty: 'Hard', time: '15 min',
+        title: 'Explain the full JWT lifecycle — issuance, validation, refresh token rotation',
+        description: 'Assess token-based auth depth: how JWTs are signed and verified, why access tokens should be short-lived, how refresh tokens enable session persistence without re-login, and token rotation for security.',
+        instruction: 'Walk through: user logs in → receives access token (15min) + refresh token (7d) → access token expires → client silently calls POST /auth/refresh → new pair issued. Ask: "Where do you store these tokens on the client and why?"',
+        rubric: '1. JWT = header.payload.signature — signed with HS256 or RS256 secret.\n2. Access token short-lived (15min); refresh token long-lived, stored in httpOnly cookie.\n3. Refresh endpoint validates refresh token, issues new access + rotated refresh token.\n4. Old refresh token is invalidated (rotation) to prevent replay attacks.\n5. Never stores sensitive data in JWT payload — it is only base64-encoded, not encrypted.'
+      },
+      {
+        id: 3, difficulty: 'Easy', time: '8 min',
+        title: 'What is CORS and how do you configure it securely in NestJS?',
+        description: 'Verify understanding of the browser\'s Same-Origin Policy, why CORS headers are necessary for cross-origin API calls, and the security risks of overly permissive configurations.',
+        instruction: 'Ask: "Your Angular app runs on localhost:4200 and NestJS on localhost:3000 — the browser blocks API calls. How do you fix it?" Then ask: "What\'s wrong with enabling CORS for all origins (*) in production?"',
+        rubric: '1. Correctly identifies Same-Origin Policy as the browser restriction.\n2. Enables CORS in main.ts: app.enableCors({ origin: [allowed origins], credentials: true }).\n3. Knows that * and credentials: true cannot be combined (browser blocks it).\n4. Explains preflight OPTIONS requests and what triggers them.\n5. Recommends environment-based allowed origins (dev vs prod).'
+      }
+    ],
+
+    database_orm: [
       {
         id: 1, difficulty: 'Hard', time: '20 min',
-        title: 'Build O(1) Cache Eviction Policy (LRU Architecture)',
-        description: 'Build an LRU Cache storage block with fast fetch and input cycles operating at absolute constant lookup limits.',
-        instruction: 'The candidate must describe why HashMaps alone are insufficient, leading into combined Linked List architectures.',
-        rubric: '1. Selects doubly-linked list structures nested with lookup maps.\n2. Updates item prioritisation during active retrieval.\n3. Handles capacity check teardowns flawlessly.'
+        title: 'Design the database schema for a Job Board — users, companies, listings, applications',
+        description: 'Evaluate entity-relationship thinking: identifying the right tables, primary/foreign keys, normalisation level (at least 3NF), and the business rules that drive the schema (one user can apply once per listing, etc.).',
+        instruction: 'Ask them to draw the ERD on a whiteboard with at least 4 entities. Ask: "How do you prevent a user from applying to the same listing twice at the database level, not just application level?" Expect UNIQUE constraints.',
+        rubric: '1. Tables: users, companies, job_listings, applications — each with appropriate PKs.\n2. Correct FK relationships: listings.company_id → companies.id, applications.user_id → users.id.\n3. UNIQUE(user_id, listing_id) on applications table for duplicate prevention.\n4. Separates user login credentials from profile data (single-responsibility per table).\n5. Considers soft-delete (deleted_at TIMESTAMP NULL) vs hard-delete for listings.'
       },
       {
-        id: 2, difficulty: 'Medium', time: '15 min',
-        title: 'Identify structural cycles within active Graph dependencies',
-        description: 'Draft code tracking build-dependency trees to ensure circular task inclusions are resolved early.',
-        instruction: 'Deduce cyclic dependency algorithms using Depth-First Search (DFS) recursive tracking structures.',
-        rubric: '1. Explains graph representation maps (Adj list).\n2. Leverages state arrays to prevent overlapping iterations.\n3. Demonstrates understanding of topological sorting concepts.'
+        id: 2, difficulty: 'Medium', time: '12 min',
+        title: 'Explain TypeORM relations — OneToMany, ManyToMany — and how eager loading affects queries',
+        description: 'Test ORM-layer knowledge: how to define entity relations in TypeORM, when to use eager vs lazy loading, and how the underlying SQL JOIN queries differ between the two approaches.',
+        instruction: 'Ask them to define a User entity with OneToMany to Posts and a ManyToMany with Roles. Ask: "If you mark roles as eager: true on User, what happens when you call userRepository.findOne()? Is that safe at scale?"',
+        rubric: '1. Correct @OneToMany(() => Post, post => post.user) on User entity.\n2. @ManyToMany with @JoinTable on the owning side.\n3. eager: true auto-JOINs on every findOne/find — safe for small reference data (roles), dangerous for large collections.\n4. Recommends lazy loading (Promise<Role[]>) or explicit relations in find options.\n5. Aware of the N+1 query problem and how query builder or relations array solves it.'
+      },
+      {
+        id: 3, difficulty: 'Medium', time: '8 min',
+        title: 'What are database migrations and how does TypeORM manage schema evolution safely?',
+        description: 'Assess understanding of why auto-synchronize is unsafe in production, how migration files provide a traceable, reversible history of schema changes, and the workflow for generating and running them.',
+        instruction: 'Ask: "Your team adds a NOT NULL column to a 1M-row table in production. How do you do this without downtime?" Expect mention of: nullable first, backfill, add NOT NULL constraint, all in separate migration steps.',
+        rubric: '1. synchronize: true is for development only — never production (it can drop columns).\n2. typeorm migration:generate creates a timestamped migration file from entity diffs.\n3. migration:run applies pending migrations in sequence; migration:revert undoes last one.\n4. NOT NULL on existing table: add as nullable → backfill default value → add NOT NULL constraint in 3 separate migrations.\n5. Migration files are committed to version control alongside the code that requires them.'
       }
     ],
-    behavioral: [
+
+    system_design: [
       {
-        id: 1, difficulty: 'Medium', time: '10 min',
-        title: 'Navigating deep critical engineering conflicts within teams',
-        description: 'Examine behavioral methods of dealing with high-stress architectural alignment disputes between engineering squads.',
-        instruction: 'Prompt applicant to detail true instances of performance disputes or design decisions and the steps taken to reach consensus.',
-        rubric: '1. Uses structured logic patterns (STAR method).\n2. Prioritises product metrics and group focus over personal beliefs.\n3. Handles leadership interactions in a mature, collaborative tone.'
+        id: 1, difficulty: 'Expert', time: '25 min',
+        title: 'Design a scalable file upload and async processing service for a job platform',
+        description: 'Architect the end-to-end flow for CV/resume uploads: client → API → object storage → async processing queue → parsed results stored in DB. The system should handle 10K uploads/hour and remain responsive under load.',
+        instruction: 'Let them diagram the architecture. Prompt: "The PDF parsing takes 3–5 seconds per file. How do you ensure the API responds instantly while processing happens in the background?" Look for queue-based decoupling.',
+        rubric: '1. Multipart upload to NestJS → streams directly to S3/GCS (never stores on API server disk).\n2. On upload success, enqueues a job (Bull/RabbitMQ) with file location metadata.\n3. Separate worker service consumes the queue and processes the PDF.\n4. API returns 202 Accepted immediately; client polls or uses WebSocket for completion status.\n5. Failed jobs retry with exponential backoff; dead-letter queue captures persistent failures.'
       },
       {
-        id: 2, difficulty: 'Medium', time: '10 min',
-        title: 'Managing critical technical debt vs aggressive feature targets',
-        description: 'Discuss strategies for managing executive deadlines while legacy platforms require critical structural re-engineering.',
-        instruction: 'Assess compromise skills, timeline creation techniques, and technical health tracking indicators.',
-        rubric: '1. Articulates technical debt impact to non-technical partners.\n2. Proposes iterative modular rollouts instead of pure rebuilds.\n3. Establishes sound QA verification standards.'
+        id: 2, difficulty: 'Hard', time: '15 min',
+        title: 'Design a multi-layer caching strategy for an Angular + NestJS application',
+        description: 'Evaluate understanding of where caching can be applied across the full stack: HTTP cache headers, CDN edge caching, in-memory Redis cache in the API, and Angular HTTP interceptor-level caching on the client.',
+        instruction: 'Ask: "A public job listings endpoint is called 50K times/min. Walk me through every layer where you can cache the response and what the TTL strategy is for each layer." Expect a layered answer.',
+        rubric: '1. Browser: Cache-Control: public, max-age=60 header on GET /jobs.\n2. CDN (CloudFront/Cloudflare): caches at edge PoPs; invalidated on data change via tag-based purge.\n3. API layer: Redis cache with TTL of 30–60s; cache key = hash of query params.\n4. Angular HTTP interceptor: caches identical GET requests in-memory for session duration.\n5. Identifies cache invalidation as the hard problem — discusses write-through vs TTL-expiry strategies.'
+      },
+      {
+        id: 3, difficulty: 'Medium', time: '10 min',
+        title: 'Horizontal vs Vertical Scaling — choosing the right strategy for Angular + NestJS',
+        description: 'Test whether the candidate understands the trade-offs between scaling up (bigger server) and scaling out (more servers), and what application-level changes are required to make a NestJS API horizontally scalable.',
+        instruction: 'Ask: "You need to scale your NestJS API to handle 10× traffic. What breaks if you just spin up 3 instances behind a load balancer without changing the code?" Expect mention of in-process state, session storage, and websocket affinity.',
+        rubric: '1. Vertical scaling: simpler but has an upper hardware limit; no code changes needed.\n2. Horizontal scaling requires: externalising session state (Redis), stateless JWT auth, and shared job queues.\n3. In-process caches (Map/object) are not shared across instances — must move to Redis.\n4. WebSocket connections need sticky sessions or a Redis pub/sub adapter (socket.io-redis).\n5. Database becomes the next bottleneck — read replicas and connection pooling are the next step.'
       }
     ]
   };
@@ -176,9 +313,7 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
-  ngOnInit(): void {
-    this.startTimer();
-  }
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
     const canvas = this.canvasRef.nativeElement;
@@ -227,7 +362,7 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   slideClass(idx: number): string {
-    const base = 'absolute inset-0 w-full h-full flex flex-col justify-between bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl transition-all duration-500 ease-out transform';
+    const base = 'absolute inset-0 w-full h-full flex flex-col justify-between bg-cm-surface border border-cm-border rounded-2xl p-6 shadow-xl transition-all duration-500 ease-out transform';
     if (idx === this.activeSlideIndex)
       return `${base} opacity-100 translate-x-0 scale-100 pointer-events-auto z-10`;
     if (idx < this.activeSlideIndex)
@@ -278,20 +413,20 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
     this.activeCelebTheme = theme;
     this.activePreset = theme;
     const map: Record<string, [string, string]> = {
-      strong_hire: ['STRONG HIRE',    'bg-indigo-500/10 border-indigo-500/40 text-indigo-300'],
-      hire:        ['HIRE',           'bg-amber-500/10 border-amber-500/40 text-amber-400'],
-      no_hire:     ['STRONG NO HIRE', 'bg-rose-500/10 border-rose-500/40 text-rose-400'],
-      pending:     ['UNDER REVIEW',   'bg-sky-500/10 border-sky-500/40 text-sky-400']
+      strong_hire: ['STRONG HIRE',    'bg-cm-brand-dim  border-cm-brand  text-cm-brand-text'],
+      hire:        ['HIRE',           'bg-amber-500/10  border-amber-500/40  text-amber-600  dark:text-amber-400'],
+      no_hire:     ['STRONG NO HIRE', 'bg-rose-500/10   border-rose-500/40   text-rose-600   dark:text-rose-400'],
+      pending:     ['UNDER REVIEW',   'bg-sky-500/10    border-sky-500/40    text-sky-600    dark:text-sky-400']
     };
-    [this.candidateStatusText, this.candidateStatusClass] = map[status] ?? ['In Progress', 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300'];
+    [this.candidateStatusText, this.candidateStatusClass] = map[status] ?? ['In Progress', 'bg-cm-brand-dim border-cm-brand text-cm-brand-text'];
     this.spawnBurst(75);
     this.showToast(`Milestone updated: ${this.candidateStatusText}`);
   }
 
   presetBtnClass(theme: string): string {
     return theme === this.activePreset
-      ? 'px-3 py-2 bg-indigo-950/40 hover:bg-indigo-900/40 border border-indigo-500/30 text-indigo-300'
-      : 'px-3 py-2 bg-slate-800/40 hover:bg-slate-700/50 border border-slate-700 text-slate-300';
+      ? 'px-3 py-2 bg-cm-brand-dim border border-cm-brand text-cm-brand-text hover:bg-cm-surface-raised'
+      : 'px-3 py-2 bg-cm-surface-raised border border-cm-border text-cm-text-secondary hover:bg-cm-surface-hover';
   }
 
   // ── Submit ─────────────────────────────────────────────────────────────────
@@ -313,9 +448,9 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   // ── Timer ──────────────────────────────────────────────────────────────────
   private startTimer(): void {
     this.timerInterval = setInterval(() => {
-      if (this.timeRemaining > 0) this.timeRemaining--;
-      const m = Math.floor(this.timeRemaining / 60);
-      const s = this.timeRemaining % 60;
+      this.elapsedSeconds++;
+      const m = Math.floor(this.elapsedSeconds / 60);
+      const s = this.elapsedSeconds % 60;
       this.timerDisplay = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }, 1000);
   }

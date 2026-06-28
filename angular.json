@@ -30,6 +30,7 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/assets/scss/theme/all-themes.scss",
               "src/assets/scss/style.scss",
+              "src/assets/css/tokens.css",
               "src/assets/css/tailwind.output.css"
             ],
             "scripts": [

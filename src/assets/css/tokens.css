@@ -1,0 +1,76 @@
+/*
+ * ╔══════════════════════════════════════════════════════╗
+ * ║         CODEMERIT  –  BRAND & THEME TOKENS          ║
+ * ║  Edit this file to change colors across the app.    ║
+ * ║  :root  = light mode   .dark  = dark mode           ║
+ * ╚══════════════════════════════════════════════════════╝
+ */
+
+/* ── LIGHT MODE ─────────────────────────────────────────── */
+:root {
+
+  /* ── Backgrounds ── */
+  --cm-surface:         #ffffff;     /* main card / page background   */
+  --cm-surface-muted:   #f8fafc;     /* sidebars, subheaders          */
+  --cm-surface-raised:  #f1f5f9;     /* inputs, chips, inner boxes    */
+  --cm-surface-hover:   #e2e8f0;     /* hover state on buttons        */
+
+  /* ── Borders ── */
+  --cm-border:          #e2e8f0;     /* default dividers & outlines   */
+  --cm-border-strong:   #cbd5e1;     /* emphasized borders            */
+
+  /* ── Text ── */
+  --cm-text-primary:    #0f172a;     /* headings & important text     */
+  --cm-text-secondary:  #64748b;     /* body text, descriptions       */
+  --cm-text-muted:      #94a3b8;     /* placeholders, meta text       */
+
+  /* ── Brand color ── */
+  --cm-brand:           #6366f1;     /* ← CHANGE THIS to rebrand      */
+  --cm-brand-dim:       rgba(99, 102, 241, 0.10);
+  --cm-brand-text:      #4338ca;     /* brand color on light bg       */
+  --cm-brand-ring:      rgba(99, 102, 241, 0.35);
+
+  /* ── Sidebar (interview panel) ── */
+  --cm-sidebar-bg:      #f1f5f9;     /* matches surface-raised        */
+
+  /* ── Scrollbar ── */
+  --cm-scrollbar-track: #e2e8f0;
+  --cm-scrollbar-thumb: #94a3b8;
+  --cm-scrollbar-hover: #64748b;
+
+}
+
+
+/* ── DARK MODE ──────────────────────────────────────────── */
+.dark {
+
+  /* ── Backgrounds ── */
+  --cm-surface:         #0f172a;     /* slate-900                     */
+  --cm-surface-muted:   #020617;     /* slate-950                     */
+  --cm-surface-raised:  #1e293b;     /* slate-800                     */
+  --cm-surface-hover:   #334155;     /* slate-700                     */
+
+  /* ── Borders ── */
+  --cm-border:          #1e293b;     /* slate-800                     */
+  --cm-border-strong:   #334155;     /* slate-700                     */
+
+  /* ── Text ── */
+  --cm-text-primary:    #f8fafc;     /* slate-50                      */
+  --cm-text-secondary:  #94a3b8;     /* slate-400                     */
+  --cm-text-muted:      #64748b;     /* slate-500 — visible on dark   */
+
+  /* ── Brand color ── */
+  --cm-brand:           #818cf8;     /* indigo-400 (lighter on dark)  */
+  --cm-brand-dim:       rgba(99, 102, 241, 0.12);
+  --cm-brand-text:      #818cf8;
+  --cm-brand-ring:      rgba(129, 140, 248, 0.40);
+
+  /* ── Sidebar (interview panel) ── */
+  --cm-sidebar-bg:      #151516;     /* original dark sidebar tone    */
+
+  /* ── Scrollbar ── */
+  --cm-scrollbar-track: #0f172a;     /* slate-900                     */
+  --cm-scrollbar-thumb: #334155;     /* slate-700                     */
+  --cm-scrollbar-hover: #475569;     /* slate-600                     */
+
+}
