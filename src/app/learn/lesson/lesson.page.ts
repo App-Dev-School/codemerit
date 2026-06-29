@@ -1,13 +1,12 @@
-import { JsonPipe, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
-import { CdTimerModule } from 'angular-cd-timer';
-import { CountdownModule } from 'ngx-countdown';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { register } from 'swiper/element/bundle';
 import { Swiper } from 'swiper';
-import { SwiperOptions } from 'swiper/types';
-import { HttpClient } from '@angular/common/http';
-import { SafePipe } from '@shared/pipes/safehtml.pipe';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { NgScrollbar } from 'ngx-scrollbar';
+import { LessonService } from '../lesson.service';
 
 @Component({
   selector: 'app-lesson',
@@ -17,14 +16,16 @@ import { SafePipe } from '@shared/pipes/safehtml.pipe';
   schemas: [ CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     RouterModule,
-    CdTimerModule, 
-    CountdownModule,
-    // JsonPipe,
-    // SafePipe,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    NgScrollbar,
     ]
 })
 export class LessonPage implements OnInit, AfterViewInit {
   currentSection = 0;
+  loading = false;
+  errorMessage = '';
 
   sliderOne: any;
   viewType!: string;
@@ -32,17 +33,10 @@ export class LessonPage implements OnInit, AfterViewInit {
   qcode :any;
   lesson :any;
 
-  //@ViewChild('slideWithNav', { static: false }) slideWithNav!: IonSlides;
-   swiperParams: SwiperOptions = {
-    slidesPerView: 2,
-    spaceBetween: 50,
-    navigation: true
-  };
-
   swiper?: Swiper;
   @ViewChild("swiperEx") swiperEx ?: ElementRef<{ swiper: Swiper }>
 
-  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { 
+  constructor(private lessonService: LessonService, private router: Router, private route: ActivatedRoute) { 
 
   }
 
@@ -89,12 +83,13 @@ export class LessonPage implements OnInit, AfterViewInit {
 
   //
   onSlideChange() {
-    console.log("onSlideChange", this.swiper.activeIndex);
+    console.log("onSlideChange", this.swiper?.activeIndex);
   }
 
   swiperSlideChanged(e: any) {
     console.log('swiperSlideChanged 1 changed: ', e);
-    console.log('swiperSlideChanged 2: ', this.swiper.activeIndex);
+    this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
+    console.log('swiperSlideChanged 2: ', this.swiper?.activeIndex);
   }
 
   
@@ -102,8 +97,8 @@ export class LessonPage implements OnInit, AfterViewInit {
   {
       //this.swiper.slidePrev(1000);
       this.swiperEx?.nativeElement.swiper.slidePrev(1000);
-      this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex;
-      console.log('onSlidePrev : ', this.swiper.activeIndex, this.swiperEx?.nativeElement.swiper.activeIndex);
+      this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
+      console.log('onSlidePrev : ', this.swiper?.activeIndex, this.swiperEx?.nativeElement.swiper.activeIndex);
   }
 
   onSlideNext()
@@ -112,14 +107,13 @@ export class LessonPage implements OnInit, AfterViewInit {
     this.backToLessons();
     }else{
     this.swiperEx?.nativeElement.swiper.slideNext(1000);
-    this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex;
+    this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
     }
-    console.log('onSlideNext : ', this.swiper.activeIndex, this.swiperEx?.nativeElement.swiper.activeIndex);
+    console.log('onSlideNext : ', this.swiper?.activeIndex, this.swiperEx?.nativeElement.swiper.activeIndex);
   }
 
   swiperReady() {
-    //this.swiper = this.swiperEx?.nativeElement.swiper;
-    this.swiper = new Swiper('#swiperEx', this.swiperParams);
+    this.swiper = this.swiperEx?.nativeElement.swiper;
     console.log('swiperReady: ', this.swiper);
   }
 
@@ -145,14 +139,27 @@ export class LessonPage implements OnInit, AfterViewInit {
   }
 
   fetchLesson(){
-    //const quizName = this.qcode;
-    const lessonName = 'angular17';
-    let lessonResponse = this.http.get("./assets/data/lessons/"+lessonName+".json");
-    lessonResponse.subscribe(lesson => {
-    if(lesson){
-      this.lesson = lesson;
-      console.log("LessonComponent fetchLesson => ", this.lesson);
-    }
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.lessonService.getLessonBySlug(this.qcode).subscribe({
+      next: (response: any) => {
+        this.lesson = response?.data ?? response;
+        this.loading = false;
+        this.currentSection = 0;
+
+        if (!this.lesson?.title) {
+          this.errorMessage = 'Lesson data not found.';
+        }
+
+        setTimeout(() => this.swiperReady());
+        console.log("LessonComponent fetchLesson => ", this.lesson);
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = error?.error?.message || 'Unable to load lesson.';
+        console.log("LessonComponent fetchLesson error => ", error);
+      },
     });
   }
   

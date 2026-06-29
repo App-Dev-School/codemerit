@@ -25,4 +25,8 @@ export class LessonService {
     }
     return this.httpService.get(`apis/lesson?${params.join('&')}`, apiKey);
   }
+
+  getLessonBySlug(slug: string): Observable<any> {
+    return this.httpService.get(`apis/lesson/${slug}`);
+  }
 }
