@@ -1,232 +1,314 @@
 @if (!completed) {
-<div class="auth-container">
-  <div class="auth-main">
-    <div class="quiz-container d-flex flex-column vh-100">
-      <!-- LOADING SCREEN -->
-      @if (loading) {
-      <div class="overlay"></div>
-      <div class="animToast quizLoader loading">
-        <img src="assets/images/icons/cube.gif" class="loadingIcon">
-        <h5>{{loadingText}}</h5>
-        <h6>Please wait</h6>
-      </div>
-      }
-      <!-- HEADER -->
-      @if (!loading && quiz) {
-      <mat-toolbar color="primary" class="toolbar justify-content-between" [class.warning]="warningActive">
+<div class="tq-shell1">
 
-        <div class="d-flex align-items-center">
-          <!-- Settings Icon -->
-          <button mat-icon-button (click)="openSettingsDialog()" matTooltip="Settings"
-            style="color: #fff; opacity: 0.8;">
-            <mat-icon>settings</mat-icon>
-          </button>
-          @if (quiz.image) {
-          <img [src]="quiz.image" alt="icon" class="subject-icon me-2">
-          }
-          <span class="quiz-title">{{ quiz.title }}</span>
-        </div>
+  <!-- ═══ LOADING ══════════════════════════════════════════════════════════ -->
+  @if (loading) {
+    <div class="tq-loading">
+      <div class="tq-spinner"></div>
+      <p class="tq-loading__title">{{ loadingText }}</p>
+      <p class="tq-loading__sub">Please wait…</p>
+    </div>
+  }
 
-        @if(!questions[currentQuestionId]?.hasAnswered) {
-        <div class="d-flex align-items-center">
-          <img src="assets/images/icons/ic_watch.png" class="timerIcon" alt="timer">
+  <!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
+  @if (!loading && quiz) {
+    <header class="tq-header" [class.tq-header--warn]="warningActive">
 
-          <!-- Keep cd-timer for exams i.e. a variation of quiz -->
-          <!-- <cd-timer #timerRef [countdown]="true" [startTime]="quizDuration" [omitZero]="true" maxTimeUnit="minute"
-            [autoStart]="true" [callTick]="true" format="ms" (onTick)="onTick($event)" (onComplete)="onTimerComplete()">
-          </cd-timer> -->
-
-          <div class="question-timer d-flex align-items-center">
-            <span>{{ questionTimeLeft }}s</span>
-          </div>
-        </div>
+      <!-- Left: Settings + icon + title -->
+      <div class="tq-header__left">
+        <button class="tq-icon-btn" (click)="openSettingsDialog()" title="Settings">
+          <i class="fa-solid fa-sliders" style="font-size:14px;"></i>
+        </button>
+        @if (quiz.image) {
+          <img [src]="quiz.image" class="tq-subject-icon" alt="">
         }
-        <!-- #Task3: Display Progressbar here that shows time left in each question -->
-      </mat-toolbar>
-      @if (questions && questions[currentQuestionId]?.timeAllowed && !questions[currentQuestionId]?.hasAnswered) {
-      <mat-progress-bar mode="determinate"
-        [value]="(questionTimeLeft / (questions[currentQuestionId]?.timeAllowed))*100">
-      </mat-progress-bar>
-      }
+        <span class="tq-quiz-title">{{ quiz.title }}</span>
+      </div>
+
+      <!-- Right: SVG timer ring -->
+      @if (!questions[currentQuestionId]?.hasAnswered) {
+        <div class="tq-timer" [class.tq-timer--warn]="warningActive">
+          <svg class="tq-timer__svg" viewBox="0 0 44 44" fill="none">
+            <!-- Track ring -->
+            <circle cx="22" cy="22" r="18"
+                    stroke-width="3.5" class="tq-timer__track"/>
+            <!-- Progress arc — starts at 12 o'clock via rotate(-90) -->
+            <circle cx="22" cy="22" r="18"
+                    stroke-width="3.5"
+                    stroke-dasharray="113.1"
+                    stroke-linecap="round"
+                    class="tq-timer__arc"
+                    transform="rotate(-90 22 22)"
+                    [attr.stroke-dashoffset]="113.1 * (1 - questionTimeLeft / (questions[currentQuestionId]?.timeAllowed ?? 1))"/>
+          </svg>
+          <span class="tq-timer__label">{{ questionTimeLeft }}s</span>
+        </div>
       }
 
-      <!-- Screen Overlay -->
-      @if (quizConfig.mode !== 'Interactive' && showWarningToast) {
-      <div class="overlay"></div>
-      <div class="animToast warning">
-        <h5>⚠️ 10 Seconds Left!</h5>
-      </div>
-      }
+    </header>
 
-      <!-- Screen Overlay -->
-      @if (hintActive) {
-      <div class="overlay"></div>
-      <div class="animToast quizLoader hint">
-        <!-- <img src="assets/images/icons/hinting.gif" class="hint-icon" alt="hint"> -->
-        <h6>{{currentHint}}</h6>
-        <hr class="dim-divider">
-        <button mat-raised-button color="accent" (click)="hideHint()">
-          Okay
-        </button>
+    <!-- Time progress strip -->
+    @if (questions && questions[currentQuestionId]?.timeAllowed && !questions[currentQuestionId]?.hasAnswered) {
+      <div class="tq-progress">
+        <div class="tq-progress__fill"
+             [class.tq-progress__fill--warn]="warningActive"
+             [style.width.%]="(questionTimeLeft / (questions[currentQuestionId]?.timeAllowed)) * 100">
+        </div>
       </div>
-      }
+    }
+  }
 
-      <!-- Screen Overlay : Not In Use -->
-      @if (answerActive) {
-      <div class="overlay"></div>
-      <div class="animToast text-start quizLoader hint">
-        <p class="font-14 col-indigo m-b-0">Question:</p>
-        <h6 class="col-indigo m-t-0">{{currentQuestion?.question}}</h6>
-        <p class="font-14">Answer:</p>
-        <p class="cmSubHeading m-t-0">{{currentQuestion?.answer}}</p>
-        <hr class="dim-divider">
-        <button mat-raised-button color="primary" class="text-center" (click)="hideAnswer()">
-          <mat-icon>keyboard_arrow_left</mat-icon> Got It
-        </button>
-      </div>
-      }
-      <!-- MAIN SWIPER CONTENT -->
-      <!-- SWIPER QUESTIONS -->
-      @if (!loading) {
-      <div class="flex-grow-1 overflow-hidden">
-        @if (questions?.length > 0) {
-        <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
+  <!-- ═══ WARNING BANNER (non-interactive, 10s alert) ════════════════════════ -->
+  @if (!loading && quizConfig.mode !== 'Interactive' && showWarningToast) {
+    <div class="tq-warn-banner">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      Only 10 seconds left — choose your answer!
+    </div>
+  }
+
+  <!-- ═══ SWIPER BODY ═══════════════════════════════════════════════════════ -->
+  @if (!loading) {
+    <div class="tq-body">
+
+      @if (questions?.length > 0) {
+        <swiper-container #swiperEx slides-per-view="1"
+                          space-between="10"
+                          allow-touch-move="false"
+                          class="tq-swiper">
 
           @for (question of questions; track question.id) {
-          <swiper-slide>
-            <p class="col-grey text-center m-t-20 m-b-10">{{$index+1}} of {{questions?.length}}</p>
-            <div class="question-card">
-              <ng-scrollbar class="questionScroller" visibility="hover">
-                <div class="card-content">
-                  <p class="font-11 col-grey">#{{question.id}}</p>
-                  @if (question.title) {
-                  <h5 class="mb-3">{{ question.title }}</h5>
-                  }
-                  <!-- @if (isCodeQuestion(question.question)) {
-                  <small>Read the question carefully and answer.</small>
-                  <div class="question m-b-10">
-                    <pre><code>{{question.question}}</code></pre>
-                  </div>
-                  }@else {
-                  <div class="question m-b-20" [innerHTML]="question?.question | safe:'html'"></div>
-                  } -->
+            <swiper-slide>
+              <div class="tq-slide">
 
-                  @if (isCodeQuestion(question.question)) {
-                  <small>Read the question carefully and answer.</small>
-                  <div class="question m-b-10">
-                    <pre><code>{{question.question}}</code></pre>
-                  </div>
-                  }
-
-                  <div [class.tiptap]="isCodeQuestion(question?.question)"
-                    [class.question]="!isCodeQuestion(question?.question)" [innerHTML]="question?.question"></div>
-
-                  <hr class="dim-divider">
-                  <div class="list-group-item m-b-20 d-flex align-items-center justify-content-between flex-wrap">
-                    <div class="d-flex flex-wrap gap-1">
-                      @for (topic of question?.topicsArr; track topic) {
-                      <span class="badge col-indigo">{{ topic }}</span>
-                      }
-                    </div>
-
-                    <span class="badge level-badge" [ngClass]="getLevelClass(question.level)">
-                      {{ getQuestionLevel(question.level) }}
-                    </span>
-                  </div>
-
-
-                  @for (choice of question.options; track choice) {
-                  <mat-card (click)="optionSelected($event, choice.id, question)" class="choice p-2 rounded mb-2"
-                    [ngClass]="{
-         'selected': question.selectedOption === choice.id,
-         'correct': quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && choice.correct,
-         'wrong': quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && !choice.correct
-       }" [disabled]="!allowOptionClick">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span>{{ choice.option }}</span>
-
-                      @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && choice.correct)
-                      {
-                      <img src="assets/images/icons/ic_correct.png" class="icon-right">
-                      }
-                      @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id &&
-                      !choice.correct) {
-                      <img src="assets/images/icons/ic_wrong.png" class="icon-wrong">
-                      }
-                    </div>
-                  </mat-card>
-                  }
-
-                  <!-- Celebration container -->
-                  <app-celebration [trigger]="celebrationTrigger" [marks]="question.marks"
-                    (animationDone)="onCelebrationFinished()"></app-celebration>
+                <!-- ─ Question counter ────────────────────────────────────── -->
+                <div class="tq-counter">
+                  <span class="tq-counter__cur">{{ $index + 1 }}</span>
+                  <span class="tq-counter__of">of</span>
+                  <span class="tq-counter__tot">{{ questions.length }}</span>
                 </div>
-              </ng-scrollbar>
-            </div>
-          </swiper-slide>
+
+                <!-- ─ Question card ───────────────────────────────────────── -->
+                <div class="tq-card">
+                  <ng-scrollbar visibility="hover" style="height:auto;">
+                    <div class="tq-card__inner">
+
+                      <!-- Meta: topics + difficulty -->
+                      <div class="tq-meta">
+                        <div class="tq-topics">
+                          @for (topic of question.topicsArr; track topic) {
+                            <span class="tq-topic">{{ topic }}</span>
+                          }
+                        </div>
+                        <span class="tq-level" [ngClass]="getLevelClass(question.level)">
+                          {{ getQuestionLevel(question.level) }}
+                        </span>
+                      </div>
+
+                      <!-- Question title (optional subtitle) -->
+                      @if (question.title) {
+                        <h4 class="tq-q-title">{{ question.title }}</h4>
+                      }
+
+                      <!-- Question body: code or rich HTML -->
+                      @if (isCodeQuestion(question.question)) {
+                        <p class="tq-read-note">Read carefully before answering.</p>
+                        <pre class="tq-code"><code>{{ question.question }}</code></pre>
+                      }
+                      <div [class.tq-question]="!isCodeQuestion(question.question)"
+                           [class.tiptap]="isCodeQuestion(question.question)"
+                           [innerHTML]="question.question">
+                      </div>
+
+                      <div class="tq-divider"></div>
+
+                      <!-- Answer options -->
+                      <div class="tq-options">
+                        @for (choice of question.options; track choice; let i = $index) {
+                          <div class="tq-opt"
+                               [class.tq-opt--selected]="question.selectedOption === choice.id"
+                               [class.tq-opt--correct]="quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && choice.correct"
+                               [class.tq-opt--wrong]="quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && !choice.correct"
+                               [class.tq-opt--disabled]="!allowOptionClick"
+                               (click)="optionSelected($event, choice.id, question)">
+
+                            <span class="tq-opt__letter">{{ ['A','B','C','D','E'][i] }}</span>
+                            <span class="tq-opt__text">{{ choice.option }}</span>
+
+                            @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && choice.correct) {
+                              <i class="fa-solid fa-circle-check tq-opt__icon tq-opt__icon--ok"></i>
+                            }
+                            @if (quizConfig.mode === 'Interactive' && question.selectedOption === choice.id && !choice.correct) {
+                              <i class="fa-solid fa-circle-xmark tq-opt__icon tq-opt__icon--bad"></i>
+                            }
+                          </div>
+                        }
+                      </div>
+
+                      <!-- ─ Inline feedback strip (Interactive mode) ──────── -->
+                      @if (feedback.show) {
+                        <div class="tq-feedback"
+                             [class.tq-feedback--correct]="feedback.isCorrect && !feedback.isTimeout"
+                             [class.tq-feedback--wrong]="!feedback.isCorrect && !feedback.isTimeout"
+                             [class.tq-feedback--timeout]="feedback.isTimeout">
+
+                          <!-- Head: emoji + title + marks chip -->
+                          <div class="tq-feedback__head">
+                            <span class="tq-feedback__emoji">
+                              @if (feedback.isTimeout) { ⏰ }
+                              @else if (feedback.isCorrect) { ✅ }
+                              @else { ❌ }
+                            </span>
+                            <div class="tq-feedback__title-wrap">
+                              <span class="tq-feedback__title">
+                                @if (feedback.isTimeout) { Time's Up! }
+                                @else if (feedback.isCorrect) { Correct! }
+                                @else { Incorrect }
+                              </span>
+                              @if (feedback.isCorrect && feedback.marks > 0) {
+                                <span class="tq-feedback__marks">+{{ feedback.marks }} pts</span>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Reward message (correct only) -->
+                          @if (feedback.isCorrect) {
+                            <p class="tq-feedback__reward">
+                              @switch (feedback.rewardMsgIdx) {
+                                @case (0) { ⭐ {{ feedback.marks }} {{ feedback.marks > 1 ? 'marks' : 'mark' }} awarded }
+                                @case (1) { +{{ feedback.marks }} {{ feedback.marks > 1 ? 'Marks' : 'Mark' }} Earned ⭐ }
+                                @case (2) { 🔥 Awesome! Keep it up! }
+                                @case (3) { 🧠 Great thinking! }
+                                @default  { 🏅 Well done! }
+                              }
+                            </p>
+                          }
+
+                          <!-- Answer reveal (wrong / timeout + showAnswers enabled) -->
+                          @if (!feedback.isCorrect && feedback.answer && quizConfig.showAnswers) {
+                            <div class="tq-feedback__answer">
+                              <i class="fa-solid fa-lightbulb tq-feedback__answer-icon"></i>
+                              <p class="tq-feedback__answer-text">{{ feedback.answer }}</p>
+                            </div>
+                          }
+
+                          <!-- Footer: countdown label + Next button -->
+                          <div class="tq-feedback__footer">
+                            <span class="tq-feedback__countdown">
+                              <i class="fa-regular fa-clock"></i>
+                              Next in {{ feedback.autoIn }}s
+                            </span>
+                            <button class="tq-feedback__next-btn" (click)="dismissFeedback()">
+                              Next <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                          </div>
+
+                          <!-- Depleting time bar -->
+                          <div class="tq-feedback__bar-track">
+                            <div class="tq-feedback__bar-fill"
+                                 [style.width.%]="(feedback.autoIn / feedback.autoInTotal) * 100">
+                            </div>
+                          </div>
+
+                        </div>
+                      }
+
+                      <!-- ─ Hint panel — hidden while feedback is showing ── -->
+                      @if (hintActive && question.hint && !feedback.show) {
+                        <div class="tq-panel tq-panel--hint">
+                          <div class="tq-panel__head">
+                            <i class="fa-solid fa-lightbulb tq-panel__icon"></i>
+                            <span class="tq-panel__label">Hint</span>
+                            <button class="tq-panel__close" (click)="hideHint()">
+                              <i class="fa-solid fa-xmark"></i>
+                            </button>
+                          </div>
+                          <p class="tq-panel__body">{{ question.hint }}</p>
+                        </div>
+                      }
+
+                      <!-- ─ Answer panel — hidden while feedback is showing ─ -->
+                      @if (answerActive && question.answer && !feedback.show) {
+                        <div class="tq-panel tq-panel--answer">
+                          <div class="tq-panel__head">
+                            <i class="fa-solid fa-key tq-panel__icon"></i>
+                            <span class="tq-panel__label">Correct Answer</span>
+                            <button class="tq-panel__close" (click)="hideAnswer()">
+                              <i class="fa-solid fa-xmark"></i>
+                            </button>
+                          </div>
+                          <p class="tq-panel__body">{{ question.answer }}</p>
+                        </div>
+                      }
+
+                      <!-- Celebration trigger -->
+                      <app-celebration [trigger]="celebrationTrigger"
+                                       [marks]="question.marks"
+                                       (animationDone)="onCelebrationFinished()">
+                      </app-celebration>
+
+                    </div>
+                  </ng-scrollbar>
+                </div>
+                <!-- end .tq-card -->
+
+              </div>
+              <!-- end .tq-slide -->
+            </swiper-slide>
           }
+
         </swiper-container>
-        }
-      </div>
-      }
-
-      <!-- FOOTER -->
-      @if (!loading) {
-      <mat-toolbar color="accent" class="footer-toolbar">
-        <div class="footer-actions">
-
-          <!-- Prev -->
-          @if (quizConfig.enableNavigation && currentQuestionId > 0) {
-          <ng-container>
-            <button mat-flat-button color="warn" (click)="onSlidePrev()">
-              <mat-icon>keyboard_arrow_left</mat-icon>
-              Prev
-            </button>
-          </ng-container>
-          }
-
-          <!-- Hint -->
-          @if (quizConfig.showHint && currentQuestion?.hint !== "") {
-          <ng-container>
-            <button mat-raised-button color="accent" (click)="showHint()">
-              <mat-icon>live_help</mat-icon> Hint
-            </button>
-          </ng-container>
-          }
-
-          <!-- Answer 
-          @if (quizConfig.showAnswers && currentQuestion?.answer !== "") {
-          <ng-container>
-            <button mat-raised-button color="accent" (click)="showAnswers()">
-              Answer <mat-icon>lock</mat-icon>
-            </button>
-          </ng-container>
-          }
-          -->
-          <span class="mat-spacer"></span>
-          <!-- Next / Finish -->
-          <button mat-flat-button color="primary" (click)="onSlideNext()" [hidden]="onSelectionPhase">
-            <mat-icon>keyboard_arrow_right</mat-icon>
-            {{ currentQuestionId === questions.length - 1 ? 'Finish' : 'Next' }}
-          </button>
-
-        </div>
-      </mat-toolbar>
       }
     </div>
-  </div>
+  }
+
+  <!-- ═══ FOOTER ═══════════════════════════════════════════════════════════ -->
+  @if (!loading) {
+    <footer class="tq-footer">
+
+      <!-- Prev -->
+      @if (quizConfig.enableNavigation && currentQuestionId > 0) {
+        <button class="tq-btn tq-btn--ghost" (click)="onSlidePrev()">
+          <i class="fa-solid fa-chevron-left"></i> Prev
+        </button>
+      } @else {
+        <div></div>
+      }
+
+      <!-- Center: Hint + Answer toggles -->
+      <div class="tq-footer__aux">
+        @if (quizConfig.showHint && currentQuestion?.hint !== '') {
+          <button class="tq-aux-btn" [class.tq-aux-btn--on]="hintActive" (click)="showHint()">
+            <i class="fa-solid fa-lightbulb"></i>
+            <span>Hint</span>
+          </button>
+        }
+        @if (quizConfig.showAnswers && currentQuestion?.answer !== '') {
+          <button class="tq-aux-btn" [class.tq-aux-btn--on]="answerActive" (click)="showAnswers()">
+            <i class="fa-solid fa-eye"></i>
+            <span>Answer</span>
+          </button>
+        }
+      </div>
+
+      <!-- Next / Finish -->
+      <button class="tq-btn tq-btn--primary" (click)="onSlideNext()" [hidden]="onSelectionPhase">
+        {{ currentQuestionId === questions.length - 1 ? 'Finish' : 'Next' }}
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+    </footer>
+  }
+
 </div>
 }
 
+<!-- ═══ COMPLETED / EVALUATING ════════════════════════════════════════════ -->
 @if (completed) {
-<div class="quiz-result-container">
-  <div class="content-block">
-    <div class="overlay"></div>
-    <div class="animToast quizLoader hint">
-      <img src="assets/images/icons/loading.gif" class="loadingIcon" alt="hint">
-      <h4>Evaluating Quiz</h4>
-      <h6 class="col-grey">Please wait while evaluation is in progress</h6>
+  <div class="tq-eval">
+    <div class="tq-eval__ring">
+      <div class="tq-spinner tq-spinner--lg"></div>
     </div>
+    <h4 class="tq-eval__title">Evaluating Quiz</h4>
+    <p class="tq-eval__sub">Please wait while your results are being calculated…</p>
   </div>
-</div>
 }

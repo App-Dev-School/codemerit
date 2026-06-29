@@ -1,46 +1,41 @@
-<div class="row">
-  @for(subject of subjects|async;track subject){
-    <div class="col-lg-3 col-md-3 col-sm-12" (click)="switchSubject(subject?.slug)">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+  @for(subject of subjects | async; track subject){
+    <div (click)="switchSubject(subject?.slug)" class="cursor-pointer">
       <mat-card class="hoverCard">
         <mat-card-content>
+
           <div class="subjectHeader">
             <img src="{{subject?.image}}" alt="{{subject?.title}}" class="subjectImage">
             <mat-card-title class="text">{{subject.title}}</mat-card-title>
           </div>
-          <p class="font-12">{{subject.description}}</p>
-          <!-- <p class="font-12">{{subject.goal}} Trivia</p> -->
+
+          <p class="text-xs text-cm-text-secondary">{{subject.description}}</p>
+
           @if(!minimal){
-          @if(subject?.isSubscribed){
-            <ul class="list-unstyled">
-              <li>
-                <div class="mb-2">
-                  <span class="progress-label">Coverage</span>
-                  <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{subject.practice_percentage}}%</span>
-                </div>
-                <div class="progress skill-progress m-b-20 w-100">
-                  <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="subject.practice_percentage + '%'"
-                  role="progressbar" [attr.aria-valuenow]="subject.practice_percentage" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </li>
-            </ul>
-          }@else{
-            <!-- <p class="m-b-0 font-12 d-flex"><i class="material-icons col-green psr-2">trending_up</i> Continue Practice
-            </p> -->
-            <!-- <mat-card-footer class="example-card-footer">
-              <mat-chip-set aria-label="Tags">
-                <mat-chip>12 Lessons</mat-chip>
-                <mat-chip>{{subject?.numQuestions}} Questions</mat-chip>
-              </mat-chip-set>
-            </mat-card-footer> -->
-            <mat-card-actions align="end">
-              <button (click)="subscribeSubject(subject.slug)" mat-button mat-ripple>Explore</button>
-            </mat-card-actions>
+            @if(subject?.isSubscribed){
+              <ul class="list-none p-0 mt-3 space-y-3">
+                <li>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-xs text-cm-text-secondary">Coverage</span>
+                    <span class="text-xs font-bold text-green-600">{{subject.practice_percentage}}%</span>
+                  </div>
+                  <div class="w-full h-2 bg-cm-surface-raised rounded-full overflow-hidden">
+                    <div class="h-full bg-green-500 rounded-full transition-all duration-500"
+                         [style.width]="subject.practice_percentage + '%'"
+                         role="progressbar" [attr.aria-valuenow]="subject.practice_percentage"
+                         aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </li>
+              </ul>
+            } @else {
+              <mat-card-actions align="end">
+                <button (click)="switchSubject(subject.slug); $event.stopPropagation()"
+                        mat-button mat-ripple>Explore</button>
+              </mat-card-actions>
+            }
           }
-        }
+
         </mat-card-content>
-        <!-- @if(!subject.isSubscribed){
-          Enroll to start learning and assessing your skills.
-        } -->
       </mat-card>
     </div>
   }

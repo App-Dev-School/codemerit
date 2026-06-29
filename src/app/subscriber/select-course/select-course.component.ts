@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {
+  ActivatedRoute,
   NavigationCancel,
   NavigationEnd,
   NavigationStart,
@@ -41,12 +42,14 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private _bottomSheet: MatBottomSheet,
     public authService: AuthService,
   ) {}
 
   ngOnInit() {
     this.syncUserJobRoles();
+
     this.subscriptions.add(
       this.authService.currentUser.subscribe((user) => {
         const roles = user?.userJobRoles;
@@ -59,15 +62,17 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationStart) {
-          // Animation trigger can be based on route change
-          this.showContent = false; // Hide content when navigation starts
-        }
-        if (
-          event instanceof NavigationEnd ||
-          event instanceof NavigationCancel
-        ) {
-          // Ensure content is shown when navigation is complete
-          this.showContent = true;
+          // Only hide (trigger exit animation) when navigating AWAY from this component
+          const stayingHere = event.url.startsWith('/select-job-role');
+          if (!stayingHere) {
+            this.showContent = false;
+          }
+        } else if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
+          // Only restore visibility when the final URL is still this component
+          if (event.url.startsWith('/select-job-role')) {
+            this.showContent = true;
+          }
+          // When navigating away: leave showContent = false so the exit animation plays out
         }
       }),
     );
@@ -80,7 +85,6 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
   private syncUserJobRoles(): void {
     const currentUserRoles = this.authService.currentUserValue?.userJobRoles;
     const cachedRoles = this.authService.getUserJobRoles();
-    //who did this?
     const roles =
       Array.isArray(currentUserRoles) && currentUserRoles.length
         ? currentUserRoles
@@ -88,32 +92,14 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
     this.userJobRoles = Array.isArray(roles)
       ? roles.map((r: any) => r.jobRoleId)
       : [];
-    //  setTimeout(() => {
-    //   this.isLoading = false;
-    //   this.loadingTxt = '';
-    //  }, 2000); 
   }
 
   onCourseChange(subject: string) {
     this.subject = subject ? subject : '';
-    console.log('CoursePickTest #2', subject);
-    if (this.actionMode === 'view') {
-      this.router.navigate(['/app/program', this.subject]).then(() => {
-        console.log('Navigation completed!');
-      });
+    if (this.actionMode === 'skill-rating') {
+      this.router.navigate(['/assessment/skill-rating', this.subject]);
     } else {
-      if (this.actionMode === 'enroll') {
-        this.router.navigate(['/app/program', this.subject]).then(() => {
-          console.log('Navigation completed!');
-        });
-      }
-      if (this.actionMode === 'skill-rating') {
-        this.router
-          .navigate(['/assessment/skill-rating', this.subject])
-          .then(() => {
-            console.log('Navigated to skill-rating!');
-          });
-      }
+      this.router.navigate(['/app/program', this.subject]);
     }
   }
 
@@ -124,10 +110,15 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      this.router.navigate(['/dashboard']);
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    const isSafeReturn = returnUrl && !returnUrl.startsWith('/select-job-role');
+    if (isSafeReturn) {
+      this.router.navigateByUrl(returnUrl, { replaceUrl: true });
+      return;
     }
+    // Only go to dashboard if the user already has job roles —
+    // otherwise the dashboard would immediately redirect back here (loop).
+    const hasJobRoles = (this.authService.getUserJobRoles()?.length ?? 0) > 0;
+    this.router.navigate([hasJobRoles ? '/dashboard' : '/app/welcome'], { replaceUrl: true });
   }
 }
