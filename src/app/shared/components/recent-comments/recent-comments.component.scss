@@ -1,8 +1,16 @@
-.table-img {
-    width: 48px !important;
-    height: 48px !important;
+.badge-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar { display: none; }
 }
-.notice-object {
-    width: 48px !important;
-    height: 48px !important;
+
+.badge-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow  0.35s ease;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 48px -10px var(--badge-glow, rgba(99,102,241,0.2));
+  }
 }

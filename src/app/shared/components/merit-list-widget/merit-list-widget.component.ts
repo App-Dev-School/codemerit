@@ -1,5 +1,4 @@
 
-import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 
@@ -18,7 +17,7 @@ interface MeritList {
 
 @Component({
     selector: 'app-merit-list-widget',
-    imports: [NgClass],
+    imports: [MatIcon],
     templateUrl: './merit-list-widget.component.html',
     styleUrl: './merit-list-widget.component.scss'
 })

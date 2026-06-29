@@ -1,82 +1,12 @@
-.swiper-container {
-  position: relative;
-  /* Essential for positioning child elements */
-  /* Other container styles */
-}
-
-.swiper-button-prev-custom,
-.swiper-button-next-custom {
-  position: absolute;
-  bottom: 10px;
-  /* Adjust as needed */
-  /* Further styling for appearance and positioning */
-}
-
-.swiper-button-prev-custom {
-  left: 10px;
-  /* Adjust as needed */
-}
-
-.swiper-button-next-custom {
-  right: 10px;
-  /* Adjust as needed */
-}
-
-.mySwiper {
-  width: 100%;
-  padding: 10px 0;
-}
-
-.stepper-slide {
-  width: auto;
-}
-
-.step-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #fd7e14;
-  color: white;
-  font-weight: 500;
-  line-height: 32px;
-  text-align: center;
-  margin: 0 auto;
-}
-
-.goalPagIcon {
-  width: 24px;
-  height: 24px;
-  padding: 20px !important;
-  background-color: #055ebc;
-  color: white;
-  font-weight: bold;
-  line-height: 20px;
-  text-align: center;
-  // margin: 0 auto;
-}
-
-.goalCard {
-  min-width: 200px;
-  padding: 1rem;
-}
-
-/* course goal tracker pagination nav */
+/* Swiper pagination bullets */
 :host ::ng-deep .swiper-pagination-bullet {
-  background-color: red;
-  opacity: 1;
-  width: 20px;
-  height: 20px;
+  background-color: var(--cm-brand);
+  opacity: 0.4;
+  width: 8px;
+  height: 8px;
 }
 
 :host ::ng-deep .swiper-pagination-bullet-active {
-  background-color: blue;
-}
-
-/* Optional: Mobile stacking */
-@media (max-width: 768px) {
-  // .stepper-item {
-  //   width: 100% !important;
-  //   margin-right: 0 !important;
-  //   margin-bottom: 1rem;
-  // }
+  background-color: var(--cm-brand);
+  opacity: 1;
 }
