@@ -1,0 +1,141 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb
+        [title]="'All Lessons'"
+        [items]="['Lessons']"
+        [active_item]="'All Lessons'"
+      ></app-breadcrumb>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <mat-card class="hoverCard">
+          <mat-card-content>
+            <div class="materialTableHeader">
+              <div class="left">
+                <ul class="header-buttons-left ms-0">
+                  <li class="tbl-title">
+                    <h2>Manage Lessons</h2>
+                  </li>
+                  <li class="tbl-search-box">
+                    <label for="lesson-search-input">
+                      <i class="material-icons search-icon">search</i>
+                    </label>
+                    <input
+                      id="lesson-search-input"
+                      placeholder="Search"
+                      type="text"
+                      (keyup)="applyFilter($event)"
+                      class="browser-default search-field"
+                      aria-label="Search lessons"
+                    />
+                  </li>
+                </ul>
+              </div>
+              <div class="right">
+                <button
+                  mat-icon-button
+                  (click)="refresh()"
+                  class="tbl-header-btn col-brown"
+                  matTooltip="Refresh"
+                >
+                  <mat-icon>refresh</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-auto">
+              <table
+                mat-table
+                [dataSource]="dataSource"
+                matSort
+                class="mat-cell advance-table"
+              >
+                <ng-container matColumnDef="title">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Title:</span>
+                    <span class="truncate-text">{{ row.title }}</span>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="subject">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Subject</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Subject:</span>
+                    {{ row.subject }}
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="topic">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Topic</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Topic:</span>
+                    {{ row.topic }}
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="sections">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Sections</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Sections:</span>
+                    {{ row.sections }}
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="author">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Author</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Author:</span>
+                    {{ row.author }}
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      matTooltip="View Lesson"
+                      (click)="viewLesson(row)"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                  [style.cursor]="'pointer'"
+                  (click)="viewLesson(row)"
+                ></mat-row>
+              </table>
+
+              @if (loading || dataSource.data.length === 0) {
+              <div class="no-results text-center">
+                @if (loading) {
+                <img src="assets/images/icons/loading.gif" class="smallLoadingIcon" />
+                <h4 class="col-grey">Loading Lessons</h4>
+                }
+                @if (!loading && dataSource.data.length === 0) {
+                <h4 class="col-grey">{{ errorMessage || 'No lessons found.' }}</h4>
+                }
+              </div>
+              }
+
+              <mat-paginator
+                [length]="dataSource.filteredData.length"
+                [pageIndex]="0"
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]"
+              ></mat-paginator>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>
