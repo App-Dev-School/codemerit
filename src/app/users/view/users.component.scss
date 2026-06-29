@@ -1,9 +1,37 @@
-.userDesignation{
-    font-size: 1.1rem;
-    font-weight: 500;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    font-size: 16px;
+// ── Skill ring: sweeps from full-circle-hidden to the target dashoffset ──────
+@keyframes ringReveal {
+  from { stroke-dashoffset: 238.8; }
+  to   { stroke-dashoffset: var(--ring-end, 0); }
+}
+
+// ── Progress bars: scaleX from 0 → 1 (origin: left) ─────────────────────────
+@keyframes barReveal {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+// ── Skill card: fade + lift in ───────────────────────────────────────────────
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Animated SVG ring ────────────────────────────────────────────────────────
+.ring-anim {
+  stroke-dashoffset: var(--ring-end, 0);
+  animation: ringReveal 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+// ── Animated progress bars ───────────────────────────────────────────────────
+.bar-anim {
+  transform-origin: left center;
+  animation: barReveal 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.bar-anim-d1 { animation-delay: 0.15s; }
+.bar-anim-d2 { animation-delay: 0.30s; }
+
+// ── Skill card stagger-in ─────────────────────────────────────────────────────
+.skill-card {
+  animation: cardFadeUp 0.45s ease-out both;
 }

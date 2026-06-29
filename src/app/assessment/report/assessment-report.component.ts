@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface SmeRatings {
@@ -58,23 +58,32 @@ interface RatingItem {
   templateUrl: './assessment-report.component.html',
   styleUrls: ['./assessment-report.component.scss'],
 })
-export class AssessmentReportComponent {
+export class AssessmentReportComponent implements OnInit {
 
   activeTabIndex = 0;
 
+  /** Starts at 251.3 (empty ring) then transitions to the real value after mount */
+  ringOffset = 251.3;
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.ringOffset = 251.3 - (251.3 * this.overallAverage / 10);
+    }, 150);
+  }
+
   readonly candidate = {
-    name: 'Alex Taylor',
-    role: 'Full Stack Developer – Angular + NestJS',
+    name: 'Anish Jain',
+    role: 'Full Stack Developer (Angular + NestJS)',
     experience: '5.5 Years',
     initials: 'AT',
     location: 'Remote',
-    email: 'alex.taylor@example.com',
-    avatarColor: '#4f46e5',
+    email: 'anish.jain@example.com',
+    avatarColor: '#272646',
   };
 
   readonly interview = {
     id: 'INT-2026-0087',
-    track: 'Full Stack Developer – 1 (Angular + NestJS)',
+    track: 'SDE- 1 (Node/ Angular/ NestJS)',
     date: '29 June 2026',
     startTime: '10:00 AM',
     endTime: '12:24 PM',
@@ -101,7 +110,7 @@ export class AssessmentReportComponent {
   readonly assessments: SmeAssessment[] = [
     {
       id: 1,
-      sme: { name: 'Dr. Priya Mehta', title: 'Principal Engineer – Frontend', initials: 'PM', avatarColor: '#7c3aed' },
+      sme: { name: 'Golda Jose', title: 'Principal Engineer – Frontend', initials: 'PM', avatarColor: '#7c3aed' },
       modules: [
         { key: 'web_foundations', label: 'Web Foundations — HTML5 & CSS3', questionCount: 3 },
         { key: 'javascript_es6',  label: 'JavaScript & ES6+',              questionCount: 3 },
@@ -228,6 +237,18 @@ export class AssessmentReportComponent {
     if (score >= 7)   return 'text-indigo-300';
     if (score >= 5)   return 'text-amber-300';
     return 'text-rose-300';
+  }
+
+  readonly radarLevels = [2.5, 5, 7.5, 10];
+
+  radarDataPoints(ratings: SmeRatings, maxR = 85): string {
+    const p = (v: number) => +(v / 10 * maxR).toFixed(2);
+    return `0,${-p(ratings.fundamental)} ${p(ratings.coding)},0 0,${p(ratings.problem)} ${-p(ratings.communication)},0`;
+  }
+
+  radarGridPoints(level: number, maxR = 85): string {
+    const r = +(level / 10 * maxR).toFixed(2);
+    return `0,${-r} ${r},0 0,${r} ${-r},0`;
   }
 
   printReport(): void { window.print(); }

@@ -32,6 +32,12 @@
 
   /* ── Sidebar (interview panel) ── */
   --cm-sidebar-bg:      #f1f5f9;     /* matches surface-raised        */
+  --cm-sidebar-gradient: linear-gradient(160deg, #eef2ff 0%, #f8fafc 45%, #ffffff 100%);
+  --cm-profile-block-bg: linear-gradient(135deg, rgba(238,242,255,.75) 0%, #ffffff 70%);
+
+  /* ── Range slider ── */
+  --cm-range-track:     #e2e8f0;     /* slate-200 — visible in light  */
+  --cm-range-thumb-border: #ffffff;
 
   /* ── Scrollbar ── */
   --cm-scrollbar-track: #e2e8f0;
@@ -67,6 +73,12 @@
 
   /* ── Sidebar (interview panel) ── */
   --cm-sidebar-bg:      #151516;     /* original dark sidebar tone    */
+  --cm-sidebar-gradient: linear-gradient(160deg, #1b1b1d 0%, #151516 50%, #0e0e0f 100%);
+  --cm-profile-block-bg: #020617;    /* flat surface-muted in dark    */
+
+  /* ── Range slider ── */
+  --cm-range-track:     #1e293b;     /* slate-800 — visible in dark   */
+  --cm-range-thumb-border: #0f172a;
 
   /* ── Scrollbar ── */
   --cm-scrollbar-track: #0f172a;     /* slate-900                     */
