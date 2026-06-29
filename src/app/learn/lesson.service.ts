@@ -16,4 +16,13 @@ export class LessonService {
     const apiKey = this.authService.currentUserValue?.token || '';
     return this.httpService.postData('apis/lesson/create', payload, apiKey);
   }
+
+  getLessons(n = 10, fetch?: 'all'): Observable<any> {
+    const apiKey = this.authService.currentUserValue?.token || '';
+    const params = [`n=${n}`];
+    if (fetch) {
+      params.push(`fetch=${fetch}`);
+    }
+    return this.httpService.get(`apis/lesson?${params.join('&')}`, apiKey);
+  }
 }

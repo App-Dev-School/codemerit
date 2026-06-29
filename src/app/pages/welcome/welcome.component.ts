@@ -24,6 +24,7 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
 import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { register } from 'swiper/element/bundle';
+import { LessonService } from 'src/app/learn/lesson.service';
 
 export const certificateModels: CertificateModel[] = [
   {
@@ -216,62 +217,7 @@ export class WelcomeComponent implements OnInit {
     }
   ];
 
-  engagements = [
-    {
-      "id": 1,
-      "title": "Have you heard about Strict Mode in JavaScript?",
-      "subject": "JavaScript",
-      "topic": "ECMAScript",
-      "type": "Ask",
-      "imageUrl": "assets/images/tech/javascript.png",
-      "style": "right",
-    },
-    {
-      "id": 2,
-      "title": "Do you know how to access geo-location using JS?",
-      "subject": "JavaScript",
-      "topic": "DOM",
-      "type": "Ask",
-      "style": "right",
-      "imageUrl": "assets/images/tech/javascript.png"
-    },
-    {
-      "id": 3,
-      "title": "How can you transform an Angular App for SEO?",
-      "subject": "Angular",
-      "topic": "SSR",
-      "type": "Ask",
-      "style": "left",
-      "imageUrl": "assets/images/tech/angular.png"
-    },
-    {
-      "id": 4,
-      "title": "How will you invoke a method 1000 times concurrently in Java?",
-      "subject": "Java",
-      "topic": "Thread",
-      "type": "Ask",
-      "style": "right",
-      "imageUrl": "assets/images/tech/java.png"
-    },
-    {
-      "id": 5,
-      "title": "What are Hot and Cold observables in RxJS?",
-      "subject": "RxJS",
-      "topic": "Selectors",
-      "type": "Ask",
-      "style": "left",
-      "imageUrl": "assets/images/tech/rxjs.png"
-    },
-    {
-      "id": 6,
-      "title": "What are Pseudo selectors in CSS?",
-      "subject": "CSS",
-      "topic": "Selectors",
-      "type": "Ask",
-      "style": "left",
-      "imageUrl": "assets/images/tech/css.png"
-    }
-  ];
+  engagements: any[] = [];
 
   userTasks = [
     {
@@ -321,7 +267,8 @@ export class WelcomeComponent implements OnInit {
   constructor(private router: Router,
     private master: MasterService,
     private snackService: SnackbarService,
-    public authService: AuthService) {
+    public authService: AuthService,
+    private lessonService: LessonService) {
     register();
     this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
@@ -366,6 +313,7 @@ export class WelcomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadExploreLessons();
     if (!this.master.subjects.length || !this.master.topics.length) {
       this.master.dataLoaded$.subscribe((ready) => {
         if (ready) {
@@ -384,7 +332,12 @@ export class WelcomeComponent implements OnInit {
   }
 
   exploreLesson(itemId: any) {
-    this.snackService.display('snackbar-dark', 'Feature coming soon!', 'bottom', 'center');
+    const lesson = this.engagements.find((item: any) => item.id === itemId);
+    if (lesson?.slug) {
+      this.router.navigate(['/learn/overview', lesson.slug]);
+      return;
+    }
+    this.snackService.display('snackbar-dark', 'Lesson not available.', 'bottom', 'center');
   }
 
   closeLesson(itemId: any) {
@@ -394,6 +347,27 @@ export class WelcomeComponent implements OnInit {
     } else {
       this.engagements = this.engagements.filter(item => item.id > 1)
     }
+  }
+
+  private loadExploreLessons(): void {
+    this.lessonService.getLessons(10, 'all').subscribe({
+      next: (response: any) => {
+        const lessons = Array.isArray(response?.data) ? response.data : [];
+        this.engagements = lessons.map((lesson: any, index: number) => ({
+          id: lesson.id,
+          slug: lesson.slug,
+          title: lesson.title,
+          subject: lesson.subject?.title ?? 'Lesson',
+          topic: lesson.topic?.title ?? '',
+          type: 'Lesson',
+          style: index % 2 === 0 ? 'right' : 'left',
+          imageUrl: lesson.subject?.image || 'assets/images/tech/placeholder.png',
+        }));
+      },
+      error: (error) => {
+        console.error('Failed to load explore lessons', error);
+      }
+    });
   }
 
 
