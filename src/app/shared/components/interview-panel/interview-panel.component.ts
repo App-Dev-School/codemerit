@@ -83,7 +83,7 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   // ── Ratings ────────────────────────────────────────────────────────────────
   ratings = { coding: 8, system: 7, problem: 8, comm: 7 };
   averageScore = '7.5';
-  averageColorClass = 'text-indigo-400';
+  averageColorClass = 'text-indigo-300';
 
   // ── Subject / Slides ───────────────────────────────────────────────────────
   activeSubject = 'web_foundations';
@@ -335,7 +335,7 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
     const avg = ((+this.ratings.coding + +this.ratings.system + +this.ratings.problem + +this.ratings.comm) / 4).toFixed(1);
     this.averageScore = avg;
     const n = +avg;
-    this.averageColorClass = n >= 8 ? 'text-emerald-400' : n >= 5 ? 'text-indigo-400' : 'text-rose-500';
+    this.averageColorClass = n >= 8 ? 'text-emerald-300' : n >= 5 ? 'text-indigo-300' : 'text-rose-300';
   }
 
   // ── Subject ────────────────────────────────────────────────────────────────
@@ -413,20 +413,31 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
     this.activeCelebTheme = theme;
     this.activePreset = theme;
     const map: Record<string, [string, string]> = {
-      strong_hire: ['STRONG HIRE',    'bg-cm-brand-dim  border-cm-brand  text-cm-brand-text'],
-      hire:        ['HIRE',           'bg-amber-500/10  border-amber-500/40  text-amber-600  dark:text-amber-400'],
-      no_hire:     ['STRONG NO HIRE', 'bg-rose-500/10   border-rose-500/40   text-rose-600   dark:text-rose-400'],
-      pending:     ['UNDER REVIEW',   'bg-sky-500/10    border-sky-500/40    text-sky-600    dark:text-sky-400']
+      strong_hire: ['STRONG HIRE',    'bg-cm-brand-dim    border-cm-brand       text-cm-brand-text'],
+      hire:        ['HIRE',           'bg-amber-500/10    border-amber-500/40   text-amber-700   dark:text-amber-400'],
+      no_hire:     ['STRONG NO HIRE', 'bg-rose-500/10     border-rose-500/40    text-rose-700    dark:text-rose-400'],
+      pending:     ['UNDER REVIEW',   'bg-sky-500/10      border-sky-500/40     text-sky-700     dark:text-sky-400'],
+      passed:      ['MOCK PASSED',    'bg-emerald-500/10  border-emerald-500/40 text-emerald-700 dark:text-emerald-400'],
+      failed:      ['MOCK FAILED',    'bg-orange-500/10   border-orange-500/40  text-orange-700  dark:text-orange-400'],
     };
     [this.candidateStatusText, this.candidateStatusClass] = map[status] ?? ['In Progress', 'bg-cm-brand-dim border-cm-brand text-cm-brand-text'];
     this.spawnBurst(75);
     this.showToast(`Milestone updated: ${this.candidateStatusText}`);
   }
 
-  presetBtnClass(theme: string): string {
-    return theme === this.activePreset
-      ? 'px-3 py-2 bg-cm-brand-dim border border-cm-brand text-cm-brand-text hover:bg-cm-surface-raised'
-      : 'px-3 py-2 bg-cm-surface-raised border border-cm-border text-cm-text-secondary hover:bg-cm-surface-hover';
+  presetBtnClass(theme: string, color: 'indigo' | 'amber' | 'rose' | 'sky' | 'emerald' | 'orange' = 'indigo'): string {
+    if (theme === this.activePreset) {
+      const active: Record<string, string> = {
+        indigo:  'border-[2.5px] border-indigo-500  bg-indigo-50  dark:bg-indigo-500/10  shadow-md shadow-indigo-500/15',
+        amber:   'border-[2.5px] border-amber-500   bg-amber-50   dark:bg-amber-500/10   shadow-md shadow-amber-500/15',
+        rose:    'border-[2.5px] border-rose-500    bg-rose-50    dark:bg-rose-500/10    shadow-md shadow-rose-500/15',
+        sky:     'border-[2.5px] border-sky-500     bg-sky-50     dark:bg-sky-500/10     shadow-md shadow-sky-500/15',
+        emerald: 'border-[2.5px] border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 shadow-md shadow-emerald-500/15',
+        orange:  'border-[2.5px] border-orange-500  bg-orange-50  dark:bg-orange-500/10  shadow-md shadow-orange-500/15',
+      };
+      return `px-3 py-2.5 ${active[color]}`;
+    }
+    return 'px-3 py-2.5 bg-white dark:bg-cm-surface-raised shadow-sm hover:shadow-md hover:bg-cm-surface-hover border border-transparent';
   }
 
   // ── Submit ─────────────────────────────────────────────────────────────────

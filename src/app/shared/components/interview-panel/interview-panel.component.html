@@ -48,6 +48,7 @@
             </button>
 
             <!-- Theme toggle (desktop only) -->
+            <!-- hide -->
             <button (click)="toggleTheme()"
                 [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
                 class="hidden md:flex p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700
@@ -102,7 +103,7 @@
             <div class="flex-1 overflow-y-auto scrollable-div min-h-0">
 
             <!-- Candidate Profile -->
-            <div class="px-5 py-3 border-b border-cm-border bg-cm-surface-muted">
+            <div class="candidate-profile px-5 py-3 border-b border-cm-border">
                 <div class="flex items-center gap-4">
                     <div class="relative">
                         <img src="https://placehold.co/150x150/1e1b4b/38bdf8?text=AT" alt="Candidate Avatar"
@@ -130,11 +131,11 @@
                     <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider">
                         Evaluation Scores
                     </h3>
-                    <div class="bg-cm-brand-dim border border-cm-brand px-3 py-1 rounded-lg text-right">
-                        <span class="text-[9px] text-cm-brand-text block font-bold leading-none uppercase">Live Avg</span>
+                    <div class="bg-slate-800 dark:bg-slate-700/80 px-3 py-1.5 rounded-lg text-right min-w-[64px]">
+                        <span class="text-[9px] text-slate-400 block font-bold leading-none uppercase tracking-wider">Live Avg</span>
                         <span [class]="'text-base font-bold fira-font leading-normal ' + averageColorClass">
                             {{ averageScore }}
-                            <span class="text-[10px] text-cm-text-muted">/10</span>
+                            <span class="text-[10px] text-slate-500">/10</span>
                         </span>
                     </div>
                 </div>
@@ -152,7 +153,7 @@
                         <input type="range" min="1" max="10" step="1"
                             [value]="ratings.coding"
                             (input)="ratings.coding = $any($event.target).valueAsNumber; updateMetrics()"
-                            class="w-full h-1.5 bg-cm-surface-raised rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                            class="w-full appearance-none cursor-pointer [--thumb-color:#06b6d4]">
                     </div>
 
                     <!-- Coding & Syntax -->
@@ -167,7 +168,7 @@
                         <input type="range" min="1" max="10" step="1"
                             [value]="ratings.system"
                             (input)="ratings.system = $any($event.target).valueAsNumber; updateMetrics()"
-                            class="w-full h-1.5 bg-cm-surface-raised rounded-lg appearance-none cursor-pointer accent-amber-500">
+                            class="w-full appearance-none cursor-pointer [--thumb-color:#f59e0b]">
                     </div>
 
                     <!-- Problem Solving -->
@@ -182,7 +183,7 @@
                         <input type="range" min="1" max="10" step="1"
                             [value]="ratings.problem"
                             (input)="ratings.problem = $any($event.target).valueAsNumber; updateMetrics()"
-                            class="w-full h-1.5 bg-cm-surface-raised rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                            class="w-full appearance-none cursor-pointer [--thumb-color:#10b981]">
                     </div>
 
                     <!-- Communication -->
@@ -197,7 +198,7 @@
                         <input type="range" min="1" max="10" step="1"
                             [value]="ratings.comm"
                             (input)="ratings.comm = $any($event.target).valueAsNumber; updateMetrics()"
-                            class="w-full h-1.5 bg-cm-surface-raised rounded-lg appearance-none cursor-pointer accent-pink-500">
+                            class="w-full appearance-none cursor-pointer [--thumb-color:#ec4899]">
                     </div>
                 </div>
             </div>
@@ -206,34 +207,73 @@
             <div class="p-5 border-b border-cm-border space-y-3">
                 <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider mb-2">Milestones</h3>
                 <div class="grid grid-cols-2 gap-2">
+
+                    <!-- Strong Hire -->
                     <button (click)="triggerStateMilestone('cyber_matrix', 'strong_hire')"
-                        [class]="presetBtnClass('cyber_matrix') + ' rounded-lg text-xs font-semibold text-left transition flex flex-col gap-1'">
-                        <span class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-star text-cm-brand-text"></i> Strong Hire
+                        [class]="presetBtnClass('cyber_matrix', 'indigo') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-indigo-700 dark:text-indigo-300">
+                            <i class="fa-solid fa-star"></i> Strong Hire
                         </span>
-                        <span class="text-[10px] text-cm-text-muted font-normal">Cyber matrix particles</span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Exceeds bar — highly recommended
+                        </span>
                     </button>
+
+                    <!-- Standard Hire -->
                     <button (click)="triggerStateMilestone('golden_star', 'hire')"
-                        [class]="presetBtnClass('golden_star') + ' rounded-lg text-xs font-semibold text-left transition flex flex-col gap-1'">
-                        <span class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
+                        [class]="presetBtnClass('golden_star', 'amber') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-amber-700 dark:text-amber-400">
                             <i class="fa-solid fa-crown"></i> Standard Hire
                         </span>
-                        <span class="text-[10px] text-cm-text-muted font-normal">Golden star explosion</span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Meets requirements — recommend hire
+                        </span>
                     </button>
+
+                    <!-- Strong No Hire -->
                     <button (click)="triggerStateMilestone('cyber_sparks', 'no_hire')"
-                        [class]="presetBtnClass('cyber_sparks') + ' rounded-lg text-xs font-semibold text-left transition flex flex-col gap-1'">
-                        <span class="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+                        [class]="presetBtnClass('cyber_sparks', 'rose') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-rose-700 dark:text-rose-400">
                             <i class="fa-solid fa-ban"></i> Strong No Hire
                         </span>
-                        <span class="text-[10px] text-cm-text-muted font-normal">Neon warning discharge</span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Below bar — significant skill gaps
+                        </span>
                     </button>
+
+                    <!-- Under Review -->
                     <button (click)="triggerStateMilestone('classic_confetti', 'pending')"
-                        [class]="presetBtnClass('classic_confetti') + ' rounded-lg text-xs font-semibold text-left transition flex flex-col gap-1'">
-                        <span class="flex items-center gap-1.5 text-sky-600 dark:text-sky-400">
+                        [class]="presetBtnClass('classic_confetti', 'sky') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-sky-700 dark:text-sky-400">
                             <i class="fa-solid fa-hourglass-half"></i> Under Review
                         </span>
-                        <span class="text-[10px] text-cm-text-muted font-normal">Classic confetti tumble</span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Borderline — requires further evaluation
+                        </span>
                     </button>
+
+                    <!-- Mock: Passed -->
+                    <button (click)="triggerStateMilestone('mock_pass', 'passed')"
+                        [class]="presetBtnClass('mock_pass', 'emerald') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400">
+                            <i class="fa-solid fa-circle-check"></i> Passed
+                        </span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Mock passed — ready for real interview
+                        </span>
+                    </button>
+
+                    <!-- Mock: Failed -->
+                    <button (click)="triggerStateMilestone('mock_fail', 'failed')"
+                        [class]="presetBtnClass('mock_fail', 'orange') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-orange-700 dark:text-orange-400">
+                            <i class="fa-solid fa-circle-xmark"></i> Failed
+                        </span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Mock failed — needs more preparation
+                        </span>
+                    </button>
+
                 </div>
             </div>
 

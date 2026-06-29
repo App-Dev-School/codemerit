@@ -59,7 +59,7 @@ export class LearnerWelcomeCardComponent implements OnInit {
       pingClass:   'bg-amber-300/50 dark:bg-amber-500/25',
       ringClass:   'border-amber-500 shadow-amber-200 dark:shadow-amber-500/20',
       btnClass:    'bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-500/25',
-      route: '/assessment/skill-rating',
+      route: '/interview-panel/beta999',
     },
     {
       icon: 'videocam',
@@ -74,7 +74,7 @@ export class LearnerWelcomeCardComponent implements OnInit {
       pingClass:   'bg-emerald-300/50 dark:bg-emerald-500/25',
       ringClass:   'border-emerald-500 shadow-emerald-200 dark:shadow-emerald-500/20',
       btnClass:    'bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-500/25',
-      route: '/interview',
+      route: '/interview-panel/beta999',
     },
     {
       icon: 'workspace_premium',
@@ -89,7 +89,7 @@ export class LearnerWelcomeCardComponent implements OnInit {
       pingClass:   'bg-violet-300/50 dark:bg-violet-500/25',
       ringClass:   'border-violet-500 shadow-violet-200 dark:shadow-violet-500/20',
       btnClass:    'bg-violet-500 hover:bg-violet-600 shadow-md shadow-violet-500/25',
-      route: '/profile',
+      route: '/interview-panel/beta999',
     },
   ];
 
