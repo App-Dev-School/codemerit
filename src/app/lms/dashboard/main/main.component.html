@@ -12,7 +12,7 @@
     @if (dashboard) {
     <div class="row m-b-20 clearfix">
       @if (dashboard?.questions) {
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+      <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="hoverCard">
           <mat-card-content>
             <div class="text-center">
@@ -48,7 +48,7 @@
           </mat-card-content>
         </mat-card>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+      <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="hoverCard">
           <mat-card-content>
             <div class="text-center">
@@ -83,7 +83,7 @@
       }
 
       @if (dashboard?.quizzes) {
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+      <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="hoverCard">
           <mat-card-content>
             <div class="text-center">
@@ -105,6 +105,43 @@
               <div class="col-4 text-center">
                 <label class="font-b-500 font-16">Plays</label>
                 <p class="value-text">131</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+      @if (dashboard?.lessons) {
+      <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <mat-card class="hoverCard">
+          <mat-card-content>
+            <div class="text-center">
+              <p class="value-text">
+                {{ dashboard.lessons.totalLessonsCreated ?? '0' }}
+              </p>
+              <h4 class="banner-big-font col-blue">Lessons Created</h4>
+            </div>
+            <hr class="dim-divider" />
+            <div class="row">
+              <div class="col-4 text-center">
+                <label class="font-b-500 font-16">Views</label>
+                <p class="value-text">{{ dashboard.lessons.totalViews ?? '0' }}</p>
+              </div>
+              <div class="col-4 text-center">
+                <label class="font-b-500 font-16">Pending</label>
+                <p class="value-text">{{ dashboard.lessons.totalPending ?? '0' }}</p>
+              </div>
+              <div class="col-4 text-center">
+                <label class="font-b-500 font-16">Done</label>
+                <p class="value-text">{{ dashboard.lessons.totalCompleted ?? '0' }}</p>
+              </div>
+            </div>
+            <hr class="dim-divider" />
+            <div class="row m-t-10 text-center clearfix">
+              <div class="col text-center">
+                <button mat-stroked-button color="primary" (click)="goToLessons()">
+                  View Lessons
+                </button>
               </div>
             </div>
           </mat-card-content>

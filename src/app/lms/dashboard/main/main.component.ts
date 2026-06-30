@@ -148,4 +148,8 @@ export class LmsDashboardMainComponent implements OnInit {
   goToTopicManager(): void {
     this.router.navigate(['/lms/topics/list']);
   }
+
+  goToLessons(): void {
+    this.router.navigate(['/lms/lessons/list']);
+  }
 }

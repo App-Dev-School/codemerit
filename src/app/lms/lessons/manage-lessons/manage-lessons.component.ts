@@ -9,6 +9,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { AuthService, Role } from '@core';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { LessonService } from 'src/app/learn/lesson.service';
 
@@ -60,9 +61,21 @@ export class ManageLessonsComponent implements OnInit, AfterViewInit {
   constructor(
     private lessonService: LessonService,
     private router: Router,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
+    if (this.isAdmin) {
+      this.displayedColumns = [
+        'title',
+        'subject',
+        'topic',
+        'sections',
+        'author',
+        'actions',
+      ];
+    }
+
     this.loadLessons();
   }
 
@@ -78,8 +91,16 @@ export class ManageLessonsComponent implements OnInit, AfterViewInit {
     this.lessonService.getLessons(undefined, 'all').subscribe({
       next: (response: any) => {
         const lessons = Array.isArray(response?.data) ? response.data : [];
+        const currentUser = this.authService.currentUserValue;
+        const isAdmin =
+          currentUser?.role === Role.Admin || currentUser?.role === Role.All;
+        const visibleLessons = isAdmin
+          ? lessons
+          : lessons.filter(
+              (lesson: any) => Number(lesson?.user?.id) === Number(currentUser?.id),
+            );
 
-        this.dataSource.data = lessons.map((lesson: any) => ({
+        this.dataSource.data = visibleLessons.map((lesson: any) => ({
           id: lesson?.id,
           title: lesson?.title ?? '-',
           subject: lesson?.subject?.title ?? '-',
@@ -129,6 +150,11 @@ export class ManageLessonsComponent implements OnInit, AfterViewInit {
 
   refresh(): void {
     this.loadLessons();
+  }
+
+  get isAdmin(): boolean {
+    const role = this.authService.currentUserValue?.role;
+    return role === Role.Admin || role === Role.All;
   }
 
   viewLesson(row: LessonListItem): void {
