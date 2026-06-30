@@ -1,75 +1,10 @@
-.header-flex {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+/* Horizontal scroll carousel — used by both Certificates and Daily Lessons */
+.hw-scroll {
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE / Edge */
+  -webkit-overflow-scrolling: touch; /* smooth momentum on iOS */
 }
 
-.title-block {
-  flex: 1;
-  margin: 0 10px;
+.hw-scroll::-webkit-scrollbar {
+  display: none;               /* Chrome / Safari */
 }
-
-.subject-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-}
-
-//others
-.example-card {
-  max-width: 400px;
-  margin-bottom: 8px;
-}
-
-.example-card-footer {
-  padding: 16px;
-}
-
-.size40px {
-  width: 40px !important;
-  height: 40px !important;
-}
-
-.match-height {
-  >[class*='col'] {
-    display: flex;
-    flex-flow: column;
-
-    >.card {
-      flex: 1 1 auto;
-    }
-  }
-}
-
-.mat-card-title{
-  font-size: 1rem!important;
-  font-weight: 500;
-  margin-bottom: 0px!important;
-}
-
-.mat-card-subtitle{
-  font-size: 0.8rem!important;
-  font-weight: 500;
-  margin-top: 0px!important;
-}
-
-.swiper-wrapper-container {
-  position: relative;
-}
-
-.custom-pagination {
-  position: absolute;
-  bottom: 10px; /* move wherever you want */
-  left: 50%;
-  transform: translateX(-50%);
-  background: gray;
-}
-
-// ::ng-deep swiper-container::part(pagination) {
-//   bottom: 10px;
-//   top: auto;
-// }
-// ::ng-deep swiper-container::part(bullet) {
-//   background-color: #000;
-// }

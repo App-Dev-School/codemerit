@@ -1,42 +1,69 @@
-<div class="divide-y divide-cm-border">
-  @for(skillRating of skillRatings(); track skillRating){
-  <div class="flex items-center gap-3 py-3 first:pt-1">
+@if(skillRatings().length === 0) {
+<div class="flex flex-col items-center justify-center py-10 text-center">
+  <div class="w-12 h-12 rounded-full bg-cm-surface-raised border border-cm-border
+              flex items-center justify-center mb-3">
+    <i class="fa-regular fa-star text-cm-text-muted text-lg"></i>
+  </div>
+  <p class="text-sm font-semibold text-cm-text-primary mb-1">No skills rated yet</p>
+  <p class="text-xs text-cm-text-muted leading-relaxed max-w-[200px] mx-auto">
+    Add your first skill rating to personalise your learning path.
+  </p>
+</div>
+}
 
-    <img [src]="skillRating.imageUrl" alt=""
-         class="w-8 h-8 rounded-full object-cover border border-cm-border shrink-0">
+<div class="space-y-2">
+  @for(s of skillRatings(); track s.skillId) {
+  <div class="flex items-center gap-3 p-3 rounded-xl border border-cm-border
+              bg-cm-surface hover:bg-cm-surface-hover transition-colors duration-150">
 
-    <div class="flex-1 min-w-0">
-      <div class="flex items-center justify-between gap-2 flex-wrap">
-        <span class="text-[12px] font-semibold text-cm-text-primary truncate">{{skillRating.skillName}}</span>
-        @if(skillRating.level){
-        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cm-brand-dim text-cm-brand-text border border-cm-brand shrink-0">
-          {{skillRating.level}}
-        </span>
-        }
-      </div>
-      @if(skillRating.rating > 0){
-      <div class="flex items-center gap-0.5 mt-1">
-        @for(star of [1,2,3,4,5]; track star){
-          @if(skillRating.rating >= star){
-            <mat-icon class="text-amber-400 leading-none" style="font-size:14px">star</mat-icon>
-          }@else if(skillRating.rating >= star - 0.5){
-            <mat-icon class="text-amber-400 leading-none" style="font-size:14px">star_half</mat-icon>
-          }@else{
-            <mat-icon class="text-cm-border leading-none" style="font-size:14px">star_border</mat-icon>
-          }
-        }
-        @if(skillRating.grade){
-        <span class="text-[10px] text-cm-text-muted ml-1">· {{skillRating.grade}}</span>
-        }
-      </div>
-      }@else{
-      <p class="text-[11px] text-cm-text-muted mt-0.5">Not yet rated</p>
+    <!-- Tech icon -->
+    <div class="w-10 h-10 rounded-xl border border-cm-border bg-cm-surface-raised
+                flex items-center justify-center overflow-hidden shrink-0">
+      @if(s.imageUrl) {
+        <img [src]="s.imageUrl" [alt]="s.skillName" class="w-7 h-7 object-contain">
+      } @else {
+        <i class="fa-solid fa-code text-cm-text-muted text-sm"></i>
       }
     </div>
 
-    @if(!skillRating.knows){
-    <span class="text-[10px] text-cm-text-muted font-medium shrink-0">Unknown</span>
-    }
+    <!-- Info -->
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="text-xs font-bold text-cm-text-primary truncate leading-none">{{ s.skillName }}</span>
+        @if(s.level) {
+        <span class="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full
+                     bg-cm-brand-dim text-cm-brand-text border border-cm-brand/30 leading-none">
+          {{ s.level }}
+        </span>
+        }
+      </div>
+
+      @if(s.rating) {
+      <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-0.5">
+          @for(star of [1,2,3,4,5]; track star) {
+            @if(s.rating >= star) {
+              <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
+            } @else if(s.rating >= star - 0.5) {
+              <i class="fa-solid fa-star-half-stroke text-amber-400 text-[11px]"></i>
+            } @else {
+              <i class="fa-regular fa-star text-cm-border-strong text-[11px]"></i>
+            }
+          }
+        </div>
+        @if(s.grade) {
+        <span class="text-[10px] text-cm-text-muted">· {{ s.grade }}</span>
+        }
+      </div>
+      } @else if(!s.knows) {
+      <span class="inline-flex items-center gap-1 text-[10px] font-medium text-cm-text-muted">
+        <i class="fa-solid fa-circle-question text-[9px]"></i>
+        Not familiar yet
+      </span>
+      } @else {
+      <span class="text-[10px] text-cm-text-muted">Not yet rated</span>
+      }
+    </div>
 
   </div>
   }

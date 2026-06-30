@@ -1,0 +1,150 @@
+<div class="bg-cm-surface border border-cm-border rounded-2xl overflow-hidden shadow-sm flex flex-col">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <div class="px-5 py-4 border-b border-cm-border
+              bg-gradient-to-br from-amber-50/80 via-orange-50/50 to-cm-surface-muted
+              dark:from-amber-500/5 dark:via-orange-500/5 dark:to-transparent">
+
+    <div class="flex items-start justify-between gap-3 mb-3">
+      <!-- Title -->
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="text-sm font-bold text-cm-text-primary">Daily Lessons</h3>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full
+                       bg-amber-100 dark:bg-amber-500/20
+                       text-amber-700 dark:text-amber-400
+                       border border-amber-200 dark:border-amber-500/30 leading-none">
+            TODAY
+          </span>
+        </div>
+        <p class="text-xs text-cm-text-muted">
+          {{ completedCount() }} of {{ lessons.length }} lessons complete for today
+        </p>
+      </div>
+
+      <!-- Streak badge -->
+      <div class="flex items-center gap-1.5 px-3 py-2 rounded-xl shrink-0
+                  bg-orange-50 dark:bg-orange-500/10
+                  border border-orange-200 dark:border-orange-500/20">
+        <span class="text-base leading-none select-none">🔥</span>
+        <div>
+          <p class="text-sm font-black text-orange-600 dark:text-orange-400 leading-none">{{ streakDays }}</p>
+          <p class="text-[9px] font-semibold uppercase tracking-wide leading-none mt-0.5
+                    text-orange-500/70 dark:text-orange-400/60">days</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress track -->
+    <div class="flex items-center gap-2.5">
+      <!-- Dots -->
+      <div class="flex items-center gap-1">
+        @for (lesson of lessons; track lesson.id) {
+          <div [class]="'w-2 h-2 rounded-full transition-all duration-500 ' +
+                        (isDone(lesson.id)
+                          ? 'bg-emerald-500 scale-110'
+                          : 'bg-cm-surface-raised')">
+          </div>
+        }
+      </div>
+      <!-- Bar -->
+      <div class="flex-1 h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-700 ease-out
+                    bg-gradient-to-r from-amber-400 via-orange-400 to-orange-500"
+             [style.width.%]="progressPercent()">
+        </div>
+      </div>
+      <span class="text-[11px] font-bold text-cm-text-muted tabular-nums shrink-0">
+        {{ completedCount() }}/{{ lessons.length }}
+      </span>
+    </div>
+  </div>
+
+  <!-- ── Lesson rows ─────────────────────────────────────────────── -->
+  @if (!allDone()) {
+  <div class="flex-1 divide-y divide-cm-border">
+    @for (lesson of activeLessons(); track lesson.id) {
+
+    <div [@lessonRow]
+         [class]="'group relative flex items-center gap-3 px-4 py-3.5 pl-[14px] border-l-[3px] ' +
+                  'transition-colors duration-300 ' +
+                  (isCompleting(lesson.id)
+                    ? 'bg-emerald-50/60 dark:bg-emerald-500/5 ' + lesson.accentClass
+                    : 'bg-cm-surface hover:bg-cm-surface-hover ' + lesson.accentClass)">
+
+      <!-- Tech icon -->
+      <img [src]="lesson.iconImg" alt=""
+           class="w-9 h-9 object-contain rounded-lg shrink-0 transition-all duration-500"
+           [class.opacity-25]="isCompleting(lesson.id)"
+           [class.grayscale]="isCompleting(lesson.id)" />
+
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <p [class]="'text-[12px] font-semibold leading-snug transition-all duration-300 ' +
+                    (isCompleting(lesson.id)
+                      ? 'text-cm-text-muted line-through decoration-emerald-400/60'
+                      : 'text-cm-text-primary')">
+          {{ lesson.title }}
+        </p>
+        <div class="flex items-center gap-2 mt-1.5">
+          <span [class]="'text-[10px] font-semibold px-1.5 py-0.5 rounded-md leading-none ' + lesson.badgeClass">
+            {{ lesson.topic }}
+          </span>
+          <span class="flex items-center gap-0.5 text-[10px] text-cm-text-muted">
+            <i class="material-icons-outlined" style="font-size: 10px; line-height: 1">schedule</i>
+            {{ lesson.duration }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Mark done button -->
+      <button (click)="markDone(lesson)"
+              [disabled]="isCompleting(lesson.id)"
+              [class]="'w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 select-none ' +
+                       'transition-all duration-300 ' +
+                       (isCompleting(lesson.id)
+                         ? 'bg-emerald-500 border-emerald-500 scale-110 shadow-md shadow-emerald-300/40 dark:shadow-emerald-500/20 cursor-default'
+                         : 'border-cm-border-strong bg-cm-surface cursor-pointer ' +
+                           'hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 ' +
+                           'hover:scale-110 active:scale-95')">
+        <i class="material-icons-outlined leading-none select-none transition-all duration-200"
+           [class]="isCompleting(lesson.id) ? 'text-white' : 'text-cm-border-strong'"
+           style="font-size: 15px">
+          {{ isCompleting(lesson.id) ? 'check' : 'radio_button_unchecked' }}
+        </i>
+      </button>
+    </div>
+
+    }
+  </div>
+  }
+
+  <!-- ── All done celebration ───────────────────────────────────── -->
+  @if (allDone()) {
+  <div [@allDone] class="flex-1 flex flex-col items-center justify-center py-10 px-6 text-center">
+    <div class="relative mb-4">
+      <div class="w-16 h-16 rounded-full flex items-center justify-center
+                  bg-emerald-100 dark:bg-emerald-500/10
+                  shadow-xl shadow-emerald-200/60 dark:shadow-emerald-500/20">
+        <i class="material-icons-outlined text-emerald-500" style="font-size: 34px">verified</i>
+      </div>
+      <span class="absolute -top-1 -right-2 text-2xl select-none leading-none">🎉</span>
+    </div>
+
+    <h4 class="text-sm font-bold text-cm-text-primary mb-1.5">You're on fire!</h4>
+    <p class="text-xs text-cm-text-secondary leading-relaxed mb-5 max-w-[220px]">
+      All 5 lessons done for today. Come back tomorrow to keep your streak alive.
+    </p>
+
+    <div class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl
+                bg-orange-50 dark:bg-orange-500/10
+                border border-orange-200 dark:border-orange-500/20">
+      <span class="text-lg leading-none select-none">🔥</span>
+      <span class="text-xs font-bold text-orange-700 dark:text-orange-400">
+        {{ streakDays + 1 }}-day streak — keep it going!
+      </span>
+    </div>
+  </div>
+  }
+
+</div>

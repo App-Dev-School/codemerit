@@ -32,8 +32,8 @@
 
   /* ── Sidebar (interview panel) ── */
   --cm-sidebar-bg:      #f1f5f9;     /* matches surface-raised        */
-  --cm-sidebar-gradient: linear-gradient(160deg, #eef2ff 0%, #f8fafc 45%, #ffffff 100%);
-  --cm-profile-block-bg: linear-gradient(135deg, rgba(238,242,255,.75) 0%, #ffffff 70%);
+  --cm-sidebar-gradient: linear-gradient(170deg, #e2e8f0 0%, #edf0f4 30%, #f1f5f9 65%, #f8fafc 100%);
+  --cm-profile-block-bg: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 55%, #f8fafc 100%);
 
   /* ── Range slider ── */
   --cm-range-track:     #e2e8f0;     /* slate-200 — visible in light  */
@@ -72,13 +72,13 @@
   --cm-brand-ring:      rgba(129, 140, 248, 0.40);
 
   /* ── Sidebar (interview panel) ── */
-  --cm-sidebar-bg:      #151516;     /* original dark sidebar tone    */
-  --cm-sidebar-gradient: linear-gradient(160deg, #1b1b1d 0%, #151516 50%, #0e0e0f 100%);
-  --cm-profile-block-bg: #020617;    /* flat surface-muted in dark    */
+  --cm-sidebar-bg:      #000000;
+  --cm-sidebar-gradient: linear-gradient(175deg, #0d0b12 0%, #07060c 45%, #020104 75%, #000000 100%);
+  --cm-profile-block-bg: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, #050508 60%, #000000 100%);
 
   /* ── Range slider ── */
   --cm-range-track:     #1e293b;     /* slate-800 — visible in dark   */
-  --cm-range-thumb-border: #0f172a;
+  --cm-range-thumb-border: #000000;
 
   /* ── Scrollbar ── */
   --cm-scrollbar-track: #0f172a;     /* slate-900                     */

@@ -1,4 +1,4 @@
-<div class="h-screen flex flex-col overflow-hidden relative bg-cm-surface-muted">
+<div class="fixed inset-0 flex flex-col overflow-hidden bg-cm-surface-muted">
 
     <!-- Celebration Canvas -->
     <canvas #celebCanvas class="absolute inset-0 w-full h-full pointer-events-none z-50"></canvas>
@@ -25,7 +25,7 @@
                         Live
                     </span>
                 </div>
-                <p class="hidden md:block text-xs text-slate-400">SME Led Technical Evaluation &amp; Assessment</p>
+                <p class="hidden md:block text-sm text-slate-400">SME Led Technical Evaluation &amp; Assessment</p>
             </div>
         </div>
 
@@ -100,7 +100,7 @@
             </div>
 
             <!-- Scrollable body -->
-            <div class="flex-1 overflow-y-auto scrollable-div min-h-0">
+            <div class="flex-1 overflow-y-auto overflow-x-hidden scrollable-div min-h-0">
 
             <!-- Candidate Profile -->
             <div class="candidate-profile px-5 py-3 border-b border-cm-border">
@@ -125,11 +125,297 @@
                 </div>
             </div>
 
-            <!-- Evaluation Scores -->
+            <!-- ── Tech Evaluation Scores ── -->
+            <div class="p-5 border-b border-cm-border space-y-3">
+
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider shrink-0">
+                            Tech Evaluation Scores
+                        </h3>
+                        @if (interviewSkillRatings.length > 0) {
+                        <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0
+                                     bg-cm-surface-raised border border-cm-border text-cm-text-muted tabular-nums">
+                            {{ interviewSkillRatings.length }}
+                        </span>
+                        }
+                    </div>
+                    <div class="bg-slate-800 dark:bg-slate-700/80 px-3 py-1.5 rounded-lg text-right shrink-0 min-w-[58px]">
+                        <span class="text-[9px] text-slate-400 block font-bold leading-none uppercase tracking-wider">
+                            Live Avg
+                        </span>
+                        <span [class]="'text-base font-bold fira-font leading-normal ' +
+                                       (techEvalAvg > 0 ? techEvalAvgColor : 'text-slate-500')">
+                            {{ techEvalAvg > 0 ? techEvalAvg : '–' }}<span class="text-[10px] text-slate-500">/5</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Active question context + link toggle -->
+                @if (assessmentStarted && activeQuestion) {
+                <div class="rounded-lg bg-cm-surface-muted border border-cm-border px-3 py-2 space-y-1.5">
+                    <p class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">
+                        Visible question
+                    </p>
+                    <p class="text-[11px] font-semibold text-cm-text-primary leading-snug">
+                        Q{{ activeQuestion.id }} — {{ truncateText(activeQuestion.title) }}
+                    </p>
+                    <label class="flex items-center gap-2 cursor-pointer pt-0.5">
+                        <input type="checkbox" [(ngModel)]="newRatingLinked"
+                               class="w-3.5 h-3.5 rounded cursor-pointer accent-indigo-500">
+                        <span class="text-[11px] text-cm-text-secondary font-medium">
+                            Link rating to this question
+                        </span>
+                    </label>
+                </div>
+                }
+
+                <!-- Dropdown 1: Skill Type -->
+                <select (change)="onRatingTypeChange($event)"
+                    class="w-full box-border bg-cm-surface-muted border border-cm-border text-cm-text-primary
+                           text-xs rounded-lg px-3 py-2 outline-none cursor-pointer
+                           focus:ring-1 focus:ring-cm-brand transition">
+                    <option value="">Skill type…</option>
+                    <option [value]="SkillType.JobRole">Job Role</option>
+                    <option [value]="SkillType.Subject">Subject</option>
+                    <option [value]="SkillType.Topic">Topic</option>
+                    <option [value]="SkillType.Question">Question</option>
+                </select>
+
+                <!-- Job Role: auto-filled display (no second dropdown) -->
+                @if (newRatingType === SkillType.JobRole) {
+                <div class="flex items-center gap-2 px-3 py-2 rounded-lg
+                            bg-cm-brand-dim border border-cm-brand">
+                    <i class="fa-solid fa-briefcase text-cm-brand-text text-[11px]"></i>
+                    <span class="text-[11px] font-semibold text-cm-brand-text truncate">
+                        {{ interviewJobRoleName }}
+                    </span>
+                </div>
+                }
+
+                <!-- Subject / Topic: collapsible searchable picker -->
+                @if (showSkillDropdown) {
+
+                <!-- Closed trigger -->
+                @if (!skillPickerOpen) {
+                <button type="button" (click)="skillPickerOpen = true"
+                        [class]="'w-full box-border flex items-center gap-2.5 px-3 py-2.5 rounded-lg border ' +
+                                 'text-xs transition-all ' +
+                                 (newRatingSkillId
+                                   ? 'bg-cm-brand-dim border-cm-brand text-cm-brand-text font-medium'
+                                   : 'bg-cm-surface-muted border-cm-border text-cm-text-muted ' +
+                                     'hover:border-cm-border-strong active:bg-cm-surface-raised')">
+                    @if (newRatingSkillId) {
+                    <i class="fa-solid fa-check text-[9px] shrink-0"></i>
+                    <span class="flex-1 text-left truncate">{{ newRatingSkillName }}</span>
+                    <i class="fa-solid fa-pen text-[9px] shrink-0 opacity-50"></i>
+                    } @else {
+                    <i class="fa-solid fa-magnifying-glass text-[9px] shrink-0"></i>
+                    <span class="flex-1 text-left">
+                        {{ newRatingType === SkillType.Subject ? 'Select subject…' : 'Select topic…' }}
+                    </span>
+                    <i class="fa-solid fa-chevron-down text-[9px] shrink-0"></i>
+                    }
+                </button>
+                }
+
+                <!-- Open picker -->
+                @if (skillPickerOpen) {
+                <div class="border border-cm-border rounded-xl overflow-hidden">
+
+                    <!-- Search + close -->
+                    <div class="flex items-center gap-2 bg-cm-surface-muted px-3 py-2.5 border-b border-cm-border">
+                        <i class="fa-solid fa-magnifying-glass text-cm-text-muted text-[10px] shrink-0"></i>
+                        <input #skillSearchInput type="text" [(ngModel)]="skillSearch"
+                               [placeholder]="newRatingType === SkillType.Subject ? 'Search subject…' : 'Search topic…'"
+                               class="flex-1 min-w-0 bg-transparent text-cm-text-primary text-sm
+                                      outline-none placeholder:text-cm-text-muted">
+                        <button type="button"
+                                (click)="skillPickerOpen = false; skillSearch = ''"
+                                class="shrink-0 p-1.5 -mr-1 rounded text-cm-text-muted
+                                       hover:text-cm-text-primary active:bg-cm-surface-raised transition">
+                            <i class="fa-solid fa-xmark text-[11px]"></i>
+                        </button>
+                    </div>
+
+                    <!-- Option list — tall enough for mobile scroll -->
+                    <div class="max-h-52 overflow-y-auto overscroll-contain">
+                        @for (opt of filteredSkillOptions; track opt.id) {
+                        <button type="button" (click)="selectSkillOption(opt)"
+                                [class]="'w-full box-border flex items-center gap-3 px-3 py-3 text-left text-sm ' +
+                                         'border-b border-cm-border last:border-b-0 transition-colors ' +
+                                         (newRatingSkillId === opt.id
+                                           ? 'bg-cm-brand-dim text-cm-brand-text font-medium'
+                                           : 'bg-cm-surface-muted text-cm-text-primary ' +
+                                             'hover:bg-cm-surface-hover active:bg-cm-surface-raised')">
+                            <i [class]="'fa-solid fa-check text-[9px] shrink-0 text-cm-brand transition-opacity ' +
+                                        (newRatingSkillId === opt.id ? 'opacity-100' : 'opacity-0')"></i>
+                            <span class="truncate">{{ opt.title }}</span>
+                        </button>
+                        } @empty {
+                        <div class="px-3 py-5 text-center">
+                            <p class="text-xs text-cm-text-muted italic">No results for "{{ skillSearch }}"</p>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+
+                }
+
+                <!-- Question: auto-filled from board (no second dropdown) -->
+                @if (newRatingType === SkillType.Question) {
+                    @if (assessmentStarted && activeQuestion) {
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg
+                                bg-cm-brand-dim border border-cm-brand">
+                        <i class="fa-solid fa-circle-question text-cm-brand-text text-[11px]"></i>
+                        <span class="text-[11px] font-semibold text-cm-brand-text truncate leading-snug">
+                            Q{{ activeQuestion.id }}: {{ truncateText(activeQuestion.title) }}
+                        </span>
+                    </div>
+                    } @else {
+                    <div class="px-3 py-2 rounded-lg
+                                bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20">
+                        <span class="text-[11px] text-rose-600 dark:text-rose-400 font-medium">
+                            No question active on board
+                        </span>
+                    </div>
+                    }
+                }
+
+                <!-- Star rating — segmented panel -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between h-4">
+                        <span class="text-[10px] font-medium uppercase tracking-wider text-cm-text-muted">
+                            Rating
+                        </span>
+                        @if (newRatingStars > 0) {
+                        <span class="text-[11px] font-semibold text-amber-500 dark:text-amber-400 leading-none">
+                            {{ ratingLabel(newRatingStars) }} &middot; {{ newRatingStars }}/5
+                        </span>
+                        } @else {
+                        <span class="text-[10px] text-cm-text-muted/50 leading-none">tap to rate</span>
+                        }
+                    </div>
+
+                    <div class="flex items-stretch gap-1.5" (mouseleave)="clearHoverStar()">
+                        @for (star of [1,2,3,4,5]; track star) {
+                        <button type="button"
+                                (click)="newRatingStars = star"
+                                (mouseenter)="setHoverStar(star)"
+                                [class]="'flex-1 flex items-center justify-center py-3 rounded-lg select-none ' +
+                                         'border transition-all duration-150 ' +
+                                         (isStarFilled(star)
+                                           ? 'bg-amber-50 dark:bg-amber-500/15 border-amber-300 dark:border-amber-500/40 shadow-sm shadow-amber-100 dark:shadow-amber-500/10'
+                                           : 'bg-cm-surface-muted border-cm-border ' +
+                                             'hover:border-amber-300/70 dark:hover:border-amber-500/25 ' +
+                                             'hover:bg-amber-50/60 dark:hover:bg-amber-500/5')">
+                            <i [class]="isStarFilled(star)
+                                   ? 'fa-solid fa-star text-amber-400 text-[15px] leading-none'
+                                   : 'fa-solid fa-star text-slate-300 dark:text-slate-600 text-[15px] leading-none'"></i>
+                        </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Optional note -->
+                <div class="flex min-w-0">
+                    <input type="text" [(ngModel)]="newRatingNote"
+                        placeholder="Note (optional)"
+                        class="flex-1 min-w-0 bg-cm-surface-muted border border-cm-border text-cm-text-primary
+                               text-xs rounded-lg px-3 py-2 outline-none
+                               focus:ring-1 focus:ring-cm-brand transition
+                               placeholder:text-cm-text-muted">
+                </div>
+
+                <!-- Add button -->
+                <button (click)="addInterviewRating()"
+                    [disabled]="!canAddRating"
+                    class="w-full py-2 text-xs font-semibold rounded-lg transition
+                           bg-cm-brand text-white hover:opacity-90
+                           disabled:opacity-40 disabled:cursor-not-allowed
+                           flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-plus text-[10px]"></i> Add Skill Rating
+                </button>
+
+                <!-- Captured log -->
+                @if (interviewSkillRatings.length > 0) {
+                <div class="pt-2 border-t border-cm-border space-y-1">
+
+                    <!-- header row -->
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-medium uppercase tracking-wider text-cm-text-muted">
+                            Captured
+                        </span>
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full
+                                     bg-cm-surface-raised border border-cm-border text-cm-text-muted tabular-nums">
+                            {{ interviewSkillRatings.length }}
+                        </span>
+                    </div>
+
+                    @for (r of interviewSkillRatings; track r.uid) {
+                    <div class="group flex items-center gap-2 px-2.5 py-2 rounded-lg
+                                bg-cm-surface-muted border border-transparent
+                                hover:border-cm-border transition-colors duration-150">
+
+                        <!-- type dot -->
+                        <div [class]="'w-1.5 h-1.5 rounded-full shrink-0 mt-px ' + skillTypeDotClass(r.skillType)"></div>
+
+                        <!-- name + note -->
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[12px] font-medium text-cm-text-primary leading-tight truncate">
+                                {{ r.skillName }}
+                            </p>
+                            @if (r.note) {
+                            <p class="text-[10px] text-cm-text-muted leading-none truncate mt-0.5 italic">
+                                {{ r.note }}
+                            </p>
+                            }
+                        </div>
+
+                        <!-- star score pill -->
+                        <div class="flex items-center gap-1 shrink-0
+                                    px-1.5 py-0.5 rounded-md
+                                    bg-amber-50 dark:bg-amber-500/10
+                                    border border-amber-200 dark:border-amber-500/20">
+                            <i class="fa-solid fa-star text-amber-400 text-[9px] leading-none"></i>
+                            <span class="text-[10px] font-semibold text-amber-600 dark:text-amber-400 tabular-nums leading-none">
+                                {{ r.rating }}.0
+                            </span>
+                        </div>
+
+                        <!-- question badge -->
+                        @if (r.linkedToQuestion) {
+                        <span class="text-[9px] px-1.5 py-0.5 rounded shrink-0 tabular-nums font-semibold
+                                     bg-cm-brand-dim border border-cm-brand text-cm-brand-text">
+                            Q{{ r.questionId }}
+                        </span>
+                        }
+
+                        <!-- remove -->
+                        <button (click)="removeInterviewRating(r.uid)"
+                            class="opacity-0 group-hover:opacity-100 shrink-0
+                                   w-5 h-5 flex items-center justify-center rounded
+                                   text-cm-text-muted hover:text-rose-400
+                                   hover:bg-rose-50 dark:hover:bg-rose-500/10
+                                   transition-all duration-150"
+                            title="Remove">
+                            <svg viewBox="0 0 24 24" class="w-3 h-3 fill-none stroke-current stroke-2 pointer-events-none">
+                                <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    }
+                </div>
+                }
+
+            </div>
+
+            <!-- Other Skill Metrics -->
             <div class="p-5 border-b border-cm-border space-y-4">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider">
-                        Evaluation Scores
+                        Other Skill Metrics
                     </h3>
                     <div class="bg-slate-800 dark:bg-slate-700/80 px-3 py-1.5 rounded-lg text-right min-w-[64px]">
                         <span class="text-[9px] text-slate-400 block font-bold leading-none uppercase tracking-wider">Live Avg</span>
@@ -392,6 +678,26 @@
                 </div>
             </div>
 
+            <!-- Dismissed questions restore strip -->
+            @if (dismissedQuestionsList.length > 0) {
+            <div class="bg-cm-surface-muted border-b border-cm-border px-6 py-2
+                        flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] text-cm-text-muted font-bold uppercase tracking-wider shrink-0">
+                    <i class="fa-solid fa-eye-slash mr-1 text-[9px]"></i>Cleared:
+                </span>
+                @for (q of dismissedQuestionsList; track q.id) {
+                <button (click)="restoreQuestion(q)"
+                    class="inline-flex items-center gap-1 text-[10px] font-semibold
+                           px-2 py-0.5 rounded-md border transition-colors
+                           bg-cm-surface border-cm-border text-cm-text-secondary
+                           hover:border-cm-brand hover:bg-cm-brand-dim hover:text-cm-brand-text">
+                    <i class="fa-solid fa-rotate-left text-[9px]"></i>
+                    Q{{ q.id }}: {{ truncateText(q.title, 28) }}
+                </button>
+                }
+            </div>
+            }
+
             <!-- Slide Frame -->
             <div class="flex-1 relative overflow-hidden px-6 pt-6 pb-4 flex flex-col items-center gap-4">
                 <div class="relative w-full max-w-4xl flex-1 flex items-center justify-center min-h-0">
@@ -461,7 +767,17 @@
                                                transition flex items-center gap-1.5">
                                         <i class="fa-solid fa-eye"></i> Toggle Rubric / Solution
                                     </button>
-                                    <span class="text-[10px] text-cm-text-muted">Live Assessment Board</span>
+                                    <button (click)="dismissQuestion(q)"
+                                        class="px-3.5 py-1.5 text-xs font-semibold rounded-lg border
+                                               transition flex items-center gap-1.5
+                                               bg-rose-50 dark:bg-rose-500/10
+                                               border-rose-200 dark:border-rose-500/30
+                                               text-rose-600 dark:text-rose-400
+                                               hover:bg-rose-100 dark:hover:bg-rose-500/20"
+                                        title="Clear this question from the board">
+                                        <i class="fa-solid fa-eye-slash text-[11px]"></i>
+                                        Clear from board
+                                    </button>
                                 </div>
                             </div>
                         }

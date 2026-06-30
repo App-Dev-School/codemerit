@@ -1,0 +1,236 @@
+<div class="register-page">
+  <app-particle-canvas></app-particle-canvas>
+
+  <!-- ── Success state ────────────────────────────────────── -->
+  @if (success) {
+    <div class="glass-card success-card">
+      <div class="success-body">
+        <div class="success-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h2 class="success-title">Journey Initiated!</h2>
+        <p class="success-subtitle">Welcome to the elite tier. Check your email — your verification link is on its way.</p>
+        <div class="spinner"></div>
+      </div>
+    </div>
+  }
+
+  <!-- ── Main card ─────────────────────────────────────────── -->
+  @if (!success) {
+    <div class="glass-card main-card">
+
+      <!-- Header -->
+      <div class="card-header">
+        <h1 class="card-title">Your Path to <span class="text-gradient">Tech Expert</span></h1>
+        <p class="card-subtitle">Complete your profile to unlock the ultimate career roadmap.</p>
+      </div>
+
+      <!-- ── Stepper ──────────────────────────────────────── -->
+      <div class="stepper-wrapper">
+        <div class="stepper-track"></div>
+        <div class="stepper-fill" [style.width.%]="progressWidth"></div>
+        <div class="stepper-indicators">
+          @for (step of steps; track step.label; let i = $index) {
+            <div class="step-item" (click)="goToStep(i + 1)">
+              <div [class]="stepBtnClass(i + 1)">
+                @if (isCompleted(i + 1)) {
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:1.1rem;height:1.1rem">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                  </svg>
+                } @else {
+                  {{ i + 1 }}
+                }
+              </div>
+              <span [class]="stepTextClass(i + 1)">{{ step.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- ── Form ──────────────────────────────────────────── -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <!-- STEP 1 – Goal Setting -->
+        <div class="step-content" [class.active]="currentStep === 1">
+          <h2 class="step-title">
+            <svg style="color:#60a5fa" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            Define Your Next Tech Goal
+          </h2>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label">Target Industry</label>
+              <select class="glass-input" disabled>
+                <option>Software &amp; Technology</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Tech Area</label>
+              <select formControlName="techArea" class="glass-input" (change)="onTechAreaChange()">
+                <option value="" disabled>Select an area…</option>
+                <option value="frontend">Frontend Engineering</option>
+                <option value="backend">Backend Engineering</option>
+                <option value="fullstack">Full-Stack Development</option>
+                <option value="aiml">AI / ML Engineering</option>
+                <option value="data">Data Engineering</option>
+                <option value="devops">DevOps &amp; Cloud</option>
+                <option value="gamedev">Game Development</option>
+                <option value="mobile">Mobile Development</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Select Track</label>
+              <select formControlName="track" class="glass-input">
+                <option value="" disabled>Select a Tech Area first…</option>
+                @for (track of availableTracks; track track) {
+                  <option [value]="trackValue(track)">{{ track }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Dream Role</label>
+              <input type="text" formControlName="dreamRole"
+                     placeholder="e.g. Principal Architect, Lead Developer…"
+                     class="glass-input"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 – Skill Mapping -->
+        <div class="step-content" [class.active]="currentStep === 2">
+          <h2 class="step-title">
+            <svg style="color:#c084fc" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+            Map Your Core Skills
+          </h2>
+          <div class="form-stack">
+            <div class="form-field">
+              <label class="form-label-row">
+                <span>Current Mastery Level</span>
+                <span [class]="masteryLabelClass">{{ masteryLabel }}</span>
+              </label>
+              <input type="range" min="1" max="100"
+                     [value]="form.get('masteryLevel')!.value"
+                     (input)="onMasteryInput($event)"
+                     class="mastery-range"/>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Primary Focus Areas</label>
+              <div class="focus-areas-grid">
+                @for (area of focusAreaOptions; track area) {
+                  <label class="focus-chip" [class.focus-chip--selected]="isFocusAreaSelected(area)">
+                    <input type="checkbox"
+                           [checked]="isFocusAreaSelected(area)"
+                           (change)="toggleFocusArea(area)"/>
+                    <span>{{ area }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 – Experience -->
+        <div class="step-content" [class.active]="currentStep === 3">
+          <h2 class="step-title">
+            <svg style="color:#60a5fa" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Validate Your Experience
+          </h2>
+          <div class="form-stack">
+            <div class="form-field">
+              <label class="form-label">Years of Field Experience</label>
+              <input type="number" min="0" formControlName="yearsExperience"
+                     placeholder="e.g. 5" class="glass-input"/>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Describe Your Biggest Technical Achievement</label>
+              <textarea rows="4" formControlName="achievement"
+                        placeholder="I migrated our monolithic architecture to microservices, reducing deployment times by 40%…"
+                        class="glass-input" style="resize:none"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4 – Account -->
+        <div class="step-content" [class.active]="currentStep === 4">
+          <h2 class="step-title">
+            <svg style="color:#c084fc" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+            Lock In Your SME Account
+          </h2>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label">First Name</label>
+              <input type="text" formControlName="firstName" placeholder="John" class="glass-input"/>
+              @if (form.get('firstName')!.touched && form.get('firstName')!.hasError('required')) {
+                <p class="field-error">First name is required.</p>
+              }
+            </div>
+            <div class="form-field">
+              <label class="form-label">Last Name</label>
+              <input type="text" formControlName="lastName" placeholder="Doe" class="glass-input"/>
+            </div>
+            <div class="form-field form-field--full">
+              <label class="form-label">Email Address</label>
+              <input type="email" formControlName="email" placeholder="john@domain.com" class="glass-input"/>
+              @if (form.get('email')!.touched && form.get('email')!.hasError('email')) {
+                <p class="field-error">Please enter a valid email.</p>
+              }
+            </div>
+            <div class="form-field form-field--full">
+              <label class="form-label">Secure Password</label>
+              <input type="password" formControlName="password" placeholder="••••••••" class="glass-input"/>
+              @if (form.get('password')!.touched && form.get('password')!.hasError('minlength')) {
+                <p class="field-error">Password must be at least 6 characters.</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Navigation ──────────────────────────────────── -->
+        <div class="form-nav">
+          <button type="button" (click)="prevStep()" class="btn-back"
+                  [class.btn-hidden]="currentStep === 1">
+            Back
+          </button>
+          @if (currentStep < totalSteps) {
+            <button type="button" (click)="nextStep()" class="action-btn">
+              Continue Journey
+            </button>
+          } @else {
+            <button type="submit" class="action-btn" [disabled]="loading">
+              @if (loading) {
+                <svg class="btn-spinner" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" style="opacity:.25"/>
+                  <path fill="currentColor" style="opacity:.75"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                </svg>
+                Processing…
+              } @else {
+                Become SME
+              }
+            </button>
+          }
+        </div>
+
+      </form>
+
+      <p class="signin-note">
+        Already have an account?
+        <a routerLink="/authentication/signin" class="signin-link">Sign in</a>
+      </p>
+
+    </div>
+  }
+</div>

@@ -1,0 +1,130 @@
+@use '../auth-base' as auth;
+
+:host        { @include auth.page-host; }
+.verify-page { @include auth.page-wrapper; }
+
+.verify-card {
+  @include auth.glass-card;
+  width: 100%;
+  max-width: 26rem;
+  padding: 2.25rem 2rem;
+}
+
+// ── Avatar ────────────────────────────────────────────────────
+.avatar-wrap { position: relative; width: 5rem; height: 5rem; margin: 0 auto 1.5rem; }
+
+.avatar-img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.25);
+}
+
+.avatar-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #0f172a;
+
+  svg { width: 0.7rem; height: 0.7rem; color: white; }
+}
+
+// ── Card header ───────────────────────────────────────────────
+.card-header  { text-align: center; margin-bottom: 1.5rem; }
+.card-title   { font-size: 1.6rem; font-weight: 700; color: white; margin-bottom: 0.5rem; line-height: 1.2; }
+.card-subtitle { font-size: 0.83rem; color: #9ca3af; line-height: 1.55; margin-bottom: 0.75rem; }
+
+.email-chip {
+  display: inline-block;
+  font-size: 0.78rem;
+  color: #c084fc;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 999px;
+  padding: 0.2rem 0.75rem;
+}
+
+.text-gradient { @include auth.text-gradient; }
+
+// ── OTP section ───────────────────────────────────────────────
+.otp-section    { margin-bottom: 1.25rem; }
+.otp-hint-text  { font-size: 0.78rem; color: #6b7280; text-align: center; margin-bottom: 0.75rem; strong { color: #a5b4fc; font-weight: 500; } }
+
+// ── Clipboard paste button ────────────────────────────────────
+.paste-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.6rem;
+  border: 1px dashed rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.06);
+  color: #a5b4fc;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  svg { width: 0.95rem; height: 0.95rem; flex-shrink: 0; }
+  &:hover { background: rgba(139, 92, 246, 0.12); border-color: rgba(139, 92, 246, 0.6); color: #c4b5fd; }
+}
+
+// ── Errors ────────────────────────────────────────────────────
+.field-error  { @include auth.field-error; text-align: center; }
+.error-banner { @include auth.error-banner; text-align: center; }
+
+// ── Verify button ─────────────────────────────────────────────
+.verify-btn  { @include auth.action-btn; margin-bottom: 1.25rem; }
+
+// ── Help link ─────────────────────────────────────────────────
+.help-wrap { text-align: center; }
+.help-link { @include auth.back-link; }
+
+// ── Verifying state ───────────────────────────────────────────
+.verifying-state { text-align: center; padding: 2rem 0; position: relative; }
+
+.verifying-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  position: relative;
+  z-index: 1;
+
+  svg { width: 2rem; height: 2rem; color: white; }
+}
+
+.pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5rem;
+  height: 5rem;
+  transform: translate(-50%, calc(-50% - 0.5rem));
+  border-radius: 50%;
+  border: 2px solid rgba(139, 92, 246, 0.5);
+  animation: pulse 1.5s ease-out infinite;
+}
+
+@keyframes pulse {
+  0%   { transform: translate(-50%, calc(-50% - 0.5rem)) scale(1);   opacity: 0.8; }
+  100% { transform: translate(-50%, calc(-50% - 0.5rem)) scale(1.7); opacity: 0; }
+}
+
+.verifying-text { font-size: 0.9rem; color: #9ca3af; }

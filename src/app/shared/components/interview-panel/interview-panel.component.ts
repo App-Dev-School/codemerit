@@ -5,6 +5,9 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '@core';
+import { MasterService } from '@core/service/master.service';
+import { RatingType } from '@core/models/rating-type';
+import { SkillType } from '@core/models/skill-type';
 
 interface Question {
   id: number;
@@ -14,6 +17,25 @@ interface Question {
   description: string;
   instruction: string;
   rubric: string;
+}
+
+interface InterviewSkillRating {
+  uid:              string;       // local UI identity
+  skillId:          number;       // jobRoleId | subjectId | topicId | questionId
+  skillType:        SkillType;    // JobRole | Subject | Topic | Question
+  skillName:        string;       // human-readable label
+  imageUrl?:        string;
+  rating:           number;       // 0–5 stars
+  ratingType:       RatingType;   // always Interview
+  note:             string;
+  linkedToQuestion: boolean;
+  questionId?:      number;
+}
+
+interface SkillOption {
+  id: number;
+  title: string;
+  imageUrl?: string;
 }
 
 interface Particle {
@@ -42,6 +64,14 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   readonly themeService = inject(ThemeService);
   private renderer      = inject(Renderer2);
   private document      = inject<Document>(DOCUMENT);
+  private master        = inject(MasterService);
+
+  // Expose enum to template
+  readonly SkillType = SkillType;
+
+  // ── Interview context (injectable later via @Input) ─────────────────────────
+  readonly interviewJobRoleId   = 1;
+  readonly interviewJobRoleName = 'Full Stack Developer – Angular + NestJS';
 
   toggleTheme(): void {
     this.themeService.toggle(this.document, this.renderer);
@@ -62,7 +92,7 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   closeSidebar(): void  { this.sidebarOpen = false; }
 
   get asideClass(): string {
-    const base    = 'bg-cm-surface border-r border-cm-border flex flex-col transition-transform duration-300 ease-in-out shrink-0';
+    const base    = 'bg-black border-r border-cm-border flex flex-col transition-transform duration-300 ease-in-out shrink-0';
     const mobile  = `fixed inset-y-0 left-0 z-50 w-80 h-screen ${this.sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`;
     const desktop = 'md:relative md:translate-x-0 md:w-96 md:h-full md:z-10';
     return `${base} ${mobile} ${desktop}`;
@@ -81,9 +111,9 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   // ── Ratings ────────────────────────────────────────────────────────────────
-  ratings = { coding: 8, system: 7, problem: 8, comm: 7 };
-  averageScore = '7.5';
-  averageColorClass = 'text-indigo-300';
+  ratings = { coding: 1, system: 1, problem: 1, comm: 1 };
+  averageScore = '1.0';
+  averageColorClass = 'text-rose-400';
 
   // ── Subject / Slides ───────────────────────────────────────────────────────
   activeSubject = 'web_foundations';
@@ -113,6 +143,24 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
 
   // ── Mute ───────────────────────────────────────────────────────────────────
   isMuted = false;
+
+  // ── Dismissed questions ────────────────────────────────────────────────────
+  // Key format: `${subject}:${questionId}` — scoped per-subject
+  private dismissedQuestions = new Set<string>();
+
+  // ── Skill ratings captured during interview ────────────────────────────────
+  interviewSkillRatings: InterviewSkillRating[] = [];
+
+  // Rating form state
+  newRatingType:      SkillType | '' = '';
+  newRatingSkillId:   number         = 0;
+  newRatingSkillName: string         = '';
+  newRatingStars:     number         = 0;
+  newRatingNote:      string         = '';
+  newRatingLinked:    boolean        = true;
+  newRatingHover:     number         = 0;
+  skillSearch:        string         = '';
+  skillPickerOpen:    boolean        = false;
 
   // ── Toast ──────────────────────────────────────────────────────────────────
   toastMessage = '';
@@ -305,7 +353,17 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
 
   // ── Computed ───────────────────────────────────────────────────────────────
   get activeQuestions(): Question[] {
-    return this.questionsDatabase[this.activeSubject] ?? [];
+    return (this.questionsDatabase[this.activeSubject] ?? [])
+      .filter(q => !this.dismissedQuestions.has(`${this.activeSubject}:${q.id}`));
+  }
+
+  get activeQuestion(): Question | null {
+    return this.activeQuestions[this.activeSlideIndex] ?? null;
+  }
+
+  get dismissedQuestionsList(): Question[] {
+    return (this.questionsDatabase[this.activeSubject] ?? [])
+      .filter(q => this.dismissedQuestions.has(`${this.activeSubject}:${q.id}`));
   }
 
   get activeSubjectTitle(): string {
@@ -406,6 +464,162 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   toggleMute(): void {
     this.isMuted = !this.isMuted;
     this.showToast(this.isMuted ? 'Your microphone has been muted.' : 'Microphone is live.');
+  }
+
+  // ── Dismiss / Restore questions ────────────────────────────────────────────
+  dismissQuestion(q: Question): void {
+    this.dismissedQuestions.add(`${this.activeSubject}:${q.id}`);
+    const remaining = this.activeQuestions;
+    if (this.activeSlideIndex >= remaining.length) {
+      this.activeSlideIndex = Math.max(0, remaining.length - 1);
+    }
+    this.showToast('Question cleared from board.');
+  }
+
+  restoreQuestion(q: Question): void {
+    this.dismissedQuestions.delete(`${this.activeSubject}:${q.id}`);
+    this.showToast('Question restored to board.');
+  }
+
+  // ── Skill rating dropdowns ─────────────────────────────────────────────────
+  get skillDropdownOptions(): SkillOption[] {
+    if (this.newRatingType === SkillType.Subject) {
+      return (this.master.subjects as any[]).map(s => ({
+        id: s.id, title: s.title, imageUrl: s.image ?? s.imageUrl
+      }));
+    }
+    if (this.newRatingType === SkillType.Topic) {
+      return (this.master.topics as any[]).map(t => ({
+        id: t.id, title: t.title
+      }));
+    }
+    return [];
+  }
+
+  get showSkillDropdown(): boolean {
+    return this.newRatingType === SkillType.Subject
+        || this.newRatingType === SkillType.Topic;
+  }
+
+  get filteredSkillOptions(): SkillOption[] {
+    const q = this.skillSearch.toLowerCase().trim();
+    if (!q) return this.skillDropdownOptions;
+    return this.skillDropdownOptions.filter(o => o.title.toLowerCase().includes(q));
+  }
+
+  get canAddRating(): boolean {
+    if (!this.newRatingType || !this.newRatingStars) return false;
+    if (this.showSkillDropdown && !this.newRatingSkillId) return false;
+    if (this.newRatingType === SkillType.Question && !this.activeQuestion) return false;
+    return true;
+  }
+
+  get techEvalAvg(): number {
+    if (!this.interviewSkillRatings.length) return 0;
+    const sum = this.interviewSkillRatings.reduce((acc, r) => acc + r.rating, 0);
+    return Math.round((sum / this.interviewSkillRatings.length) * 10) / 10;
+  }
+
+  get techEvalAvgColor(): string {
+    const avg = this.techEvalAvg;
+    if (avg >= 4.5) return 'text-emerald-400';
+    if (avg >= 3)   return 'text-amber-400';
+    if (avg >= 2)   return 'text-orange-400';
+    return 'text-rose-400';
+  }
+
+  onRatingTypeChange(event: Event): void {
+    this.newRatingType      = (event.target as HTMLSelectElement).value as SkillType | '';
+    this.newRatingSkillId   = 0;
+    this.newRatingSkillName = '';
+    this.skillSearch        = '';
+    this.skillPickerOpen    = false;
+  }
+
+  selectSkillOption(opt: SkillOption): void {
+    this.newRatingSkillId   = opt.id;
+    this.newRatingSkillName = opt.title;
+    this.skillSearch        = '';
+    this.skillPickerOpen    = false;
+  }
+
+  // ── Skill ratings ──────────────────────────────────────────────────────────
+  addInterviewRating(): void {
+    if (!this.canAddRating) return;
+
+    let skillId   = this.newRatingSkillId;
+    let skillName = this.newRatingSkillName;
+    let imageUrl: string | undefined;
+
+    if (this.newRatingType === SkillType.JobRole) {
+      skillId   = this.interviewJobRoleId;
+      skillName = this.interviewJobRoleName;
+    }
+
+    if (this.newRatingType === SkillType.Question) {
+      const aq  = this.activeQuestion!;
+      skillId   = aq.id;
+      skillName = aq.title;
+    }
+
+    if (this.newRatingType === SkillType.Subject) {
+      const opt = this.skillDropdownOptions.find(o => o.id === skillId);
+      imageUrl  = opt?.imageUrl;
+    }
+
+    const aq           = this.activeQuestion;
+    const isQType      = this.newRatingType === SkillType.Question;
+    const linked       = isQType || (this.newRatingLinked && !!aq && this.assessmentStarted);
+
+    this.interviewSkillRatings.push({
+      uid:              `${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+      skillId,
+      skillType:        this.newRatingType as SkillType,
+      skillName,
+      imageUrl,
+      rating:           this.newRatingStars,
+      ratingType:       RatingType.Interview,
+      note:             this.newRatingNote.trim(),
+      linkedToQuestion: linked,
+      questionId:       linked ? aq?.id : undefined,
+    });
+
+    // Keep type so user can quickly add another rating of the same type
+    this.newRatingSkillId   = 0;
+    this.newRatingSkillName = '';
+    this.newRatingStars     = 0;
+    this.newRatingNote      = '';
+    this.skillPickerOpen    = false;
+    this.showToast(`Rating added: ${skillName}`);
+  }
+
+  removeInterviewRating(uid: string): void {
+    this.interviewSkillRatings = this.interviewSkillRatings.filter(r => r.uid !== uid);
+  }
+
+  setHoverStar(n: number): void { this.newRatingHover = n; }
+  clearHoverStar():        void { this.newRatingHover = 0; }
+
+  isStarFilled(star: number): boolean {
+    return star <= (this.newRatingHover || this.newRatingStars);
+  }
+
+  ratingLabel(r: number): string {
+    return ['', 'Weak', 'Fair', 'Average', 'Strong', 'Exceptional'][r] ?? '';
+  }
+
+  skillTypeDotClass(type: SkillType): string {
+    const map: Partial<Record<SkillType, string>> = {
+      [SkillType.JobRole]:  'bg-indigo-500',
+      [SkillType.Subject]:  'bg-violet-500',
+      [SkillType.Topic]:    'bg-sky-500',
+      [SkillType.Question]: 'bg-emerald-500',
+    };
+    return map[type] ?? 'bg-cm-text-muted';
+  }
+
+  truncateText(text: string, max = 32): string {
+    return text.length > max ? text.slice(0, max) + '…' : text;
   }
 
   // ── Milestone ──────────────────────────────────────────────────────────────

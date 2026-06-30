@@ -187,7 +187,7 @@ export class QuizCreateComponent implements OnInit {
                 this.generatedQuizCode = slug;
                 //this.launchQuiz(this.generatedQuizCode);
                 this.loading = false;
-                this.close();
+                //this.close();
               }, 6000);
             }
           } else {
@@ -195,7 +195,7 @@ export class QuizCreateComponent implements OnInit {
             this.close();
             //#Task: handle error well. Determine eligibilty etc.
             this.requestConfirmed = false;
-            this.snackService.display('snackbar-dark', response?.message ?? 'Failed to process your Quiz request. Please try again later.', 'bottom', 'center');
+            this.snackService.display('snackbar-dark', response?.message ?? 'Failed to process your request. Please try again later.', 'bottom', 'center');
           }
         },
         error: (error) => {
