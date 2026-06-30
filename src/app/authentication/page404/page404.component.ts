@@ -1,22 +1,12 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms'; 
-@Component({
-    selector: 'app-page404',
-    templateUrl: './page404.component.html',
-    styleUrls: ['./page404.component.scss'],
-    imports: [
-        FormsModule,
-        MatButtonModule,
-        RouterLink,
-    ]
-})
-export class Page404Component {
-  constructor(private router: Router) { }
+import { RouterLink } from '@angular/router';
+import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
 
-  navigateToHome(){
-    this.router.navigate(['./dashboard']);
-  }
-}
+@Component({
+  selector: 'app-page404',
+  standalone: true,
+  imports: [RouterLink, ParticleCanvasComponent],
+  templateUrl: './page404.component.html',
+  styleUrls: ['./page404.component.scss'],
+})
+export class Page404Component {}

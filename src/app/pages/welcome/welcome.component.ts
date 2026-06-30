@@ -9,6 +9,7 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { CertificateModel, CertificateTemplateId } from '@shared/components/certificate/certificate.model';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
+import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 
 export const certificateModels: CertificateModel[] = [
   {
@@ -117,6 +118,7 @@ export const certificateModels: CertificateModel[] = [
   imports: [
     RouterLink,
     LearnerWelcomeCardComponent,
+    MeritListWidgetComponent,
   ],
   //  animations: [
   //     trigger('fadeOut', [
@@ -138,6 +140,14 @@ export class WelcomeComponent implements OnInit {
   subjectsByRole: { [role: string]: Course[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
   certificateModels: CertificateModel[] = [];
+
+  meritList = [
+    { id: 1, name: 'Vishal Kumar',  username: 'vishal',  designationName: 'Angular Architect', score: 96, avgAccuracy: 92, image: 'assets/images/users/user.jpg' },
+    { id: 2, name: 'Priya Sharma',  username: 'priya',   designationName: 'Frontend Dev',      score: 91, avgAccuracy: 88 },
+    { id: 3, name: 'Arjun Patel',   username: 'arjun',   designationName: 'Full Stack Dev',    score: 87, avgAccuracy: 84 },
+    { id: 4, name: 'Golda Maria',   username: 'golda',   designationName: 'Intern',            score: 82, avgAccuracy: 79 },
+    { id: 5, name: 'Taylor Star',   username: 'taylor',  designationName: 'Contributor',       score: 75, avgAccuracy: 71 },
+  ];
 
   skillRatings: SkillRating[] = [
     {
