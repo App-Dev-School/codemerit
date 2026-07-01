@@ -82,6 +82,13 @@ export interface QuizStats {
   avgScore: number;
 }
 
+export interface LessonStats {
+  totalLessons: number;
+  totalViews: number;
+  totalPending: number;
+  totalCompleted: number;
+}
+
 // ---------------------
 // Combined Dashboard Data
 // ---------------------
@@ -92,6 +99,7 @@ export interface AdminDashboardData {
   topics: TopicStats;
   subjects: SubjectStats;
   quizzes: QuizStats;
+  lessons: LessonStats;
   timeSeries: TimeSeriesStats;
 }
 

@@ -58,6 +58,13 @@ export interface LmsQuizStats {
   totalQuizCreated: number;
 }
 
+export interface LmsLessonStats {
+  totalLessonsCreated: number;
+  totalViews: number;
+  totalPending: number;
+  totalCompleted: number;
+}
+
 // ---------------------
 // Combined Dashboard Data
 // ---------------------
@@ -66,6 +73,7 @@ export interface LmsDashboardData {
   questions: LmsQuestionStats;
   topics: LmsTopicStats;
   quizzes: LmsQuizStats;
+  lessons: LmsLessonStats;
   timeSeries: LmsTimeSeriesStats;
 }
 

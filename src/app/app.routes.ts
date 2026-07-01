@@ -111,6 +111,16 @@ export const APP_ROUTE: Route[] = [
             import('./assessment/assessment.routes').then((m) => m.ASSESSMENT_ROUTE),
     },
     {
+        path: "learn/overview/:qcode",
+        component: AuthLayoutComponent,
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./learn/lesson/lesson.page').then(c => c.LessonPage),
+            },
+        ],
+    },
+    {
         path: "learn",
         component: MainLayoutComponent,
         //component: AuthLayoutComponent,

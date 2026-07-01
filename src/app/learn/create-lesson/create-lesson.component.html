@@ -16,23 +16,58 @@
             <div class="col-12 mb-2">
               <mat-form-field appearance="fill" class="example-full-width">
                 <mat-label>Subject</mat-label>
-                <input matInput formControlName="subject" placeholder="Enter subject" required />
+                <mat-select formControlName="subject" required (selectionChange)="onSubjectChange($event.value)">
+                  @for (subject of subjects; track subject.id) {
+                  <mat-option [value]="subject.id">{{ subject.title }}</mat-option>
+                  }
+                </mat-select>
               </mat-form-field>
             </div>
             <div class="col-12 mb-2">
               <mat-form-field appearance="fill" class="example-full-width">
                 <mat-label>Topic</mat-label>
-                <input matInput formControlName="topic" placeholder="Enter topic" required />
+                <mat-select formControlName="topic" required>
+                  @for (topic of filteredTopics; track topic.id) {
+                  <mat-option [value]="topic.id">{{ topic.title }}</mat-option>
+                  }
+                </mat-select>
               </mat-form-field>
             </div>
             <div class="col-12 mb-2">
-              <mat-label>Description</mat-label>
-              <!-- <div class="tiptap-mat-wrapper">
-                <tiptap-editor [editor]="editor" class="tiptap-mat-textarea"></tiptap-editor>
-              </div> -->
-
-          <tiptap-editor [editor]="editor"></tiptap-editor>
-
+              <mat-form-field appearance="fill" class="example-full-width">
+                <mat-label>Level</mat-label>
+                <mat-select formControlName="level" required>
+                  @for (option of difficultyOptions; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-12 mb-2" formArrayName="descriptions">
+              <div class="description-header">
+                <mat-label>Description</mat-label>
+                <button mat-mini-fab color="primary" type="button" (click)="addDescription()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              @for (description of descriptions.controls; track $index) {
+              <div class="description-row">
+                <div class="description-editor">
+                  <label>Description {{ $index + 1 }}{{ $index === 0 ? ' *' : '' }}</label>
+                  <div class="tiptap-mat-wrapper">
+                    <tiptap-editor [editor]="descriptionEditors[$index]" class="tiptap-mat-textarea"></tiptap-editor>
+                  </div>
+                  @if (description.invalid && (description.touched || submitted)) {
+                  <mat-error>Description is required</mat-error>
+                  }
+                </div>
+                @if (descriptions.length > 1) {
+                <button mat-icon-button color="warn" type="button" (click)="removeDescription($index)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                }
+              </div>
+              }
             </div>
             <div class="col-12 mt-3">
               <button mat-raised-button color="primary" type="submit" [disabled]="lessonForm.invalid">Create Lesson</button>

@@ -9,7 +9,13 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { CertificateModel, CertificateTemplateId } from '@shared/components/certificate/certificate.model';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
-import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
+import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
+import { ReportListComponent } from '@shared/components/report-list/report-list.component';
+import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
+import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
+import { NgScrollbar } from 'ngx-scrollbar';
+import { register } from 'swiper/element/bundle';
+import { LessonService } from 'src/app/learn/lesson.service';
 
 export const certificateModels: CertificateModel[] = [
   {
@@ -196,14 +202,7 @@ export class WelcomeComponent implements OnInit {
     }
   ];
 
-  engagements = [
-    { id: 1, title: 'Angular Signals — Reactive State Without Zone.js', subject: 'Angular',    topic: 'Signals',    duration: '8 min',  difficulty: 'Intermediate', imageUrl: 'assets/images/tech/angular.png' },
-    { id: 2, title: 'TypeScript Generics & Conditional Types Explained', subject: 'TypeScript', topic: 'Generics',   duration: '12 min', difficulty: 'Advanced',     imageUrl: 'assets/images/tech/typescript.png' },
-    { id: 3, title: 'RxJS: switchMap vs mergeMap vs concatMap',          subject: 'RxJS',       topic: 'Operators',  duration: '10 min', difficulty: 'Advanced',     imageUrl: 'assets/images/tech/rxjs.png' },
-    { id: 4, title: 'Git Rebase vs Merge — When to Use Which',           subject: 'Git',        topic: 'Branching',  duration: '7 min',  difficulty: 'Beginner',     imageUrl: 'assets/images/tech/git.png' },
-    { id: 5, title: 'Docker Multi-Stage Builds for Leaner Images',       subject: 'Docker',     topic: 'Optimisation',duration: '9 min', difficulty: 'Intermediate', imageUrl: 'assets/images/tech/docker.png' },
-    { id: 6, title: 'Strict Mode in JavaScript — What Changes?',         subject: 'JavaScript', topic: 'ECMAScript', duration: '6 min',  difficulty: 'Beginner',     imageUrl: 'assets/images/tech/javascript.png' },
-  ];
+  engagements: any[] = [];
 
   userTasks = [
     {
@@ -252,7 +251,9 @@ export class WelcomeComponent implements OnInit {
   constructor(private router: Router,
     private master: MasterService,
     private snackService: SnackbarService,
-    public authService: AuthService) {
+    public authService: AuthService,
+    private lessonService: LessonService) {
+    register();
     this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
       this.certificateModels = certificateModels;
@@ -296,6 +297,7 @@ export class WelcomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadExploreLessons();
     if (!this.master.subjects.length || !this.master.topics.length) {
       this.master.dataLoaded$.subscribe((ready) => {
         if (ready) {
@@ -313,37 +315,13 @@ export class WelcomeComponent implements OnInit {
     }
   }
 
-  startedLessonIds: number[] = [];
-
-  get pendingLessonsCount(): number {
-    return this.engagements.length - this.startedLessonIds.length;
-  }
-
-  get allLessonsStarted(): boolean {
-    return this.startedLessonIds.length >= this.engagements.length;
-  }
-
-  isLessonStarted(id: number): boolean {
-    return this.startedLessonIds.includes(id);
-  }
-
-  lessonMeta(subject: string): { accentColor: string; iconBg: string; iconColor: string } {
-    const map: Record<string, { accentColor: string; iconBg: string; iconColor: string }> = {
-      'Angular':    { accentColor: '#f87171', iconBg: 'rgba(248,113,113,0.12)', iconColor: '#f87171' },
-      'TypeScript': { accentColor: '#60a5fa', iconBg: 'rgba(96,165,250,0.12)',  iconColor: '#60a5fa' },
-      'RxJS':       { accentColor: '#a78bfa', iconBg: 'rgba(167,139,250,0.12)', iconColor: '#a78bfa' },
-      'Git':        { accentColor: '#fb923c', iconBg: 'rgba(251,146,60,0.12)',  iconColor: '#fb923c' },
-      'Docker':     { accentColor: '#38bdf8', iconBg: 'rgba(56,189,248,0.12)',  iconColor: '#38bdf8' },
-      'JavaScript': { accentColor: '#ca8a04', iconBg: 'rgba(250,204,21,0.10)',  iconColor: '#ca8a04' },
-    };
-    return map[subject] ?? { accentColor: '#818cf8', iconBg: 'rgba(99,102,241,0.12)', iconColor: '#818cf8' };
-  }
-
-  exploreLesson(itemId: number): void {
-    if (!this.isLessonStarted(itemId)) {
-      this.startedLessonIds = [...this.startedLessonIds, itemId];
+  exploreLesson(itemId: any) {
+    const lesson = this.engagements.find((item: any) => item.id === itemId);
+    if (lesson?.slug) {
+      this.router.navigate(['/learn/overview', lesson.slug]);
+      return;
     }
-    this.snackService.display('snackbar-dark', 'Opening lesson — mark complete from the lesson page', 'bottom', 'center');
+    this.snackService.display('snackbar-dark', 'Lesson not available.', 'bottom', 'center');
   }
 
   closeLesson(itemId: any) {
@@ -353,6 +331,27 @@ export class WelcomeComponent implements OnInit {
     } else {
       this.engagements = this.engagements.filter(item => item.id > 1)
     }
+  }
+
+  private loadExploreLessons(): void {
+    this.lessonService.getLessons(10, 'all').subscribe({
+      next: (response: any) => {
+        const lessons = Array.isArray(response?.data) ? response.data : [];
+        this.engagements = lessons.map((lesson: any, index: number) => ({
+          id: lesson.id,
+          slug: lesson.slug,
+          title: lesson.title,
+          subject: lesson.subject?.title ?? 'Lesson',
+          topic: lesson.topic?.title ?? '',
+          type: 'Lesson',
+          style: index % 2 === 0 ? 'right' : 'left',
+          imageUrl: lesson.subject?.image || 'assets/images/tech/placeholder.png',
+        }));
+      },
+      error: (error) => {
+        console.error('Failed to load explore lessons', error);
+      }
+    });
   }
 
 

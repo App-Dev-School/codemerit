@@ -1,72 +1,82 @@
-@if(lesson && lesson.title){
-    <ion-header>
-        <ion-toolbar>
-            <ion-buttons mode="md" slot="start">
-                <ion-back-button text="{{lesson.title}}" mode="md" icon="">{{lesson.title}}</ion-back-button>
-            </ion-buttons>
-            <ion-title>
-                <div class="title_inner d-flex">
-                    <strong>{{lesson.title}} {{lesson.sections.length}}</strong>
+<div class="auth-container">
+  <div class="auth-main">
+    <div class="lesson-container d-flex flex-column vh-100">
+      @if (loading) {
+      <div class="lesson-state">
+        <h5>Loading lesson...</h5>
+      </div>
+      }
+
+      @if (!loading && errorMessage) {
+      <div class="lesson-state">
+        <h5>{{ errorMessage }}</h5>
+        <button mat-flat-button color="primary" (click)="backToLessons()">
+          <mat-icon>keyboard_arrow_left</mat-icon>
+          Back
+        </button>
+      </div>
+      }
+
+      @if (!loading && !errorMessage && lesson && lesson.title) {
+      <mat-toolbar color="primary" class="toolbar justify-content-between">
+        <div class="d-flex align-items-center min-w-0">
+          <button mat-icon-button (click)="backToLessons()" style="color: #fff; opacity: 0.8;">
+            <mat-icon>keyboard_arrow_left</mat-icon>
+          </button>
+
+          @if (lesson.subject?.image) {
+          <img [src]="lesson.subject.image" alt="icon" class="subject-icon me-2">
+          }
+
+          <span class="lesson-title">{{ lesson.title }}</span>
+        </div>
+
+        @if (lesson.sections?.length) {
+        <div class="section-count">{{ currentSection + 1 }} of {{ lesson.sections.length }}</div>
+        }
+      </mat-toolbar>
+
+      <div class="flex-grow-1 overflow-hidden">
+        @if (lesson.sections?.length > 0) {
+        <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100"
+          (slidechange)="swiperSlideChanged($event)">
+          @for (section of lesson.sections; track section.id) {
+          <swiper-slide>
+            <p class="col-grey text-center m-t-20 m-b-10">{{$index + 1}} of {{ lesson.sections.length }}</p>
+
+            <div class="lesson-card">
+              <ng-scrollbar class="lesson-scroller" visibility="hover">
+                <div class="card-content">
+                  <div class="lesson-content" [innerHTML]="section.description || section.body"></div>
                 </div>
-            </ion-title>
-            <ion-buttons slot="end">
-                <ion-icon name="add-circle-outline" slot="end" (click)="openMenu()"></ion-icon>
-                <ion-icon color="add-circle-outline" name="chevron-forward"></ion-icon>
-              </ion-buttons>
-        </ion-toolbar>
-    </ion-header>
-    
-    <ion-content>
-                    <div class="sliderBox">
-                        <swiper-container #swiperEx initial-slide = "0" (slidechange)="swiperSlideChanged($event)">
-                            @for (section of lesson.sections; track section.id) {
-                                <swiper-slide>
-                                    <div class="ion-slides">
-                                        <div class="ion-slide">
-                        <!-- Start Sample Question -->
-                        <ion-card>
-                        <h3>{{section.title}}</h3>
-                        <div class="section_content" [innerHTML]="section.body">
-                        </div>
-                        <!-- <div class="section_content">
-                            {{section.body }}
-                        </div> -->
-                        </ion-card>
-                        </div>
-                        <!-- End Sample Question -->
-                                     </div>
-                                </swiper-slide>
-                            }
-                            </swiper-container>
-                            <ion-icon name="add-circle-outline" color="secondary" size="large"></ion-icon>
-                            <ion-icon name="md-add" color="secondary" size="large"></ion-icon>
+              </ng-scrollbar>
+            </div>
+          </swiper-slide>
+          }
+        </swiper-container>
+        }
+      </div>
 
-                            <ion-item lines="none" class="ion-text-center centered-item">
-                                <ion-label class="ion-text-center" color="secondary">{{ currentSection + 1 }} of {{ lesson.sections.length }}</ion-label>
-                            </ion-item>
+      @if (lesson.sections?.length > 0) {
+      <mat-toolbar color="accent" class="footer-toolbar">
+        <div class="footer-actions">
+          @if (currentSection > 0) {
+          <button mat-flat-button color="warn" (click)="onSlidePrev()">
+            <mat-icon>keyboard_arrow_left</mat-icon>
+            Prev
+          </button>
+          }
 
-                            <ion-item lines="none" class="centered-item">
-                                <ion-label>{{ currentSection + 1 }} of {{ lesson.sections.length }}</ion-label>
-                            </ion-item>
+          <span class="mat-spacer"></span>
 
-                    </div>
-
-    </ion-content>
-    <ion-footer>
-        <ion-toolbar>
-          <ion-row class="ion-text-center">
-            <ion-col size="6">
-              <!-- <ion-button expand="block" class="custom-button">Button 1</ion-button> -->
-              <ion-button mode="md" size="large" [disabled]="currentSection == 0" fill="solid" shape="block" class="button prevButton btn-secondary" (click)="onSlidePrev()">
-                {{'PREVIOUS'}}
-            </ion-button>
-            </ion-col>
-            <ion-col size="6">
-                <ion-button mode="md" size="large" fill="solid" shape="block" class="button nextButton btn-secondary" (click)="onSlideNext()">
-                    {{ currentSection == lesson.sections.length -1 ? 'Complete' : 'NEXT'}}
-                </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-toolbar>
-      </ion-footer>
-}
+          <button mat-flat-button color="primary" (click)="onSlideNext()">
+            <mat-icon>keyboard_arrow_right</mat-icon>
+            {{ currentSection === lesson.sections.length - 1 ? 'Complete' : 'Next' }}
+          </button>
+        </div>
+      </mat-toolbar>
+      }
+      }
+    </div>
+  </div>
+</div>

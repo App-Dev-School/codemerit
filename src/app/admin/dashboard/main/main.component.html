@@ -105,6 +105,41 @@
           </mat-card-content></mat-card>
       </div>
       }
+      @if (dashboard?.lessons) {
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <mat-card class="hoverCard">
+          <mat-card-content>
+            <div class="text-center">
+              <p class="banner-big-font">{{ dashboard.lessons.totalLessons }}</p>
+              <h4 class="banner-big-font2 col-green">Total Lessons</h4>
+            </div>
+            <hr class="dim-divider">
+            <div class="row">
+              <div class="col-4">
+                <label class="font-b-500 font-16">Views</label>
+                <p>{{ dashboard.lessons.totalViews }}</p>
+              </div>
+              <div class="col-4">
+                <label class="font-b-500 font-16">Pending</label>
+                <p>{{ dashboard.lessons.totalPending }}</p>
+              </div>
+              <div class="col-4">
+                <label class="font-b-500 font-16">Completed</label>
+                <p>{{ dashboard.lessons.totalCompleted }}</p>
+              </div>
+            </div>
+            <hr class="dim-divider">
+            <p class="m-b-10 m-t-10 font-12 d-flex align-items-center justify-content-center">
+              {{ dashboard.lessons.totalViews }} Views across lessons
+            </p>
+            <hr class="dim-divider">
+            <div class="text-center p-t-20 p-b-10">
+              <button mat-stroked-button color="primary" (click)="goToLessons()">View Lesson</button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
       @if (dashboard?.questions) {
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="hoverCard">
