@@ -1,48 +1,12 @@
-.banner-big-font {
-  font-size: 25px !important;
-  margin-bottom: 0.3rem !important;
-  margin-top: 10px;
-  font-weight: 500;
+/* All layout is handled by section.content + div.content-block in the global SCSS. */
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
-.row.clearfix > [class*='col-'] {
-  display: flex;
-}
-
-.row.clearfix > [class*='col-'] .hoverCard {
-  width: 100%;
-  height: 100%;
-  transition: none !important;
-  transform: none !important;
-}
-
-.hoverCard .row .col-3 {
-  text-align: center;
-}
-
-.hoverCard .row .col-3 label,
-.hoverCard .row .col-3 p {
-  display: block;
-  text-align: center;
-}
-
-@media (max-width: 767.98px) {
-  .row.clearfix > [class*='col-'] {
-    margin-bottom: 12px;
-  }
-
-  .row.clearfix > [class*='col-']:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.value-text {
-    font-size: 2.2rem;
-    font-weight: 700;
-}
-.whitelisted-count {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #6c757d;
-  margin-bottom: 0.35rem;
+.approval-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
 }

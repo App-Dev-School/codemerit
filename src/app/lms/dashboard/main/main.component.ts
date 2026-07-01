@@ -1,10 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -20,12 +15,7 @@ import { LmsDashboardData } from '../../dtos/lms-dashboard.model';
   styleUrls: ['./main.component.scss'],
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatIconModule,
     TimeseriesChartComponent,
-    FormsModule,
   ],
 })
 export class LmsDashboardMainComponent implements OnInit {
@@ -149,7 +139,59 @@ export class LmsDashboardMainComponent implements OnInit {
     this.router.navigate(['/lms/topics/list']);
   }
 
+  get approvalRate(): number {
+    const q = this.dashboard?.questions;
+    if (!q?.totalQuestions) return 0;
+    return Math.round((q.totalApproved / q.totalQuestions) * 100);
+  }
+
+  get correctRate(): number {
+    const a = this.dashboard?.attempts;
+    if (!a?.total) return 0;
+    return Math.round((a.totalCorrect / a.total) * 100);
+  }
+
+  get wrongRate(): number {
+    const a = this.dashboard?.attempts;
+    if (!a?.total) return 0;
+    return Math.round((a.totalWrong / a.total) * 100);
+  }
+
+  get triviaRate(): number {
+    const q = this.dashboard?.questions;
+    if (!q?.totalQuestions) return 0;
+    return Math.round((q.totalTrivia / q.totalQuestions) * 100);
+  }
+
+  get topicsActiveRate(): number {
+    const t = this.dashboard?.topics;
+    if (!t?.total) return 0;
+    return Math.round((t.totalActive / t.total) * 100);
+  }
+
+  get lessonsCompleteRate(): number {
+    const l = this.dashboard?.lessons;
+    if (!l?.totalLessonsCreated) return 0;
+    return Math.round((l.totalCompleted / l.totalLessonsCreated) * 100);
+  }
+
   goToLessons(): void {
     this.router.navigate(['/lms/lessons/list']);
+  }
+
+  goToCreateQuestion(): void {
+    this.router.navigate(['/lms/questions/create']);
+  }
+
+  goToQuizzes(): void {
+    this.router.navigate(['/lms/quizzes/list']);
+  }
+
+  goToCreateQuiz(): void {
+    this.router.navigate(['/lms/quizzes/list']);
+  }
+
+  raiseRequest(): void {
+    this.snackService.display('snackbar-dark', 'Request feature coming soon. Please contact an admin for now.', 'bottom', 'center');
   }
 }

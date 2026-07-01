@@ -9,12 +9,7 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { CertificateModel, CertificateTemplateId } from '@shared/components/certificate/certificate.model';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
-import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
-import { ReportListComponent } from '@shared/components/report-list/report-list.component';
-import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
-import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
-import { NgScrollbar } from 'ngx-scrollbar';
-import { register } from 'swiper/element/bundle';
+import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { LessonService } from 'src/app/learn/lesson.service';
 
 export const certificateModels: CertificateModel[] = [
@@ -202,7 +197,7 @@ export class WelcomeComponent implements OnInit {
     }
   ];
 
-  engagements: any[] = [];
+  engagements :any = [];
 
   userTasks = [
     {
@@ -253,7 +248,6 @@ export class WelcomeComponent implements OnInit {
     private snackService: SnackbarService,
     public authService: AuthService,
     private lessonService: LessonService) {
-    register();
     this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
       this.certificateModels = certificateModels;
@@ -297,7 +291,6 @@ export class WelcomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadExploreLessons();
     if (!this.master.subjects.length || !this.master.topics.length) {
       this.master.dataLoaded$.subscribe((ready) => {
         if (ready) {
@@ -313,24 +306,49 @@ export class WelcomeComponent implements OnInit {
       console.log("Topics : ", this.master.topics);
       console.log("Job Roles : ", this.master.jobRoles);
     }
+
+    this.loadExploreLessons();
   }
 
-  exploreLesson(itemId: any) {
+  startedLessonIds: number[] = [];
+
+  get pendingLessonsCount(): number {
+    return this.engagements.length - this.startedLessonIds.length;
+  }
+
+  get allLessonsStarted(): boolean {
+    return this.startedLessonIds.length >= this.engagements.length;
+  }
+
+  isLessonStarted(id: number): boolean {
+    return this.startedLessonIds.includes(id);
+  }
+
+  lessonMeta(subject: string): { accentColor: string; iconBg: string; iconColor: string } {
+    const map: Record<string, { accentColor: string; iconBg: string; iconColor: string }> = {
+      'Angular':    { accentColor: '#f87171', iconBg: 'rgba(248,113,113,0.12)', iconColor: '#f87171' },
+      'TypeScript': { accentColor: '#60a5fa', iconBg: 'rgba(96,165,250,0.12)',  iconColor: '#60a5fa' },
+      'RxJS':       { accentColor: '#a78bfa', iconBg: 'rgba(167,139,250,0.12)', iconColor: '#a78bfa' },
+      'Git':        { accentColor: '#fb923c', iconBg: 'rgba(251,146,60,0.12)',  iconColor: '#fb923c' },
+      'Docker':     { accentColor: '#38bdf8', iconBg: 'rgba(56,189,248,0.12)',  iconColor: '#38bdf8' },
+      'JavaScript': { accentColor: '#ca8a04', iconBg: 'rgba(250,204,21,0.10)',  iconColor: '#ca8a04' },
+    };
+    return map[subject] ?? { accentColor: '#818cf8', iconBg: 'rgba(99,102,241,0.12)', iconColor: '#818cf8' };
+  }
+
+  // exploreLesson(itemId: number): void {
+  //   if (!this.isLessonStarted(itemId)) {
+  //     this.startedLessonIds = [...this.startedLessonIds, itemId];
+  //   }
+  //   this.snackService.display('snackbar-dark', 'Opening lesson — mark complete from the lesson page', 'bottom', 'center');
+  // }
+   exploreLesson(itemId: any) {
     const lesson = this.engagements.find((item: any) => item.id === itemId);
     if (lesson?.slug) {
       this.router.navigate(['/learn/overview', lesson.slug]);
       return;
     }
     this.snackService.display('snackbar-dark', 'Lesson not available.', 'bottom', 'center');
-  }
-
-  closeLesson(itemId: any) {
-    if (typeof itemId == 'number') {
-      //bad code
-      this.engagements = this.engagements.filter(item => item.id != itemId)
-    } else {
-      this.engagements = this.engagements.filter(item => item.id > 1)
-    }
   }
 
   private loadExploreLessons(): void {
@@ -352,6 +370,15 @@ export class WelcomeComponent implements OnInit {
         console.error('Failed to load explore lessons', error);
       }
     });
+  }
+
+  closeLesson(itemId: any) {
+    if (typeof itemId == 'number') {
+      //bad code
+      this.engagements = this.engagements.filter(item => item.id != itemId)
+    } else {
+      this.engagements = this.engagements.filter(item => item.id > 1)
+    }
   }
 
 
