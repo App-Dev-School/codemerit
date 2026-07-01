@@ -1,97 +1,184 @@
-<form class="quiz-settings-form m-4" [formGroup]="settingsForm">
-  <h4 class="text-center">Customize and Publish</h4>
-  <p class="cmHeading2 text-center m-b-20">Customize how the quiz is presented to users.</p>
-    <!-- Mode Selection -->
-    <div class="dim-divider"></div>
+<form [formGroup]="settingsForm">
 
-    <div class="row settingRow align-items-center">
-      <div class="col-6 d-flex align-items-center text-start">
-        <h5 class="cmHeading2">Quiz Mode</h5>
+  <!-- Section header -->
+  <div class="text-center pb-4 border-b border-cm-border">
+    <h4 class="text-sm font-bold text-cm-text-primary">Customize and Publish</h4>
+    <p class="text-xs text-cm-text-muted mt-0.5">Configure how the quiz is presented to learners</p>
+  </div>
+
+  <!-- Settings rows -->
+  <div class="divide-y divide-cm-border">
+
+    <!-- Quiz Mode -->
+    <div class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-sliders text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
+        <span class="text-sm font-semibold text-cm-text-primary">Quiz Mode</span>
       </div>
-      <div class="col-6 text-end">
-        <mat-button-toggle-group class="mt-0 mb-0" formControlName="mode" appearance="standard">
-          @for (option of modeOptions; track option.value) {
-          <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
-          }
-        </mat-button-toggle-group>
+      <div class="flex rounded-lg border border-cm-border overflow-hidden
+                  bg-cm-surface-raised text-[11px] shrink-0">
+        @for (option of modeOptions; track option.value) {
+        <button type="button"
+                (click)="settingsForm.get('mode')?.setValue(option.value)"
+                [class]="settingsForm.get('mode')?.value === option.value
+                  ? 'px-3.5 py-1.5 font-bold text-white bg-cm-brand transition-colors'
+                  : 'px-3.5 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          {{ option.label }}
+        </button>
+        }
       </div>
     </div>
 
-    <!-- Show Hint -->
-    <div class="row settingRow align-items-center">
-      <div class="col-6 d-flex align-items-center text-start">
-        <h5 class="cmHeading2">Enable Hints</h5>
+    <!-- Enable Hints -->
+    <div class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-lightbulb text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
+        <span class="text-sm font-semibold text-cm-text-primary">Enable Hints</span>
       </div>
-      <div class="col-6 text-end">
-        <mat-button-toggle-group class="mt-0 mb-0" formControlName="showHint" appearance="standard">
-          <mat-button-toggle [value]="true">Yes</mat-button-toggle>
-          <mat-button-toggle [value]="false">No</mat-button-toggle>
-        </mat-button-toggle-group>
+      <div class="flex rounded-lg border border-cm-border overflow-hidden
+                  bg-cm-surface-raised text-[11px] shrink-0">
+        <button type="button"
+                (click)="settingsForm.get('showHint')?.setValue(true)"
+                [class]="settingsForm.get('showHint')?.value === true
+                  ? 'px-4 py-1.5 font-bold text-white bg-emerald-500 transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          Yes
+        </button>
+        <button type="button"
+                (click)="settingsForm.get('showHint')?.setValue(false)"
+                [class]="settingsForm.get('showHint')?.value === false
+                  ? 'px-4 py-1.5 font-bold text-white bg-cm-brand transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          No
+        </button>
       </div>
     </div>
 
-    <!-- Show Answers -->
-    <div class="row settingRow align-items-center">
-      <div class="col-6 d-flex align-items-center text-start">
-        <h5 class="cmHeading2">Show Answer</h5>
+    <!-- Show Answer -->
+    <div class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-eye text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
+        <span class="text-sm font-semibold text-cm-text-primary">Show Answer</span>
       </div>
-      <div class="col-6 text-end">
-        <mat-button-toggle-group class="mt-0 mb-0" formControlName="showAnswers" appearance="standard">
-          <mat-button-toggle [value]="true">Yes</mat-button-toggle>
-          <mat-button-toggle [value]="false">No</mat-button-toggle>
-        </mat-button-toggle-group>
+      <div class="flex rounded-lg border border-cm-border overflow-hidden
+                  bg-cm-surface-raised text-[11px] shrink-0">
+        <button type="button"
+                (click)="settingsForm.get('showAnswers')?.setValue(true)"
+                [class]="settingsForm.get('showAnswers')?.value === true
+                  ? 'px-4 py-1.5 font-bold text-white bg-emerald-500 transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          Yes
+        </button>
+        <button type="button"
+                (click)="settingsForm.get('showAnswers')?.setValue(false)"
+                [class]="settingsForm.get('showAnswers')?.value === false
+                  ? 'px-4 py-1.5 font-bold text-white bg-cm-brand transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          No
+        </button>
       </div>
     </div>
 
     <!-- Enable Navigation -->
-    <div class="row settingRow align-items-center">
-      <div class="col-6 d-flex align-items-center text-start">
-        <h5 class="cmHeading2">Enable Navigation</h5>
+    <div class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-arrows-left-right text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
+        <span class="text-sm font-semibold text-cm-text-primary">Enable Navigation</span>
       </div>
-      <div class="col-6 text-end">
-        <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableNavigation" appearance="standard">
-          <mat-button-toggle [value]="true">ON</mat-button-toggle>
-          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
-        </mat-button-toggle-group>
+      <div class="flex rounded-lg border border-cm-border overflow-hidden
+                  bg-cm-surface-raised text-[11px] shrink-0">
+        <button type="button"
+                (click)="settingsForm.get('enableNavigation')?.setValue(true)"
+                [class]="settingsForm.get('enableNavigation')?.value === true
+                  ? 'px-4 py-1.5 font-bold text-white bg-cm-brand transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          ON
+        </button>
+        <button type="button"
+                (click)="settingsForm.get('enableNavigation')?.setValue(false)"
+                [class]="settingsForm.get('enableNavigation')?.value === false
+                  ? 'px-4 py-1.5 font-bold text-white bg-rose-500 transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          OFF
+        </button>
       </div>
     </div>
 
     <!-- Enable Audio -->
-    <div class="row settingRow align-items-center">
-      <div class="col-6 d-flex align-items-center text-start">
-        <h5 class="cmHeading2">Enable Audio</h5>
+    <div class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-volume-high text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
+        <span class="text-sm font-semibold text-cm-text-primary">Enable Audio</span>
       </div>
-      <div class="col-6 text-end">
-        <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableAudio" appearance="standard">
-          <mat-button-toggle [value]="true">ON</mat-button-toggle>
-          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
-        </mat-button-toggle-group>
+      <div class="flex rounded-lg border border-cm-border overflow-hidden
+                  bg-cm-surface-raised text-[11px] shrink-0">
+        <button type="button"
+                (click)="settingsForm.get('enableAudio')?.setValue(true)"
+                [class]="settingsForm.get('enableAudio')?.value === true
+                  ? 'px-4 py-1.5 font-bold text-white bg-cm-brand transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          ON
+        </button>
+        <button type="button"
+                (click)="settingsForm.get('enableAudio')?.setValue(false)"
+                [class]="settingsForm.get('enableAudio')?.value === false
+                  ? 'px-4 py-1.5 font-bold text-white bg-rose-500 transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          OFF
+        </button>
       </div>
     </div>
 
     <!-- Enable Timer -->
-    <div class="row settingRow align-items-center">
-      <div class="col-6 d-flex align-items-center text-start">
-        <h5 class="cmHeading2">Enable Timer</h5>
+    <div class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-stopwatch text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
+        <span class="text-sm font-semibold text-cm-text-primary">Enable Timer</span>
       </div>
-      <div class="col-6 text-end">
-        <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableTimer" appearance="standard">
-          <mat-button-toggle [value]="true">ON</mat-button-toggle>
-          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
-        </mat-button-toggle-group>
+      <div class="flex rounded-lg border border-cm-border overflow-hidden
+                  bg-cm-surface-raised text-[11px] shrink-0">
+        <button type="button"
+                (click)="settingsForm.get('enableTimer')?.setValue(true)"
+                [class]="settingsForm.get('enableTimer')?.value === true
+                  ? 'px-4 py-1.5 font-bold text-white bg-cm-brand transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          ON
+        </button>
+        <button type="button"
+                (click)="settingsForm.get('enableTimer')?.setValue(false)"
+                [class]="settingsForm.get('enableTimer')?.value === false
+                  ? 'px-4 py-1.5 font-bold text-white bg-rose-500 transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          OFF
+        </button>
       </div>
     </div>
 
     <!-- Enable Review -->
-    <div class="row settingRow align-items-center">
-      <div class="col-6 d-flex align-items-center text-start">
-        <h5 class="cmHeading2">Enable Review</h5>
+    <div class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-clipboard-check text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
+        <span class="text-sm font-semibold text-cm-text-primary">Enable Review</span>
       </div>
-      <div class="col-6 text-end">
-        <mat-button-toggle-group class="mt-0 mb-0" formControlName="enableReview" appearance="standard">
-          <mat-button-toggle [value]="true">ON</mat-button-toggle>
-          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
-        </mat-button-toggle-group>
+      <div class="flex rounded-lg border border-cm-border overflow-hidden
+                  bg-cm-surface-raised text-[11px] shrink-0">
+        <button type="button"
+                (click)="settingsForm.get('enableReview')?.setValue(true)"
+                [class]="settingsForm.get('enableReview')?.value === true
+                  ? 'px-4 py-1.5 font-bold text-white bg-cm-brand transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          ON
+        </button>
+        <button type="button"
+                (click)="settingsForm.get('enableReview')?.setValue(false)"
+                [class]="settingsForm.get('enableReview')?.value === false
+                  ? 'px-4 py-1.5 font-bold text-white bg-rose-500 transition-colors'
+                  : 'px-4 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+          OFF
+        </button>
       </div>
     </div>
+
+  </div>
+
 </form>

@@ -1,16 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, Input , SimpleChanges, OnChanges, } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { NgScrollbar } from 'ngx-scrollbar';
 
 interface QuizSettings {
   numQuestions: number;
@@ -28,21 +17,7 @@ interface QuizSettings {
   selector: 'app-quiz-settings-form',
   templateUrl: './quiz-settings-form.component.html',
   styleUrls: ['./quiz-settings-form.component.scss'],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatButtonToggleModule,
-    MatDividerModule,
-    MatIconModule,
-    NgScrollbar
-  ]
+  imports: [FormsModule, ReactiveFormsModule]
 })
 export class QuizSettingsFormComponent implements OnInit,OnChanges {
   @Input() initialSettings: Partial<QuizSettings> = {};

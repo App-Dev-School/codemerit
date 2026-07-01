@@ -1,52 +1,38 @@
 @if(achievements?.length > 0){
 
-<div class="flex gap-3 overflow-x-auto pb-3 snap-x snap-mandatory badge-scroll">
+<div class="flex gap-7 overflow-x-auto pb-3 badge-scroll">
 
   @for(badge of achievements; let i = $index; track badge){
 
-  <div class="badge-card flex-none w-[148px] snap-center rounded-2xl border-2
-              bg-cm-surface overflow-hidden cursor-default group"
-       [style.borderColor]="getTier(i).ring"
-       [style.--badge-glow]="getTier(i).glow">
+  <div class="badge-item flex-none w-[88px] flex flex-col items-center gap-2 cursor-default group">
 
-    <!-- Tier-coloured top accent -->
-    <div class="h-0.5 w-full" [style.backgroundColor]="getTier(i).ring"></div>
-
-    <!-- Radial tint bg + content -->
-    <div class="relative flex flex-col items-center pt-5 pb-4 px-3"
-         [style.background]="'radial-gradient(ellipse at 50% 0%, ' + getTier(i).glow + ', transparent 70%)'">
-
-      <!-- Badge medallion -->
-      <div class="relative w-16 h-16 mb-3">
-        <!-- ambient glow layer — appears on hover -->
-        <div class="absolute inset-0 rounded-full scale-[1.7] blur-xl opacity-0
-                    group-hover:opacity-80 transition-opacity duration-500"
-             [style.backgroundColor]="getTier(i).glow"></div>
-        <img [src]="badge.imgSrc" [alt]="badge.name"
-             class="relative w-16 h-16 object-contain drop-shadow-md
-                    group-hover:scale-110 transition-transform duration-300">
-      </div>
-
-      <!-- Tier chip -->
-      <span class="inline-flex items-center gap-0.5 px-2.5 py-[3px] rounded-full mb-2
-                   text-[9px] font-black uppercase tracking-widest"
-            [style.color]="getTier(i).ring"
-            [style.backgroundColor]="getTier(i).glow">
-        ★ {{getTier(i).label}}
-      </span>
-
-      <!-- Badge name -->
-      <h4 class="text-[11px] font-black text-cm-text-primary text-center leading-tight
-                 line-clamp-2 mb-1.5">
-        {{badge.name}}
-      </h4>
-
-      <!-- Earned timestamp -->
-      <p class="text-[10px] text-cm-text-muted text-center leading-snug line-clamp-1">
-        {{badge.timestamp}}
-      </p>
-
+    <!-- Badge image with ambient glow -->
+    <div class="relative w-16 h-16">
+      <div class="absolute inset-0 rounded-full scale-[2.2] blur-2xl opacity-0
+                  group-hover:opacity-70 transition-opacity duration-500"
+           [style.backgroundColor]="getTier(i).glow"></div>
+      <img [src]="badge.imgSrc" [alt]="badge.name"
+           class="relative w-16 h-16 object-contain drop-shadow-lg
+                  group-hover:scale-110 transition-transform duration-300">
     </div>
+
+    <!-- Tier chip -->
+    <span class="inline-flex items-center gap-0.5 px-2 py-[2px] rounded-full
+                 text-[9px] font-black uppercase tracking-widest"
+          [style.color]="getTier(i).ring"
+          [style.backgroundColor]="getTier(i).glow">
+      ★ {{getTier(i).label}}
+    </span>
+
+    <!-- Badge name -->
+    <p class="text-[11px] font-bold text-cm-text-primary text-center leading-tight line-clamp-2">
+      {{badge.name}}
+    </p>
+
+    <!-- Earned timestamp -->
+    <p class="text-[10px] text-cm-text-muted text-center leading-snug">
+      {{badge.timestamp}}
+    </p>
 
   </div>
   }

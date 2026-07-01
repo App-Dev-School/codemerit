@@ -1,29 +1,35 @@
-@if(showContent){
-  @if(isLoading){
-    <div class="fixed inset-0 bg-black/50 z-[1000]"></div>
-    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1001]
-                bg-cm-surface rounded-2xl px-10 py-6 text-center
-                border border-cm-border shadow-2xl min-w-[200px]">
-      <img src="assets/images/icons/loading.gif" class="w-[50px] mx-auto">
-      <h4 class="text-[17px] font-medium text-cm-text-primary mt-2">Loading Job Roles</h4>
-      <p class="text-sm text-cm-text-secondary mt-0.5">Please wait</p>
-    </div>
-  } @else {
-    <section class="mx-[15px] mt-[15px] relative" [@slideInOut]>
-      <button (click)="onCancel()" aria-label="Cancel"
-              class="absolute top-4 right-4 flex items-center justify-center w-8 h-8 rounded-full
-                     bg-transparent border-none cursor-pointer z-10
-                     text-cm-text-muted hover:text-cm-text-primary hover:bg-cm-surface-raised
-                     transition-colors">
-        <mat-icon>close</mat-icon>
-      </button>
+@if (showContent) {
 
-      <div class="relative mt-4">
-        <h3 class="text-center text-xl font-black text-cm-text-primary tracking-tight mt-[10px] mb-[10px]">
-          Select a Job Role
-        </h3>
+  <!-- ── Fullscreen overlay ─────────────────────────────────────────── -->
+  <div class="select-overlay" [@overlayFade] (click)="onCancel()">
 
-        <div class="mt-[10px]">
+    <!-- Loading state -->
+    @if (isLoading) {
+      <div class="select-loading" (click)="$event.stopPropagation()">
+        <img src="assets/images/icons/loading.gif" class="w-12 mx-auto">
+        <p class="mt-3 text-sm font-medium text-slate-300">Loading Job Roles…</p>
+      </div>
+    }
+
+    <!-- Content panel -->
+    @if (!isLoading) {
+      <div class="select-panel" [@panelSlide] (click)="$event.stopPropagation()">
+
+        <!-- Panel header -->
+        <div class="select-panel__header">
+          <div>
+            <h2 class="select-panel__title">Choose your Job Role</h2>
+            <p class="select-panel__subtitle">
+              Select a role to personalise your learning path and unlock relevant assessments.
+            </p>
+          </div>
+          <button class="select-close" (click)="onCancel()" aria-label="Close">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Course picker -->
+        <div class="select-panel__body">
           <app-course-picker
             [minimal]="true"
             [currentCourses]="userJobRoles"
@@ -31,7 +37,9 @@
             (subjectSelected)="onCourseChange($event)">
           </app-course-picker>
         </div>
+
       </div>
-    </section>
-  }
+    }
+  </div>
+
 }

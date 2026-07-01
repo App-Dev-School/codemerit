@@ -1,4 +1,3 @@
-import { TextFieldModule } from '@angular/cdk/text-field';
 import {
   Component,
   EventEmitter,
@@ -17,41 +16,19 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute } from '@angular/router';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
 import { QuizTypeEnum } from '@core/models/enums/quiz-type.enum';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { NgScrollbar } from 'ngx-scrollbar';
 import { QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
   selector: 'app-quiz-form',
   templateUrl: './quiz-form.component.html',
   styleUrls: ['./quiz-form.component.scss'],
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgScrollbar,
-    TextFieldModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatCheckboxModule,
-  ],
+  imports: [FormsModule, ReactiveFormsModule],
 })
 export class QuizFormComponent implements OnInit, OnChanges {
   @Input() formData: Partial<QuizCreateModel> | null = null;

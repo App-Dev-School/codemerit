@@ -1,13 +1,9 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-quiz-attempts',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatIconModule, NgClass],
+  imports: [],
   templateUrl: './quiz-attempts.component.html',
   styleUrls: ['./quiz-attempts.component.scss']
 })

@@ -1,100 +1,164 @@
-@if(isLoading){
-  <div class="flex justify-center items-center py-16">
-    <div class="flex flex-col items-center gap-3">
-      <div class="w-9 h-9 border-4 border-cm-border border-t-cm-brand rounded-full animate-spin"></div>
-      <p class="text-sm text-cm-text-muted">Loading job roles…</p>
-    </div>
+<!-- Loading -->
+@if (isLoading) {
+  <div class="cp-loading">
+    <div class="cp-spinner"></div>
+    <p class="cp-loading__text">Loading job roles…</p>
   </div>
 }
 
-@if(!isLoading){
-  <div [ngClass]="{ 'outerPadding': mode === 'dialog' }">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      @for(job of courses | async; track job){
-        <div>
-          <mat-card class="hoverCard">
-            <mat-card-content>
+<!-- Grid -->
+@if (!isLoading) {
+  <div [class]="mode === 'dialog' ? 'cp-dialog-wrap' : ''" >
+    <div class="cp-grid">
+      @for (job of courses; track job.id) {
 
-              @if(job.isSubscribed || currentCourses.includes(+job.id)){
-                <img src="assets/images/icons/badge.svg" class="job-badge" alt="Learner Badge" />
-              }
+        <div class="cp-card" [class.cp-card--enrolled]="isEnrolled(job)">
 
-              <div class="subjectHeader">
-                @if(job.isSubscribed){
-                  <small>Current Role</small>
+          <!-- Accent bar -->
+          <div class="cp-card__bar cp-card__bar--{{ getRoleAccent(job.id) }}"></div>
+
+          <!-- Card body -->
+          <div class="cp-card__body">
+
+            <!-- Role header -->
+            <div class="cp-role-head">
+              <div class="cp-role-dot cp-role-dot--{{ getRoleAccent(job.id) }}"></div>
+              <div class="cp-role-head__text">
+                @if (isEnrolled(job)) {
+                  <span class="cp-enrolled-chip">
+                    <mat-icon class="cp-enrolled-chip__icon">verified</mat-icon>
+                    Current Role
+                  </span>
                 }
-                <mat-card-title class="text">{{job.title}}</mat-card-title>
+                <h3 class="cp-role-title">{{ job.title }}</h3>
               </div>
+            </div>
 
-              <p class="text-xs text-cm-text-secondary">{{job.description}}</p>
-              <hr class="dim-divider">
+            <!-- Description -->
+            <p class="cp-description">{{ job.description }}</p>
 
-              @if(job?.subjects){
-                <ul class="list-none p-0 mb-0 order-list flex flex-wrap gap-1">
-                  @for(item of job?.subjects; track item){
-                    <li class="avatar avatar-sm">
-                      <img class="rounded-full" [src]="item.image" alt="{{item.title}}">
-                    </li>
-                  }
-                </ul>
-              }
+            <!-- Subjects -->
+            @if (job.subjects?.length) {
+              @let groups = getSubjectGroups(job.subjects);
 
-              @if(job.isSubscribed){
-                <ul class="list-none p-0 mt-3 space-y-3">
-                  @if(job.coverage > 0){
-                    <li>
-                      <div class="flex justify-between mb-1">
-                        <span class="text-xs text-cm-text-secondary">Score</span>
-                        <span class="text-xs font-bold text-green-600">{{job.score}}%</span>
-                      </div>
-                      <div class="w-full h-2 bg-cm-surface-raised rounded-full overflow-hidden">
-                        <div class="h-full bg-green-500 rounded-full transition-all duration-500"
-                             [style.width]="job.score + '%'"
-                             role="progressbar" [attr.aria-valuenow]="job.score"
-                             aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </li>
-                  }
-                  <li>
-                    <div class="flex justify-between mb-1">
-                      <span class="text-xs text-cm-text-secondary">Coverage</span>
-                      <span class="text-xs font-bold text-green-600">{{job.coverage}}%</span>
-                    </div>
-                    <div class="w-full h-2 bg-cm-surface-raised rounded-full overflow-hidden">
-                      <div class="h-full bg-green-500 rounded-full transition-all duration-500"
-                           [style.width]="job.coverage + '%'"
-                           role="progressbar" [attr.aria-valuenow]="job.coverage"
-                           aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </li>
-                </ul>
-              }
-
-              @if(minimal){
-                <mat-card-footer>
-                  <hr class="dim-divider">
-                  <div class="flex flex-col sm:flex-row justify-center gap-2 w-full">
-                    @if(currentCourses.length > 0 && currentCourses.includes(job.id)){
-                      <button mat-flat-button color="primary" (click)="switchJobRole(job)"
-                              class="w-full md:w-auto">
-                        Continue
-                      </button>
-                    } @else {
-                      <button mat-stroked-button color="primary" (click)="switchJobRole(job)"
-                              class="w-full md:w-auto">
-                        {{ actionMode === 'skill-rating' ? 'Start Evaluation'
-                           : actionMode === 'enroll' ? 'Enroll Now'
-                           : 'Explore' }}
-                      </button>
+              <!-- When no type grouping: show flat list -->
+              @if (!groups.recommended.length && !groups.optional.length) {
+                <div class="cp-subjects">
+                  <span class="cp-subjects__label">Subjects</span>
+                  <div class="cp-subject-list">
+                    @for (subj of groups.mandatory; track subj.id) {
+                      <span class="cp-subject-chip cp-subject-chip--core" [title]="subj.title">
+                        @if (subj.image) {
+                          <img [src]="subj.image" [alt]="subj.title" class="cp-subject-chip__img">
+                        }
+                        {{ subj.title }}
+                      </span>
                     }
                   </div>
-                </mat-card-footer>
+                </div>
               }
 
-            </mat-card-content>
-          </mat-card>
+              <!-- With type grouping: three sections -->
+              @if (groups.mandatory.length && (groups.recommended.length || groups.optional.length)) {
+                <div class="cp-subjects">
+                  <span class="cp-subjects__label">Mandatory</span>
+                  <div class="cp-subject-list">
+                    @for (subj of groups.mandatory; track subj.id) {
+                      <span class="cp-subject-chip cp-subject-chip--mandatory" [title]="subj.title">
+                        @if (subj.image) {
+                          <img [src]="subj.image" [alt]="subj.title" class="cp-subject-chip__img">
+                        }
+                        {{ subj.title }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+              @if (groups.recommended.length) {
+                <div class="cp-subjects">
+                  <span class="cp-subjects__label cp-subjects__label--rec">Recommended</span>
+                  <div class="cp-subject-list">
+                    @for (subj of groups.recommended; track subj.id) {
+                      <span class="cp-subject-chip cp-subject-chip--recommended" [title]="subj.title">
+                        @if (subj.image) {
+                          <img [src]="subj.image" [alt]="subj.title" class="cp-subject-chip__img">
+                        }
+                        {{ subj.title }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+              @if (groups.optional.length) {
+                <div class="cp-subjects">
+                  <span class="cp-subjects__label cp-subjects__label--opt">Optional</span>
+                  <div class="cp-subject-list">
+                    @for (subj of groups.optional; track subj.id) {
+                      <span class="cp-subject-chip cp-subject-chip--optional" [title]="subj.title">
+                        @if (subj.image) {
+                          <img [src]="subj.image" [alt]="subj.title" class="cp-subject-chip__img">
+                        }
+                        {{ subj.title }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            }
+
+            <!-- Progress bars (enrolled roles only) -->
+            @if (isEnrolled(job) && job.coverage > 0) {
+              <div class="cp-progress-group">
+                <div class="cp-progress">
+                  <div class="cp-progress__row">
+                    <span class="cp-progress__label">Score</span>
+                    <span class="cp-progress__val">{{ job.score }}%</span>
+                  </div>
+                  <div class="cp-progress__track">
+                    <div class="cp-progress__fill cp-progress__fill--score"
+                         [style.width]="job.score + '%'"></div>
+                  </div>
+                </div>
+                <div class="cp-progress">
+                  <div class="cp-progress__row">
+                    <span class="cp-progress__label">Coverage</span>
+                    <span class="cp-progress__val">{{ job.coverage }}%</span>
+                  </div>
+                  <div class="cp-progress__track">
+                    <div class="cp-progress__fill cp-progress__fill--coverage"
+                         [style.width]="job.coverage + '%'"></div>
+                  </div>
+                </div>
+              </div>
+            }
+
+          </div>
+
+          <!-- Card footer -->
+          @if (minimal) {
+            <div class="cp-card__footer">
+              <button class="cp-action-btn"
+                      [class.cp-action-btn--enrolled]="isEnrolled(job)"
+                      (click)="switchJobRole(job)">
+                <mat-icon class="cp-action-btn__icon">
+                  {{ isEnrolled(job) ? 'play_arrow' : actionMode === 'skill-rating' ? 'assessment' : 'arrow_forward' }}
+                </mat-icon>
+                {{ isEnrolled(job) ? 'Continue' : getActionLabel() }}
+              </button>
+            </div>
+          }
+
         </div>
       }
+
+      <!-- Empty state -->
+      @if (!courses.length) {
+        <div class="cp-empty">
+          <mat-icon class="cp-empty__icon">work_outline</mat-icon>
+          <p class="cp-empty__text">No job roles available at the moment.</p>
+        </div>
+      }
+
     </div>
   </div>
 }

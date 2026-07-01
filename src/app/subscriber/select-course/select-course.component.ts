@@ -1,8 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import {
   ActivatedRoute,
   NavigationCancel,
@@ -11,21 +10,37 @@ import {
   Router,
 } from '@angular/router';
 import { AuthService } from '@core';
-import { slideInOutAnimation, topToBottomAnimation } from '@shared/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
 import { Subscription } from 'rxjs';
-import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-select-course',
   templateUrl: './select-course.component.html',
   styleUrls: ['./select-course.component.scss'],
-  animations: [slideInOutAnimation, topToBottomAnimation],
+  animations: [
+    trigger('overlayFade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        animate('180ms ease', style({ opacity: 0 })),
+      ]),
+    ]),
+    trigger('panelSlide', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(28px)' }),
+        animate('320ms cubic-bezier(0.22,1,0.36,1)', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+      transition(':leave', [
+        animate('180ms ease-in', style({ opacity: 0, transform: 'translateY(20px)' })),
+      ]),
+    ]),
+  ],
   imports: [
-    MatIcon,
-    MatFormFieldModule,
-    MatInputModule,
+    MatIconModule,
     MatButtonModule,
     CoursePickerComponent,
   ],
@@ -34,9 +49,7 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
   @Input() actionMode: 'view' | 'enroll' | 'skill-rating' = 'view';
   showContent = true;
   subject = '';
-  subjectData: any;
   isLoading = false;
-  loadingTxt = '';
   userJobRoles: number[] = [];
   private subscriptions = new Subscription();
 
@@ -62,17 +75,10 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationStart) {
-          // Only hide (trigger exit animation) when navigating AWAY from this component
           const stayingHere = event.url.startsWith('/select-job-role');
-          if (!stayingHere) {
-            this.showContent = false;
-          }
+          if (!stayingHere) this.showContent = false;
         } else if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
-          // Only restore visibility when the final URL is still this component
-          if (event.url.startsWith('/select-job-role')) {
-            this.showContent = true;
-          }
-          // When navigating away: leave showContent = false so the exit animation plays out
+          if (event.url.startsWith('/select-job-role')) this.showContent = true;
         }
       }),
     );
@@ -95,7 +101,7 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
   }
 
   onCourseChange(subject: string) {
-    this.subject = subject ? subject : '';
+    this.subject = subject ?? '';
     if (this.actionMode === 'skill-rating') {
       this.router.navigate(['/assessment/skill-rating', this.subject]);
     } else {
@@ -104,9 +110,7 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
   }
 
   onSubscribe(subject: any) {
-    this._bottomSheet.open(SetDesignationBottomSheetComponent, {
-      data: subject,
-    });
+    this._bottomSheet.open(SetDesignationBottomSheetComponent, { data: subject });
   }
 
   onCancel() {
@@ -116,8 +120,6 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl(returnUrl, { replaceUrl: true });
       return;
     }
-    // Only go to dashboard if the user already has job roles —
-    // otherwise the dashboard would immediately redirect back here (loop).
     const hasJobRoles = (this.authService.getUserJobRoles()?.length ?? 0) > 0;
     this.router.navigate([hasJobRoles ? '/dashboard' : '/app/welcome'], { replaceUrl: true });
   }

@@ -41,7 +41,7 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
 })
 export class DashboardComponent implements OnInit {
   pageTitle = 'SubjectDashboard';
-  activeTab: string = 'dashboard';
+  activeTab: string = 'milestones';
   loading = true;
   loadingText = 'Loading Subject Dashboard';
   showContent = true;

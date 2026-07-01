@@ -14,10 +14,6 @@ import {
   ReactiveFormsModule,
   FormsModule,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -25,10 +21,6 @@ import {
   CdkDrag,
   CdkDragHandle,
 } from '@angular/cdk/drag-drop';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { NgScrollbar } from 'ngx-scrollbar';
-import { MatIcon } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
 import { NgTemplateOutlet } from '@angular/common';
 import { MasterService } from '@core/service/master.service';
 import {
@@ -71,17 +63,9 @@ interface Question {
     FormsModule,
     ReactiveFormsModule,
     NgTemplateOutlet,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    MatIcon,
-    MatSelectModule,
-    MatCheckboxModule,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
-    NgScrollbar,
   ],
 })
 export class QuizQuestionsFormComponent implements OnInit, OnChanges {

@@ -1,42 +1,70 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-  @for(subject of subjects | async; track subject){
-    <div (click)="switchSubject(subject?.slug)" class="cursor-pointer">
-      <mat-card class="hoverCard">
-        <mat-card-content>
+@let list = displaySubjects$ | async;
 
-          <div class="subjectHeader">
-            <img src="{{subject?.image}}" alt="{{subject?.title}}" class="subjectImage">
-            <mat-card-title class="text">{{subject.title}}</mat-card-title>
-          </div>
+<!-- Empty / no results -->
+@if (list !== null && list?.length === 0) {
+  <div class="subj-empty">
+    <mat-icon class="subj-empty__icon">search_off</mat-icon>
+    <p class="subj-empty__text">No subjects match your search.</p>
+  </div>
+}
 
-          <p class="text-xs text-cm-text-secondary">{{subject.description}}</p>
+<!-- Flexible card grid — no section wrappers -->
+<div class="subj-grid">
+  @for (subject of list; track subject.id) {
 
-          @if(!minimal){
-            @if(subject?.isSubscribed){
-              <ul class="list-none p-0 mt-3 space-y-3">
-                <li>
-                  <div class="flex justify-between mb-1">
-                    <span class="text-xs text-cm-text-secondary">Coverage</span>
-                    <span class="text-xs font-bold text-green-600">{{subject.practice_percentage}}%</span>
-                  </div>
-                  <div class="w-full h-2 bg-cm-surface-raised rounded-full overflow-hidden">
-                    <div class="h-full bg-green-500 rounded-full transition-all duration-500"
-                         [style.width]="subject.practice_percentage + '%'"
-                         role="progressbar" [attr.aria-valuenow]="subject.practice_percentage"
-                         aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </li>
-              </ul>
-            } @else {
-              <mat-card-actions align="end">
-                <button (click)="switchSubject(subject.slug); $event.stopPropagation()"
-                        mat-button mat-ripple>Explore</button>
-              </mat-card-actions>
-            }
+    <div class="subj-card" (click)="switchSubject(subject?.slug)">
+
+      <!-- Icon area -->
+      <div class="subj-card__icon-wrap" [style.background]="getSubjectColor(subject) + '18'">
+        @if (subject?.image) {
+          <img [src]="subject.image" [alt]="subject.title" class="subj-card__icon-img">
+        } @else {
+          <span class="subj-card__icon-initials"
+                [style.color]="getSubjectColor(subject)">
+            {{ getInitials(subject.title) }}
+          </span>
+        }
+        <!-- Enrolled indicator dot -->
+        @if (subject?.isSubscribed) {
+          <span class="subj-card__enrolled-dot" title="Enrolled">
+            <mat-icon>check</mat-icon>
+          </span>
+        }
+      </div>
+
+      <!-- Info -->
+      <div class="subj-card__info">
+        <div class="subj-card__title-row">
+          <h3 class="subj-card__title">{{ subject.title }}</h3>
+          @if (subject?.isSubscribed) {
+            <span class="subj-enrolled-badge">Enrolled</span>
           }
+        </div>
+        <p class="subj-card__desc">{{ subject.description }}</p>
+      </div>
 
-        </mat-card-content>
-      </mat-card>
+      <!-- Progress (subscribed only) -->
+      @if (subject?.isSubscribed && subject?.practice_percentage > 0) {
+        <div class="subj-card__progress">
+          <div class="subj-progress-row">
+            <span class="subj-progress-label">Coverage</span>
+            <span class="subj-progress-val">{{ subject.practice_percentage }}%</span>
+          </div>
+          <div class="subj-progress-track">
+            <div class="subj-progress-fill"
+                 [style.width]="subject.practice_percentage + '%'"
+                 [style.background]="getSubjectColor(subject)">
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Hover arrow -->
+      <div class="subj-card__arrow" [style.color]="getSubjectColor(subject)">
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+
     </div>
+
   }
 </div>

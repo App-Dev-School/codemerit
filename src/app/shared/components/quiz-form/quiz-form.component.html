@@ -1,300 +1,245 @@
-<form class="register-form m-4" [formGroup]="quizForm">
-  <ng-scrollbar visibility="hover">
-    <div class="row">
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-        <mat-form-field class="example-full-width m-b-10" appearance="fill">
-          <mat-label>Quiz Title</mat-label>
-          <textarea
-            matInput
-            formControlName="title"
-            rows="2"
-            cdkTextareaAutosize
-            #autosize="cdkTextareaAutosize"
-            [cdkAutosizeMinRows]="1"
-            [cdkAutosizeMaxRows]="1"
-            style="resize: none; overflow: hidden"
-            placeholder="Enter a quiz title"
-            required
-          ></textarea>
-          @if (
-            quizForm.get("title")?.hasError("required") &&
-            (quizForm.get("title")?.touched || quizForm.get("title")?.dirty)
-          ) {
-            <mat-error class="m-b-10">Quiz title is required</mat-error>
-          }
-          @if (
-            quizForm.get("title")?.hasError("minlength") &&
-            (quizForm.get("title")?.touched || quizForm.get("title")?.dirty)
-          ) {
-            <mat-error class="m-b-10">Quiz title is too short</mat-error>
-          }
-          @if (
-            quizForm.get("title")?.hasError("maxlength") &&
-            (quizForm.get("title")?.touched || quizForm.get("title")?.dirty)
-          ) {
-            <mat-error>Quiz title is too long</mat-error>
-          }
-        </mat-form-field>
-      </div>
+<form [formGroup]="quizForm" class="space-y-4 py-1">
 
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-        <mat-form-field class="example-full-width m-b-10" appearance="fill">
-          <mat-label>Quiz Tag</mat-label>
-          <input
-            matInput
-            formControlName="tag"
-            type="text"
-            maxLength="20"
-            placeholder="Add a tag to identify this quiz (e.g. arrays, linkedlist, etc.)"
-          />
-          @if (
-            quizForm.get("tag")?.hasError("required") &&
-            (quizForm.get("tag")?.touched || quizForm.get("tag")?.dirty)
-          ) {
-            <mat-error>Quiz tag is required</mat-error>
-          }
-        </mat-form-field>
-      </div>
+  <!-- Title -->
+  <div class="space-y-1.5">
+    <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+      Quiz Title <span class="text-rose-500 ml-0.5">*</span>
+    </label>
+    <textarea formControlName="title" rows="2"
+              placeholder="Enter a quiz title"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none resize-none leading-snug
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand
+                     placeholder:text-cm-text-muted transition-all"></textarea>
+    @if (quizForm.get("title")?.hasError("required") && (quizForm.get("title")?.touched || quizForm.get("title")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Quiz title is required
+    </p>
+    }
+    @if (quizForm.get("title")?.hasError("minlength") && (quizForm.get("title")?.touched || quizForm.get("title")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Quiz title is too short
+    </p>
+    }
+    @if (quizForm.get("title")?.hasError("maxlength") && (quizForm.get("title")?.touched || quizForm.get("title")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Quiz title is too long
+    </p>
+    }
+  </div>
+
+  <!-- Tag -->
+  <div class="space-y-1.5">
+    <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+      Quiz Tag <span class="text-rose-500 ml-0.5">*</span>
+    </label>
+    <input type="text" formControlName="tag" maxlength="20"
+           placeholder="E.g. arrays, linkedlist, sorting…"
+           class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                  rounded-xl px-4 py-2.5 outline-none
+                  focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand
+                  placeholder:text-cm-text-muted transition-all">
+    @if (quizForm.get("tag")?.hasError("required") && (quizForm.get("tag")?.touched || quizForm.get("tag")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Quiz tag is required
+    </p>
+    }
+  </div>
+
+  <!-- Short Description -->
+  <div class="space-y-1.5">
+    <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+      Short Description
+    </label>
+    <textarea formControlName="shortDesc" rows="2"
+              placeholder="Brief one-line summary of this quiz"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none resize-none leading-snug
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand
+                     placeholder:text-cm-text-muted transition-all"></textarea>
+    @if (quizForm.get("shortDesc")?.hasError("required") && (quizForm.get("shortDesc")?.touched || quizForm.get("shortDesc")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Short description is required
+    </p>
+    }
+    @if (quizForm.get("shortDesc")?.hasError("minlength") && (quizForm.get("shortDesc")?.touched || quizForm.get("shortDesc")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Short description is too short
+    </p>
+    }
+    @if (quizForm.get("shortDesc")?.hasError("maxlength") && (quizForm.get("shortDesc")?.touched || quizForm.get("shortDesc")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Short description is too long
+    </p>
+    }
+  </div>
+
+  <!-- Long Description -->
+  <div class="space-y-1.5">
+    <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+      Long Description
+    </label>
+    <textarea formControlName="description" rows="3"
+              placeholder="Detailed description of the quiz content and goals"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none resize-none leading-snug
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand
+                     placeholder:text-cm-text-muted transition-all"></textarea>
+    @if (quizForm.get("description")?.hasError("required") && (quizForm.get("description")?.touched || quizForm.get("description")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Description is required
+    </p>
+    }
+    @if (quizForm.get("description")?.hasError("minlength") && (quizForm.get("description")?.touched || quizForm.get("description")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Description is too short
+    </p>
+    }
+    @if (quizForm.get("description")?.hasError("maxlength") && (quizForm.get("description")?.touched || quizForm.get("description")?.dirty)) {
+    <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+      <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Description is too long
+    </p>
+    }
+  </div>
+
+  <!-- No. of Questions + Ordering -->
+  <div class="grid grid-cols-2 gap-3">
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+        No. of Questions <span class="text-rose-500 ml-0.5">*</span>
+      </label>
+      <input type="number" formControlName="numQuestions" min="1" max="50"
+             class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                    rounded-xl px-4 py-2.5 outline-none
+                    focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+      @if (quizForm.get("numQuestions")?.hasError("required") && (quizForm.get("numQuestions")?.touched || quizForm.get("numQuestions")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Required
+      </p>
+      }
+      @if (quizForm.get("numQuestions")?.hasError("min") && (quizForm.get("numQuestions")?.touched || quizForm.get("numQuestions")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Min 1 question
+      </p>
+      }
+      @if (quizForm.get("numQuestions")?.hasError("max") && (quizForm.get("numQuestions")?.touched || quizForm.get("numQuestions")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Max 50 questions
+      </p>
+      }
     </div>
 
-    <div class="row">
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-        <mat-form-field class="example-full-width m-b-10" appearance="fill">
-          <mat-label>Short Description</mat-label>
-          <textarea
-            matInput
-            formControlName="shortDesc"
-            rows="2"
-            cdkTextareaAutosize
-            #autosizeDesc="cdkTextareaAutosize"
-            [cdkAutosizeMinRows]="1"
-            [cdkAutosizeMaxRows]="2"
-            style="resize: none; overflow: hidden"
-            placeholder="Short quiz description"
-          ></textarea>
-          @if (
-            quizForm.get("shortDesc")?.hasError("required") &&
-            (quizForm.get("shortDesc")?.touched ||
-              quizForm.get("shortDesc")?.dirty)
-          ) {
-            <mat-error>Short description is required</mat-error>
-          }
-          @if (
-            quizForm.get("shortDesc")?.hasError("minlength") &&
-            (quizForm.get("shortDesc")?.touched ||
-              quizForm.get("shortDesc")?.dirty)
-          ) {
-            <mat-error>Short description is too short</mat-error>
-          }
-          @if (
-            quizForm.get("shortDesc")?.hasError("maxlength") &&
-            (quizForm.get("shortDesc")?.touched ||
-              quizForm.get("shortDesc")?.dirty)
-          ) {
-            <mat-error>Short description is too long</mat-error>
-          }
-        </mat-form-field>
-      </div>
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+        Ordering <span class="text-rose-500 ml-0.5">*</span>
+      </label>
+      <select formControlName="ordering"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none cursor-pointer
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+        @for (option of orderingOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
 
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-        <mat-form-field class="example-full-width m-b-10" appearance="fill">
-          <mat-label>Long Description</mat-label>
-          <textarea
-            matInput
-            formControlName="description"
-            rows="3"
-            cdkTextareaAutosize
-            #autosizeDesc="cdkTextareaAutosize"
-            [cdkAutosizeMinRows]="1"
-            [cdkAutosizeMaxRows]="3"
-            style="resize: none; overflow: hidden"
-            placeholder="Enter the quiz description"
-          ></textarea>
-          @if (
-            quizForm.get("description")?.hasError("required") &&
-            (quizForm.get("description")?.touched ||
-              quizForm.get("description")?.dirty)
-          ) {
-            <mat-error>Description is required</mat-error>
-          }
-          @if (
-            quizForm.get("description")?.hasError("minlength") &&
-            (quizForm.get("description")?.touched ||
-              quizForm.get("description")?.dirty)
-          ) {
-            <mat-error>Description is too short</mat-error>
-          }
-          @if (
-            quizForm.get("description")?.hasError("maxlength") &&
-            (quizForm.get("description")?.touched ||
-              quizForm.get("description")?.dirty)
-          ) {
-            <mat-error>Description is too long</mat-error>
-          }
-        </mat-form-field>
-      </div>
+  <!-- Difficulty + Category -->
+  <div class="grid grid-cols-2 gap-3">
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+        Difficulty <span class="text-rose-500 ml-0.5">*</span>
+      </label>
+      <select formControlName="level"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none cursor-pointer
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+        @for (option of difficultyOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
     </div>
 
-    <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Number of Questions</mat-label>
-          <input
-            type="number"
-            matInput
-            formControlName="numQuestions"
-            min="1"
-            max="50"
-            required
-          />
-          @if (
-            quizForm.get("numQuestions")?.hasError("required") &&
-            (quizForm.get("numQuestions")?.touched ||
-              quizForm.get("numQuestions")?.dirty)
-          ) {
-            <mat-error>Number of questions is required</mat-error>
-          }
-          @if (
-            quizForm.get("numQuestions")?.hasError("min") &&
-            (quizForm.get("numQuestions")?.touched ||
-              quizForm.get("numQuestions")?.dirty)
-          ) {
-            <mat-error>Minimum 1 question required</mat-error>
-          }
-          @if (
-            quizForm.get("numQuestions")?.hasError("max") &&
-            (quizForm.get("numQuestions")?.touched ||
-              quizForm.get("numQuestions")?.dirty)
-          ) {
-            <mat-error>Maximum 50 questions allowed</mat-error>
-          }
-        </mat-form-field>
-      </div>
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+        Category <span class="text-rose-500 ml-0.5">*</span>
+      </label>
+      <input type="text" formControlName="category" maxlength="100"
+             class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                    rounded-xl px-4 py-2.5 outline-none
+                    focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+      @if (quizForm.get("category")?.hasError("required") && (quizForm.get("category")?.touched || quizForm.get("category")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Category is required
+      </p>
+      }
+    </div>
+  </div>
 
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Question Ordering</mat-label>
-          <mat-select formControlName="ordering" required>
-            @for (option of orderingOptions; track option.value) {
-              <mat-option [value]="option.value">{{ option.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
+  <!-- Pass Marks + Max Attempts -->
+  <div class="grid grid-cols-2 gap-3">
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+        Pass Marks (%) <span class="text-rose-500 ml-0.5">*</span>
+      </label>
+      <input type="number" formControlName="passMarks" min="0" max="100"
+             class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                    rounded-xl px-4 py-2.5 outline-none
+                    focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+      @if (quizForm.get("passMarks")?.hasError("required") && (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Required
+      </p>
+      }
+      @if (quizForm.get("passMarks")?.hasError("min") && (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Minimum 0
+      </p>
+      }
+      @if (quizForm.get("passMarks")?.hasError("max") && (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Maximum 100
+      </p>
+      }
     </div>
 
-    <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Difficulty Level</mat-label>
-          <mat-select formControlName="level" required>
-            @for (option of difficultyOptions; track option.value) {
-              <mat-option [value]="option.value">{{ option.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Category</mat-label>
-          <input
-            matInput
-            formControlName="category"
-            type="text"
-            maxLength="100"
-            required
-          />
-          @if (
-            quizForm.get("category")?.hasError("required") &&
-            (quizForm.get("category")?.touched || quizForm.get("category")?.dirty)
-          ) {
-            <mat-error>Category is required</mat-error>
-          }
-        </mat-form-field>
-      </div>
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">
+        Max Attempts <span class="text-rose-500 ml-0.5">*</span>
+      </label>
+      <input type="number" formControlName="maxAttempts" min="1"
+             class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                    rounded-xl px-4 py-2.5 outline-none
+                    focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+      @if (quizForm.get("maxAttempts")?.hasError("required") && (quizForm.get("maxAttempts")?.touched || quizForm.get("maxAttempts")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Required
+      </p>
+      }
+      @if (quizForm.get("maxAttempts")?.hasError("min") && (quizForm.get("maxAttempts")?.touched || quizForm.get("maxAttempts")?.dirty)) {
+      <p class="text-[11px] text-rose-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Minimum 1 attempt
+      </p>
+      }
     </div>
+  </div>
 
-    <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Pass Marks</mat-label>
-          <input
-            type="number"
-            matInput
-            formControlName="passMarks"
-            min="0"
-            max="100"
-            required
-          />
-          @if (
-            quizForm.get("passMarks")?.hasError("required") &&
-            (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)
-          ) {
-            <mat-error>Pass marks is required</mat-error>
-          }
-          @if (
-            quizForm.get("passMarks")?.hasError("min") &&
-            (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)
-          ) {
-            <mat-error>Minimum pass marks is 0</mat-error>
-          }
-          @if (
-            quizForm.get("passMarks")?.hasError("max") &&
-            (quizForm.get("passMarks")?.touched || quizForm.get("passMarks")?.dirty)
-          ) {
-            <mat-error>Maximum pass marks is 100</mat-error>
-          }
-        </mat-form-field>
+  <!-- Publish toggle -->
+  <div class="pt-3 border-t border-cm-border">
+    <label class="flex items-center gap-3.5 cursor-pointer select-none">
+      <div class="relative">
+        <input type="checkbox" formControlName="isPublished" class="peer sr-only">
+        <div class="w-11 h-6 bg-cm-surface-raised border border-cm-border rounded-full
+                    peer-checked:bg-cm-brand peer-checked:border-cm-brand
+                    transition-all duration-200"></div>
+        <div class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm
+                    transition-all duration-200 peer-checked:translate-x-5"></div>
       </div>
-
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-2">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Max Attempts</mat-label>
-          <input
-            type="number"
-            matInput
-            formControlName="maxAttempts"
-            min="1"
-            required
-          />
-          @if (
-            quizForm.get("maxAttempts")?.hasError("required") &&
-            (quizForm.get("maxAttempts")?.touched || quizForm.get("maxAttempts")?.dirty)
-          ) {
-            <mat-error>Max attempts is required</mat-error>
-          }
-          @if (
-            quizForm.get("maxAttempts")?.hasError("min") &&
-            (quizForm.get("maxAttempts")?.touched || quizForm.get("maxAttempts")?.dirty)
-          ) {
-            <mat-error>Minimum 1 attempt required</mat-error>
-          }
-        </mat-form-field>
+      <div>
+        <p class="text-sm font-semibold text-cm-text-primary leading-none">Publish this quiz</p>
+        <p class="text-xs text-cm-text-muted mt-0.5">Make this quiz visible to learners</p>
       </div>
-    </div>
+    </label>
+  </div>
 
-    <div class="row">
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-        <mat-checkbox
-          class="example-margin"
-          formControlName="isPublished"
-          checked
-          >Publish this quiz
-        </mat-checkbox>
-      </div>
-    </div>
-  </ng-scrollbar>
-
-  <!-- <div class="form-actions">
-            <button mat-stroked-button color="primary" (click)="onCancel()">
-              <mat-icon>keyboard_arrow_left</mat-icon>
-              Cancel
-            </button>
-            <span class="flex-grow"></span>
-            <button mat-flat-button color="accent" (click)="submit()" [disabled]="!quizForm.valid">
-              Next
-              <mat-icon>keyboard_arrow_right</mat-icon>
-            </button>
-          </div> -->
 </form>

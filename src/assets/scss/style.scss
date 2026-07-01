@@ -4,6 +4,7 @@
  *  Author     : AppDev Theme
  *  Description: This is main style scss file. Bootstrap to Tailwind css migration
 */
+//delete
 //@import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @include meta.load-css("common/_variables");
 @include meta.load-css("common/_mixins");

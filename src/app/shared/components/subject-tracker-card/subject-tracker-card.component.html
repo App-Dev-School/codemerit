@@ -1,147 +1,113 @@
-<!--- Start Subject Tracker Card -->
-<mat-card class="subjectCard" [class.hoverCard]="!profileMode" [class.profileCard]="profileMode">
-  <mat-card-content>
+<div class="tracker-card rounded-2xl border border-cm-border bg-cm-surface overflow-hidden">
 
-    <div class="row align-items-center">
-      <div class="col-12 col-sm-6 text-center text-sm-start mb-2 mb-sm-0">
-        <div class="d-flex align-items-center justify-content-center justify-content-sm-start">
-          <img [src]="item?.image || 'assets/images/tech/placeholder.png'" alt="item?.title"
-            class="subject-icon me-2" />
-          <span class="cmSubHeading">{{ item?.title }}</span>
-        </div>
-      </div>
-      @if ((profileMode || item?.numTrivia > 0) && item?.score > 0) {
-        <div class="col-12 col-sm-6 text-center text-sm-end">
-        <div class="d-flex flex-column align-items-center align-items-sm-end">
-          <app-course-progress
-            [score]="item.score"
-            [size]="profileMode ? 92 : 72"
-            [thickness]="profileMode ? 8 : 6"
-          ></app-course-progress>
-        </div>
-      </div>
-      }
-    </div>
+  <!-- ── Header: icon + name + score ring ─────────────────────── -->
+  <div class="flex items-center gap-3 p-4 border-b border-cm-border">
 
-    @if (profileMode) {
-      <p class="m-b-0 d-flex align-items-center justify-content-center level-info">
-        <i class="material-icons me-2 level-info-icon">trending_up</i>
-        Level: {{ findUserLevel() }}
+    <img [src]="item?.image || 'assets/images/tech/placeholder.png'"
+         [alt]="item?.title"
+         class="w-10 h-10 rounded-xl object-cover border border-cm-border shrink-0">
+
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-black text-cm-text-primary truncate">{{item?.title}}</p>
+      @if(item?.attempted > 0){
+      <p class="text-[11px] text-cm-text-muted mt-0.5">
+        <span class="font-semibold text-cm-text-secondary">{{findUserLevel()}}</span>
+        @if(item?.avgAccuracy){ · {{item.avgAccuracy}}% accuracy }
       </p>
-    }
-
-    @if (!profileMode) {
-    <div class="row">
-      @if (user && user?.role === 'Admin') {
-        <div class="col-12">
-        @if (item.numTrivia > 0) {
-        <hr class="dim-divider">
-        <div class="progress" style="height: 20px;width: 100%;margin-top:2px;">
-          <div class="progress-bar" [style.width]="getPercentage(item.numEasyTrivia) + '%'" role="progressbar"
-            [attr.aria-valuenow]="item.numEasyTrivia" aria-valuemin="0" aria-valuemax="100">
-            {{ item.numEasyTrivia }}
-          </div>
-          <div class="progress-bar progress-bar-success" [style.width]="getPercentage(item.numIntTrivia) + '%'"
-            role="progressbar" [attr.aria-valuenow]="item.numIntTrivia" aria-valuemin="0" aria-valuemax="100">
-            {{ item.numIntTrivia }}
-          </div>
-          <div class="progress-bar progress-bar-dark" [style.width]="getPercentage(item.numAdvTrivia) + '%'"
-            role="progressbar" [attr.aria-valuenow]="item.numAdvTrivia" aria-valuemin="0" aria-valuemax="100">
-            {{ item.numAdvTrivia }}
-          </div>
-        </div>
-        }
-      </div>
+      }@else{
+      <p class="text-[11px] text-cm-text-muted mt-0.5">Not started yet</p>
       }
-      @if (item.attempted > 0) {
-      <div class="col-12">
-        <!-- <p class="m-b-5 m-t-0 font-12 d-flex align-items-center justify-content-center">
-         {{item.description}}
-        </p>
-        <hr class="dim-divider"> -->
-        <p class="m-b-0 m-t-0 font-12 d-flex align-items-center justify-content-center">
-          Your Level Wise Attempts 
-        </p>
-        <!-- Level Wise Completetion Widget -->
-        <div class="row no-gutter text-center mt-3">
-          <!-- Beginner -->
-          <div class="col-12 col-md-4 mb-3">
-            <div class="p-2 rounded" style="background:#2b982b;">
-              <h6 class="mb-1 col-white font-12">Basic</h6>
-              <h6 class="mb-1 col-white text-center">
-                {{ ((item.attemptedEasy / item.numEasyTrivia) * 100) | number:'1.0-0' }}%
-              </h6>
-            </div>
-          </div>
+    </div>
 
-          <!-- Intermediate -->
-          <div class="col-12 col-md-4 mb-3">
-            <div class="p-2 rounded" style="background:#fb483a;">
-              <h6 class="mb-1 col-white font-12">Intermediate</h6>
-              
-              <h6 class="mb-1 col-white text-center">
-                {{ ((item.attemptedMedium / item.numIntTrivia) * 100) | number:'1.0-0' }}%</h6>
-            </div>
-          </div>
-
-          <!-- Advanced -->
-          <div class="col-12 col-md-4 mb-3 progress-bar-dark">
-            <div class="p-2 rounded progress-bar" style="background:#212529;">
-              <h6 class="mb-1 col-white font-12">Advanced</h6>
-              <h6 class="mb-1 col-white text-center">
-                {{ ((item.attemptedHard / item.numAdvTrivia) * 100) | number:'1.0-0' }}%
-              </h6>
-            </div>
-          </div>
-        </div>
-<hr class="dim-divider">
-        <p class="m-b-5 m-t-0 d-flex align-items-center justify-content-center level-info">
-          <i class="material-icons me-2 level-info-icon">trending_up</i> 
-          Level: {{findUserLevel()}}
-      <span class="col-grey m-l-10 m-r-10"> | </span>Accuracy : {{item?.avgAccuracy}}%
-        </p>
-      </div>
-      }
+    @if((profileMode || item?.numTrivia > 0) && item?.score > 0){
+    <div class="shrink-0">
+      <app-course-progress
+        [score]="item.score"
+        [size]="profileMode ? 72 : 60"
+        [thickness]="profileMode ? 7 : 5">
+      </app-course-progress>
     </div>
     }
 
+  </div>
 
-    @if (!profileMode) {
-    <mat-card-footer>
-      @if (item.coverage > 0) {
-      <hr class="dim-divider">
-      <ul class="list-unstyled m-b-10 m-t-10">
-        <li>
-          <div class="mb-2 d-flex justify-content-between">
-            <span class="progress-label">Completed</span>
-            <span class="progress-percent label label-success">{{item.coverage}}%</span>
-          </div>
-          <div class="progress skill-progress w-100">
-            <div class="progress-bar progress-bar-success" [style.width]="item.coverage + '%'" role="progressbar"
-              [attr.aria-valuenow]="item.coverage" aria-valuemin="0" aria-valuemax="100">
-            </div>
+  <!-- ── Body: coverage + level breakdown ─────────────────────── -->
+  @if(!profileMode){
+  <div class="px-4 pt-3 pb-2 space-y-3">
 
-            <div class="progress-bar progress-bar-success" [style.width]="item.coverage + '%'" role="progressbar"
-              [attr.aria-valuenow]="item.coverage" aria-valuemin="0" aria-valuemax="100">
-            </div>
-          </div>
-        </li>
-      </ul>
-      }
-      <hr class="dim-divider">
-      <div class="d-flex flex-column flex-sm-row justify-content-center text-center">
-        <button (click)="onViewPath()" mat-stroked-button color="primary" class="mb-2 mb-sm-0 me-sm-2">
-          Explore
-        </button>
-        @if (item.numTrivia > 0) {
-        <button (click)="onTakeQuiz()" mat-flat-button color="accent">
-          {{ item.attempted > 0 ? 'Next Quiz' : 'Test Skills'}}
-        </button>
-        }
+    <!-- Coverage progress bar -->
+    @if(item?.coverage > 0){
+    <div>
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-[10px] font-bold text-cm-text-muted uppercase tracking-wider">Coverage</span>
+        <span class="text-[11px] font-black text-cm-text-primary">{{item.coverage}}%</span>
+      </div>
+      <div class="h-1.5 w-full rounded-full bg-cm-surface-raised overflow-hidden">
+        <div class="h-full rounded-full bg-green-500 transition-all duration-700"
+             [style.width]="item.coverage + '%'"></div>
+      </div>
+    </div>
+    }
+
+    <!-- Level-wise attempt chips -->
+    @if(item?.attempted > 0 && item?.numEasyTrivia > 0){
+    <div class="grid grid-cols-3 gap-1.5">
+
+      <div class="rounded-xl p-2.5 text-center bg-green-500/10 border border-green-500/20">
+        <p class="text-[9px] font-black uppercase tracking-widest text-green-600 dark:text-green-400 mb-1">
+          Basic
+        </p>
+        <p class="text-sm font-black text-green-600 dark:text-green-400">
+          {{((item.attemptedEasy / item.numEasyTrivia) * 100) | number:'1.0-0'}}%
+        </p>
       </div>
 
-    </mat-card-footer>
+      <div class="rounded-xl p-2.5 text-center bg-orange-500/10 border border-orange-500/20">
+        <p class="text-[9px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 mb-1">
+          Mid
+        </p>
+        <p class="text-sm font-black text-orange-600 dark:text-orange-400">
+          {{((item.attemptedMedium / item.numIntTrivia) * 100) | number:'1.0-0'}}%
+        </p>
+      </div>
+
+      <div class="rounded-xl p-2.5 text-center bg-cm-surface-raised border border-cm-border">
+        <p class="text-[9px] font-black uppercase tracking-widest text-cm-text-muted mb-1">Adv</p>
+        <p class="text-sm font-black text-cm-text-primary">
+          {{((item.attemptedHard / item.numAdvTrivia) * 100) | number:'1.0-0'}}%
+        </p>
+      </div>
+
+    </div>
     }
-  </mat-card-content>
-</mat-card>
-<!--- End Subject Tracker Card -->
+
+    <!-- Admin: difficulty distribution bar -->
+    @if(user?.role === 'Admin' && item?.numTrivia > 0){
+    <div class="flex h-2 rounded-full overflow-hidden bg-cm-surface-raised">
+      <div class="h-full bg-green-500"
+           [style.width]="getPercentage(item.numEasyTrivia) + '%'"></div>
+      <div class="h-full bg-orange-400"
+           [style.width]="getPercentage(item.numIntTrivia) + '%'"></div>
+      <div class="h-full bg-slate-500"
+           [style.width]="getPercentage(item.numAdvTrivia) + '%'"></div>
+    </div>
+    }
+
+  </div>
+  }
+
+  <!-- ── Footer: action buttons ────────────────────────────────── -->
+  @if(!profileMode){
+  <div class="px-4 pb-4 pt-2 flex gap-2">
+    <button (click)="onViewPath()" mat-stroked-button color="primary" class="flex-1 !text-xs !h-8">
+      Explore
+    </button>
+    @if(item?.numTrivia > 0){
+    <button (click)="onTakeQuiz()" mat-flat-button color="accent" class="flex-1 !text-xs !h-8">
+      {{item.attempted > 0 ? 'Next Quiz' : 'Test Skills'}}
+    </button>
+    }
+  </div>
+  }
+
+</div>
