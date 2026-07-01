@@ -1,97 +1,167 @@
-<div class="settingSidebar" [ngClass]="isOpenSidebar ? 'showSettingPanel' : ''">
-    <a href="javascript:void(0)" class="settingPanelToggle" (click)="toggleRightSidebar()">
-        <mat-icon [class]="'setting-sidebar-icon'">filter_list</mat-icon>
-    </a>
-    <ng-scrollbar [style.height]="maxHeight + 'px'" visibility="hover">
-        <div class="settingSidebar-body ps-container ps-theme-default">
-            <div class="fade show active">
-                <div class="setting-panel-header">
-                    <span class="filter">Filter Quizzes</span>
-                    <button class="close" mat-icon-button (click)="closeSidebar()">
-                        <mat-icon>close</mat-icon>
-                    </button>
-                </div>
-            </div>
+<!-- Backdrop -->
+@if (isOpenSidebar) {
+  <div class="filter-backdrop" (click)="toggleRightSidebar()"></div>
+}
 
-            <div class="rightSetting">
-                <p class="font-medium">Skill Type</p>
-                <mat-button-toggle-group class="mt-2" [(ngModel)]="skillType">
-                    <mat-button-toggle value="Job" (click)="skillTypeChanged($event)">Tech Jobs</mat-button-toggle>
-                    <mat-button-toggle value="Subject" (click)="skillTypeChanged($event)">Skills</mat-button-toggle>
-                </mat-button-toggle-group>
-            </div>
-            <hr class="dim-divider">
+<!-- Slide-in panel -->
+<div class="filter-panel" [class.filter-panel--open]="isOpenSidebar">
 
-            @if (skillType === 'Job') {
-            <div class="rightSetting">
-                <p class="font-medium m-b-0">Select a Job</p>
-                <mat-form-field appearance="fill">
-                    <mat-select [(ngModel)]="selectedJobId" (selectionChange)="onJobChange()">
-                        <!-- <mat-option [value]="0">All Jobs</mat-option> -->
-                        @for (job of filteredJobs; track job.id) {
-                        <mat-option [value]="job.id">{{ job.title }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            }
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <div class="filter-panel__header">
 
-            <div class="rightSetting">
-                <p class="font-medium m-b-0">Select a Subject</p>
-                <mat-form-field appearance="fill">
-                    <!-- <mat-label>Subject</mat-label> -->
-                    <mat-select [(ngModel)]="selectedSubjectId" (selectionChange)="onSubjectChange()">
-                        <mat-option [value]="0">All Subjects</mat-option>
-                        @for (
-                        subject of subjects;
-                        track subject.id
-                        ) {
-                        <mat-option [value]="subject.id">
-                            {{ subject.title }}
-                        </mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-            </div>
+    <!-- Top accent bar -->
+    <div class="filter-panel__accent"></div>
 
-            @if (skillType === 'Subject' && selectedSubjectId && selectedSubjectId !== 0) {
-            <hr class="dim-divider">
-            <div class="rightSetting">
-                <p class="font-medium m-b-0">Select a Topic</p>
-                <mat-form-field appearance="fill">
-                    <mat-select [(ngModel)]="selectedTopicId">
-                        <mat-option [value]="0">All Topics</mat-option>
-                        @for (topic of filteredTopics; track topic.id) {
-                        <mat-option [value]="topic.id">{{ topic.title }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            }
-
-            <hr class="dim-divider">
-            <div class="rightSetting">
-                <p class="font-medium">Supported Mode</p>
-                <mat-button-toggle-group class="mt-2" [value]="isDarkSidebar ? 'dark' : 'light'">
-                    <mat-button-toggle (click)="testClick()" value="light">All</mat-button-toggle>
-                    <mat-button-toggle (click)="testClick()" value="dark">Interactive</mat-button-toggle>
-                </mat-button-toggle-group>
-            </div>
-
-            <!-- <div class="rightSetting">
-                <p class="font-medium m-b-10">Difficulty Level</p>
-                <mat-button-toggle-group class="mt-2" [value]="isDarkSidebar ? 'dark' : 'light'">
-                    <mat-button-toggle (click)="testClick()" value="light">Beginner</mat-button-toggle>
-                    <mat-button-toggle (click)="testClick()" value="dark">Intermediate</mat-button-toggle>
-                    <mat-button-toggle (click)="testClick()" value="dark">Advanced</mat-button-toggle>
-                </mat-button-toggle-group>
-            </div> -->
-
-            <!-- <button mat-stroked-button type="button" class="reset-btn m-t-20 m-b-20" (click)="resetFilters()">Reset</button> -->
+    <div class="px-5 py-4 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <div style="width:32px; height:32px; border-radius:10px; display:flex; align-items:center;
+                    justify-content:center; background:linear-gradient(135deg,#6366f1,#8b5cf6);">
+          <i class="fa-solid fa-sliders text-white" style="font-size:13px;"></i>
         </div>
-    </ng-scrollbar>
-    <div class="filter-actions rightSetting sticky-bottom">
-        <button mat-flat-button color="primary" type="button" class="apply-btn fullWidth"
-            (click)="applyFilter()">Apply</button>
+        <div>
+          <div class="text-[13px] font-extrabold text-cm-text-primary leading-tight">Filter Quizzes</div>
+          <div class="text-[10px] text-cm-text-muted leading-tight">Narrow by subject, topic or role</div>
+        </div>
+      </div>
+      <button (click)="toggleRightSidebar()"
+              class="w-8 h-8 rounded-lg border border-cm-border bg-cm-surface-raised
+                     flex items-center justify-center text-cm-text-muted
+                     hover:text-cm-text-primary hover:bg-cm-surface-hover transition-all">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
     </div>
+  </div>
+
+  <!-- ── Body ───────────────────────────────────────────────────────────── -->
+  <div class="filter-panel__body">
+
+    <!-- ─ Skill Type ─ -->
+    <div class="filter-section">
+      <span class="filter-label">Quiz Type</span>
+      <div style="display:flex; border-radius:12px; border:1px solid var(--cm-border);
+                  overflow:hidden; background:var(--cm-surface-raised);">
+        <button
+          (click)="skillType='Job'; skillTypeChanged($event)"
+          [style]="skillType === 'Job'
+            ? 'flex:1; padding:9px 12px; font-size:12px; font-weight:700; border:none; cursor:pointer;
+               background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; transition:.2s;'
+            : 'flex:1; padding:9px 12px; font-size:12px; font-weight:600; border:none; cursor:pointer;
+               background:transparent; color:var(--cm-text-secondary); transition:.2s;'">
+          <i class="fa-solid fa-briefcase" style="font-size:10px; margin-right:5px;"></i>Tech Jobs
+        </button>
+        <div style="width:1px; background:var(--cm-border); margin:6px 0; flex-shrink:0;"></div>
+        <button
+          (click)="skillType='Subject'; skillTypeChanged($event)"
+          [style]="skillType === 'Subject'
+            ? 'flex:1; padding:9px 12px; font-size:12px; font-weight:700; border:none; cursor:pointer;
+               background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; transition:.2s;'
+            : 'flex:1; padding:9px 12px; font-size:12px; font-weight:600; border:none; cursor:pointer;
+               background:transparent; color:var(--cm-text-secondary); transition:.2s;'">
+          <i class="fa-solid fa-book-open" style="font-size:10px; margin-right:5px;"></i>Skills
+        </button>
+      </div>
+    </div>
+
+    <!-- ─ Job Role (Tech Jobs mode) ─ -->
+    @if (skillType === 'Job') {
+      <div class="filter-section">
+        <span class="filter-label">
+          <i class="fa-solid fa-briefcase" style="color:#6366f1; font-size:10px; margin-right:4px;"></i>
+          Job Role
+        </span>
+        <div class="filter-select-wrapper">
+          <select [(ngModel)]="selectedJobId" (change)="onJobChange()" class="filter-select">
+            @for (job of filteredJobs; track job.id) {
+              <option [ngValue]="job.id">{{ job.title }}</option>
+            }
+          </select>
+          <i class="fa-solid fa-chevron-down filter-select-icon"></i>
+        </div>
+        @if (filteredJobs.length === 0) {
+          <p class="text-[11px] text-cm-text-muted mt-1.5 italic">No job roles loaded yet.</p>
+        }
+      </div>
+    }
+
+    <!-- ─ Subject ─ -->
+    <div class="filter-section">
+      <span class="filter-label">
+        <i class="fa-solid fa-layer-group" style="color:#8b5cf6; font-size:10px; margin-right:4px;"></i>
+        Subject
+      </span>
+      <div class="filter-select-wrapper">
+        <select [(ngModel)]="selectedSubjectId" (change)="onSubjectChange()" class="filter-select">
+          <option [ngValue]="0">All Subjects</option>
+          @for (subject of subjects; track subject.id) {
+            <option [ngValue]="subject.id">{{ subject.title }}</option>
+          }
+        </select>
+        <i class="fa-solid fa-chevron-down filter-select-icon"></i>
+      </div>
+    </div>
+
+    <!-- ─ Topic (Skills mode + subject selected) ─ -->
+    @if (skillType === 'Subject' && selectedSubjectId && selectedSubjectId !== 0) {
+      <div class="filter-section">
+        <span class="filter-label">
+          <i class="fa-solid fa-tag" style="color:#a78bfa; font-size:10px; margin-right:4px;"></i>
+          Topic
+        </span>
+        <div class="filter-select-wrapper">
+          <select [(ngModel)]="selectedTopicId" class="filter-select">
+            <option [ngValue]="0">All Topics</option>
+            @for (topic of filteredTopics; track topic.id) {
+              <option [ngValue]="topic.id">{{ topic.title }}</option>
+            }
+          </select>
+          <i class="fa-solid fa-chevron-down filter-select-icon"></i>
+        </div>
+        @if (filteredTopics.length === 0) {
+          <p class="text-[11px] text-cm-text-muted mt-1.5 italic">No topics for this subject.</p>
+        }
+      </div>
+    }
+
+    <!-- ─ Active Filters Summary ─ -->
+    @if ((selectedSubjectId && selectedSubjectId !== 0) || (selectedTopicId && selectedTopicId !== 0)) {
+      <div class="rounded-xl border border-indigo-200/60 dark:border-indigo-500/25
+                  bg-indigo-50/60 dark:bg-indigo-500/8 px-4 py-3">
+        <p class="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 mb-2">
+          <i class="fa-solid fa-circle-info text-[10px] mr-1.5"></i>Active Filters
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          @if (selectedSubjectId && selectedSubjectId !== 0) {
+            <span style="display:inline-flex; align-items:center; gap:4px; padding:3px 9px;
+                         border-radius:99px; font-size:10px; font-weight:700;
+                         background:rgba(99,102,241,.15); color:#4338ca; border:1px solid rgba(99,102,241,.25);">
+              <i class="fa-solid fa-layer-group" style="font-size:8px;"></i>
+              Subject #{{ selectedSubjectId }}
+            </span>
+          }
+          @if (selectedTopicId && selectedTopicId !== 0) {
+            <span style="display:inline-flex; align-items:center; gap:4px; padding:3px 9px;
+                         border-radius:99px; font-size:10px; font-weight:700;
+                         background:rgba(139,92,246,.15); color:#6d28d9; border:1px solid rgba(139,92,246,.25);">
+              <i class="fa-solid fa-tag" style="font-size:8px;"></i>
+              Topic #{{ selectedTopicId }}
+            </span>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────── -->
+  <div class="filter-panel__footer">
+    <button (click)="resetFilters()" class="filter-btn filter-btn--ghost">
+      <i class="fa-solid fa-rotate-left" style="font-size:11px;"></i>
+      Reset All
+    </button>
+    <button (click)="applyFilter()" class="filter-btn filter-btn--primary">
+      <i class="fa-solid fa-magnifying-glass" style="font-size:11px;"></i>
+      Apply Filter
+    </button>
+  </div>
+
 </div>

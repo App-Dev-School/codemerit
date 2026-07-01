@@ -1,43 +1,175 @@
-@if(showContent){
+@if (showContent) {
 <section class="content" [@topToBottom]>
   <div class="content-block">
-    @if(isLoading){
-    <div class="progress-container">
-      <div class="preloader pl-size-sm">
-        <div class="spinner-layer pl-purple">
-          <div class="circle-clipper left">
-            <div class="circle"></div>
+    <div class="pr-[25px] pb-12 pt-4">
+
+      <!-- ══ LOADING STATE ══════════════════════════════════════════════════ -->
+      @if (isLoading) {
+
+        <!-- Gradient sweep progress bar -->
+        <div class="loading-bar-track">
+          <div class="loading-bar-fill"></div>
+        </div>
+
+        <div class="space-y-5 mt-4">
+
+          <!-- Skeleton header -->
+          <div class="flex items-center justify-between gap-4">
+            <div class="space-y-2">
+              <div class="shimmer h-7 w-48 rounded-xl"></div>
+              <div class="shimmer h-4 w-64 rounded-lg"></div>
+            </div>
+            <div class="shimmer h-9 w-32 rounded-xl"></div>
           </div>
 
-          <div class="circle-clipper right">
-            <div class="circle"></div>
+          <!-- Skeleton quiz cards -->
+          <div style="display:flex; flex-wrap:wrap; gap:16px;">
+            @for (i of [1,2,3,4,5,6]; track i) {
+              <div style="min-width:268px; flex:1 1 268px; border-radius:16px;
+                          border:1px solid var(--cm-border); background:var(--cm-surface);
+                          overflow:hidden;">
+                <div class="shimmer" style="height:130px;"></div>
+                <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
+                  <div class="shimmer" style="height:12px; border-radius:6px;"></div>
+                  <div class="shimmer" style="height:12px; border-radius:6px; width:70%;"></div>
+                  <div style="display:flex; gap:8px;">
+                    <div class="shimmer" style="height:22px; width:56px; border-radius:6px;"></div>
+                    <div class="shimmer" style="height:22px; width:56px; border-radius:6px;"></div>
+                    <div class="shimmer" style="height:22px; width:48px; border-radius:6px;"></div>
+                  </div>
+                  <div style="display:flex; align-items:center; justify-content:space-between;
+                              padding-top:10px; border-top:1px solid var(--cm-border);">
+                    <div class="shimmer" style="height:12px; width:80px; border-radius:6px;"></div>
+                    <div class="shimmer" style="height:30px; width:90px; border-radius:8px;"></div>
+                  </div>
+                </div>
+              </div>
+            }
           </div>
-        </div>
-      </div>
-    </div>
-    }
 
-    @if(!isLoading){
-    <div class="m-t-10">
-      <!-- <button mat-stroked-button class="open-filter-btn" type="button" (click)="openSidebar()">
-      <mat-icon>filter_list</mat-icon>
-      Filter Quizzes
-    </button> -->
-      <quiz-filter-sidebar [selectedSubjectId]="selectedSubjectId" [selectedTopicId]="selectedTopicId"
-        (selectedSubjectIdChange)="selectedSubjectId = $event" (selectedTopicIdChange)="selectedTopicId = $event"
-        (apply)="applyFilter()" (reset)="resetFilters()" (close)="closeSidebar()"></quiz-filter-sidebar>
-
-      @if(selectedSubjectId !== null && selectedSubjectId !== undefined){
-      <div class="row m-t-10 g-4">
-        @for(quiz of quizzes; track quiz.id){
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-          <app-quiz-thumbnail [quiz]="quiz" (quizSelected)="takeQuiz($event)" (viewAttempts)="viewAttempts($event)"></app-quiz-thumbnail>
         </div>
-        }
-      </div>
       }
+
+
+      <!-- ══ LOADED STATE ═══════════════════════════════════════════════════ -->
+      @if (!isLoading) {
+        <div class="space-y-5">
+
+          <!-- Page header ─────────────────────────────────────────────────── -->
+          <div class="flex flex-wrap items-center justify-between gap-4">
+
+            <!-- Title + subtitle -->
+            <div>
+              <h1 class="text-xl font-black text-cm-text-primary tracking-tight leading-tight">
+                Browse Quizzes
+              </h1>
+              <p class="text-[12px] text-cm-text-muted mt-0.5">
+                Practice &amp; assess your skills with curated quizzes
+              </p>
+            </div>
+
+            <!-- Actions -->
+            <div style="display:flex; align-items:center; gap:10px;">
+
+              <!-- Quiz count badge -->
+              @if (quizzes.length > 0) {
+                <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl
+                             bg-cm-surface border border-cm-border shadow-sm
+                             text-xs font-bold text-cm-text-primary">
+                  <i class="fa-solid fa-layer-group text-[10px]" style="color:#6366f1;"></i>
+                  {{ quizzes.length }} quizzes
+                </span>
+              }
+
+              <!-- Filter trigger button -->
+              <button (click)="toggleRightSidebar()"
+                      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                             text-xs font-bold text-white transition-all
+                             shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40"
+                      style="background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; cursor:pointer;">
+                <i class="fa-solid fa-sliders" style="font-size:12px;"></i>
+                Filters
+              </button>
+
+            </div>
+          </div>
+
+          <!-- Quiz grid ───────────────────────────────────────────────────── -->
+          @if (quizzes.length > 0) {
+            <div style="display:flex; flex-wrap:wrap; gap:16px;">
+              @for (quiz of quizzes; track quiz.id) {
+                <div style="min-width:268px; flex:1 1 268px; max-width:420px;">
+                  <app-quiz-thumbnail
+                    [quiz]="quiz"
+                    (quizSelected)="takeQuiz($event)"
+                    (viewAttempts)="viewAttempts($event)">
+                  </app-quiz-thumbnail>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Empty: filter returned nothing ─────────────────────────────── -->
+          @if (quizzes.length === 0 && selectedSubjectId !== null && selectedSubjectId !== undefined && selectedSubjectId !== 0) {
+            <div class="flex flex-col items-center justify-center py-20 gap-4 text-center
+                        rounded-2xl border border-cm-border bg-cm-surface">
+              <div class="w-16 h-16 rounded-2xl bg-cm-surface-raised border border-cm-border
+                          flex items-center justify-center">
+                <i class="fa-solid fa-magnifying-glass text-cm-text-muted text-2xl"></i>
+              </div>
+              <div class="space-y-1.5">
+                <p class="text-sm font-bold text-cm-text-primary">No quizzes found</p>
+                <p class="text-xs text-cm-text-muted max-w-[280px] leading-relaxed">
+                  No quizzes match your current filters. Try adjusting them or reset to see all.
+                </p>
+              </div>
+              <button (click)="resetFilters()"
+                      class="flex items-center gap-2 px-4 py-2 rounded-lg
+                             text-xs font-bold text-white shadow-md shadow-indigo-500/20"
+                      style="background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; cursor:pointer;">
+                <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset Filters
+              </button>
+            </div>
+          }
+
+          <!-- Prompt: no filter applied yet ──────────────────────────────── -->
+          @if (quizzes.length === 0 && (selectedSubjectId === null || selectedSubjectId === undefined || selectedSubjectId === 0)) {
+            <div class="flex flex-col items-center justify-center py-20 gap-4 text-center
+                        rounded-2xl border border-cm-border bg-cm-surface-muted">
+              <div class="w-16 h-16 rounded-2xl flex items-center justify-center"
+                   style="background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.2);">
+                <i class="fa-solid fa-filter text-2xl" style="color:#6366f1;"></i>
+              </div>
+              <div class="space-y-1.5">
+                <p class="text-sm font-bold text-cm-text-primary">Ready to explore?</p>
+                <p class="text-xs text-cm-text-muted max-w-[280px] leading-relaxed">
+                  Click <span class="font-bold text-cm-text-primary">Filters</span> to select a subject or job role, then apply to load quizzes.
+                </p>
+              </div>
+              <button (click)="toggleRightSidebar()"
+                      class="flex items-center gap-2 px-4 py-2 rounded-lg
+                             text-xs font-bold text-white shadow-md shadow-indigo-500/20"
+                      style="background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; cursor:pointer;">
+                <i class="fa-solid fa-sliders text-[10px]"></i> Open Filters
+              </button>
+            </div>
+          }
+
+        </div>
+      }
+
     </div>
-    }
   </div>
 </section>
 }
+
+<!-- Filter sidebar — fixed overlay, renders outside the page flow -->
+<quiz-filter-sidebar
+  [selectedSubjectId]="selectedSubjectId"
+  [selectedTopicId]="selectedTopicId"
+  (selectedSubjectIdChange)="selectedSubjectId = $event"
+  (selectedTopicIdChange)="selectedTopicId = $event"
+  (apply)="applyFilter()"
+  (reset)="resetFilters()"
+  (close)="closeSidebar()">
+</quiz-filter-sidebar>

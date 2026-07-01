@@ -1,49 +1,168 @@
-.quiz-filter-sidebar {
+/* ── Backdrop ──────────────────────────────────────────── */
+.filter-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1299;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  animation: backdropIn 0.22s ease;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Panel ─────────────────────────────────────────────── */
+.filter-panel {
   position: fixed;
   top: 0;
-  right: -400px;
-  width: 350px;
-  height: 100vh;
-  background: #fff;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.08);
-  z-index: 1200;
-  transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+  right: 0;
+  width: 340px;
+  height: 100dvh;
+  z-index: 1300;
   display: flex;
   flex-direction: column;
+  background: var(--cm-surface);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.14);
+  transform: translateX(110%);
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
-.quiz-filter-sidebar.open {
-  right: 0;
+
+.filter-panel--open {
+  transform: translateX(0);
 }
-.sidebar-header {
+
+/* ── Header ────────────────────────────────────────────── */
+.filter-panel__header {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--cm-border);
+  background: var(--cm-surface);
+}
+
+.filter-panel__accent {
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+}
+
+/* ── Body ──────────────────────────────────────────────── */
+.filter-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cm-border) transparent;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: var(--cm-border);
+  }
+}
+
+/* ── Filter section ────────────────────────────────────── */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--cm-text-muted);
   display: flex;
   align-items: center;
-  //justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
-  font-weight: 600;
-  font-size: 1.1rem;
 }
-.filter{
-  align-items: start;
-  flex:1;
+
+/* ── Custom select ─────────────────────────────────────── */
+.filter-select-wrapper {
+  position: relative;
 }
-.close{
-  align-items: end;
+
+.filter-select {
+  width: 100%;
+  appearance: none;
+  padding: 9px 36px 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--cm-border);
+  background: var(--cm-surface-muted);
+  color: var(--cm-text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  }
+
+  &:hover {
+    border-color: #a5b4fc;
+  }
 }
-.sidebar-content {
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
+
+.filter-select-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 9px;
+  color: var(--cm-text-muted);
+  pointer-events: none;
 }
-.filter-actions {
+
+/* ── Footer ────────────────────────────────────────────── */
+.filter-panel__footer {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border-top: 1px solid var(--cm-border);
+  background: var(--cm-surface);
   display: flex;
-  justify-content: space-between;
-  margin-top: 1.5rem;
+  gap: 10px;
 }
-.sticky-bottom {
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  padding-bottom: 1rem;
-  z-index: 2;
+
+.filter-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+}
+
+.filter-btn--ghost {
+  background: var(--cm-surface-raised);
+  border: 1px solid var(--cm-border);
+  color: var(--cm-text-secondary);
+
+  &:hover {
+    background: var(--cm-surface-muted);
+    color: var(--cm-text-primary);
+  }
+}
+
+.filter-btn--primary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+
+  &:hover {
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+    opacity: 0.92;
+  }
 }

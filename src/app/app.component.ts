@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Event, NavigationEnd, NavigationStart, Router, RouterModule } from '@angular/router';
 import { PageLoaderComponent } from './layout/page-loader/page-loader.component';
 import { MasterService } from '@core/service/master.service';
 import { AuthConstants } from '@config/AuthConstants';
+import { ThemeService } from '@core';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -15,7 +17,11 @@ import { AuthConstants } from '@config/AuthConstants';
 })
 export class AppComponent implements OnInit{
   currentUrl!: string;
-  //isVisible = true;
+
+  private themeService = inject(ThemeService);
+  private renderer    = inject(Renderer2);
+  private document    = inject<Document>(DOCUMENT);
+
   constructor(public _router: Router, private master : MasterService) {
     this._router.events.subscribe((routerEvent: Event) => {
       if (routerEvent instanceof NavigationStart) {
@@ -31,6 +37,9 @@ export class AppComponent implements OnInit{
 
   //Added for animation in router outlet
   ngOnInit() {
+    // Apply saved theme preference globally — runs for every route including
+    // standalone ones like /interview-panel that have no MainLayoutComponent.
+    this.themeService.init(this.document, this.renderer);
     //Enable component transition globally
     // this._router.events.subscribe(event => {
     //   if (event instanceof NavigationStart) {

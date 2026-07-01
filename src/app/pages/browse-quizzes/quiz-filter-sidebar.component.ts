@@ -112,17 +112,14 @@ export class QuizFilterSidebarComponent extends UnsubscribeOnDestroyAdapter impl
     }
 
     filterTopics() {
-        if (
-            this.selectedSubjectId === null ||
-            this.selectedSubjectId === undefined ||
-            this.selectedSubjectId === 0
-        ) {
+        const sid = Number(this.selectedSubjectId);
+        if (!sid) {
             this.filteredTopics = [...this.topics];
-        } else {
-            this.filteredTopics = this.topics.filter(
-                (topic: any) => topic.subjectId === this.selectedSubjectId
-            );
+            return;
         }
+        this.filteredTopics = this.topics.filter(
+            (topic: any) => Number(topic.subjectId) === sid
+        );
     }
 
     resetFilters() {

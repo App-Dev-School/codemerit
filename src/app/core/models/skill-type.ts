@@ -1,4 +1,6 @@
 export enum SkillType {
-  Subject = 'Subject',
-  Topic = 'Topic'
+  Subject  = 'Subject',
+  Topic    = 'Topic',
+  JobRole  = 'JobRole',
+  Question = 'Question',
 }

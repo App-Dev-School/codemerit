@@ -1,107 +1,15 @@
-.flex-center {
-  justify-content: center;
-}
-
-.flexContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  width: 100%;
-  margin-bottom: 20px;
-
-  > * {
-    flex: 1 1 280px;
-    min-width: 0;
-  }
-}
-
-// Fix horizontal scrollbar issue in mat-tab-group caused by Bootstrap row negative margins
+/* Prevent horizontal scrollbar from mat-tab negative margins */
 ::ng-deep .mat-mdc-tab-body-content {
   overflow: hidden !important;
-  padding: 0 15px;
+  padding: 0 4px;
 }
 
-.congratulation-medal {
-  position: absolute;
-  top: 0;
-  right: 37px;
-  height: 96px;
-}
-
-.subject-badge {
-  position: absolute;
-  top: 0;
-  right: 36px;
-  height: 48px;
-}
-
-.subject-info {
-  flex: 1 1 auto;
-  min-width: 0;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.miniTxt {
-  font-size: 0.7rem;
-}
-
-.courseLoader{
-  min-width: min(90%, 360px);
-}
-
-.image-group img {
-  display: inline-block;
-  width: 40px;
-  margin: 4px;
-  //animation: fadeScale 1.5s infinite;
-  //animation: bounce 2.1s infinite;
-  //animation: fadeBounce 2s ease-in-out forwards;
-}
-
+/* Loading image stagger animation */
 .image-group img:nth-child(1) { animation-delay: 0s; }
 .image-group img:nth-child(2) { animation-delay: 0.4s; }
 .image-group img:nth-child(3) { animation-delay: 0.8s; }
 .image-group img:nth-child(4) { animation-delay: 1.2s; }
-.image-group img:nth-child(5) { animation-delay: 1.2s; }
-.image-group img:nth-child(6) { animation-delay: 1.8s; }
-.image-group img:nth-child(7) { animation-delay: 2.2s; }
-.image-group img:nth-child(8) { animation-delay: 2.5s; }
-
-@keyframes fadeBounce {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);   /* start slightly below */
-  }
-  40% {
-    opacity: 1;
-    transform: translateY(0);      /* fade into place */
-  }
-  60% {
-    transform: translateY(-15px);  /* bounce up */
-  }
-  80% {
-    transform: translateY(5px);    /* small rebound */
-  }
-  100% {
-    transform: translateY(0);      /* settle in place */
-  }
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
-}
-
-//fade together
-@keyframes fadeScale {
-  from {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-  to {
-    transform: scale(1.2);
-    opacity: 1;
-  }
-}
+.image-group img:nth-child(5) { animation-delay: 1.6s; }
+.image-group img:nth-child(6) { animation-delay: 2.0s; }
+.image-group img:nth-child(7) { animation-delay: 2.4s; }
+.image-group img:nth-child(8) { animation-delay: 2.8s; }

@@ -1,34 +1,75 @@
-aside{
-    background-color: #151516;
+/* ── Sidebar — auto-flips via CSS variable in tokens.css ── */
+aside {
+  background: var(--cm-sidebar-gradient);
 }
 
-/* Target your specific scrollable div */
+/* ── Candidate profile block — auto-flips via CSS variable ── */
+.candidate-profile {
+  background: var(--cm-profile-block-bg);
+}
+
+/* ── Scrollbar ── */
 .scrollable-div {
-  //overflow-y: auto;
-  /* Modern Standard Syntax (Firefox) */
-  scrollbar-width: thin; /* Options: auto, thin, none */
-  scrollbar-color: #888888 #f1f1f1; /* Format: thumb_color track_color */
+  scrollbar-width: thin;
+  scrollbar-color: var(--cm-scrollbar-thumb) var(--cm-scrollbar-track);
 }
 
-/* WebKit-based Syntax (Chrome, Safari, Edge) */
 .scrollable-div::-webkit-scrollbar {
-  width: 8px; /* Width of the vertical scrollbar */
-  height: 8px; /* Height of the horizontal scrollbar */
+  width: 6px;
+  height: 6px;
 }
 
-/* Style the scrollbar track (background) */
 .scrollable-div::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-  border-radius: 4px;
+  background: var(--cm-scrollbar-track);
 }
 
-/* Style the scrollbar thumb (draggable handle) */
 .scrollable-div::-webkit-scrollbar-thumb {
-  background: #888888; 
+  background: var(--cm-scrollbar-thumb);
   border-radius: 4px;
 }
 
-/* Style the thumb on hover */
 .scrollable-div::-webkit-scrollbar-thumb:hover {
-  background: #555555; 
+  background: var(--cm-scrollbar-hover);
+}
+
+/* ── Range sliders — custom track + thumb, visible in both modes ── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--cm-range-track);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--cm-range-track);
+  border: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-top: -4px;
+  cursor: pointer;
+  background: var(--thumb-color, #6366f1);
+  border: 2px solid var(--cm-range-thumb-border);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: var(--thumb-color, #6366f1);
+  border: 2px solid var(--cm-range-thumb-border);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 }

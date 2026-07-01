@@ -1,104 +1,15 @@
-.subjectCard {
-  border-radius: 1rem;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.tracker-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
-  &:not(.profileCard):hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 }
 
+/* Profile mode: slightly larger icon treatment */
 .profileCard {
-  border-radius: 28px;
-  background: #f7f9fc;
-  border: 1px solid #e7ecf4;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-
-  .subject-icon {
-    width: 56px;
-    height: 56px;
+  app-course-progress {
+    margin: 0 auto;
   }
-
-  .cmSubHeading {
-    font-size: 20px;
-    font-weight: 700;
-  }
-}
-
-.subject-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  //border-radius: 50%;
-  //border: 2px solid #e0e0e0;
-}
-
-.score-box {
-  min-width: 80px;
-}
-
-.progress-label {
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.progress-percent {
-  font-size: 0.85rem;
-}
-
-//added 
-.avatar-section {
-  width: 64px;
-  flex-shrink: 0;
-}
-
-.avatar-img {
-  width: 100%;
-  height: auto;
-  border-radius: 50%;
-}
-
-
-.score-section {
-  width: 120px;
-  flex-shrink: 0;
-}
-
-@media (max-width: 480px) {
-  .subject-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .score-section {
-    width: 150px;
-    margin-top: 0.5rem;
-  }
-
-  .profileCard .cmSubHeading {
-    font-size: 18px;
-  }
-}
-
-.miniTxt {
-  font-size: 0.7rem;
-}
-
-.level-info {
-  font-size: 0.75rem;
-  margin-top: 6px !important;
-}
-
-.level-info-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-}
-
-.no-gutter {
-  --bs-gutter-x: 4px;
-  /* horizontal gap */
-  --bs-gutter-y: 4px;
-  /* vertical gap */
 }

@@ -1,25 +1,80 @@
 @if(meritList && meritList.length > 0){
-    <ul class="list-unstyled list-unstyled-border list-unstyled-noborder">
-      @for (merit of meritList; track merit) {
-        <li class="merit-list">
-          <img alt="image" class="msr-3 rounded-circle" width="48" [src]="merit.image ?? 'assets/images/users/user.jpg'">
-          <div class="">
-            <div class="media-title font-14 font-b-500">{{ merit.name }}</div>
-            <div class="text-job text-muted mb-0 font-12">{{ merit.designationName }}</div>
-             <!-- <p class="text-job text-muted mb-0 font-12">Merit Points : {{ merit.score }}</p> -->
-          </div>
-          <div class="ms-auto">
-            <!-- <div class="media-title font-15 font-b-500">#{{ merit.rank }}</div> -->
-            <span [ngClass]="'bg-orange'" class="label">{{merit.score}}%</span>
-            <!-- <span class="badge bg-orange">{{merit.points}}</span> -->
-          </div>
-        </li>
-      }
-    </ul>
-    }@else {
-    <div class="no-data-container text-center">
-    <img src="assets/images/icons/hinting.gif" class="loadingIcon" />
-    <h6 class="col-grey">No Talent found here</h6>
-    <small>Be the first to appear in the Leaderboard</small>
+
+  <!-- ── Champion spotlight — #1 ───────────────────────────────── -->
+  <div class="relative overflow-hidden rounded-xl border border-cm-border bg-cm-surface-muted p-4 mb-3">
+
+    <!-- Ambient glow -->
+    <div class="absolute -top-6 -right-6 w-24 h-24 bg-amber-400/15 rounded-full blur-2xl pointer-events-none"></div>
+
+    <div class="relative flex items-center gap-3">
+
+      <!-- Avatar -->
+      <div class="relative shrink-0">
+        <img [src]="meritList[0].image ?? 'assets/images/users/user.jpg'"
+             class="w-12 h-12 rounded-xl object-cover border-2 border-amber-400 shadow-md shadow-amber-400/20"
+             alt="">
+        <span class="absolute -top-2.5 -right-1.5 text-sm leading-none select-none">👑</span>
+      </div>
+
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <p class="text-sm font-black text-cm-text-primary truncate">{{meritList[0].name}}</p>
+          <span class="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider
+                       bg-amber-400/10 text-amber-600 border border-amber-400/30">#1</span>
+        </div>
+        @if(meritList[0].designationName){
+        <p class="text-[10px] text-cm-brand-text font-medium truncate mt-0.5">
+          {{meritList[0].designationName}}
+        </p>
+        }
+        <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+          <span class="text-sm font-black text-amber-500">{{meritList[0].score}}%</span>
+          @if(meritList[0].avgAccuracy){
+          <span class="text-[10px] text-cm-text-muted">· {{meritList[0].avgAccuracy}}% accuracy</span>
+          }
+        </div>
+      </div>
+
+    </div>
   </div>
+
+  <!-- ── Ranked list — positions 2+ ────────────────────────────── -->
+  @if(meritList.length > 1){
+  <div class="space-y-0.5">
+    @for(merit of meritList.slice(1); let i = $index; track merit){
+    <div class="flex items-center gap-2.5 px-2 py-2 rounded-lg
+                hover:bg-cm-surface-hover transition-colors duration-150 cursor-default">
+
+      <!-- Medal / rank number -->
+      <span class="w-6 text-center text-xs font-black shrink-0"
+            [class.text-cm-text-muted]="i >= 2">
+        {{i === 0 ? '🥈' : i === 1 ? '🥉' : i + 2}}
+      </span>
+
+      <img [src]="merit.image ?? 'assets/images/users/user.jpg'"
+           class="w-7 h-7 rounded-lg object-cover border border-cm-border shrink-0" alt="">
+
+      <p class="flex-1 text-xs font-semibold text-cm-text-primary truncate">{{merit.name}}</p>
+
+      <span class="text-xs font-bold text-cm-text-secondary shrink-0">{{merit.score}}%</span>
+
+    </div>
     }
+  </div>
+  }
+
+}@else{
+
+  <!-- ── Empty state ─────────────────────────────────────────────── -->
+  <div class="flex flex-col items-center justify-center py-8 gap-3 text-center">
+    <div class="w-12 h-12 rounded-xl bg-cm-surface-raised flex items-center justify-center">
+      <mat-icon class="text-cm-text-muted" style="font-size:22px;width:22px;height:22px">leaderboard</mat-icon>
+    </div>
+    <div>
+      <p class="text-xs font-bold text-cm-text-primary">No rankings yet</p>
+      <p class="text-[11px] text-cm-text-muted mt-0.5">Complete assessments to appear here</p>
+    </div>
+  </div>
+
+}

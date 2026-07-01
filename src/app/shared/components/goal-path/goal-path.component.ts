@@ -1,8 +1,6 @@
-import { NgClass, NgStyle } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QuestionService } from 'src/app/lms/questions/manage/questions.service';
@@ -14,10 +12,8 @@ import { SwiperOptions } from 'swiper/types';
   selector: 'app-goal-path',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
-    MatProgressBarModule,
-    MatCardModule,
     MatButtonModule,
-    NgClass, NgStyle],
+    MatIconModule],
   templateUrl: './goal-path.component.html',
   styleUrl: './goal-path.component.scss'
 })

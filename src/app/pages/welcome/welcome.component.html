@@ -1,157 +1,429 @@
 <section class="content">
-  <div class="content-block">
+<div class="content-block">
+  <!--m-t-8 looks good on desktop -->
+<div class="p-0 m-t-30 sm:p-6 space-y-10">
 
-    <app-interview-panel></app-interview-panel>
-    <div class="row match-height m-t-20 clearfix">
-      <!-- Congratulations Card -->
-      @if(authUser?.firstName) {
-      <div class="col-12 col-md-4 col-lg-4">
-        <app-medal-card [userName]="'Welcome '+userName" [message]="userMessage" [action]="nextAction"
-          (medalAction)="handleAction($event)"></app-medal-card>
+  <!-- ── Welcome Card ─────────────────────────────────────────────────────── -->
+  <div class="pb-10 mb-0">
+    <app-learner-welcome-card></app-learner-welcome-card>
+  </div>
+
+  <!-- ── Skills + Leaderboard row ────────────────────────────────────────── -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+
+  <!-- ── My Skills — 1/2 ──────────────────────────────────────────────────── -->
+  <div class="lg:col-span-1 min-w-0 bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
+              dark:shadow-none">
+
+    <!-- Header -->
+    <div class="px-6 py-5 border-b border-cm-border flex items-center justify-between gap-3
+                bg-gradient-to-br from-violet-50/70 to-cm-surface
+                dark:from-violet-500/5 dark:to-transparent">
+      <div>
+        <h3 class="text-sm font-bold text-cm-text-primary">My Skills</h3>
+        <p class="text-xs text-cm-text-muted mt-0.5">{{ skillRatings.length }} skills rated</p>
       </div>
-      }@else{
-      <div class="col-12 col-md-6 col-lg-4">
-        <app-congratulations-card [user]="authUser"></app-congratulations-card>
+      <a href="#" (click)="handleAction('selfRating'); $event.preventDefault()"
+         class="text-xs font-semibold text-cm-brand hover:opacity-75 transition-opacity shrink-0">
+        Rate All →
+      </a>
+    </div>
+
+    <!-- Skill rows -->
+    <div class="divide-y divide-cm-border">
+      @for(s of skillRatings; track s.skillId) {
+      <div class="group relative flex items-center gap-4 px-6 py-4
+                  bg-cm-surface hover:bg-cm-surface-hover transition-colors duration-150">
+
+        <!-- Left hover accent -->
+        <div class="absolute left-0 inset-y-3 w-[3px] rounded-r-full
+                    bg-cm-brand scale-y-0 group-hover:scale-y-100
+                    transition-transform duration-200 origin-center"></div>
+
+        <!-- Icon -->
+        <div class="w-10 h-10 rounded-xl border border-cm-border bg-cm-surface-raised
+                    flex items-center justify-center overflow-hidden shrink-0">
+          @if(s.imageUrl) {
+            <img [src]="s.imageUrl" [alt]="s.skillName" class="w-7 h-7 object-contain">
+          } @else {
+            <i class="fa-solid fa-code text-cm-text-muted text-sm"></i>
+          }
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-bold text-cm-text-primary truncate leading-none">{{ s.skillName }}</span>
+            @if(s.level) {
+            <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-md leading-none
+                         bg-cm-brand-dim text-cm-brand-text border border-cm-brand/25">
+              {{ s.level }}
+            </span>
+            }
+          </div>
+
+          @if(s.rating) {
+          <div class="flex items-center gap-2 mb-2">
+            <div class="flex items-center gap-0.5">
+              @for(star of [1,2,3,4,5]; track star) {
+                @if(s.rating >= star) {
+                  <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
+                } @else if(s.rating >= star - 0.5) {
+                  <i class="fa-solid fa-star-half-stroke text-amber-400 text-[11px]"></i>
+                } @else {
+                  <i class="fa-regular fa-star text-cm-border-strong text-[11px]"></i>
+                }
+              }
+            </div>
+            @if(s.grade) {
+            <span class="text-[10px] font-semibold" [style.color]="gradeColor(s.grade)">{{ s.grade }}</span>
+            }
+          </div>
+          <div class="h-1.5 rounded-full bg-cm-surface-raised overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700"
+                 [style.width.%]="(s.rating / 5) * 100"
+                 [style.backgroundColor]="gradeColor(s.grade)"></div>
+          </div>
+          } @else if(!s.knows) {
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-cm-text-muted">
+            <i class="fa-solid fa-circle-question text-[10px]"></i> Not familiar yet
+          </span>
+          } @else {
+          <span class="text-[11px] text-cm-text-muted">Not yet rated</span>
+          }
+        </div>
       </div>
       }
+    </div>
 
-      <div class="col-12 col-md-8 col-lg-8">
-        <app-learner-welcome-card></app-learner-welcome-card>
+    <!-- Footer CTA -->
+    <div class="px-6 py-4 border-t border-cm-border bg-cm-surface-muted">
+      <button (click)="handleAction('selfRating')"
+              class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold
+                     text-cm-brand bg-cm-brand-dim border border-cm-brand/25
+                     hover:border-cm-brand/50 active:scale-[0.98] transition-all duration-150">
+        <i class="fa-solid fa-plus text-[10px]"></i>
+        Add Skill Rating
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Leaderboard — 1/3 ────────────────────────────────────────────────── -->
+  <div class="lg:col-span-1 min-w-0 bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
+              dark:shadow-none">
+
+    <!-- Header -->
+    <div class="px-6 py-5 border-b border-cm-border flex items-center justify-between gap-3
+                bg-gradient-to-br from-amber-50/70 to-cm-surface
+                dark:from-amber-500/5 dark:to-transparent">
+      <div>
+        <h3 class="text-sm font-bold text-cm-text-primary">Leaderboard</h3>
+        <p class="text-xs text-cm-text-muted mt-0.5">Top performers this month</p>
+      </div>
+      <a href="#" (click)="$event.preventDefault()"
+         class="text-xs font-semibold text-cm-brand hover:opacity-75 transition-opacity shrink-0">
+        View All →
+      </a>
+    </div>
+
+    <!-- Merit list -->
+    <div class="px-4 py-4">
+      <app-merit-list-widget [meritList]="meritList"></app-merit-list-widget>
+    </div>
+
+  </div>
+
+  </div><!-- end skills + leaderboard row -->
+
+  <!-- ── Daily Lessons ────────────────────────────────────────────────────── -->
+  <div class="min-w-0">
+
+    @if(!allLessonsStarted) {
+    <!-- Header + nav arrows + carousel all in one @if so #lessonScroll is in scope -->
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="text-sm font-bold text-cm-text-primary">Daily Lessons</h3>
+        <p class="text-xs text-cm-text-muted mt-0.5">
+          {{ pendingLessonsCount }} of {{ engagements.length }} remaining today
+        </p>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button (click)="lessonScroll.scrollBy({left: -292, behavior: 'smooth'})"
+                class="w-8 h-8 flex items-center justify-center rounded-lg border border-cm-border
+                       bg-cm-surface text-cm-text-muted hover:bg-cm-surface-raised hover:text-cm-text-primary
+                       hover:border-cm-border-strong transition-all duration-150 active:scale-[0.95]">
+          <i class="fa-solid fa-chevron-left text-[11px]"></i>
+        </button>
+        <button (click)="lessonScroll.scrollBy({left: 292, behavior: 'smooth'})"
+                class="w-8 h-8 flex items-center justify-center rounded-lg border border-cm-border
+                       bg-cm-surface text-cm-text-muted hover:bg-cm-surface-raised hover:text-cm-text-primary
+                       hover:border-cm-border-strong transition-all duration-150 active:scale-[0.95]">
+          <i class="fa-solid fa-chevron-right text-[11px]"></i>
+        </button>
+      </div>
+    </div>
+    <div #lessonScroll class="hw-scroll overflow-x-auto">
+      <div class="flex gap-4 pb-2" style="width: max-content">
+
+        @for(lesson of engagements; track lesson.id) {
+        @let lm = lessonMeta(lesson.subject);
+        @let dm = difficultyMeta(lesson.difficulty);
+        @let started = isLessonStarted(lesson.id);
+
+        <div class="w-64 shrink-0 flex flex-col bg-cm-surface border border-cm-border-strong
+                    rounded-2xl overflow-hidden border-t-[3px] cursor-pointer
+                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_12px_28px_rgba(0,0,0,0.07)]
+                    dark:shadow-none transition-all duration-200
+                    hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_20px_rgba(0,0,0,0.09),0_20px_40px_rgba(0,0,0,0.08)]
+                    hover:-translate-y-0.5 active:scale-[0.98] active:shadow-none"
+             [style.borderTopColor]="lm.accentColor"
+             (click)="exploreLesson(lesson.id)">
+
+          <!-- Subject header -->
+          <div class="flex items-start gap-3 px-4 pt-5 pb-4">
+            <div class="relative shrink-0">
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center"
+                   [style.backgroundColor]="lm.iconBg">
+                <img [src]="lesson.imageUrl" [alt]="lesson.subject" class="w-6 h-6 object-contain" />
+              </div>
+              @if(started) {
+              <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center
+                          bg-emerald-500 border-2 border-cm-surface shadow-sm">
+                <i class="fa-solid fa-check text-white text-[8px]"></i>
+              </div>
+              }
+            </div>
+            <div class="min-w-0 flex-1 pt-0.5">
+              <p class="text-[10px] font-bold uppercase tracking-widest leading-none mb-1"
+                 [style.color]="lm.accentColor">{{ lesson.subject }}</p>
+              <p class="text-[11px] text-cm-text-muted leading-none mb-2">{{ lesson.topic }}</p>
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md"
+                    [style.color]="dm.color" [style.backgroundColor]="dm.bg">
+                <i class="fa-solid fa-signal text-[8px]"></i>
+                {{ dm.label }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div class="px-4 pb-3 flex-1">
+            <h4 class="text-sm font-semibold text-cm-text-primary leading-snug line-clamp-2">{{ lesson.title }}</h4>
+          </div>
+
+          <!-- Duration -->
+          <div class="flex items-center gap-1.5 px-4 pb-4 text-[11px] text-cm-text-muted">
+            <i class="fa-regular fa-clock text-[10px]"></i>
+            {{ lesson.duration }} read
+          </div>
+
+          <!-- CTA -->
+          <div class="px-4 pb-4 pt-4 border-t border-cm-border">
+            @if(started) {
+            <div class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold
+                        text-emerald-700 dark:text-emerald-400
+                        bg-emerald-50 dark:bg-emerald-500/10
+                        border border-emerald-200 dark:border-emerald-500/25">
+              <i class="fa-solid fa-check text-[10px]"></i>
+              In Progress
+            </div>
+            } @else {
+            <div class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold border"
+                 [style.color]="lm.accentColor"
+                 [style.borderColor]="lm.iconBg"
+                 [style.backgroundColor]="lm.iconBg">
+              <i class="fa-solid fa-play text-[9px]"></i>
+              Start Lesson
+            </div>
+            }
+          </div>
+        </div>
+        }
+
       </div>
     </div>
 
-    <div class="row m-t-10 clearfix">
-      <div class="col-12 col-md-6 col-lg-4">
-        <mat-card class="m-t-20">
-          <mat-card-header class="header-style">
-            <mat-card-title> My Assessments</mat-card-title>
-            <a mat-button color="primary" href="#" (click)="$event.preventDefault();">View All</a>
-          </mat-card-header>
-          <mat-card-content>
-            <ng-scrollbar style="height: 380px" visibility="hover">
-              <div class="doc-file-type">
-                <app-skill-rating-widget [skillRatings]="skillRatings"></app-skill-rating-widget>
-              </div>
-            </ng-scrollbar>
-          </mat-card-content>
-        </mat-card>
+    } @else {
+    <!-- Header (no nav in done state) -->
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="text-sm font-bold text-cm-text-primary">Daily Lessons</h3>
+        <p class="text-xs text-cm-text-muted mt-0.5">All {{ engagements.length }} done — check back tomorrow</p>
       </div>
-      <div class="col-12 col-md-6 col-lg-8">
-        <div class="swiper-wrapper-container">
-          <!-- <swiper-container #swiperEx [pagination]="{ el: '.custom-pagination', clickable: true }"
-            slides-per-view="auto" space-between="10" [loop]="true" [speed]="4000" [autoplay]="{
-    delay: 0,
-    disableOnInteraction: false
-  }" class="certificate-swiper"> -->
-          <swiper-container #swiperEx [pagination]="{ el: '.custom-pagination', clickable: true }"
-            slides-per-view="auto" space-between="10" [loop]="true" [speed]="4000" class="certificate-swiper">
-            @for(certificate of certificateModels; track certificate) {
-            <swiper-slide class="swiper-slide m-t-20 m-b-20">
-              <app-certificate [templateId]="certificate.templateId" [model]="certificate"
-                [preview]="true"></app-certificate>
-            </swiper-slide>
-            }
-            <div class="custom-pagination"></div>
-          </swiper-container>
-          <!-- Custom pagination outside -->
+    </div>
+    <!-- All-done state -->
+    <div class="rounded-2xl border border-emerald-200 dark:border-emerald-500/25
+                bg-gradient-to-br from-emerald-50/80 to-cm-surface
+                dark:from-emerald-500/5 dark:to-transparent
+                shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <div class="flex flex-col items-center justify-center py-14 px-6 text-center">
+        <div class="relative mb-5">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center
+                      bg-emerald-100 dark:bg-emerald-500/15
+                      border-2 border-emerald-300 dark:border-emerald-500/40">
+            <i class="fa-solid fa-check text-emerald-500 text-xl"></i>
+          </div>
+          <span class="absolute -top-1 -right-1 text-xl leading-none select-none">🎉</span>
+        </div>
+        <h4 class="text-sm font-bold text-cm-text-primary mb-2">All caught up for today!</h4>
+        <p class="text-xs text-cm-text-muted leading-relaxed max-w-[260px] mb-6">
+          You've started all {{ engagements.length }} lessons. Mark them complete from each lesson page.
+        </p>
+        <div class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl
+                    bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20">
+          <span class="text-base leading-none select-none">🔥</span>
+          <span class="text-xs font-bold text-orange-700 dark:text-orange-400">Come back tomorrow!</span>
+        </div>
+      </div>
+    </div>
+    }
 
+  </div>
+
+  <!-- ── Certificates & Achievements ──────────────────────────────────────── -->
+  <div class="min-w-0">
+
+    <!-- Section header + nav arrows -->
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h3 class="text-sm font-bold text-cm-text-primary">Certificates &amp; Achievements</h3>
+        <p class="text-xs text-cm-text-muted mt-0.5">{{ certificateModels.length }} certificates earned</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="#" (click)="$event.preventDefault()"
+           class="text-xs font-semibold text-cm-brand hover:opacity-75 transition-opacity">
+          View All →
+        </a>
+        <div class="flex items-center gap-1.5">
+          <button (click)="certScroll.scrollBy({left: -296, behavior: 'smooth'})"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg border border-cm-border
+                         bg-cm-surface text-cm-text-muted hover:bg-cm-surface-raised hover:text-cm-text-primary
+                         hover:border-cm-border-strong transition-all duration-150 active:scale-[0.95]">
+            <i class="fa-solid fa-chevron-left text-[11px]"></i>
+          </button>
+          <button (click)="certScroll.scrollBy({left: 296, behavior: 'smooth'})"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg border border-cm-border
+                         bg-cm-surface text-cm-text-muted hover:bg-cm-surface-raised hover:text-cm-text-primary
+                         hover:border-cm-border-strong transition-all duration-150 active:scale-[0.95]">
+            <i class="fa-solid fa-chevron-right text-[11px]"></i>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- <div class="row m-t-20 clearfix">
-      @for(certificate of certificateModels; track certificate) {
-      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-        <app-certificate [templateId]="certificate.templateId" [model]="certificate"></app-certificate>
-      </div>
-      }
-    </div> -->
-    <!-- <div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
-        <app-certificate [model]="certificateModels[0]"></app-certificate>
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
-        <app-certificate [model]="certificateModels[certificateModels.length-1]"></app-certificate>
-      </div> -->
+    <div #certScroll class="hw-scroll overflow-x-auto">
+      <div class="flex gap-4 pb-3" style="width: max-content">
 
-    <div class="row m-t-20 clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h3 class="text-center m-t-20">Skills by <span class="col-green">Job Roles</span></h3>
-        @if(subjectRoleMap && subjectRoleMap.length > 0){
-        <app-subject-role-map [data]="subjectRoleMap"
-          (subjectSelected)="onSubjectChange($event)"></app-subject-role-map>
-        }
-      </div>
-    </div>
+        @for(cert of certificateModels; track cert.certificateNumber) {
+        @let m = certMeta(cert.templateId);
 
-    <div class="row m-t-20 clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h4 class="text-center mb-5 mt-5">Explore Cards</h4>
-      </div>
-    </div>
+        <div class="w-72 shrink-0 flex flex-col bg-cm-surface border border-cm-border-strong
+                    rounded-2xl overflow-hidden border-t-[3px]
+                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_12px_28px_rgba(0,0,0,0.07)]
+                    dark:shadow-none transition-all duration-200
+                    hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_20px_rgba(0,0,0,0.09),0_20px_40px_rgba(0,0,0,0.08)]
+                    hover:-translate-y-0.5"
+             [style.borderTopColor]="m.accentColor">
 
-    <div class="row clearfix">
-      @for (engage of engagements; track engage) {
-      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-        <mat-card>
-          <mat-card-header>
-            <div class="header-flex">
-              <!-- LEFT ICON -->
-              @if (engage.style === 'left') {
-              <ng-container>
-                <img src="{{engage.imageUrl}}" class="subject-icon" />
-              </ng-container>
+          <!-- Header -->
+          <div class="flex items-start gap-3 px-5 pt-5 pb-4">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                 [style.backgroundColor]="m.iconBg">
+              <i [class]="m.icon + ' text-base'" [style.color]="m.iconColor"></i>
+            </div>
+            <div class="min-w-0 pt-0.5">
+              <p class="text-[10px] font-bold uppercase tracking-widest leading-none mb-1"
+                 [style.color]="m.accentColor">{{ m.label }}</p>
+              @if(cert.tierDisplayName) {
+              <p class="text-[11px] text-cm-text-muted leading-none">{{ cert.tierDisplayName }}</p>
               }
-              <div class="title-block">
-                <mat-card-title class="mat-card-title m-b-0">{{ engage.subject }}</mat-card-title>
-                <mat-card-subtitle class="mat-card-subtitle col-grey m-t-0">{{ engage.topic }}</mat-card-subtitle>
+            </div>
+          </div>
+
+          <!-- Title + skill -->
+          <div class="px-5 pb-5 flex-1">
+            <h4 class="text-sm font-bold text-cm-text-primary leading-snug mb-1.5 line-clamp-2">
+              {{ cert.platformName || (cert.skillName + ' Certificate') }}
+            </h4>
+            <p class="text-xs text-cm-text-muted">{{ cert.skillName }}</p>
+          </div>
+
+          <!-- Meta -->
+          <div class="px-5 py-4 border-t border-cm-border bg-cm-surface-muted space-y-3">
+            <div class="flex items-center justify-between text-[11px] text-cm-text-muted">
+              <span class="flex items-center gap-1.5">
+                <i class="fa-regular fa-calendar text-[10px]"></i>
+                {{ formatIssuedDate(cert.issuedDate) }}
+              </span>
+              <span class="font-mono text-[10px]">{{ cert.certificateNumber }}</span>
+            </div>
+            @if(cert.scorePercentage > 0) {
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] text-cm-text-muted">Score</span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-md"
+                      [style.color]="m.accentColor" [style.backgroundColor]="m.iconBg">
+                  {{ cert.scorePercentage }}%
+                </span>
               </div>
-
-              <!-- RIGHT ICON -->
-              @if (engage.style === 'right') {
-              <ng-container>
-                <img src="{{engage.imageUrl}}" class="subject-icon" />
-              </ng-container>
-              }
+              <div class="h-2 rounded-full bg-cm-surface-raised overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-700"
+                     [style.width.%]="cert.scorePercentage"
+                     [style.backgroundColor]="m.accentColor"></div>
+              </div>
             </div>
-          </mat-card-header>
+            }
+          </div>
 
-          <mat-card-content>
-            <p>{{ engage.title }}</p>
-          </mat-card-content>
+          <!-- CTA -->
+          <div class="px-5 py-4 border-t border-cm-border">
+            <button (click)="viewCertificate(cert)"
+                    class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl
+                           text-xs font-bold border transition-all duration-150
+                           hover:opacity-90 active:scale-[0.98]"
+                    [style.color]="m.accentColor"
+                    [style.borderColor]="m.iconBg"
+                    [style.backgroundColor]="m.iconBg">
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+              View Certificate
+            </button>
+          </div>
+        </div>
+        }
 
-          <mat-divider class="dim-divider"></mat-divider>
-
-          <mat-card-actions>
-            <div fxLayout="row">
-              <button mat-button (click)="exploreLesson(engage.id)">
-                <mat-icon class="col-blue">check_circle_outline</mat-icon> Explore
-              </button>
-              <button mat-button (click)="closeLesson(engage.id)">
-                <mat-icon class="col-red">close</mat-icon> Close
-              </button>
-            </div>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-      }
-    </div>
-
-    @if(authUser?.role !== 'Admin') {
-    <div class="row m-t-20 text-center clearfix">
-      <div class="col-12">
-        <h3 class="text-center m-t-20">Other Action Links</h3>
-        <hr class="dim-divider">
-        <button [routerLink]="['/learn/create-lesson']" class="autoWidth text-center m-b-20 m-r-20" mat-flat-button
-          color="primary">
-          Create Lesson
-        </button>
-
-        <button [routerLink]="['/learn/overview', 'angular17']" class="autoWidth text-center m-b-20 m-r-20"
-          mat-flat-button color="primary">
-          Explore a Lesson
-        </button>
       </div>
     </div>
-    }
   </div>
+
+  <!-- ── Quick Links ───────────────────────────────────────────────────────── -->
+  @if(authUser?.role !== 'Admin') {
+  <div class="flex items-center gap-3 flex-wrap pt-2 pb-4 border-t border-cm-border">
+    <span class="text-[10px] font-bold uppercase tracking-widest text-cm-text-muted shrink-0">Quick links</span>
+    <a [routerLink]="['/learn/create-lesson']"
+       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+              text-cm-text-secondary bg-cm-surface border border-cm-border
+              hover:text-cm-text-primary hover:bg-cm-surface-raised hover:border-cm-border-strong
+              transition-colors">
+      <i class="fa-solid fa-plus text-[10px]"></i> Create Lesson
+    </a>
+    <a [routerLink]="['/learn/overview', 'angular17']"
+       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+              text-cm-text-secondary bg-cm-surface border border-cm-border
+              hover:text-cm-text-primary hover:bg-cm-surface-raised hover:border-cm-border-strong
+              transition-colors">
+      <i class="fa-solid fa-arrow-right text-[10px]"></i> Explore a Lesson
+    </a>
+     <a [routerLink]="['/learnkk', 'kk']"
+       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+              text-cm-text-secondary bg-cm-surface border border-cm-border
+              hover:text-cm-text-primary hover:bg-cm-surface-raised hover:border-cm-border-strong
+              transition-colors">
+      <i class="fa-solid fa-arrow-right text-[10px]"></i> Become a SME
+    </a>
+  </div>
+  }
+
+</div>
+</div>
 </section>

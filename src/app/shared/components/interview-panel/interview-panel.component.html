@@ -1,231 +1,832 @@
-<div class="h-screen flex flex-col overflow-hidden relative">
-<!-- Header Navbar -->
-    <header class="bg-slate-900 border-b border-slate-800/80 px-6 py-4 flex items-center justify-between z-20 shrink-0">
-        <div class="flex items-center gap-3">
-            <!-- <img src="assets/images/light.png" alt="Codemerit" width="80" /> -->
-            <!-- <div class="p-2.5 bg-gradient-to-tr from-indigo-500 to-violet-600 rounded-lg text-white shadow-lg shadow-indigo-500/20">
-                jjj <img src="assets/images/light.png" alt="Codemerit" width="80" />
-            </div> -->
-            <div>
+<div class="fixed inset-0 flex flex-col overflow-hidden bg-cm-surface-muted">
+
+    <!-- Celebration Canvas -->
+    <canvas #celebCanvas class="absolute inset-0 w-full h-full pointer-events-none z-50"></canvas>
+
+    <!-- ── Header — always dark regardless of theme ── -->
+    <header class="bg-slate-900 border-b border-slate-800 px-4 md:px-6 py-3 md:py-4
+                   flex items-center justify-between z-20 shrink-0 shadow-md gap-3">
+
+        <!-- Left: hamburger (mobile) + title -->
+        <div class="flex items-center gap-3 min-w-0">
+            <button (click)="toggleSidebar()" title="Candidate info"
+                class="md:hidden p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700
+                       text-slate-400 hover:text-white rounded-lg text-sm transition shrink-0">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                    <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                    <h1 class="text-base md:text-lg font-bold tracking-tight text-white truncate">
                         Interview Panel
                     </h1>
-                    <!-- <span class="bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">Live Session</span> -->
+                    <span class="bg-indigo-500/10 border border-indigo-500/30 text-white
+                                 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase
+                                 tracking-wider animate-pulse shrink-0">
+                        Live
+                    </span>
                 </div>
-                <p class="text-xs text-slate-400">SME Led Technical Evaluation & Assessment</p>
+                <p class="hidden md:block text-sm text-slate-400">SME Led Technical Evaluation &amp; Assessment</p>
             </div>
         </div>
-        
-        <!-- Live Call & Action Controls -->
-        <div class="flex items-center gap-3">
-            <div class="hidden md:flex items-center gap-2 mr-4 bg-slate-950 px-3.5 py-1.5 rounded-lg border border-slate-800 text-xs">
-                <span class="h-2 w-2 rounded-full bg-green-500 animate-ping"></span>
+
+        <!-- Right: controls -->
+        <div class="flex items-center gap-2 shrink-0">
+            <!-- Timer (desktop only) -->
+            <div class="hidden md:flex items-center gap-2 mr-2 bg-slate-950
+                        px-3.5 py-1.5 rounded-lg border border-slate-800 text-xs">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
                 <span class="text-slate-400">Timer:</span>
-                <span id="session-timer" class="font-mono font-bold text-white">02:15</span>
+                <span class="font-mono font-bold text-white">{{ timerDisplay }}</span>
             </div>
-            <button id="btn-mute" onclick="toggleMute()" class="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg text-sm transition" title="Toggle Mic">
-                <i id="mute-icon" class="fa-solid fa-microphone"></i>
+
+            <!-- Fullscreen (desktop only) -->
+            <button (click)="callFullscreen()"
+                [title]="isFullScreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+                class="hidden md:flex p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700
+                       text-slate-400 hover:text-white rounded-lg text-sm transition">
+                <i [class]="isFullScreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"></i>
             </button>
-            <button id="btn-submit" (click)="submitAndExit()" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm rounded-lg font-semibold transition flex items-center gap-2 shadow-lg shadow-indigo-500/20">
-                <i class="fa-solid fa-clipboard-check"></i> Submit Feedback
+
+            <!-- Theme toggle (desktop only) -->
+            <!-- hide -->
+            <button (click)="toggleTheme()"
+                [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+                class="hidden md:flex p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700
+                       text-slate-400 hover:text-white rounded-lg text-sm transition">
+                <i [class]="themeService.isDark() ? 'fa-solid fa-sun' : 'fa-solid fa-moon'"></i>
+            </button>
+
+            <!-- Mic toggle -->
+            <button (click)="toggleMute()" title="Toggle Mic"
+                [class]="isMuted
+                    ? 'p-2 bg-rose-500/10 border border-rose-500/40 text-rose-400 rounded-lg text-sm transition'
+                    : 'p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-400 hover:text-white rounded-lg text-sm transition'">
+                <i [class]="isMuted ? 'fa-solid fa-microphone-slash' : 'fa-solid fa-microphone'"></i>
+            </button>
+
+            <!-- Submit — icon-only on mobile, full label on desktop -->
+            <button (click)="submitAndExit()"
+                class="flex items-center gap-2 bg-cm-brand hover:opacity-90 text-white
+                       text-sm font-semibold rounded-lg transition shadow-lg shadow-cm-brand/20
+                       px-3 py-2 md:px-4">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <span class="hidden sm:inline">Submit</span>
+                <span class="hidden md:inline"> Feedback</span>
             </button>
         </div>
     </header>
 
-    <!-- Main Workspace Container -->
-    <main class="flex-1 flex overflow-hidden">
-        
-        <!-- Left Sidebar: Scrollable Panel -->
-        <aside class="w-96 bg-slate-900/40 border-r border-slate-800/80 flex flex-col h-full z-10 shrink-0 overflow-y-auto scrollable-div">
-            
-            <!-- Candidate Profile Section -->
-            <div class="p-5 border-b border-slate-800 bg-slate-950/40">
+    <!-- ── Main Workspace ── -->
+    <main class="flex-1 flex overflow-hidden relative">
+
+        <!-- Mobile backdrop -->
+        @if (sidebarOpen) {
+            <div class="fixed inset-0 z-40 bg-black/50 md:hidden"
+                 (click)="closeSidebar()"></div>
+        }
+
+        <!-- Left Sidebar — drawer on mobile, inline on md+ -->
+        <aside [class]="asideClass">
+
+            <!-- Mobile sidebar header with close button -->
+            <div class="md:hidden flex items-center justify-between px-4 py-3
+                        bg-slate-900 border-b border-slate-800 shrink-0">
+                <span class="text-sm font-bold text-white">Candidate Info</span>
+                <button (click)="closeSidebar()"
+                    class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700
+                           rounded-lg transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable body -->
+            <div class="flex-1 overflow-y-auto overflow-x-hidden scrollable-div min-h-0">
+
+            <!-- Candidate Profile -->
+            <div class="candidate-profile px-5 py-3 border-b border-cm-border">
                 <div class="flex items-center gap-4">
                     <div class="relative">
-                        <img src="https://placehold.co/150x150/1e1b4b/38bdf8?text=AT" alt="Candidate Avatar" class="h-16 w-16 rounded-xl border border-indigo-500/30 object-cover shadow-inner">
-                        <span class="absolute bottom-0 right-0 h-4 w-4 bg-emerald-500 border-2 border-slate-900 rounded-full flex items-center justify-center" title="Online Status"></span>
+                        <img src="https://placehold.co/150x150/1e1b4b/38bdf8?text=AT" alt="Candidate Avatar"
+                            class="h-16 w-16 rounded-xl border border-cm-brand object-cover shadow-inner">
+                        <span class="absolute bottom-0 right-0 h-4 w-4 bg-emerald-500
+                                     border-2 border-cm-surface rounded-full" title="Online"></span>
                     </div>
                     <div class="space-y-1">
-                        <h2 class="text-base font-bold text-white tracking-tight">Alex Taylor</h2>
-                        <p class="text-xs text-indigo-400 font-medium">Senior Backend Engineer Candidate</p>
+                        <h2 class="text-base font-bold text-cm-text-primary tracking-tight">Alex Taylor</h2>
+                        <p class="text-xs text-cm-brand-text font-medium">Full Stack Developer – Angular + NestJS</p>
                         <div class="flex items-center gap-1.5 pt-0.5">
-                            <span id="badge-status" class="bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wider">In Progress</span>
-                            <span class="text-slate-500 text-[11px]">• Exp: 5.5 Yrs</span>
+                            <span [class]="'text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wider border '
+                                          + candidateStatusClass">
+                                {{ candidateStatusText }}
+                            </span>
+                            <span class="text-cm-text-muted text-[11px]">• Exp: 5.5 Yrs</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Interactive Metrics Rating Panel -->
-            <div class="p-5 border-b border-slate-800 space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Evaluation Scores</h3>
-                    <!-- Overall Score Indicator -->
-                    <div class="bg-indigo-950/50 border border-indigo-500/30 px-3 py-1 rounded-lg text-right">
-                        <span class="text-[9px] text-indigo-300 block font-bold leading-none uppercase">Live Avg</span>
-                        <span id="val-avg" class="text-base font-bold text-indigo-400 fira-font leading-normal">7.5 <span class="text-[10px] text-slate-500">/10</span></span>
+            <!-- ── Tech Evaluation Scores ── -->
+            <div class="p-5 border-b border-cm-border space-y-3">
+
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider shrink-0">
+                            Tech Evaluation Scores
+                        </h3>
+                        @if (interviewSkillRatings.length > 0) {
+                        <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0
+                                     bg-cm-surface-raised border border-cm-border text-cm-text-muted tabular-nums">
+                            {{ interviewSkillRatings.length }}
+                        </span>
+                        }
+                    </div>
+                    <div class="bg-slate-800 dark:bg-slate-700/80 px-3 py-1.5 rounded-lg text-right shrink-0 min-w-[58px]">
+                        <span class="text-[9px] text-slate-400 block font-bold leading-none uppercase tracking-wider">
+                            Live Avg
+                        </span>
+                        <span [class]="'text-base font-bold fira-font leading-normal ' +
+                                       (techEvalAvg > 0 ? techEvalAvgColor : 'text-slate-500')">
+                            {{ techEvalAvg > 0 ? techEvalAvg : '–' }}<span class="text-[10px] text-slate-500">/5</span>
+                        </span>
                     </div>
                 </div>
 
-                <!-- Rating Inputs -->
-                <div class="space-y-4 pt-1">
-                    <!-- Coding Skills -->
-                    <div class="space-y-1.5">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-300 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-code text-cyan-400 w-4 text-center"></i> Fundamental Knowledge</span>
-                            <span id="lbl-rate-coding" class="text-cyan-400 fira-font font-bold">8/10</span>
-                        </div>
-                        <input type="range" id="rate-coding" min="1" max="10" step="1" value="8" oninput="updateMetrics()" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                <!-- Active question context + link toggle -->
+                @if (assessmentStarted && activeQuestion) {
+                <div class="rounded-lg bg-cm-surface-muted border border-cm-border px-3 py-2 space-y-1.5">
+                    <p class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">
+                        Visible question
+                    </p>
+                    <p class="text-[11px] font-semibold text-cm-text-primary leading-snug">
+                        Q{{ activeQuestion.id }} — {{ truncateText(activeQuestion.title) }}
+                    </p>
+                    <label class="flex items-center gap-2 cursor-pointer pt-0.5">
+                        <input type="checkbox" [(ngModel)]="newRatingLinked"
+                               class="w-3.5 h-3.5 rounded cursor-pointer accent-indigo-500">
+                        <span class="text-[11px] text-cm-text-secondary font-medium">
+                            Link rating to this question
+                        </span>
+                    </label>
+                </div>
+                }
+
+                <!-- Dropdown 1: Skill Type -->
+                <select (change)="onRatingTypeChange($event)"
+                    class="w-full box-border bg-cm-surface-muted border border-cm-border text-cm-text-primary
+                           text-xs rounded-lg px-3 py-2 outline-none cursor-pointer
+                           focus:ring-1 focus:ring-cm-brand transition">
+                    <option value="">Skill type…</option>
+                    <option [value]="SkillType.JobRole">Job Role</option>
+                    <option [value]="SkillType.Subject">Subject</option>
+                    <option [value]="SkillType.Topic">Topic</option>
+                    <option [value]="SkillType.Question">Question</option>
+                </select>
+
+                <!-- Job Role: auto-filled display (no second dropdown) -->
+                @if (newRatingType === SkillType.JobRole) {
+                <div class="flex items-center gap-2 px-3 py-2 rounded-lg
+                            bg-cm-brand-dim border border-cm-brand">
+                    <i class="fa-solid fa-briefcase text-cm-brand-text text-[11px]"></i>
+                    <span class="text-[11px] font-semibold text-cm-brand-text truncate">
+                        {{ interviewJobRoleName }}
+                    </span>
+                </div>
+                }
+
+                <!-- Subject / Topic: collapsible searchable picker -->
+                @if (showSkillDropdown) {
+
+                <!-- Closed trigger -->
+                @if (!skillPickerOpen) {
+                <button type="button" (click)="skillPickerOpen = true"
+                        [class]="'w-full box-border flex items-center gap-2.5 px-3 py-2.5 rounded-lg border ' +
+                                 'text-xs transition-all ' +
+                                 (newRatingSkillId
+                                   ? 'bg-cm-brand-dim border-cm-brand text-cm-brand-text font-medium'
+                                   : 'bg-cm-surface-muted border-cm-border text-cm-text-muted ' +
+                                     'hover:border-cm-border-strong active:bg-cm-surface-raised')">
+                    @if (newRatingSkillId) {
+                    <i class="fa-solid fa-check text-[9px] shrink-0"></i>
+                    <span class="flex-1 text-left truncate">{{ newRatingSkillName }}</span>
+                    <i class="fa-solid fa-pen text-[9px] shrink-0 opacity-50"></i>
+                    } @else {
+                    <i class="fa-solid fa-magnifying-glass text-[9px] shrink-0"></i>
+                    <span class="flex-1 text-left">
+                        {{ newRatingType === SkillType.Subject ? 'Select subject…' : 'Select topic…' }}
+                    </span>
+                    <i class="fa-solid fa-chevron-down text-[9px] shrink-0"></i>
+                    }
+                </button>
+                }
+
+                <!-- Open picker -->
+                @if (skillPickerOpen) {
+                <div class="border border-cm-border rounded-xl overflow-hidden">
+
+                    <!-- Search + close -->
+                    <div class="flex items-center gap-2 bg-cm-surface-muted px-3 py-2.5 border-b border-cm-border">
+                        <i class="fa-solid fa-magnifying-glass text-cm-text-muted text-[10px] shrink-0"></i>
+                        <input #skillSearchInput type="text" [(ngModel)]="skillSearch"
+                               [placeholder]="newRatingType === SkillType.Subject ? 'Search subject…' : 'Search topic…'"
+                               class="flex-1 min-w-0 bg-transparent text-cm-text-primary text-sm
+                                      outline-none placeholder:text-cm-text-muted">
+                        <button type="button"
+                                (click)="skillPickerOpen = false; skillSearch = ''"
+                                class="shrink-0 p-1.5 -mr-1 rounded text-cm-text-muted
+                                       hover:text-cm-text-primary active:bg-cm-surface-raised transition">
+                            <i class="fa-solid fa-xmark text-[11px]"></i>
+                        </button>
                     </div>
 
-                    <!-- System Design -->
+                    <!-- Option list — tall enough for mobile scroll -->
+                    <div class="max-h-52 overflow-y-auto overscroll-contain">
+                        @for (opt of filteredSkillOptions; track opt.id) {
+                        <button type="button" (click)="selectSkillOption(opt)"
+                                [class]="'w-full box-border flex items-center gap-3 px-3 py-3 text-left text-sm ' +
+                                         'border-b border-cm-border last:border-b-0 transition-colors ' +
+                                         (newRatingSkillId === opt.id
+                                           ? 'bg-cm-brand-dim text-cm-brand-text font-medium'
+                                           : 'bg-cm-surface-muted text-cm-text-primary ' +
+                                             'hover:bg-cm-surface-hover active:bg-cm-surface-raised')">
+                            <i [class]="'fa-solid fa-check text-[9px] shrink-0 text-cm-brand transition-opacity ' +
+                                        (newRatingSkillId === opt.id ? 'opacity-100' : 'opacity-0')"></i>
+                            <span class="truncate">{{ opt.title }}</span>
+                        </button>
+                        } @empty {
+                        <div class="px-3 py-5 text-center">
+                            <p class="text-xs text-cm-text-muted italic">No results for "{{ skillSearch }}"</p>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+
+                }
+
+                <!-- Question: auto-filled from board (no second dropdown) -->
+                @if (newRatingType === SkillType.Question) {
+                    @if (assessmentStarted && activeQuestion) {
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg
+                                bg-cm-brand-dim border border-cm-brand">
+                        <i class="fa-solid fa-circle-question text-cm-brand-text text-[11px]"></i>
+                        <span class="text-[11px] font-semibold text-cm-brand-text truncate leading-snug">
+                            Q{{ activeQuestion.id }}: {{ truncateText(activeQuestion.title) }}
+                        </span>
+                    </div>
+                    } @else {
+                    <div class="px-3 py-2 rounded-lg
+                                bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20">
+                        <span class="text-[11px] text-rose-600 dark:text-rose-400 font-medium">
+                            No question active on board
+                        </span>
+                    </div>
+                    }
+                }
+
+                <!-- Star rating — segmented panel -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between h-4">
+                        <span class="text-[10px] font-medium uppercase tracking-wider text-cm-text-muted">
+                            Rating
+                        </span>
+                        @if (newRatingStars > 0) {
+                        <span class="text-[11px] font-semibold text-amber-500 dark:text-amber-400 leading-none">
+                            {{ ratingLabel(newRatingStars) }} &middot; {{ newRatingStars }}/5
+                        </span>
+                        } @else {
+                        <span class="text-[10px] text-cm-text-muted/50 leading-none">tap to rate</span>
+                        }
+                    </div>
+
+                    <div class="flex items-stretch gap-1.5" (mouseleave)="clearHoverStar()">
+                        @for (star of [1,2,3,4,5]; track star) {
+                        <button type="button"
+                                (click)="newRatingStars = star"
+                                (mouseenter)="setHoverStar(star)"
+                                [class]="'flex-1 flex items-center justify-center py-3 rounded-lg select-none ' +
+                                         'border transition-all duration-150 ' +
+                                         (isStarFilled(star)
+                                           ? 'bg-amber-50 dark:bg-amber-500/15 border-amber-300 dark:border-amber-500/40 shadow-sm shadow-amber-100 dark:shadow-amber-500/10'
+                                           : 'bg-cm-surface-muted border-cm-border ' +
+                                             'hover:border-amber-300/70 dark:hover:border-amber-500/25 ' +
+                                             'hover:bg-amber-50/60 dark:hover:bg-amber-500/5')">
+                            <i [class]="isStarFilled(star)
+                                   ? 'fa-solid fa-star text-amber-400 text-[15px] leading-none'
+                                   : 'fa-solid fa-star text-slate-300 dark:text-slate-600 text-[15px] leading-none'"></i>
+                        </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Optional note -->
+                <div class="flex min-w-0">
+                    <input type="text" [(ngModel)]="newRatingNote"
+                        placeholder="Note (optional)"
+                        class="flex-1 min-w-0 bg-cm-surface-muted border border-cm-border text-cm-text-primary
+                               text-xs rounded-lg px-3 py-2 outline-none
+                               focus:ring-1 focus:ring-cm-brand transition
+                               placeholder:text-cm-text-muted">
+                </div>
+
+                <!-- Add button -->
+                <button (click)="addInterviewRating()"
+                    [disabled]="!canAddRating"
+                    class="w-full py-2 text-xs font-semibold rounded-lg transition
+                           bg-cm-brand text-white hover:opacity-90
+                           disabled:opacity-40 disabled:cursor-not-allowed
+                           flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-plus text-[10px]"></i> Add Skill Rating
+                </button>
+
+                <!-- Captured log -->
+                @if (interviewSkillRatings.length > 0) {
+                <div class="pt-2 border-t border-cm-border space-y-1">
+
+                    <!-- header row -->
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-medium uppercase tracking-wider text-cm-text-muted">
+                            Captured
+                        </span>
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full
+                                     bg-cm-surface-raised border border-cm-border text-cm-text-muted tabular-nums">
+                            {{ interviewSkillRatings.length }}
+                        </span>
+                    </div>
+
+                    @for (r of interviewSkillRatings; track r.uid) {
+                    <div class="group flex items-center gap-2 px-2.5 py-2 rounded-lg
+                                bg-cm-surface-muted border border-transparent
+                                hover:border-cm-border transition-colors duration-150">
+
+                        <!-- type dot -->
+                        <div [class]="'w-1.5 h-1.5 rounded-full shrink-0 mt-px ' + skillTypeDotClass(r.skillType)"></div>
+
+                        <!-- name + note -->
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[12px] font-medium text-cm-text-primary leading-tight truncate">
+                                {{ r.skillName }}
+                            </p>
+                            @if (r.note) {
+                            <p class="text-[10px] text-cm-text-muted leading-none truncate mt-0.5 italic">
+                                {{ r.note }}
+                            </p>
+                            }
+                        </div>
+
+                        <!-- star score pill -->
+                        <div class="flex items-center gap-1 shrink-0
+                                    px-1.5 py-0.5 rounded-md
+                                    bg-amber-50 dark:bg-amber-500/10
+                                    border border-amber-200 dark:border-amber-500/20">
+                            <i class="fa-solid fa-star text-amber-400 text-[9px] leading-none"></i>
+                            <span class="text-[10px] font-semibold text-amber-600 dark:text-amber-400 tabular-nums leading-none">
+                                {{ r.rating }}.0
+                            </span>
+                        </div>
+
+                        <!-- question badge -->
+                        @if (r.linkedToQuestion) {
+                        <span class="text-[9px] px-1.5 py-0.5 rounded shrink-0 tabular-nums font-semibold
+                                     bg-cm-brand-dim border border-cm-brand text-cm-brand-text">
+                            Q{{ r.questionId }}
+                        </span>
+                        }
+
+                        <!-- remove -->
+                        <button (click)="removeInterviewRating(r.uid)"
+                            class="opacity-0 group-hover:opacity-100 shrink-0
+                                   w-5 h-5 flex items-center justify-center rounded
+                                   text-cm-text-muted hover:text-rose-400
+                                   hover:bg-rose-50 dark:hover:bg-rose-500/10
+                                   transition-all duration-150"
+                            title="Remove">
+                            <svg viewBox="0 0 24 24" class="w-3 h-3 fill-none stroke-current stroke-2 pointer-events-none">
+                                <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    }
+                </div>
+                }
+
+            </div>
+
+            <!-- Other Skill Metrics -->
+            <div class="p-5 border-b border-cm-border space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider">
+                        Other Skill Metrics
+                    </h3>
+                    <div class="bg-slate-800 dark:bg-slate-700/80 px-3 py-1.5 rounded-lg text-right min-w-[64px]">
+                        <span class="text-[9px] text-slate-400 block font-bold leading-none uppercase tracking-wider">Live Avg</span>
+                        <span [class]="'text-base font-bold fira-font leading-normal ' + averageColorClass">
+                            {{ averageScore }}
+                            <span class="text-[10px] text-slate-500">/10</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-1">
+                    <!-- Fundamental Knowledge -->
                     <div class="space-y-1.5">
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-300 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-cubes-stacked text-amber-400 w-4 text-center"></i> Coding & Syntax</span>
-                            <span id="lbl-rate-system" class="text-amber-400 fira-font font-bold">7/10</span>
+                            <span class="text-cm-text-secondary font-semibold flex items-center gap-1.5">
+                                <i class="fa-solid fa-code text-cyan-500 dark:text-cyan-400 w-4 text-center"></i>
+                                Fundamental Knowledge
+                            </span>
+                            <span class="text-cyan-600 dark:text-cyan-400 fira-font font-bold">{{ ratings.coding }}/10</span>
                         </div>
-                        <input type="range" id="rate-system" min="1" max="10" step="1" value="7" oninput="updateMetrics()" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                        <input type="range" min="1" max="10" step="1"
+                            [value]="ratings.coding"
+                            (input)="ratings.coding = $any($event.target).valueAsNumber; updateMetrics()"
+                            class="w-full appearance-none cursor-pointer [--thumb-color:#06b6d4]">
+                    </div>
+
+                    <!-- Coding & Syntax -->
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-cm-text-secondary font-semibold flex items-center gap-1.5">
+                                <i class="fa-solid fa-cubes-stacked text-amber-500 dark:text-amber-400 w-4 text-center"></i>
+                                Coding &amp; Syntax
+                            </span>
+                            <span class="text-amber-600 dark:text-amber-400 fira-font font-bold">{{ ratings.system }}/10</span>
+                        </div>
+                        <input type="range" min="1" max="10" step="1"
+                            [value]="ratings.system"
+                            (input)="ratings.system = $any($event.target).valueAsNumber; updateMetrics()"
+                            class="w-full appearance-none cursor-pointer [--thumb-color:#f59e0b]">
                     </div>
 
                     <!-- Problem Solving -->
                     <div class="space-y-1.5">
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-300 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-brain text-emerald-400 w-4 text-center"></i> Logical Ability / Problem Solving</span>
-                            <span id="lbl-rate-problem" class="text-emerald-400 fira-font font-bold">8/10</span>
+                            <span class="text-cm-text-secondary font-semibold flex items-center gap-1.5">
+                                <i class="fa-solid fa-brain text-emerald-600 dark:text-emerald-400 w-4 text-center"></i>
+                                Logical Ability / Problem Solving
+                            </span>
+                            <span class="text-emerald-600 dark:text-emerald-400 fira-font font-bold">{{ ratings.problem }}/10</span>
                         </div>
-                        <input type="range" id="rate-problem" min="1" max="10" step="1" value="8" oninput="updateMetrics()" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        <input type="range" min="1" max="10" step="1"
+                            [value]="ratings.problem"
+                            (input)="ratings.problem = $any($event.target).valueAsNumber; updateMetrics()"
+                            class="w-full appearance-none cursor-pointer [--thumb-color:#10b981]">
                     </div>
 
                     <!-- Communication -->
                     <div class="space-y-1.5">
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-300 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-comments text-pink-400 w-4 text-center"></i> Communication</span>
-                            <span id="lbl-rate-comm" class="text-pink-400 fira-font font-bold">7/10</span>
+                            <span class="text-cm-text-secondary font-semibold flex items-center gap-1.5">
+                                <i class="fa-solid fa-comments text-pink-500 dark:text-pink-400 w-4 text-center"></i>
+                                Communication
+                            </span>
+                            <span class="text-pink-600 dark:text-pink-400 fira-font font-bold">{{ ratings.comm }}/10</span>
                         </div>
-                        <input type="range" id="rate-comm" min="1" max="10" step="1" value="7" oninput="updateMetrics()" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-pink-500">
+                        <input type="range" min="1" max="10" step="1"
+                            [value]="ratings.comm"
+                            (input)="ratings.comm = $any($event.target).valueAsNumber; updateMetrics()"
+                            class="w-full appearance-none cursor-pointer [--thumb-color:#ec4899]">
                     </div>
                 </div>
             </div>
 
-            <!-- Milestone Celebration Presets -->
-            <div class="p-5 border-b border-slate-800 space-y-3">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Milestones</h3>
+            <!-- Milestones -->
+            <div class="p-5 border-b border-cm-border space-y-3">
+                <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider mb-2">Milestones</h3>
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="triggerStateMilestone('cyber_matrix', 'strong_hire')" class="preset-btn px-3 py-2 bg-indigo-950/40 hover:bg-indigo-900/40 border border-indigo-500/30 text-indigo-300 rounded-lg text-xs font-semibold text-left transition flex flex-col gap-1">
-                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-star text-indigo-400 animate-spin-slow"></i> Strong Hire</span>
-                        <span class="text-[10px] text-slate-400 font-normal">Cyber matrix particles</span>
+
+                    <!-- Strong Hire -->
+                    <button (click)="triggerStateMilestone('cyber_matrix', 'strong_hire')"
+                        [class]="presetBtnClass('cyber_matrix', 'indigo') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-indigo-700 dark:text-indigo-300">
+                            <i class="fa-solid fa-star"></i> Strong Hire
+                        </span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Exceeds bar — highly recommended
+                        </span>
                     </button>
-                    <button onclick="triggerStateMilestone('golden_star', 'hire')" class="preset-btn px-3 py-2 bg-slate-800/40 hover:bg-slate-700/50 border border-slate-700 text-slate-300 rounded-lg text-xs font-semibold text-left transition flex flex-col gap-1">
-                        <span class="flex items-center gap-1.5 text-amber-400"><i class="fa-solid fa-crown"></i> Standard Hire</span>
-                        <span class="text-[10px] text-slate-400 font-normal">Golden star explosion</span>
+
+                    <!-- Standard Hire -->
+                    <button (click)="triggerStateMilestone('golden_star', 'hire')"
+                        [class]="presetBtnClass('golden_star', 'amber') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-amber-700 dark:text-amber-400">
+                            <i class="fa-solid fa-crown"></i> Standard Hire
+                        </span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Meets requirements — recommend hire
+                        </span>
                     </button>
-                    <button onclick="triggerStateMilestone('cyber_sparks', 'no_hire')" class="preset-btn px-3 py-2 bg-slate-800/40 hover:bg-slate-700/50 border border-slate-700 text-slate-300 rounded-lg text-xs font-semibold text-left transition flex flex-col gap-1">
-                        <span class="flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-ban"></i> Strong No Hire</span>
-                        <span class="text-[10px] text-slate-400 font-normal">Neon warning discharge</span>
+
+                    <!-- Strong No Hire -->
+                    <button (click)="triggerStateMilestone('cyber_sparks', 'no_hire')"
+                        [class]="presetBtnClass('cyber_sparks', 'rose') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-rose-700 dark:text-rose-400">
+                            <i class="fa-solid fa-ban"></i> Strong No Hire
+                        </span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Below bar — significant skill gaps
+                        </span>
                     </button>
-                    <button onclick="triggerStateMilestone('classic_confetti', 'pending')" class="preset-btn px-3 py-2 bg-slate-800/40 hover:bg-slate-700/50 border border-slate-700 text-slate-300 rounded-lg text-xs font-semibold text-left transition flex flex-col gap-1">
-                        <span class="flex items-center gap-1.5 text-sky-400"><i class="fa-solid fa-hourglass-half"></i> Under Review</span>
-                        <span class="text-[10px] text-slate-400 font-normal">Classic confetti tumble</span>
+
+                    <!-- Under Review -->
+                    <button (click)="triggerStateMilestone('classic_confetti', 'pending')"
+                        [class]="presetBtnClass('classic_confetti', 'sky') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-sky-700 dark:text-sky-400">
+                            <i class="fa-solid fa-hourglass-half"></i> Under Review
+                        </span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Borderline — requires further evaluation
+                        </span>
                     </button>
+
+                    <!-- Mock: Passed -->
+                    <button (click)="triggerStateMilestone('mock_pass', 'passed')"
+                        [class]="presetBtnClass('mock_pass', 'emerald') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400">
+                            <i class="fa-solid fa-circle-check"></i> Passed
+                        </span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Mock passed — ready for real interview
+                        </span>
+                    </button>
+
+                    <!-- Mock: Failed -->
+                    <button (click)="triggerStateMilestone('mock_fail', 'failed')"
+                        [class]="presetBtnClass('mock_fail', 'orange') + ' rounded-xl text-xs font-semibold text-left transition-all duration-200 flex flex-col gap-1'">
+                        <span class="flex items-center gap-1.5 text-orange-700 dark:text-orange-400">
+                            <i class="fa-solid fa-circle-xmark"></i> Failed
+                        </span>
+                        <span class="text-[10px] text-cm-text-muted font-normal leading-snug">
+                            Mock failed — needs more preparation
+                        </span>
+                    </button>
+
                 </div>
             </div>
 
-            <!-- Dynamic Tags Section -->
+            <!-- Tags -->
             <div class="p-5 flex-1 flex flex-col min-h-[160px] space-y-3">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Add Badges</h3>
-                
-                <!-- Tag list wrapper -->
-                <div id="tags-container" class="flex flex-wrap gap-2">
-                    <span class="inline-flex items-center gap-1.5 bg-slate-800 text-slate-300 text-xs px-2.5 py-1 rounded-md border border-slate-700 font-medium">
-                        Analytical <button onclick="removeTag(this)" class="hover:text-rose-400 transition ml-0.5"><i class="fa-solid fa-xmark"></i></button>
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 bg-slate-800 text-slate-300 text-xs px-2.5 py-1 rounded-md border border-slate-700 font-medium">
-                        Fast Thinker <button onclick="removeTag(this)" class="hover:text-rose-400 transition ml-0.5"><i class="fa-solid fa-xmark"></i></button>
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 bg-slate-800 text-slate-300 text-xs px-2.5 py-1 rounded-md border border-slate-700 font-medium">
-                        System Architecture <button onclick="removeTag(this)" class="hover:text-rose-400 transition ml-0.5"><i class="fa-solid fa-xmark"></i></button>
-                    </span>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider">Add Badges</h3>
+                    <button (click)="focusTagInput()" title="Add new badge or recognition"
+                        class="p-1.5 text-cm-text-muted hover:text-cm-brand-text
+                               hover:bg-cm-brand-dim rounded-md transition">
+                        <i class="fa-solid fa-circle-plus text-sm"></i>
+                    </button>
                 </div>
 
-                <!-- Tag input generator -->
+                <div class="flex flex-wrap gap-2">
+                    @for (tag of tags; track tag; let i = $index) {
+                        <span class="inline-flex items-center gap-1.5 bg-cm-surface-raised
+                                     text-cm-text-secondary text-xs px-2.5 py-1 rounded-md
+                                     border border-cm-border font-medium">
+                            {{ tag }}
+                            <button (click)="removeTag(i)"
+                                class="bg-transparent border-0 p-0 leading-none cursor-pointer
+                                       text-cm-text-muted hover:text-rose-500 dark:hover:text-rose-400 transition ml-0.5">
+                                <i class="fa-solid fa-xmark text-[10px]"></i>
+                            </button>
+                        </span>
+                    }
+                </div>
+
                 <div class="flex gap-2 pt-2">
-                    <input type="text" id="tag-input" placeholder="Add feedback..." 
-                    onkeydown="handleTagInput(event)" 
-                    class="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-indigo-500 transition placeholder-slate-600">
+                    <textarea #tagInputEl rows="3" [(ngModel)]="tagInput"
+                        (keydown)="handleTagInput($event)"
+                        placeholder="Add feedback..."
+                        class="flex-1 bg-cm-surface-muted border border-cm-border text-cm-text-primary
+                               text-xs rounded-lg px-3 py-2 outline-none
+                               focus:ring-1 focus:ring-cm-brand transition
+                               placeholder:text-cm-text-muted resize-none"></textarea>
                 </div>
             </div>
 
-            <hr class="dim-divider">
-            <!-- Footer Signature -->
-            <div class="p-4 border-t border-slate-800 bg-slate-950/20 text-[10px] text-slate-500 flex justify-between items-center">
+            </div><!-- end scrollable body -->
+
+            <!-- Pinned footer -->
+            <div class="shrink-0 border-t border-cm-border bg-cm-surface-muted
+                        px-4 py-3 text-[10px] text-cm-text-muted flex justify-between items-center">
                 <span>Panel: CodeMerit</span>
                 <span class="font-mono">v1.0.0</span>
             </div>
         </aside>
 
-        <!-- Right Side Panel -->
-        <section class="flex-1 flex flex-col h-full bg-slate-950 relative overflow-hidden">
-            
-            <!-- Question Dashboard Subheader -->
-            <div class="bg-slate-900/50 backdrop-blur-md border-b border-slate-800/80 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 z-10 shrink-0">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-terminal text-indigo-400"></i>
-                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Evaluation Subject:</span>
-                    <span id="active-subject-title" class="text-xs font-extrabold text-white bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-md">Rest API Specs</span>
-                </div>
+        <!-- Right Panel -->
+        <section class="flex-1 flex flex-col h-full bg-cm-surface-muted relative overflow-hidden">
 
-                <!-- Subject Selector Dropdown Options -->
-                <div class="flex items-center gap-3">
-                    <label class="text-xs text-slate-400 font-medium">Select Subject Area:</label>
-                    <select id="subject-select" onchange="changeSubject(this.value)" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-1.5 focus:ring-1 focus:ring-indigo-500 outline-none cursor-pointer transition">
-                        <option value="system_design">System Architecture Design</option>
-                        <option value="data_structures">Algorithms & Data Structures</option>
-                        <option value="rest_api">REST API Design & Implementation</option>
-                        <option value="database_design">Database Schema Design</option>
-                        <option value="cloud_infra">Cloud Infrastructure & DevOps</option>
-                        <option value="security">Security & Authentication</option>
-                        <option value="performance">Performance Optimization</option>
-                        <option value="testing">Testing & Quality Assurance</option>
+            <!-- ── Pre-start splash ── -->
+            @if (!assessmentStarted) {
+                <div class="flex-1 flex flex-col items-center justify-center gap-8 px-8 text-center">
+                    <div class="space-y-3">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl
+                                    bg-cm-brand-dim border border-cm-brand text-cm-brand-text mb-2">
+                            <i class="fa-solid fa-clipboard-question text-2xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-cm-text-primary tracking-tight">
+                            Live Assessment Board
+                        </h2>
+                        <p class="text-sm text-cm-text-secondary max-w-sm leading-relaxed">
+                            The question board is ready. Click <span class="font-semibold text-cm-text-primary">Start Assessment</span>
+                            to begin the session and load the first question.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-3">
+                        <button (click)="startAssessment()"
+                            class="px-8 py-3 bg-cm-brand hover:opacity-90 text-white font-bold
+                                   text-sm rounded-xl transition shadow-lg shadow-cm-brand/20
+                                   flex items-center gap-2.5">
+                            <i class="fa-solid fa-circle-play"></i>
+                            Start Assessment
+                        </button>
+                        <span class="text-[11px] text-cm-text-muted">
+                            This will begin the timer and load questions
+                        </span>
+                    </div>
+                </div>
+            }
+
+            <!-- ── Active board ── -->
+            @if (assessmentStarted) {
+
+            <!-- Question Subheader -->
+            <div class="bg-cm-surface border-b border-cm-border px-6 py-4
+                        flex flex-col md:flex-row md:items-center justify-between gap-4 z-10 shrink-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <i class="fa-solid fa-layer-group text-cm-brand-text shrink-0"></i>
+                    <span class="text-xs text-cm-text-muted font-semibold uppercase tracking-wider shrink-0">
+                        Track:
+                    </span>
+                    <span class="text-xs font-extrabold text-cm-brand-text
+                                 bg-cm-brand-dim border border-cm-brand px-2.5 py-1 rounded-md truncate">
+                        Full Stack Developer – 1 (Angular + NestJS)
+                    </span>
+                </div>
+                <div class="flex items-center gap-3 shrink-0">
+                    <label class="text-xs text-cm-text-muted font-medium hidden sm:block">Module:</label>
+                    <select (change)="changeSubject($any($event.target).value)"
+                        class="bg-cm-surface border border-cm-border-strong text-cm-text-primary
+                               text-xs rounded-lg px-3 py-1.5 focus:ring-1 focus:ring-cm-brand
+                               outline-none cursor-pointer transition max-w-[220px]">
+                        <option value="web_foundations">① Web Foundations — HTML5 &amp; CSS3</option>
+                        <option value="javascript_es6">② JavaScript &amp; ES6+ Programming</option>
+                        <option value="angular_rxjs">③ Angular Framework &amp; RxJS</option>
+                        <option value="nestjs_backend">④ NestJS &amp; Node.js Backend</option>
+                        <option value="rest_auth">⑤ REST APIs &amp; Authentication</option>
+                        <option value="database_orm">⑥ Database Design &amp; TypeORM</option>
+                        <option value="system_design">⑦ System Design &amp; Architecture</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Active Evaluation Sandbox Frame (Questions slide in and out of this area) -->
-            <div class="flex-1 relative overflow-hidden p-6 flex flex-col justify-center items-center">
-                
-                <!-- Sliding Window Content Wrapper -->
-                <div id="sliding-deck" class="relative w-full max-w-4xl h-full flex items-center justify-center">
-                    <!-- Carousel Slides (Created dynamically via JS for smooth transitions) -->
-                    <div id="slide-container" class="w-full relative h-[520px] transition-all duration-500 ease-out">
-                        <!-- Questions injected dynamically here -->
+            <!-- Dismissed questions restore strip -->
+            @if (dismissedQuestionsList.length > 0) {
+            <div class="bg-cm-surface-muted border-b border-cm-border px-6 py-2
+                        flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] text-cm-text-muted font-bold uppercase tracking-wider shrink-0">
+                    <i class="fa-solid fa-eye-slash mr-1 text-[9px]"></i>Cleared:
+                </span>
+                @for (q of dismissedQuestionsList; track q.id) {
+                <button (click)="restoreQuestion(q)"
+                    class="inline-flex items-center gap-1 text-[10px] font-semibold
+                           px-2 py-0.5 rounded-md border transition-colors
+                           bg-cm-surface border-cm-border text-cm-text-secondary
+                           hover:border-cm-brand hover:bg-cm-brand-dim hover:text-cm-brand-text">
+                    <i class="fa-solid fa-rotate-left text-[9px]"></i>
+                    Q{{ q.id }}: {{ truncateText(q.title, 28) }}
+                </button>
+                }
+            </div>
+            }
+
+            <!-- Slide Frame -->
+            <div class="flex-1 relative overflow-hidden px-6 pt-6 pb-4 flex flex-col items-center gap-4">
+                <div class="relative w-full max-w-4xl flex-1 flex items-center justify-center min-h-0">
+                    <div class="w-full relative h-full max-h-[420px]">
+
+                        @for (q of activeQuestions; track q.id; let idx = $index) {
+                            <div [class]="slideClass(idx)">
+                                <div class="flex-1 flex flex-col space-y-4 overflow-y-auto pr-1">
+
+                                    <!-- Slide Header -->
+                                    <div class="flex items-center justify-between border-b border-cm-border pb-3">
+                                        <span class="text-[10px] uppercase font-bold text-cm-brand-text fira-font">
+                                            Question {{ idx + 1 }} of {{ activeQuestions.length }}
+                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="bg-cm-brand-dim border border-cm-brand
+                                                         text-cm-brand-text text-[10px] font-semibold px-2 py-0.5 rounded">
+                                                {{ q.difficulty }}
+                                            </span>
+                                            <span class="bg-cm-surface-raised text-cm-text-muted
+                                                         text-[10px] font-semibold px-2 py-0.5 rounded
+                                                         flex items-center gap-1">
+                                                <i class="fa-solid fa-clock text-[9px]"></i> {{ q.time }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Question Body -->
+                                    <div class="space-y-2">
+                                        <h2 class="text-xl font-extrabold text-cm-text-primary tracking-tight leading-snug">
+                                            {{ q.title }}
+                                        </h2>
+                                        <p class="text-xs text-cm-text-secondary leading-relaxed">{{ q.description }}</p>
+                                    </div>
+
+                                    <!-- Evaluation Strategy -->
+                                    <div class="bg-cm-surface-muted p-4 rounded-xl border border-cm-border space-y-1.5">
+                                        <span class="text-[10px] font-bold text-cm-brand-text uppercase tracking-wider
+                                                     flex items-center gap-1.5">
+                                            <i class="fa-solid fa-chalkboard-user"></i> Evaluation Strategy:
+                                        </span>
+                                        <p class="text-xs text-cm-text-secondary leading-normal font-medium">
+                                            {{ q.instruction }}
+                                        </p>
+                                    </div>
+
+                                    <!-- Rubric Drawer -->
+                                    @if (isRubricOpen(q.id)) {
+                                        <div class="bg-cm-surface-muted border border-emerald-500/30
+                                                    rounded-xl p-4 space-y-2">
+                                            <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400
+                                                         uppercase tracking-wider flex items-center gap-1.5">
+                                                <i class="fa-solid fa-clipboard-list"></i> Target Grading Rubrics:
+                                            </span>
+                                            <pre class="text-xs text-cm-text-secondary leading-relaxed font-mono whitespace-pre-wrap">{{ q.rubric }}</pre>
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Slide Footer -->
+                                <div class="border-t border-cm-border pt-4 mt-4
+                                            flex justify-between items-center bg-cm-surface shrink-0">
+                                    <button (click)="toggleRubric(q.id)"
+                                        class="px-3.5 py-1.5 bg-cm-surface-raised hover:bg-cm-surface-hover
+                                               text-cm-text-secondary hover:text-cm-text-primary
+                                               text-xs font-semibold rounded-lg border border-cm-border
+                                               transition flex items-center gap-1.5">
+                                        <i class="fa-solid fa-eye"></i> Toggle Rubric / Solution
+                                    </button>
+                                    <button (click)="dismissQuestion(q)"
+                                        class="px-3.5 py-1.5 text-xs font-semibold rounded-lg border
+                                               transition flex items-center gap-1.5
+                                               bg-rose-50 dark:bg-rose-500/10
+                                               border-rose-200 dark:border-rose-500/30
+                                               text-rose-600 dark:text-rose-400
+                                               hover:bg-rose-100 dark:hover:bg-rose-500/20"
+                                        title="Clear this question from the board">
+                                        <i class="fa-solid fa-eye-slash text-[11px]"></i>
+                                        Clear from board
+                                    </button>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
 
-                <!-- Left / Right Slide Navigation Buttons -->
-                <div class="flex items-center justify-between w-full max-w-4xl mt-4 z-20 shrink-0">
-                    <button onclick="navigateSlide('prev')" class="p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 rounded-xl text-slate-300 transition flex items-center gap-2 text-xs font-semibold shadow-lg">
+                <!-- Navigation -->
+                <div class="flex items-center justify-between w-full max-w-4xl z-20 shrink-0">
+                    <button (click)="navigateSlide('prev')"
+                        class="p-3 bg-cm-surface hover:bg-cm-surface-raised border border-cm-border
+                               hover:border-cm-border-strong rounded-xl text-cm-text-secondary
+                               hover:text-cm-text-primary transition flex items-center gap-2
+                               text-xs font-semibold shadow-sm">
                         <i class="fa-solid fa-arrow-left"></i> Previous Question
                     </button>
-                    
-                    <!-- Progress Dots Indicators -->
-                    <div id="slide-indicators" class="flex gap-2 items-center">
-                        <span class="h-1.5 w-6 rounded bg-indigo-500 transition-all duration-300"></span>
-                        <span class="h-1.5 w-1.5 rounded bg-slate-800 transition-all duration-300"></span>
-                        <span class="h-1.5 w-1.5 rounded bg-slate-800 transition-all duration-300"></span>
+
+                    <div class="flex gap-2 items-center">
+                        @for (q of activeQuestions; track q.id; let idx = $index) {
+                            <span (click)="goToSlide(idx)"
+                                [class]="idx === activeSlideIndex
+                                    ? 'h-1.5 w-6 rounded bg-cm-brand transition-all duration-300 cursor-pointer'
+                                    : 'h-1.5 w-1.5 rounded bg-cm-surface-raised hover:bg-cm-surface-hover transition-all duration-300 cursor-pointer'">
+                            </span>
+                        }
                     </div>
 
-                    <button onclick="navigateSlide('next')" class="p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 rounded-xl text-slate-300 transition flex items-center gap-2 text-xs font-semibold shadow-lg">
+                    <button (click)="navigateSlide('next')"
+                        class="p-3 bg-cm-surface hover:bg-cm-surface-raised border border-cm-border
+                               hover:border-cm-border-strong rounded-xl text-cm-text-secondary
+                               hover:text-cm-text-primary transition flex items-center gap-2
+                               text-xs font-semibold shadow-sm">
                         Next Question <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
 
-                <!-- Onscreen Interactive Prompt -->
-                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur border border-slate-800 text-slate-400 text-[10px] px-4 py-1.5 rounded-full z-10 flex items-center gap-2 pointer-events-none">
-                    <i class="fa-solid fa-keyboard text-indigo-400"></i>
-                    <span>Protip: Change ratings on the left sidebar before moving next!</span>
-                </div>
             </div>
+
+            } <!-- end @if (assessmentStarted) -->
+
         </section>
     </main>
+
+    <!-- Toast -->
+    <div [class]="'fixed bottom-6 right-6 px-4 py-3 bg-cm-surface border border-cm-border '
+        + 'text-cm-text-primary text-xs font-semibold rounded-xl shadow-2xl '
+        + 'transition-all duration-300 transform z-[60] flex items-center gap-2 '
+        + (toastVisible ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-20 opacity-0 pointer-events-none')">
+        <i class="fa-solid fa-circle-check text-emerald-500 text-base"></i>
+        <span>{{ toastMessage }}</span>
+    </div>
+
 </div>

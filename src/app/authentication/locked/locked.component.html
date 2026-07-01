@@ -1,65 +1,101 @@
-<div class="auth-container">
-  <div class="row auth-main">
-    <div class="col-sm-6 px-0 d-none d-sm-block">
-      <div class="left-img" style="background-image: url(assets/images/pages/page-verify.png);">
+<div class="verify-page">
+  <app-particle-canvas></app-particle-canvas>
+
+  <div class="verify-card">
+
+    <!-- ── Success / verifying state ─────────────────── -->
+    @if (verifying) {
+      <div class="verifying-state">
+        <div class="pulse-ring"></div>
+        <div class="verifying-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <p class="verifying-text">Verifying your account…</p>
       </div>
-    </div>
-    <div class="col-sm-6 auth-form-section">
-      <div class="form-section">
-        <div class="auth-wrapper">
-          <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
-            <div class="auth-locked">
-              <div class="image">
-                <img src={{userImg}} alt="User">
-              </div>
-            </div>
-            <div class="text-center">
-              <h4 class="cmSubHeading txt1 p-b-2 m-t-0">
-                Verify your account
-              </h4>
-              <p class="txt1 p-b-20">
-                Hi {{userFullName}}! We have sent an OTP to your registered e-mail address.
-              </p>
-            </div>
-            <div class="row">
-              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                <span class="error-subheader2 p-t-20 p-b-15">
-                  Enter your OTP below and click Verify.
-                </span>
-                <!-- <mat-form-field class="example-full-width pwd-toggle" appearance="outline">
-                  <mat-label>OTP</mat-label>
-                  <input matInput formControlName="password" maxlength="6" [type]="hide ? 'password' : 'text'" required>
-                  <mat-icon matSuffix (click)="hide = !hide">
-                    {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                  @if (authForm.get('password')!.hasError('required')) {
-                  <mat-error>
-                    OTP is required
-                  </mat-error>
-                  }
-                </mat-form-field> -->
+    }
 
-                <!-- bind to the same form control -->
-                <app-otp-input formControlName="password" (otpComplete)="onOtpCompleted($event)"></app-otp-input>
+    <!-- ── Main form ──────────────────────────────────── -->
+    @if (!verifying) {
 
-              </div>
-
-            </div>
-            <div class="container-auth-form-btn mt-5">
-              <button mat-flat-button color="primary" class="auth-form-btn" [disabled]="!authForm.valid" type="submit">
-                Verify My Account
-              </button>
-            </div>
-            <div class="w-full p-t-15 p-b-15 text-center">
-              <div>
-                <a routerLink="/authentication/signin" class="txt1">
-                  Need Help?
-                </a>
-              </div>
-            </div>
-          </form>
+      <!-- Avatar -->
+      <div class="avatar-wrap">
+        <img [src]="userImg" [alt]="userFullName" class="avatar-img" onerror="this.src='assets/images/users/user.jpg'"/>
+        <div class="avatar-badge">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"/>
+          </svg>
         </div>
       </div>
-    </div>
+
+      <!-- Greeting -->
+      <div class="card-header">
+        <h1 class="card-title">
+          Hi, <span class="text-gradient">{{ userFullName || 'there' }}</span>!
+        </h1>
+        <p class="card-subtitle">
+          We sent a 6-digit verification code to your email. Enter it below to activate your account.
+        </p>
+        @if (userEmail) {
+          <p class="email-chip">{{ userEmail }}</p>
+        }
+      </div>
+
+      <!-- OTP form -->
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <div class="otp-section">
+          <app-otp-input
+            formControlName="password"
+            (otpComplete)="onOtpCompleted($event)">
+          </app-otp-input>
+
+          <!-- Clipboard paste button -->
+          <button type="button" class="paste-btn" (click)="pasteFromClipboard()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            @if (pasteError) {
+              {{ pasteError }}
+            } @else {
+              Paste from clipboard
+            }
+          </button>
+
+          @if (submitted && f['password'].hasError('required')) {
+            <p class="field-error">Please enter the OTP.</p>
+          }
+          @if (submitted && f['password'].hasError('minlength')) {
+            <p class="field-error">OTP must be 6 digits.</p>
+          }
+        </div>
+
+        <!-- Error banner -->
+        @if (error) {
+          <div class="error-banner">{{ error }}</div>
+        }
+
+        <!-- Verify button -->
+        <button type="submit" class="verify-btn" [disabled]="authForm.invalid">
+          Verify My Account
+        </button>
+
+      </form>
+
+      <!-- Help link -->
+      <div class="help-wrap">
+        <a routerLink="/authentication/signin" class="help-link">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Back to Sign In
+        </a>
+      </div>
+
+    }
 
   </div>
 </div>

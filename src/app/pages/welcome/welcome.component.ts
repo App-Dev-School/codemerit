@@ -1,11 +1,4 @@
-import { JsonPipe } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatRippleModule } from '@angular/material/core';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '@core';
 import { RatingType } from '@core/models/rating-type';
@@ -14,17 +7,9 @@ import { SkillType } from '@core/models/skill-type';
 import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { CertificateModel, CertificateTemplateId } from '@shared/components/certificate/certificate.model';
-import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
-import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
-import { ReportListComponent } from '@shared/components/report-list/report-list.component';
-import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
-import { SubjectSkillRatingComponent } from '@shared/components/subject-skill-rating/subject-skill-rating.component';
-import { NgScrollbar } from 'ngx-scrollbar';
-import { InterviewPanelComponent } from 'src/app/shared/components/interview-panel/interview-panel.component';
-import { register } from 'swiper/element/bundle';
+import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 
 export const certificateModels: CertificateModel[] = [
   {
@@ -131,25 +116,10 @@ export const certificateModels: CertificateModel[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
   imports: [
-    JsonPipe,
     RouterLink,
-    NgScrollbar,
-    MatCardModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatRippleModule,
-    MatIconModule,
     LearnerWelcomeCardComponent,
-    CertificateComponent,
-    SubjectSkillRatingComponent,
-    CongratulationsCardComponent,
-    SkillRatingWidgetComponent,
-    ReportListComponent,
-    MedalCardComponent,
-    InterviewPanelComponent
+    MeritListWidgetComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
   //  animations: [
   //     trigger('fadeOut', [
   //       transition(':leave', [
@@ -170,6 +140,14 @@ export class WelcomeComponent implements OnInit {
   subjectsByRole: { [role: string]: Course[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
   certificateModels: CertificateModel[] = [];
+
+  meritList = [
+    { id: 1, name: 'Vishal Kumar',  username: 'vishal',  designationName: 'Angular Architect', score: 96, avgAccuracy: 92, image: 'assets/images/users/user.jpg' },
+    { id: 2, name: 'Priya Sharma',  username: 'priya',   designationName: 'Frontend Dev',      score: 91, avgAccuracy: 88 },
+    { id: 3, name: 'Arjun Patel',   username: 'arjun',   designationName: 'Full Stack Dev',    score: 87, avgAccuracy: 84 },
+    { id: 4, name: 'Golda Maria',   username: 'golda',   designationName: 'Intern',            score: 82, avgAccuracy: 79 },
+    { id: 5, name: 'Taylor Star',   username: 'taylor',  designationName: 'Contributor',       score: 75, avgAccuracy: 71 },
+  ];
 
   skillRatings: SkillRating[] = [
     {
@@ -219,60 +197,12 @@ export class WelcomeComponent implements OnInit {
   ];
 
   engagements = [
-    {
-      "id": 1,
-      "title": "Have you heard about Strict Mode in JavaScript?",
-      "subject": "JavaScript",
-      "topic": "ECMAScript",
-      "type": "Ask",
-      "imageUrl": "assets/images/tech/javascript.png",
-      "style": "right",
-    },
-    {
-      "id": 2,
-      "title": "Do you know how to access geo-location using JS?",
-      "subject": "JavaScript",
-      "topic": "DOM",
-      "type": "Ask",
-      "style": "right",
-      "imageUrl": "assets/images/tech/javascript.png"
-    },
-    {
-      "id": 3,
-      "title": "How can you transform an Angular App for SEO?",
-      "subject": "Angular",
-      "topic": "SSR",
-      "type": "Ask",
-      "style": "left",
-      "imageUrl": "assets/images/tech/angular.png"
-    },
-    {
-      "id": 4,
-      "title": "How will you invoke a method 1000 times concurrently in Java?",
-      "subject": "Java",
-      "topic": "Thread",
-      "type": "Ask",
-      "style": "right",
-      "imageUrl": "assets/images/tech/java.png"
-    },
-    {
-      "id": 5,
-      "title": "What are Hot and Cold observables in RxJS?",
-      "subject": "RxJS",
-      "topic": "Selectors",
-      "type": "Ask",
-      "style": "left",
-      "imageUrl": "assets/images/tech/rxjs.png"
-    },
-    {
-      "id": 6,
-      "title": "What are Pseudo selectors in CSS?",
-      "subject": "CSS",
-      "topic": "Selectors",
-      "type": "Ask",
-      "style": "left",
-      "imageUrl": "assets/images/tech/css.png"
-    }
+    { id: 1, title: 'Angular Signals — Reactive State Without Zone.js', subject: 'Angular',    topic: 'Signals',    duration: '8 min',  difficulty: 'Intermediate', imageUrl: 'assets/images/tech/angular.png' },
+    { id: 2, title: 'TypeScript Generics & Conditional Types Explained', subject: 'TypeScript', topic: 'Generics',   duration: '12 min', difficulty: 'Advanced',     imageUrl: 'assets/images/tech/typescript.png' },
+    { id: 3, title: 'RxJS: switchMap vs mergeMap vs concatMap',          subject: 'RxJS',       topic: 'Operators',  duration: '10 min', difficulty: 'Advanced',     imageUrl: 'assets/images/tech/rxjs.png' },
+    { id: 4, title: 'Git Rebase vs Merge — When to Use Which',           subject: 'Git',        topic: 'Branching',  duration: '7 min',  difficulty: 'Beginner',     imageUrl: 'assets/images/tech/git.png' },
+    { id: 5, title: 'Docker Multi-Stage Builds for Leaner Images',       subject: 'Docker',     topic: 'Optimisation',duration: '9 min', difficulty: 'Intermediate', imageUrl: 'assets/images/tech/docker.png' },
+    { id: 6, title: 'Strict Mode in JavaScript — What Changes?',         subject: 'JavaScript', topic: 'ECMAScript', duration: '6 min',  difficulty: 'Beginner',     imageUrl: 'assets/images/tech/javascript.png' },
   ];
 
   userTasks = [
@@ -318,13 +248,11 @@ export class WelcomeComponent implements OnInit {
     }
   ];
 
-  @ViewChild('swiperEx') swiperRef!: ElementRef<any>;
 
   constructor(private router: Router,
     private master: MasterService,
     private snackService: SnackbarService,
     public authService: AuthService) {
-    register();
     this.authService.currentUser.subscribe((sub: User) => {
       this.authService.log("Welcome ", sub, "CurrentUser");
       this.certificateModels = certificateModels;
@@ -385,8 +313,37 @@ export class WelcomeComponent implements OnInit {
     }
   }
 
-  exploreLesson(itemId: any) {
-    this.snackService.display('snackbar-dark', 'Feature coming soon!', 'bottom', 'center');
+  startedLessonIds: number[] = [];
+
+  get pendingLessonsCount(): number {
+    return this.engagements.length - this.startedLessonIds.length;
+  }
+
+  get allLessonsStarted(): boolean {
+    return this.startedLessonIds.length >= this.engagements.length;
+  }
+
+  isLessonStarted(id: number): boolean {
+    return this.startedLessonIds.includes(id);
+  }
+
+  lessonMeta(subject: string): { accentColor: string; iconBg: string; iconColor: string } {
+    const map: Record<string, { accentColor: string; iconBg: string; iconColor: string }> = {
+      'Angular':    { accentColor: '#f87171', iconBg: 'rgba(248,113,113,0.12)', iconColor: '#f87171' },
+      'TypeScript': { accentColor: '#60a5fa', iconBg: 'rgba(96,165,250,0.12)',  iconColor: '#60a5fa' },
+      'RxJS':       { accentColor: '#a78bfa', iconBg: 'rgba(167,139,250,0.12)', iconColor: '#a78bfa' },
+      'Git':        { accentColor: '#fb923c', iconBg: 'rgba(251,146,60,0.12)',  iconColor: '#fb923c' },
+      'Docker':     { accentColor: '#38bdf8', iconBg: 'rgba(56,189,248,0.12)',  iconColor: '#38bdf8' },
+      'JavaScript': { accentColor: '#ca8a04', iconBg: 'rgba(250,204,21,0.10)',  iconColor: '#ca8a04' },
+    };
+    return map[subject] ?? { accentColor: '#818cf8', iconBg: 'rgba(99,102,241,0.12)', iconColor: '#818cf8' };
+  }
+
+  exploreLesson(itemId: number): void {
+    if (!this.isLessonStarted(itemId)) {
+      this.startedLessonIds = [...this.startedLessonIds, itemId];
+    }
+    this.snackService.display('snackbar-dark', 'Opening lesson — mark complete from the lesson page', 'bottom', 'center');
   }
 
   closeLesson(itemId: any) {
@@ -406,6 +363,55 @@ export class WelcomeComponent implements OnInit {
         console.log('Navigation completed!');
       });
     }
+  }
+
+  certMeta(id: CertificateTemplateId): { accentColor: string; iconBg: string; iconColor: string; icon: string; label: string } {
+    const map: Record<string, { accentColor: string; iconBg: string; iconColor: string; icon: string; label: string }> = {
+      [CertificateTemplateId.MilestoneCompletion]: {
+        accentColor: '#818cf8', iconBg: 'rgba(99,102,241,0.12)', iconColor: '#818cf8',
+        icon: 'fa-solid fa-trophy', label: 'Milestone',
+      },
+      [CertificateTemplateId.InternshipCompletion]: {
+        accentColor: '#34d399', iconBg: 'rgba(52,211,153,0.12)', iconColor: '#34d399',
+        icon: 'fa-solid fa-graduation-cap', label: 'Internship',
+      },
+      [CertificateTemplateId.WorkExperience]: {
+        accentColor: '#fbbf24', iconBg: 'rgba(251,191,36,0.12)', iconColor: '#fbbf24',
+        icon: 'fa-solid fa-briefcase', label: 'Work Experience',
+      },
+      [CertificateTemplateId.Appreciation]: {
+        accentColor: '#fb7185', iconBg: 'rgba(251,113,133,0.12)', iconColor: '#fb7185',
+        icon: 'fa-solid fa-heart', label: 'Appreciation',
+      },
+    };
+    return map[id] ?? { accentColor: '#6366f1', iconBg: 'rgba(99,102,241,0.12)', iconColor: '#6366f1', icon: 'fa-solid fa-certificate', label: 'Certificate' };
+  }
+
+  gradeColor(grade: string): string {
+    const map: Record<string, string> = {
+      'Excellent': '#34d399',
+      'Good':      '#818cf8',
+      'Average':   '#fbbf24',
+      'Poor':      '#f87171',
+    };
+    return map[grade] ?? '#818cf8';
+  }
+
+  difficultyMeta(difficulty: string): { label: string; color: string; bg: string } {
+    const map: Record<string, { label: string; color: string; bg: string }> = {
+      'Beginner':     { label: 'Beginner',     color: '#34d399', bg: 'rgba(52,211,153,0.12)'  },
+      'Intermediate': { label: 'Intermediate', color: '#fbbf24', bg: 'rgba(251,191,36,0.12)'  },
+      'Advanced':     { label: 'Advanced',     color: '#f87171', bg: 'rgba(248,113,113,0.12)' },
+    };
+    return map[difficulty] ?? { label: difficulty, color: '#818cf8', bg: 'rgba(99,102,241,0.12)' };
+  }
+
+  formatIssuedDate(date: Date): string {
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+
+  viewCertificate(cert: CertificateModel): void {
+    this.snackService.display('snackbar-dark', `${cert.platformName || cert.skillName} — full view coming soon`, 'bottom', 'center');
   }
 
   //separate component and then implement

@@ -1,12 +1,7 @@
 import { CommonModule, NgClass } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizEntity } from '@core/models/dtos/GenerateQuizDto';
 import { QuizQuestion } from '@core/models/quiz-question';
@@ -16,19 +11,23 @@ import { UtilsService } from '@core/service/utils.service';
 import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
 import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
-import { SelectedOptionDetailComponent } from '@shared/components/selected-option-detail/selected-option-detail.component';
-import { SafePipe } from '@shared/pipes/safehtml.pipe';
-import { CdTimerComponent, CdTimerModule } from 'angular-cd-timer';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuizHelperService } from '../quiz-helper.service';
 import { QuizConfig, QuizService } from '../quiz.service';
-interface Quiz {
-  title: string;
-  subject_icon: string;
-  questions: QuizQuestion[];
+
+interface FeedbackState {
+  show: boolean;
+  isCorrect: boolean;
+  isTimeout: boolean;
+  marks: number;
+  answer: string;
+  rewardMsgIdx: number;
+  autoIn: number;
+  autoInTotal: number;
 }
+
 @Component({
   selector: 'app-take-quiz',
   templateUrl: './take-quiz.component.html',
@@ -38,19 +37,13 @@ interface Quiz {
     CommonModule,
     NgClass,
     NgScrollbar,
-    SafePipe,
-    CdTimerModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatProgressBarModule,
-    CelebrationComponent
-  ]
+    CelebrationComponent,
+  ],
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
-    private subscriptions: any[] = [];
-    private destroyed = false;
+  private subscriptions: any[] = [];
+  private destroyed = false;
+
   quiz!: QuizEntity;
   questions: QuizQuestion[] = [];
   currentQuestionId = 0;
@@ -60,7 +53,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   completed = false;
   quizResult: any;
   quizDuration = 300;
-  @ViewChild('timerRef', { static: false }) timer: CdTimerComponent;
+
   warningActive = false;
   hintActive = false;
   answerActive = false;
@@ -70,46 +63,50 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showWarningToast = false;
   userData: User;
   scheduledAutoNext: any;
-  showingInteractiveDialog = false;
   celebrationTrigger: { x: number; y: number } | null = null;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
   displayingAuthDialog = false;
   quizConfig: QuizConfig;
-  // -- Question Timer Variables
-  questionTimeLeft: number = 0;
+
+  questionTimeLeft = 0;
   questionTimerInterval: any;
+  feedbackTimerInterval: any;
   allowOptionClick = false;
 
-  constructor(private authService: AuthService,
+  feedback: FeedbackState = {
+    show: false,
+    isCorrect: false,
+    isTimeout: false,
+    marks: 0,
+    answer: '',
+    rewardMsgIdx: 0,
+    autoIn: 0,
+    autoInTotal: 0,
+  };
+
+  constructor(
+    private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog,
     private utility: UtilsService,
     private snackBar: MatSnackBar,
     private quizService: QuizService,
-    private quizHelper: QuizHelperService) {
-    register(); // Register Swiper web components
+    private quizHelper: QuizHelperService,
+  ) {
+    register();
   }
 
   ngOnDestroy(): void {
     this.destroyed = true;
-    // Clear question timer interval
-    if (this.questionTimerInterval) {
-      clearInterval(this.questionTimerInterval);
-    }
-    // Clear scheduled auto next timeout
-    if (this.scheduledAutoNext) {
-      clearTimeout(this.scheduledAutoNext);
-    }
-    // Unsubscribe from all subscriptions
+    if (this.questionTimerInterval) clearInterval(this.questionTimerInterval);
+    if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
+    if (this.scheduledAutoNext) clearTimeout(this.scheduledAutoNext);
     this.subscriptions.forEach(sub => {
-      if (sub && typeof sub.unsubscribe === 'function') {
-        sub.unsubscribe();
-      }
+      if (sub && typeof sub.unsubscribe === 'function') sub.unsubscribe();
     });
-    // Close all open dialogs
-    if (this.dialog && this.dialog.openDialogs && this.dialog.openDialogs.length > 0) {
+    if (this.dialog?.openDialogs?.length > 0) {
       this.dialog.openDialogs.forEach(d => d.close());
     }
   }
@@ -118,7 +115,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.userData = this.authService.currentUserValue;
     this.quizSlug = this.route.snapshot.paramMap.get('qcode');
     this.quizConfig = this.quizService.getQuizConfig();
-    console.log("QuizPlayer Loaded QuizConfig", this.quizConfig);
+    console.log('QuizPlayer Loaded QuizConfig', this.quizConfig);
     if (this.quizSlug) {
       this.loadQuiz();
     } else {
@@ -126,176 +123,160 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
-    // Swiper is automatically initialized via web component
-  }
+  ngAfterViewInit(): void {}
 
   private loadQuiz(): void {
-    const quizSub = this.quizService.getQuiz(this.quizSlug)
-      .subscribe(data => {
-        this.quiz = data;
-        this.loadingText = 'Loading Assessment Panel';
-        this.questions = (data.questions || []).map(q => ({
-          ...q,
-          options: q.options || [],
-          selectedChoice: '',
-          topicsArr: q.topics ? q.topics.map(object => object.title) : []
-        }));
-        this.currentQuestion = this.questions[this.currentQuestionId];
-        this.quizDuration = this.questions.reduce((sum, q) => sum + (q.timeAllowed || 0), 0);
-        console.log("QuizPlayer Transformed Loaded Questions", this.questions);
-        //#Task2: Done Once all quiz questions are loaded , calculate the sum of timeAllowed for each question
-        //set that time as the quiz time
-        if (this.questions.length) {
-          this.startQuestionTimer(this.questions[0]);
-          this.disableOptionClickTemporarily();
-        }
-        const loadingTimeout = setTimeout(() => {
-          this.loading = false;
-        }, 3000);
-        // Store timeout for cleanup
-        this.scheduledAutoNext = loadingTimeout;
-      });
+    const quizSub = this.quizService.getQuiz(this.quizSlug).subscribe(data => {
+      this.quiz = data;
+      this.loadingText = 'Loading Assessment Panel';
+      this.questions = (data.questions || []).map((q: any) => ({
+        ...q,
+        options: q.options || [],
+        selectedChoice: '',
+        topicsArr: q.topics ? q.topics.map((t: any) => t.title) : [],
+      }));
+      this.currentQuestion = this.questions[this.currentQuestionId];
+      this.quizDuration = this.questions.reduce((sum, q) => sum + (q.timeAllowed || 0), 0);
+      console.log('QuizPlayer Questions Loaded', this.questions);
+      if (this.questions.length) {
+        this.startQuestionTimer(this.questions[0]);
+        this.disableOptionClickTemporarily();
+      }
+      const loadingTimeout = setTimeout(() => { this.loading = false; }, 3000);
+      this.scheduledAutoNext = loadingTimeout;
+    });
     this.subscriptions.push(quizSub);
   }
 
-  startQuestionTimer(question: QuizQuestion) {
-    // Clear previous timer
+  startQuestionTimer(question: QuizQuestion): void {
     if (this.questionTimerInterval) {
       clearInterval(this.questionTimerInterval);
       this.onTimerComplete();
     }
-
-    // Initialize time left for the current question
-    this.questionTimeLeft = question.timeAllowed || 30; // default 30s if not set
+    this.questionTimeLeft = question.timeAllowed || 30;
 
     this.questionTimerInterval = setInterval(() => {
       this.questionTimeLeft--;
 
-      // Show warning if 10s left in default mode
       if (this.questionTimeLeft === 10 && this.quizConfig.mode === 'Default' && !this.warningActive) {
         this.showWarningToast = true;
         this.warningActive = true;
-        setTimeout(() => {
-          this.showWarningToast = false;
-        }, 1000);
+        setTimeout(() => { this.showWarningToast = false; }, 1000);
       }
 
-      // Auto move to next question if timer ends
       if (this.questionTimeLeft <= 0) {
         clearInterval(this.questionTimerInterval);
-       if(this.quizConfig.mode === 'Default'){
+        if (this.quizConfig.mode === 'Default') {
           this.onSlideNext();
-        }else{
-          this.displayInteractiveDialog({
-            isCorrect: false,
-            answer: question.answer || '',    
-            message: 'Time Up!',
-            icon: 'assets/images/icons/timeout.png'
-        });
-      }
+        } else {
+          // Interactive mode timeout — show inline feedback
+          question.hasAnswered = true;
+          this.onSelectionPhase = true;
+          this.showFeedback(false, true, question);
+        }
       }
     }, 1000);
   }
 
-  /** Record selected answer */
   optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
-    if (!question.hasAnswered) {
-      if (!this.allowOptionClick) {
-        this.snackBar.open('Please read the question before attempting.', '', {
-          duration: 1500,
-          panelClass: ['snackbar-warning']
-        });
-        return;
-      }
-
-      this.onSelectionPhase = true;
-      question.selectedOption = choice;
-      question.hasAnswered = true;
-
-      const isCorrect = question.options.some(
-        opt => opt.id === question.selectedOption && (opt.correct === true)
-      );
-
-      if (this.quizConfig.mode === 'Interactive') {
-        // Show selected-option-detail dialog using direct class reference
-        const data = {
-            isCorrect,
-            answer: question.answer || '',
-            message: isCorrect ? 'Correct Answer' : 'Wrong Attempt',
-            icon: isCorrect ? 'assets/images/icons/ic_correct.png' : 'assets/images/icons/ic_wrong.png'
-          };
-        this.displayInteractiveDialog(data);
-        // Play sound
-        if (this.quizConfig.enableAudio) {
-          if (isCorrect)
-            this.quizHelper.playSound('right_answer');
-          else
-            this.quizHelper.playSound('wrong_answer');
-        }
-        return;
-      }
-
-      // Non-interactive fallback
-      this.scheduledAutoNext = setTimeout(() => {
-        this.onSlideNext();
-        this.onSelectionPhase = false;
-      }, isCorrect ? 1600 : 1200);
-      if (this.quizConfig.enableAudio) {
-        if (isCorrect)
-          this.quizHelper.playSound('right_answer');
-        else
-          this.quizHelper.playSound('wrong_answer');
-      }
+    if (question.hasAnswered) return;
+    if (!this.allowOptionClick) {
+      this.snackBar.open('Please read the question before attempting.', '', {
+        duration: 1500,
+        panelClass: ['snackbar-warning'],
+      });
+      return;
     }
+
+    this.onSelectionPhase = true;
+    question.selectedOption = choice;
+    question.hasAnswered = true;
+
+    const isCorrect = question.options.some(
+      (opt: any) => opt.id === question.selectedOption && opt.correct === true
+    );
+
+    if (this.quizConfig.enableAudio) {
+      this.quizHelper.playSound(isCorrect ? 'right_answer' : 'wrong_answer');
+    }
+
+    if (this.quizConfig.mode === 'Interactive') {
+      if (isCorrect) this.triggerCelebration($event);
+      this.showFeedback(isCorrect, false, question);
+      return;
+    }
+
+    // Default mode: auto-advance after short delay
+    this.scheduledAutoNext = setTimeout(() => {
+      this.onSlideNext();
+      this.onSelectionPhase = false;
+    }, isCorrect ? 1600 : 1200);
   }
 
+  private showFeedback(isCorrect: boolean, isTimeout: boolean, question: QuizQuestion): void {
+    if (this.feedback.show) return;
+    if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
 
-  private displayInteractiveDialog(data: { isCorrect: boolean; answer?: string; message: string; icon: string }): void {
-    if(!this.showingInteractiveDialog){
-      this.showingInteractiveDialog = true;
-      const dialogRef = this.dialog.open(SelectedOptionDetailComponent, {
-          width: '92vw',
-          maxWidth: '600px',
-          data: {
-            isCorrect: data.isCorrect,
-            question: this.questions[this.currentQuestionId],
-            answer: data.answer || '',
-            message: data.message,
-            icon: data.icon
-          },
-          disableClose: true
-        });
-        const sub = dialogRef.afterClosed().subscribe((result) => {
-          this.onSlideNext();
-          this.onSelectionPhase = false;
-          this.showingInteractiveDialog = false;
-        });
-        this.subscriptions.push(sub);
-    }
+    // Correct: 3s (they already know). Wrong/timeout: 12s to read the answer.
+    const secs = isCorrect ? 3 : 12;
+    this.feedback = {
+      show: true,
+      isCorrect,
+      isTimeout,
+      marks: (question as any).marks || 0,
+      answer: question.answer || '',
+      rewardMsgIdx: Math.floor(Math.random() * 5),
+      autoIn: secs,
+      autoInTotal: secs,
+    };
+
+    // Scroll the feedback strip into view within the active slide so the user sees it
+    setTimeout(() => this.scrollToFeedback(), 180);
+
+    this.feedbackTimerInterval = setInterval(() => {
+      this.feedback.autoIn--;
+      if (this.feedback.autoIn <= 0) {
+        clearInterval(this.feedbackTimerInterval);
+        this.dismissFeedback();
+      }
+    }, 1000);
   }
 
-  /** Navigate to next question */
+  private scrollToFeedback(): void {
+    // Target only the active slide's feedback div — not other slides that also render it
+    const allSlides = document.querySelectorAll('.tq-slide');
+    const activeSlide = allSlides[this.currentQuestionId] as HTMLElement | undefined;
+    const feedbackEl = activeSlide?.querySelector('.tq-feedback') as HTMLElement | null;
+    feedbackEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  dismissFeedback(): void {
+    if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
+    this.feedback.show = false;
+    this.hintActive = false;
+    this.answerActive = false;
+    this.onSelectionPhase = false;
+    this.onSlideNext();
+  }
+
   onSlideNext(): void {
     this.warningActive = false;
+    if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
+    this.feedback.show = false;
+
     if (this.currentQuestionId < this.questions.length - 1) {
       this.swiperEx.nativeElement.swiper.slideNext();
       this.updateCurrentIndex();
       this.disableOptionClickTemporarily();
       this.startQuestionTimer(this.questions[this.currentQuestionId]);
-      if (this.quizConfig.enableAudio)
-        this.quizHelper.playSound('click');
+      if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
     } else {
-      if (this.quizConfig.enableAudio)
-        this.quizHelper.playSound('well-done');
+      if (this.quizConfig.enableAudio) this.quizHelper.playSound('well-done');
       this.completeQuiz();
     }
-    //clear any previous scheduled task
-    ///AAAAA also when option selected
     clearTimeout(this.scheduledAutoNext);
   }
 
-  /** Navigate to previous question */
   onSlidePrev(): void {
     this.warningActive = false;
     if (this.currentQuestionId > 0) {
@@ -303,25 +284,20 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       this.updateCurrentIndex();
       this.disableOptionClickTemporarily();
       this.startQuestionTimer(this.questions[this.currentQuestionId]);
-      //clear any previous scheduled task
       clearTimeout(this.scheduledAutoNext);
     }
   }
 
   private disableOptionClickTemporarily(): void {
     this.allowOptionClick = false;
-    // Allow clicking only after 5 seconds
-    setTimeout(() => {
-      this.allowOptionClick = true;
-    }, 3000);
+    setTimeout(() => { this.allowOptionClick = true; }, 3000);
   }
 
   showHint(): void {
     if (this.currentQuestion?.hint) {
-      this.currentHint = this.currentQuestion?.hint;
+      this.currentHint = this.currentQuestion.hint;
       this.currentQuestion.hintUsed = true;
-      if (this.quizConfig.enableAudio)
-        this.quizHelper.playSound('ping');
+      if (this.quizConfig.enableAudio) this.quizHelper.playSound('ping');
     } else {
       this.currentHint = 'Hint not available';
     }
@@ -331,43 +307,35 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showAnswers(): void {
     if (this.currentQuestion?.answer) {
       this.currentQuestion.answerSeen = true;
-      if (this.quizConfig.enableAudio)
-        this.quizHelper.playSound('ping');
+      if (this.quizConfig.enableAudio) this.quizHelper.playSound('ping');
     }
     this.answerActive = true;
   }
 
-  hideHint() {
+  hideHint(): void {
     this.hintActive = false;
     this.currentHint = '';
   }
 
-  hideAnswer() {
+  hideAnswer(): void {
     this.answerActive = false;
-    //this.currentHint = '';
   }
 
-  onTick(event: any) {
+  onTick(event: any): void {
     if (event.minutes === 1 && event.seconds === 0) {
       this.showWarningToast = true;
-      //this.timer.stop();
-      // Auto-hide toast after 3 seconds
       setTimeout(() => {
         this.warningActive = true;
         this.showWarningToast = false;
-        //this.timer.start();
       }, 3000);
     }
   }
 
-  onTimerComplete() {
+  onTimerComplete(): void {
     this.warningActive = false;
     this.showWarningToast = false;
-    if (this.quizConfig.enableAudio)
-      this.quizHelper.playSound('click');
+    if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
     console.log('Quiz Timed Out!', this.questions);
-    //this.submitQuiz();
-    //this is a question level timer
   }
 
   private completeQuiz(): void {
@@ -377,19 +345,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   private updateCurrentIndex(): void {
     this.currentQuestionId = this.swiperEx.nativeElement.swiper.activeIndex;
-    const currentQuestion = this.questions[this.currentQuestionId];
-    this.currentQuestion = currentQuestion;
+    this.currentQuestion = this.questions[this.currentQuestionId];
   }
 
-  submitQuiz() {
-    console.log("QuizPlayer submitQuiz() with user", this.authService.currentUserValue);
+  submitQuiz(): void {
+    console.log('QuizPlayer submitQuiz() with user', this.authService.currentUserValue);
     clearInterval(this.questionTimerInterval);
     if (!(this.authService.currentUserValue && this.authService.currentUserValue.email)) {
-      //#Task1: Display Signup/login option as dialog
-      //Use existing signin / signup component and display them as a dialog
-      if (!this.displayingAuthDialog) {
-        this.quickRegister();
-      }
+      if (!this.displayingAuthDialog) this.quickRegister();
       return;
     }
     this.loading = true;
@@ -403,14 +366,10 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           this.navigateToResult(this.quizResult.resultCode);
         }, 3000);
         this.scheduledAutoNext = completeTimeout;
-      }, (error: any) => {
-        this.showNotification(
-          "snackbar-danger",
-          error,
-          "bottom",
-          "center"
-        );
-      }
+      },
+      (error: any) => {
+        this.showNotification('snackbar-danger', error, 'bottom', 'center');
+      },
     );
     this.subscriptions.push(sub);
   }
@@ -419,7 +378,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     return this.utility.isCodeQuestion(text);
   }
 
-  quickRegister() {
+  quickRegister(): void {
     this.displayingAuthDialog = true;
     const dialogRef = this.dialog.open(LoginFormComponent, {
       width: 'auto',
@@ -428,23 +387,22 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       data: {
         title: 'Your Attempts are saved',
         message: 'Login/ Register to submit your assessment.',
-        action: 'Exit this Assessment'
+        action: 'Exit this Assessment',
       },
-      disableClose: true
+      disableClose: true,
     });
-    const sub = dialogRef.afterClosed().subscribe((result) => {
-      console.log("Take Quiz QuickAuth Complete", result);
+    const sub = dialogRef.afterClosed().subscribe((result: any) => {
+      console.log('Take Quiz QuickAuth Complete', result);
       this.displayingAuthDialog = false;
-      if (result && result?.id) {
+      if (result?.id) {
         this.showNotification(
           'snackbar-danger',
-          (result?.isNewUser) ? 'Quick Registration Complete.' : 'Welcome back ' + (result?.firstName),
+          result?.isNewUser ? 'Quick Registration Complete.' : 'Welcome back ' + result?.firstName,
           'bottom',
-          'center'
+          'center',
         );
-        //if userID received submit the Quiz
         if (!this.quizResult) {
-          console.log("Submitted again", this.authService.currentUserValue);
+          console.log('Submitted again', this.authService.currentUserValue);
           this.submitQuiz();
         }
       }
@@ -452,32 +410,32 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.subscriptions.push(sub);
   }
 
-  showNotification(colorName, text, placementFrom, placementAlign) {
-    this.snackBar.open(text, "", {
+  showNotification(colorName: string, text: string, placementFrom: any, placementAlign: any): void {
+    this.snackBar.open(text, '', {
       duration: 2000,
       verticalPosition: placementFrom,
       horizontalPosition: placementAlign,
-      panelClass: colorName
+      panelClass: colorName,
     });
   }
 
-  navigateToResult(resultCode: string) {
+  navigateToResult(resultCode: string): void {
     this.router.navigate(['quiz/result', resultCode]);
   }
 
-  triggerCelebration(event: MouseEvent) {
+  triggerCelebration(event: MouseEvent): void {
     try {
       const rect = (event.target as HTMLElement).getBoundingClientRect();
       this.celebrationTrigger = {
         x: event.clientX,
-        y: event.clientY - rect.height / 2
+        y: event.clientY - rect.height / 2,
       };
     } catch (error) {
-      console.log("optionSelected() triggerCelebration error", error);
+      console.log('triggerCelebration error', error);
     }
   }
 
-  onCelebrationFinished() {
+  onCelebrationFinished(): void {
     console.log('🎉 Celebration animation completed!');
   }
 
@@ -489,6 +447,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       default: return 'Unknown';
     }
   }
+
   getLevelClass(level: number): string {
     switch (level) {
       case 1: return 'col-indigo';
@@ -498,25 +457,21 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openSettingsDialog() {
-      const dialogRef = this.dialog.open(QuizCreateComponent, {
+  openSettingsDialog(): void {
+    const dialogRef = this.dialog.open(QuizCreateComponent, {
       width: '60vw',
       height: 'auto',
       minWidth: '345px',
-        data: {
-          editMode: true,
-          title: 'Select your preference',
-          message: ''
-        },
-        hasBackdrop: true,
-        autoFocus: true,
-        disableClose: true
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this.quizConfig = this.quizService.getQuizConfig();
-          console.log("QuizPlayer QuizConfig updated", this.quizConfig);
-        }
-      });
-    }
+      data: { editMode: true, title: 'Select your preference', message: '' },
+      hasBackdrop: true,
+      autoFocus: true,
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.quizConfig = this.quizService.getQuizConfig();
+        console.log('QuizPlayer QuizConfig updated', this.quizConfig);
+      }
+    });
+  }
 }

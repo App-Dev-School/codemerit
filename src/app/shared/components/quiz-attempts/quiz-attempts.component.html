@@ -1,31 +1,92 @@
-<div class="quiz-attempts-container">
+<div class="space-y-4 pb-16">
+
   @if (questions?.length > 0) {
     @for (question of questions; track $index) {
-      <mat-card class="attempt-card">
-        <div class="attempt-header">
-          <div>
-            <!-- <h4>Question {{ $index + 1 }} of {{ questions.length }}</h4> -->
-            <div class="question-text" [innerHTML]="question.text"></div>
-          </div>
-          <span class="status-pill" [ngClass]="getStatusClass(question)">{{ getStatusLabel(question) }}</span>
-        </div>
 
-        <div class="options-list">
-          @for (option of question.options; track option.id) {
-          <mat-card class="option-card" [ngClass]="{ correct: option.correct }">
-            <span class="option-text">{{ option.text }}</span>
-            <img *ngIf="option.correct" src="assets/images/icons/ic_correct.png" class="icon-right" />
-            <span *ngIf="option.selected" class="selected-label">Selected</span>
-          </mat-card>
+    <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+                shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none
+                transition-shadow hover:shadow-[0_2px_6px_rgba(0,0,0,0.06),0_8px_20px_rgba(0,0,0,0.08)]">
+
+      <!-- Question header -->
+      <div class="flex items-start justify-between gap-3 px-5 pt-5 pb-4 border-b border-cm-border">
+        <div [innerHTML]="question.text"
+             class="flex-1 min-w-0 text-sm font-semibold text-cm-text-primary leading-snug"></div>
+
+        <!-- Status pill -->
+        @if (question.isSkipped === true) {
+        <span class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold
+                     bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400
+                     border border-slate-200 dark:border-slate-600">
+          <i class="fa-solid fa-forward-step text-[9px]"></i> Skipped
+        </span>
+        } @else if (question.isCorrect === 1) {
+        <span class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold
+                     bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400
+                     border border-emerald-200 dark:border-emerald-500/25">
+          <i class="fa-solid fa-check text-[9px]"></i> Correct
+        </span>
+        } @else {
+        <span class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold
+                     bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400
+                     border border-rose-200 dark:border-rose-500/25">
+          <i class="fa-solid fa-xmark text-[9px]"></i> Wrong
+        </span>
+        }
+      </div>
+
+      <!-- Options -->
+      <div class="p-4 space-y-2">
+        @for (option of question.options; track option.id) {
+
+        <div [class]="option.correct
+               ? 'flex items-center gap-3 px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all ' +
+                 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-300 dark:border-emerald-500/40 ' +
+                 'text-emerald-800 dark:text-emerald-300'
+               : 'flex items-center gap-3 px-4 py-3 rounded-xl border-2 font-medium text-sm transition-all ' +
+                 'bg-cm-surface-muted border-cm-border text-cm-text-secondary'">
+
+          <!-- Indicator dot -->
+          @if (option.correct) {
+          <div class="shrink-0 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+            <i class="fa-solid fa-check text-white text-[9px]"></i>
+          </div>
+          } @else {
+          <div class="shrink-0 w-5 h-5 rounded-full border-2 border-cm-border bg-cm-surface"></div>
           }
+
+          <!-- Option text -->
+          <span class="flex-1 min-w-0">{{ option.text }}</span>
+
+          <!-- Correct badge -->
+          @if (option.correct) {
+          <img src="assets/images/icons/ic_correct.png"
+               class="w-5 h-5 object-contain shrink-0 opacity-90">
+          }
+
+          <!-- Selected label -->
+          @if (option.selected) {
+          <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded
+                       bg-cm-brand-dim text-cm-brand-text border border-cm-brand/25">
+            Your Answer
+          </span>
+          }
+
         </div>
-      </mat-card>
+        }
+      </div>
+
+    </div>
     }
+
   } @else {
-  <mat-card class="empty-card">
-    <mat-card-content>
-      <p>No attempt questions are available for review.</p>
-    </mat-card-content>
-  </mat-card>
+
+  <!-- Empty state -->
+  <div class="bg-cm-surface border border-cm-border-strong rounded-2xl p-10 text-center
+              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <i class="fa-regular fa-clipboard text-cm-text-muted text-2xl mb-3 block"></i>
+    <p class="text-sm text-cm-text-muted">No attempt questions are available for review.</p>
+  </div>
+
   }
+
 </div>

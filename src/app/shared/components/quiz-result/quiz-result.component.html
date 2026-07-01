@@ -1,159 +1,238 @@
-@if (showCelebration) {
-      <app-celebration-overlay [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> 
-    }
-    <!-- Full screen centered Score section -->
-<section class="score-viewport">
-  <!-- <app-celebration-overlay *ngIf="showCelebration" [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> -->
-  <div class="score-card-wrap">
-    <!-- <app-celebration-overlay *ngIf="showCelebration" [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> -->
-    <!-- @if (showCelebration) {
-      <app-celebration-overlay [enabled]="showCelebration" [controlsEnabled]="celebrationControlsEnabled" (controlsEnabledChange)="celebrationControlsEnabled = $event" (autoDisabled)="showCelebration = false" #celebs></app-celebration-overlay> 
-    } -->
-    <ng-container *ngTemplateOutlet="scoreChart"></ng-container>
-  </div>
-</section>
+<!-- Celebration canvas: fixed fullscreen, pointer-events none so it never blocks clicks -->
+<canvas #celebCanvas style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 
-<!-- Details row: left = attempts, right = topics -->
-<section class="quiz-details">
-  <hr class="dim-divider"> 
-  <div class="row">
-    <div class="col-12 col-md-8">
-      @if (reviewQuestions.length > 0) {
-      <h4>Review Attempt Summary</h4>
-      <app-quiz-attempts [questions]="reviewQuestions"></app-quiz-attempts>
-      }
-    </div>
-    <div class="col-12 col-md-4">
-      @if (result?.topics && result?.topics.length > 0) {
-      <ng-container *ngTemplateOutlet="topicWiseChart"></ng-container>
-      }
-    </div>
-  </div>
-</section>
+<!-- ══════════════════════════════════════════════
+  SCORE CARD
+══════════════════════════════════════════════ -->
+<div class="result-hero">
+  <div class="result-card-wrap">
 
-<ng-template #scoreChart>
-  <mat-card class="cardPadding">
-    <mat-card-content id="quizResultCard">
-      <div class="row align-items-center text-center text-sm-center text-md-start m-b-10">
-        <!-- Left text -->
-        <div class="col-12 col-md-4 order-2 order-md-1">
-          <p class="small mb-2 mb-md-0 col-grey">Assessment ID : CMA{{result?.resultCode}}</p>
-        </div>
+    <!-- Shareable / downloadable area -->
+    <div id="quizResultCard" class="result-card">
 
-        <!-- Center image -->
-        <div class="col-12 col-md-4 order-1 m-b-10 order-md-2 d-flex justify-content-center">
-          <img src="/assets/images/logo.png" alt="CodeMerit Assessment Report" class="img-fluid cm-logo">
-        </div>
+      <!-- Brand bar -->
+      <div class="result-card__bar"></div>
 
-        <!-- Right text -->
-        <div class="col-12 col-md-4 order-3 order-md-3 text-sm-center text-md-end m-b-10">
-          <p class="small mb-0 col-grey">{{ result?.createdAt | date:'dd/MM/yyyy' }}</p>
-        </div>
-      </div>
-      <!-- <hr class="dim-divider"> -->
-      <div class="cm-result-row">
-        <img src="/assets/images/users/user.jpg" alt="User avatar" class="cm-avatar" />
-        <div class="cm-result-text">
-          <h5>
-            {{ result?.user?.firstName + ' ' + result?.user?.lastName }}
-            completed the {{ result?.quiz?.title ?? 'CodeMerit Assessment' }}
-            with {{ result?.score }}% score.
-          </h5>
-        </div>
-        <div class="cm-result-progress">
-          <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
-        </div>
+      <!-- Certificate header -->
+      <div class="result-card__header">
+        <span class="result-card__meta">CMA{{ result?.resultCode }}</span>
+        <img src="/assets/images/logo.png" alt="CodeMerit" class="result-card__logo">
+        <span class="result-card__meta">{{ result?.createdAt | date:'dd/MM/yyyy' }}</span>
       </div>
 
-      @if (result?.remarks) {
-      <hr class="dim-divider">
-      <div class="row">
-        <div class="col-12 text-center cmSmallTitle">
-          {{result.remarks}}
-        </div>
-      </div>
-      }
-      <hr class="dim-divider">
-       <div class="result-status" [ngClass]="{ 'status-pass': isPassed, 'status-fail': !isPassed }">
-            <span class="result-status__icon">
-              <mat-icon aria-hidden="true">{{ isPassed ? 'check' : 'close' }}</mat-icon>
-            </span>
-            <span class="result-status__label">{{ statusLabel }}</span>
-          </div>
-       <hr class="dim-divider">    
-      <div class="row">
-        <div class="col-3 col-sm-3 col-md-3 col-lg-3">
-          <p class="text-muted font-15 text-truncate">Total</p>
-          <p class="font-b-600 font-24">
-            <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.total}}
-          </p>
-        </div>
-        <div class="col-3 col-sm-3 col-md-3 col-lg-3">
-          <p class="text-muted">Answered</p>
-          <p class="font-b-600 font-24">
-            <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.correct + result.wrong}}
-          </p>
-        </div>
-        <div class="col-3 col-sm-3 col-md-3 col-lg-3">
-          <p class="text-muted font-15">Correct</p>
-          <p class="font-b-600 font-24">
-            <i class="fas fa-arrow-circle-down col-red m-r-5"></i>{{result.correct}}
-          </p>
-        </div>
-        <div class="col-3 col-sm-3 col-md-3 col-lg-3">
-          <p class="text-muted">Wrong</p>
-          <p class="font-b-600 font-24">
-            <i class="fas fa-arrow-circle-up col-green m-r-5"></i>{{result.wrong}}
-          </p>
-        </div>
-      </div>
-    </mat-card-content>
-    <mat-card-footer class="footer">
-      <ul class="list-unstyled m-b-10 m-t-10 m-l-10 m-r-10">
-        <li>
-          <div class="mb-2 d-flex justify-content-between">
-            <span class="progress-label">Accuracy</span>
-            <span class="progress-percent label bg-dark text-white">
-              {{ ((result.correct / (result.correct + result.wrong)) * 100) | number:'1.0-0' }}%
-            </span>
-          </div>
-          <div class="progress skill-progress w-100">
-            <div class="progress-bar bg-dark" [style.width]="result.score + '%'" role="progressbar"
-              [attr.aria-valuenow]="result.score" aria-valuemin="0" aria-valuemax="100">
+      <!-- Two-column body -->
+      <div class="result-card__body">
+
+        <!-- LEFT: identity -->
+        <div class="result-col result-col--identity">
+
+          <div class="result-user">
+            <div class="result-avatar-wrap">
+              <img src="/assets/images/users/user.jpg" alt="avatar" class="result-avatar">
+            </div>
+            <div class="result-user__info">
+              <p class="result-user__label">Candidate</p>
+              <h2 class="result-user__name">
+                {{ result?.user?.firstName }} {{ result?.user?.lastName }}
+              </h2>
             </div>
           </div>
-        </li>
-      </ul>
 
-    </mat-card-footer>
-  </mat-card>
-  <!-- <hr class="dim-divider"> -->
-  <div class="d-flex flex-column flex-sm-row justify-content-center text-center actions">
-    <button (click)="doOnShareResult()" class="margin-8 hoverCard" mat-flat-button color="accent">
-      <mat-icon>share</mat-icon> Share Result
-    </button>
+          <div class="result-quiz-chip">
+            <p class="result-quiz-chip__label">Assessment</p>
+            <p class="result-quiz-chip__title">
+              {{ result?.quiz?.title ?? 'CodeMerit Assessment' }}
+            </p>
+          </div>
 
-    <button (click)="downloadReport()" mat-stroked-button color="primary" class="margin-8">
-      <mat-icon>download</mat-icon> Download Report
-    </button>
+          <div>
+            <span class="result-status-badge"
+                  [ngClass]="isPassed ? 'result-status-badge--pass' : 'result-status-badge--fail'">
+              <mat-icon class="result-status-badge__icon">
+                {{ isPassed ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              {{ statusLabel }}
+            </span>
+            @if (result?.remarks) {
+              <p class="result-remarks">{{ result.remarks }}</p>
+            }
+          </div>
 
-    @if (result?.quiz?.id) {
-    <button (click)="doOnContinue()" class="margin-8" mat-flat-button color="primary">
-      <mat-icon>play_arrow</mat-icon> Continue
-    </button>
+        </div>
+
+        <!-- RIGHT: score + stats -->
+        <div class="result-col result-col--score">
+
+          <div class="result-donut">
+            <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
+          </div>
+
+          <div class="result-stats">
+            <div class="result-stat">
+              <span class="result-stat__val">{{ result?.total }}</span>
+              <span class="result-stat__key">Total</span>
+            </div>
+            <div class="result-stat">
+              <span class="result-stat__val">{{ (result?.correct ?? 0) + (result?.wrong ?? 0) }}</span>
+              <span class="result-stat__key">Done</span>
+            </div>
+            <div class="result-stat result-stat--correct">
+              <span class="result-stat__val">{{ result?.correct }}</span>
+              <span class="result-stat__key">Correct</span>
+            </div>
+            <div class="result-stat result-stat--wrong">
+              <span class="result-stat__val">{{ result?.wrong }}</span>
+              <span class="result-stat__key">Wrong</span>
+            </div>
+          </div>
+
+          <div class="result-accuracy">
+            <div class="result-accuracy__row">
+              <span class="result-accuracy__label">Accuracy</span>
+              <span class="result-accuracy__pct">
+                {{ ((result?.correct ?? 0) / (((result?.correct ?? 0) + (result?.wrong ?? 0)) || 1) * 100) | number:'1.0-0' }}%
+              </span>
+            </div>
+            <div class="result-accuracy__track">
+              <div class="result-accuracy__fill"
+                   [ngClass]="isPassed ? 'result-accuracy__fill--pass' : 'result-accuracy__fill--fail'"
+                   [style.width]="(result?.score ?? 0) + '%'">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="result-actions">
+      <button (click)="doOnShareResult()" mat-flat-button color="accent" class="hoverCard">
+        <mat-icon>share</mat-icon> Share Result
+      </button>
+      <button (click)="downloadReport()" mat-stroked-button color="primary">
+        <mat-icon>download</mat-icon> Download
+      </button>
+      @if (result?.quiz?.id) {
+        <button (click)="doOnContinue()" mat-flat-button color="primary">
+          <mat-icon>play_arrow</mat-icon> Continue
+        </button>
+      }
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  WIDGET ZONE
+══════════════════════════════════════════════ -->
+<div class="breakdown">
+
+  <div class="breakdown__heading">
+    <span class="breakdown__accent"></span>
+    <h3 class="breakdown__title">Result Breakdown</h3>
+    @if (reviewQuestions.length > 0) {
+      <span class="breakdown__count">{{ reviewQuestions.length }} questions</span>
     }
   </div>
-</ng-template>
 
-<ng-template #topicWiseChart>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title class="text-center">Covered Topics</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <ng-scrollbar style="height: auto;" visibility="hover">
-        <app-topics-score [topicScores]="result?.topics"></app-topics-score>
-      </ng-scrollbar>
-    </mat-card-content>
-  </mat-card>
-</ng-template>
+  <div class="breakdown__zone">
+
+    <!-- Attempt cards -->
+    <div class="attempt-list">
+
+      @if (reviewQuestions.length > 0) {
+        @for (q of reviewQuestions; track $index) {
+          <div class="attempt-card">
+
+            <div class="attempt-card__head">
+              <span class="attempt-card__num">Q{{ $index + 1 }} <span class="attempt-card__of">/ {{ reviewQuestions.length }}</span></span>
+              <span class="attempt-badge"
+                    [ngClass]="{
+                      'attempt-badge--correct': q.isCorrect === 1,
+                      'attempt-badge--wrong':   q.isCorrect === 0 && q.isSkipped !== 1,
+                      'attempt-badge--skipped': q.isSkipped === 1
+                    }">
+                {{ q.isSkipped === 1 ? 'Skipped' : q.isCorrect === 1 ? 'Correct' : 'Wrong' }}
+              </span>
+            </div>
+
+            <div class="attempt-card__question" [innerHTML]="q.text"></div>
+
+            @if (q.options?.length > 0) {
+              <div class="attempt-options">
+                @for (opt of q.options; track opt.id) {
+                  <div class="attempt-opt"
+                       [ngClass]="{
+                         'attempt-opt--correct': opt.correct,
+                         'attempt-opt--wrong':   opt.selected && !opt.correct
+                       }">
+                    <span class="attempt-opt__dot"
+                          [ngClass]="{
+                            'attempt-opt__dot--correct': opt.correct,
+                            'attempt-opt__dot--wrong':   opt.selected && !opt.correct
+                          }">
+                      {{ opt.correct ? '✓' : opt.selected ? '✗' : '' }}
+                    </span>
+                    <span class="attempt-opt__text">{{ opt.text }}</span>
+                    @if (opt.selected && opt.correct) {
+                      <span class="attempt-opt__tag attempt-opt__tag--yours-correct">Your answer</span>
+                    }
+                    @if (opt.selected && !opt.correct) {
+                      <span class="attempt-opt__tag attempt-opt__tag--yours-wrong">Your answer</span>
+                    }
+                    @if (!opt.selected && opt.correct) {
+                      <span class="attempt-opt__tag attempt-opt__tag--correct">Correct</span>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+          </div>
+        }
+      } @else {
+        <div class="attempt-empty">
+          <mat-icon>quiz</mat-icon>
+          <p>No attempt data available for review.</p>
+        </div>
+      }
+
+    </div>
+
+    <!-- Topics sidebar -->
+    @if (result?.topics && result?.topics?.length > 0) {
+      <aside class="topics-panel">
+        <div class="topics-panel__head">
+          <span class="topics-panel__title">Covered Topics</span>
+          <span class="topics-panel__count">{{ result.topics.length }}</span>
+        </div>
+        <div class="topics-panel__body">
+          @for (topic of result.topics; track topic.id) {
+            <div class="topic-row">
+              <div class="topic-row__meta">
+                <span class="topic-row__name">{{ topic.title }}</span>
+                <span class="topic-row__pct"
+                      [style.color]="(+topic.coverage || 0) >= 70 ? '#22c55e'
+                        : (+topic.coverage || 0) >= 40 ? '#f59e0b' : '#ef4444'">
+                  {{ topic.coverage != null ? topic.coverage + '%' : '—' }}
+                </span>
+              </div>
+              <div class="topic-bar">
+                <div class="topic-bar__fill"
+                     [style.width]="(+topic.coverage || 0) + '%'"
+                     [style.background]="(+topic.coverage || 0) >= 70
+                       ? 'linear-gradient(90deg,#22c55e,#34d399)'
+                       : (+topic.coverage || 0) >= 40
+                         ? 'linear-gradient(90deg,#f59e0b,#fbbf24)'
+                         : 'linear-gradient(90deg,#ef4444,#f97316)'">
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </aside>
+    }
+
+  </div>
+</div>

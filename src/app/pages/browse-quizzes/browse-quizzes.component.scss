@@ -1,137 +1,66 @@
+/* ── Loading progress bar ──────────────────────────────── */
+.loading-bar-track {
+  position: relative;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--cm-surface-raised);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.loading-bar-fill {
+  position: absolute;
+  top: 0;
+  left: -60%;
+  height: 100%;
+  width: 60%;
+  border-radius: 99px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    #6366f1 30%,
+    #8b5cf6 60%,
+    #a78bfa 80%,
+    transparent 100%
+  );
+  animation: barSweep 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes barSweep {
+  0%   { left: -60%; }
+  100% { left: 110%; }
+}
+
+/* ── Shimmer skeleton ──────────────────────────────────── */
+.shimmer {
+  position: relative;
+  background: var(--cm-surface-raised);
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.14) 40%,
+    rgba(255, 255, 255, 0.24) 50%,
+    rgba(255, 255, 255, 0.14) 60%,
+    transparent 100%
+  );
+  animation: shimmerSweep 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmerSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ── Quiz card ─────────────────────────────────────────── */
 .quiz-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.job-badge {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    height: 20px;
-}
-
-.subjectHeader {
-    margin-top: 12px;
-    margin-bottom: 12px;
-    text-align: center;
-
-    small {
-        color: #7c3aed;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 0.5px;
-    }
-}
-
-.text {
-    font-size: 20px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-top: 8px;
-    line-height: 1.4;
-}
-
-.description {
-    color: #6b7280;
-    min-height: 55px;
-    text-align: center;
-    font-size: 13px;
-    margin-bottom: 18px;
-}
-
-.quiz-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 16px;
-    margin-bottom: 18px;
-}
-
-.meta-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-}
-
-.meta-label {
-    font-size: 12px;
-    color: #6b7280;
-    margin-bottom: 6px;
-}
-
-.meta-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #4b3f8f;
-}
-
-.quiz-settings {
-    display: flex;
-
-    justify-content: center;
-
-    flex-wrap: wrap;
-
-    gap: 8px;
-
-    margin-bottom: 20px;
-
-    span {
-        background: #eef2ff;
-
-        color: #4b3f8f;
-
-        padding: 6px 12px;
-
-        border-radius: 30px;
-
-        font-size: 11px;
-
-        font-weight: 600;
-    }
-}
-
-.created-by {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-    padding: 0 16px;
-
-    span {
-        color: #6b7280;
-        font-size: 13px;
-    }
-
-    strong {
-        color: #2c3e50;
-        font-size: 14px;
-    }
-}
-
-.footer-btn {
-    padding: 16px;
-}
-
-.take-btn {
-    width: 100%;
-    height: 44px !important;
-    border-radius: 30px !important;
-}
-
-.dim-divider {
-    opacity: 0.5;
-}
-
-.progress-container {
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    min-height: 300px;
+  height: 100%;
+  transition: box-shadow 0.2s, border-color 0.2s;
 }

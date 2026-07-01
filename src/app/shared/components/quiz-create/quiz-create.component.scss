@@ -1,39 +1,92 @@
-.contentUnused {
-  text-align: center;
-  padding: 1rem 1rem;
-  animation: panelGlow 3s ease-in-out infinite alternate;
+/* ── Sweep progress bar (mirrors browse-quizzes pattern) ────── */
+.loading-bar-track {
+  position: relative;
+  height: 3px;
+  background: var(--cm-surface-raised);
+  overflow: hidden;
 }
 
-.settingRow{
-  margin-top: 16px;
+.loading-bar-fill {
+  position: absolute;
+  top: 0;
+  left: -60%;
+  height: 100%;
+  width: 60%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #6366f1     30%,
+    #8b5cf6     60%,
+    #a78bfa     80%,
+    transparent 100%
+  );
+  animation: barSweep 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.glow-text {
-  font-size: 1.2rem;
-  color: rgb(24, 26, 24);
-  text-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
-  animation: pulse 1.5s infinite alternate;
+@keyframes barSweep {
+  0%   { left: -60%; }
+  100% { left: 110%; }
 }
 
-/* Glow animation for text */
-@keyframes pulse {
-  from {
-    text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
-  }
-  to {
-    text-shadow: 0 0 20px #0f0, 0 0 40px #0f0;
-  }
+/* ── Loading state: shimmer text effect ─────────────────────── */
+.quiz-loading-msg {
+  background: linear-gradient(
+    90deg,
+    var(--cm-brand, #6366f1) 0%,
+    var(--cm-text-primary, #0f172a) 50%,
+    var(--cm-brand, #6366f1) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmerText 2.4s linear infinite;
 }
 
-/* Glow animation for panels */
-@keyframes panelGlow {
-  
-  from {
-    box-shadow: 0 0 5px rgba(0, 255, 0, 0.3), 0 0 15px rgba(0, 255, 0, 0.2);
-    //background: rgba(0, 0, 0, 0.6);
+@keyframes shimmerText {
+  0%   { background-position:  200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* ── mat-button-toggle-group: themed for both light + dark ───── */
+::ng-deep .quiz-toggle.mat-button-toggle-group {
+  border: 1px solid var(--cm-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  overflow: hidden;
+  height: 32px;
+
+  /* Each toggle — use surface (not raised) so light mode has clean white bg */
+  .mat-button-toggle {
+    border-left: 1px solid var(--cm-border) !important;
+    background: var(--cm-surface) !important;
+
+    &:first-child { border-left: none !important; }
   }
-  to {
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.6), 0 0 25px rgba(0, 255, 0, 0.4);
-    //background: rgba(0, 0, 0, 0.75);
+
+  /* Unchecked label: secondary gives readable contrast in light + dark */
+  .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 32px !important;
+    padding: 0 14px !important;
+    letter-spacing: 0.04em !important;
+    color: var(--cm-text-secondary) !important;
   }
+
+  /* Checked toggle: brand fill + white text — works on both modes */
+  .mat-button-toggle-checked {
+    background: var(--cm-brand, #6366f1) !important;
+
+    /* Override the label color specifically for the checked+appearance selector */
+    &.mat-button-toggle-appearance-standard .mat-button-toggle-label-content,
+    .mat-button-toggle-appearance-standard .mat-button-toggle-label-content,
+    .mat-button-toggle-label-content {
+      color: #ffffff !important;
+    }
+  }
+
+  /* Kill focus ring overlay that adds unwanted tint */
+  .mat-button-toggle-focus-overlay,
+  .mat-button-toggle-ripple { display: none !important; }
 }
