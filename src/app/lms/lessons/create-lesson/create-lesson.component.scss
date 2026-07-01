@@ -10,6 +10,7 @@
 }
 
 .field-input {
+  box-sizing: border-box;
   width: 100%;
   padding: 10px 12px;
   font-size: 0.875rem;
@@ -36,6 +37,7 @@
 }
 
 .field-select {
+  box-sizing: border-box;
   width: 100%;
   padding: 10px 36px 10px 12px;
   font-size: 0.875rem;

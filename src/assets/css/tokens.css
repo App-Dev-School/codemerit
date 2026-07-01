@@ -11,7 +11,7 @@
 
   /* ── Backgrounds ── */
   --cm-surface:         #ffffff;     /* main card / page background   */
-  --cm-surface-muted:   #f8fafc;     /* sidebars, subheaders          */
+  --cm-surface-muted:   #F9F9F9;     /* sidebars, subheaders          */
   --cm-surface-raised:  #f1f5f9;     /* inputs, chips, inner boxes    */
   --cm-surface-hover:   #e2e8f0;     /* hover state on buttons        */
 

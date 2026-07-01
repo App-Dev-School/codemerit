@@ -5,12 +5,10 @@
  */
 
 @use "mixins" as mix;
-body.light {
-  background-color: #f0f3fb;
-}
-
 body {
-  @include mix.transition(all 0.5s);
+  background-color: var(--cm-surface-muted);
+  color: var(--cm-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
   font-family: "Roboto", sans-serif !important;
   font-size: 14px !important;
 }
