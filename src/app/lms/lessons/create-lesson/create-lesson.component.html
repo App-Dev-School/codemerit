@@ -147,7 +147,7 @@
           <!-- Section cards -->
           <div formArrayName="descriptions" class="flex flex-col gap-4">
             @for (section of sections; track section.id; let i = $index) {
-              <div class="rounded-2xl border border-cm-border bg-cm-surface shadow-sm overflow-hidden">
+              <div [formGroupName]="i" class="rounded-2xl border border-cm-border bg-cm-surface shadow-sm overflow-hidden">
 
                 <!-- Section bar -->
                 <div class="flex items-center justify-between px-4 py-3 border-b border-cm-border bg-cm-surface-muted">
@@ -177,9 +177,23 @@
                   }
                 </div>
 
+                <!-- Section title -->
+                <div class="p-4 border-b border-cm-border">
+                  <label class="field-label">Section Title <span class="text-rose-400">*</span></label>
+                  <input
+                    formControlName="title"
+                    type="text"
+                    placeholder="e.g. Variables and Data Types"
+                    class="field-input"
+                  />
+                  @if (descriptions.at(i)?.get('title')?.invalid && (descriptions.at(i)?.get('title')?.touched || submitted)) {
+                    <p class="field-error">Section title is required.</p>
+                  }
+                </div>
+
                 <!-- Tiptap editor -->
                 <div class="p-4">
-                  <div class="tiptap-shell" (click)="onShellClick(i, $event)">
+                  <div class="tiptap-shell" tabindex="0" (pointerdown)="onShellClick(i, $event)">
                     @if (isEditorEmpty(i)) {
                       <p class="tiptap-placeholder">
                         Start writing here — paste text, add lists, or format with headings…
@@ -187,7 +201,7 @@
                     }
                     <tiptap-editor [editor]="section.editor" class="tiptap-body"></tiptap-editor>
                   </div>
-                  @if (descriptions.at(i)?.invalid && (descriptions.at(i)?.touched || submitted)) {
+                  @if (descriptions.at(i)?.get('content')?.invalid && (descriptions.at(i)?.get('content')?.touched || submitted)) {
                     <p class="mt-2 text-xs text-rose-400">Section content is required.</p>
                   }
                 </div>

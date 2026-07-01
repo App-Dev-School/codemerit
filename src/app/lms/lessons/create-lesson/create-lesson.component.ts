@@ -8,8 +8,8 @@ import Code from '@tiptap/extension-code';
 import StarterKit from '@tiptap/starter-kit';
 import { TiptapEditorDirective } from 'ngx-tiptap';
 import { Subscription } from 'rxjs';
+import { MasterService } from '@core/service/master.service';
 import { LessonService } from 'src/app/learn/lesson.service';
-import { QuizService } from 'src/app/quiz/quiz.service';
 
 interface Section {
   id: string;
@@ -42,7 +42,7 @@ export class CreateLessonComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private quizService: QuizService,
+    private masterService: MasterService,
     private lessonService: LessonService,
     private snackService: SnackbarService,
     private router: Router,
@@ -90,9 +90,12 @@ export class CreateLessonComponent implements OnInit, OnDestroy {
     return this.sections[index]?.editor?.isEmpty ?? true;
   }
 
-  onShellClick(index: number, event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    if (!target.closest('[contenteditable]')) {
+  onShellClick(index: number, event: PointerEvent): void {
+    const target = event.target;
+    const isEditorHit = target instanceof HTMLElement && target.closest('[contenteditable]');
+
+    if (!isEditorHit) {
+      event.preventDefault();
       this.sections[index]?.editor?.commands.focus('end');
     }
   }
@@ -162,28 +165,30 @@ export class CreateLessonComponent implements OnInit, OnDestroy {
       extensions: [StarterKit, Code],
       content: '',
       onUpdate: ({ editor }) => {
-        // find by reference — stable even after splices
         const idx = this.sections.findIndex((s) => s.editor === instance);
         if (idx !== -1) {
-          this.descriptions.at(idx)?.setValue(editor.getHTML(), { emitEvent: false });
+          this.descriptions
+            .at(idx)
+            ?.get('content')
+            ?.setValue(editor.getHTML(), { emitEvent: false });
         }
       },
     });
     return instance;
   }
 
-  private createDescription() {
-    return this.fb.control('', [Validators.required]);
+  private createDescription(): FormGroup {
+    return this.fb.group({
+      title: ['', [Validators.required]],
+      content: ['', [Validators.required]],
+    });
   }
 
   private loadSubjectsTopics(): void {
-    this.quizService.getSubjectsTopics().subscribe({
-      next: (res: any) => {
-        this.subjects = res?.data?.subjects || [];
-        this.topics = res?.data?.topics || [];
-        this.filteredTopics = [...this.topics];
-      },
-      error: (err) => console.error('Failed to load subjects/topics', err),
+    this.masterService.fetchMasterDataFromAPI().subscribe(() => {
+      this.subjects = this.masterService.subjects || [];
+      this.topics = this.masterService.topics || [];
+      this.filteredTopics = [...this.topics];
     });
   }
 

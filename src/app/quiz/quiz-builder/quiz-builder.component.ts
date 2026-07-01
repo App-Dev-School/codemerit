@@ -12,6 +12,7 @@ import { SnackbarService } from '@core/service/snackbar.service';
 import { QuizFormComponent } from '@shared/components/quiz-form/quiz-form.component';
 import { QuizQuestionsFormComponent } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
 import { QuizSettingsFormComponent } from '@shared/components/quiz-settings-form/quiz-settings-form.component';
+import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
 import { register } from 'swiper/element/bundle';
 import { QuizService } from '../quiz.service';
 import { MasterService } from '@core/service/master.service';
@@ -36,12 +37,26 @@ register();
     QuizFormComponent,
     QuizQuestionsFormComponent,
     QuizSettingsFormComponent,
+    ParticleCanvasComponent,
   ],
 })
 export class QuizBuilderComponent implements OnInit {
   currentStep = 0;
   canProceedToNext = false;
-  quizFormData: any = {};
+  quizFormData: any = {
+    title: 'Angular Fundamentals Quiz',
+    tag: 'angular',
+    shortDesc: 'Test your Angular knowledge with this quiz',
+    description: 'A comprehensive quiz covering Angular components, services, routing, and forms for developers',
+    level: 2,
+    category: 'Frontend',
+    numQuestions: 5,
+    ordering: 'Default',
+    passMarks: 60,
+    maxAttempts: 3,
+    isPublished: true,
+    quizType: 'Standard',
+  };
   quizQuestionsData: any[] = [];
   quizSettingsData: any = {};
   quizFiltersData: any = null; // Stores subject and topic filters

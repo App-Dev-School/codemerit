@@ -1,1 +1,51 @@
-/* All styling handled by Tailwind utility classes */
+// ── Section header ─────────────────────────────────────────────────────────
+.sf-header {
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+// ── Settings list ──────────────────────────────────────────────────────────
+.sf-rows > .sf-row + .sf-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sf-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 0;
+}
+
+.sf-row-label {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.sf-row-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cm-text-primary);
+}
+
+.sf-row-desc {
+  font-size: 10px;
+  color: var(--cm-text-muted);
+  margin-top: 1px;
+}
+
+// ── Segment button wrapper ─────────────────────────────────────────────────
+// Replaces the invisible border-cm-border wrapper in dark mode.
+.sf-seg {
+  display: flex;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 11px;
+  font-family: inherit;
+  flex-shrink: 0;
+}

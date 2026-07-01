@@ -1,189 +1,285 @@
-.quiz-builder-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #f5f7fa;
+// Override global section.content so the builder fills the full content area
+// without extra right margin, and starts flush below the 60px fixed header.
+section.content {
+  margin-top: 60px !important;    // flush below fixed 60px header
+  margin-right: 0 !important;     // fill to viewport right edge
+  // margin-left: 260px is inherited from global CSS (sidebar clearance)
 }
 
-/* ── Stepper Header ── */
-.stepper-header {
+// ── Outer shell ────────────────────────────────────────────────────────────
+.quiz-builder {
+  position: relative;           // stacking context so z-index works vs particles
+  z-index: 1;                   // above particle canvas (z-index: 0)
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px); // 60px = fixed header height
+  // Semi-transparent so particles show through the dark background areas;
+  // step panels remain fully opaque because they have their own background.
+  background: rgba(15, 23, 42, 0.88);
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  padding-bottom: 88px; // room for sticky nav
+}
+
+// ── Header ─────────────────────────────────────────────────────────────────
+.builder-header {
+  text-align: center;
+  padding: 2.5rem 1.5rem 0.5rem;
+}
+
+.builder-title {
+  font-size: clamp(1.6rem, 4vw, 2.25rem);
+  font-weight: 700;
+  color: white;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.text-gradient {
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.builder-subtitle {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+// ── Stepper ────────────────────────────────────────────────────────────────
+.stepper-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 2rem auto 1.5rem;
+}
+
+.stepper-track {
+  position: absolute;
+  top: 1.25rem;
+  transform: translateY(-50%);
+  // Span only between circle centres (circles are 2.5rem wide)
+  left: 1.25rem;
+  right: 1.25rem;
+  width: auto;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  z-index: 0;
+}
+
+.stepper-fill {
+  position: absolute;
+  top: 1.25rem;
+  transform: translateY(-50%);
+  // Fill starts at centre of first circle and grows toward centre of last circle
+  left: 1.25rem;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  transition: width 0.5s ease;
+  z-index: 0;
+}
+
+.stepper-indicators {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// ── Step circles ───────────────────────────────────────────────────────────
+.step-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 24px 20px;
-  gap: 0;
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+
+  &--active {
+    background: #3b82f6;
+    color: white;
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.6);
+  }
+
+  &--done {
+    background: #8b5cf6;
+    color: white;
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.5);
+  }
+
+  &--pending {
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    color: #6b7280;
+  }
 }
 
-.step {
+// ── Step labels ────────────────────────────────────────────────────────────
+.step-label {
+  font-size: 0.72rem;
+  white-space: nowrap;
+  text-align: center;
+
+  &--active  { font-weight: 600; color: #ffffff; }
+  &--done    { font-weight: 600; color: #d1d5db; }
+  &--pending { font-weight: 500; color: #6b7280; }
+}
+
+// ── Alert banner ───────────────────────────────────────────────────────────
+.alert-info {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  cursor: default;
-
-  .step-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #e0e0e0;
-    color: #9e9e9e;
-    font-weight: 600;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #e0e0e0;
-    transition: background 0.25s, border-color 0.25s, color 0.25s;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
-  }
-
-  .step-label {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: #9e9e9e;
-    white-space: nowrap;
-    transition: color 0.25s;
-  }
-
-  &.active {
-    .step-circle {
-      background: #1976d2;
-      border-color: #1976d2;
-      color: #fff;
-      box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.15);
-    }
-
-    .step-label {
-      color: #1976d2;
-    }
-  }
-
-  &.completed {
-    .step-circle {
-      background: #43a047;
-      border-color: #43a047;
-      color: #fff;
-    }
-
-    .step-label {
-      color: #43a047;
-    }
-  }
+  gap: 0.6rem;
+  margin: 0 1.5rem 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 0.75rem;
+  color: #fbbf24;
+  font-size: 0.85rem;
 }
 
-.step-connector {
-  flex: 1;
-  max-width: 80px;
-  height: 2px;
-  background: #e0e0e0;
-  margin: 0 8px;
-  margin-bottom: 26px;
-  transition: background 0.25s;
-
-  &.active {
-    background: #43a047;
-  }
+// ── Content area ───────────────────────────────────────────────────────────
+.builder-body {
+  padding: 0.5rem 1.5rem 1.5rem;
 }
 
-/* ── Content area ── */
-.builder-content {
-  flex: 1;
+// ── Step panels ────────────────────────────────────────────────────────────
+.step-panel {
+  background: #1a2540;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  animation: panelFadeIn 0.3s ease both;
+}
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Step section heading ───────────────────────────────────────────────────
+.step-heading {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 8px 16px 0;
+  gap: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 1.5rem;
 }
 
-.step-content {
+.step-icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+}
+
+// ── Narrow content wrappers (Quiz Info & Settings) ─────────────────────────
+.step-inner {
+  max-width: 600px;
+  margin: 0 auto;
   width: 100%;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  padding: 32px 28px;
-  margin-bottom: 24px;
-  animation: fadeSlideIn 0.2s ease;
+
+  &--sm { max-width: 500px; }
 }
 
-@keyframes fadeSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ── Actions bar ── */
-.stepper-actions {
+// ── Sticky navigation bar ──────────────────────────────────────────────────
+.builder-nav {
+  position: sticky;
+  bottom: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 24px 28px;
-  border-top: 1px solid #ececec;
-  background: #fff;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 50;
+}
 
-  .flex-grow {
-    flex: 1;
+// ── Back button ────────────────────────────────────────────────────────────
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #d1d5db;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover { background: rgba(255, 255, 255, 0.08); }
+}
+
+.btn-hidden { visibility: hidden; pointer-events: none; }
+
+// ── Gradient action button ─────────────────────────────────────────────────
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 2rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  color: white;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: box-shadow 0.25s ease, transform 0.2s ease, opacity 0.2s;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 0 22px rgba(139, 92, 246, 0.5);
+    transform: translateY(-1px);
   }
 
-  button {
-    min-width: 120px;
-    border-radius: 8px;
-    font-weight: 500;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
   }
 }
 
-/* Publish button loading spinner */
-.spin {
-  animation: spin 1s linear infinite;
+// ── Spinner ────────────────────────────────────────────────────────────────
+.btn-spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+  animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .stepper-header {
-    padding: 20px 12px 12px;
-  }
-
-  .step-connector {
-    max-width: 32px;
-    margin: 0 4px;
-    margin-bottom: 26px;
-  }
-
-  .step .step-label {
-    font-size: 0.75rem;
-  }
-
-  .step-content {
-    padding: 16px 12px;
-  }
-
-  .stepper-actions {
-    padding: 10px 12px 20px;
-
-    button {
-      min-width: 90px;
-      font-size: 0.85rem;
-    }
-  }
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 640px) {
+  .builder-header  { padding: 1.5rem 1rem 0.5rem; }
+  .stepper-wrapper { max-width: 320px; }
+  .builder-body    { padding: 0.5rem 1rem 1rem; }
+  .step-panel      { padding: 1.25rem; }
+  .builder-nav     { padding: 0.75rem 1rem; }
+  .btn-action      { padding: 0.6rem 1.25rem; font-size: 0.875rem; }
+  .btn-back        { padding: 0.5rem 1rem;   font-size: 0.875rem; }
+  .alert-info      { margin: 0 1rem 0.5rem; }
 }

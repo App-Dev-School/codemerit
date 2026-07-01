@@ -35,6 +35,7 @@ export class LmsDashboardMainComponent implements OnInit {
     weekly: [],
   };
   loading = true;
+  activeTooltip: string | null = null;
 
   constructor(
     private masterService: MasterService,
@@ -189,6 +190,18 @@ export class LmsDashboardMainComponent implements OnInit {
 
   goToCreateQuiz(): void {
     this.router.navigate(['/lms/quizzes/list']);
+  }
+
+  goToCreateTopic(): void {
+    this.router.navigate(['/lms/topics/create']);
+  }
+
+  openTooltip(name: string): void {
+    this.activeTooltip = name;
+  }
+
+  closeTooltip(): void {
+    this.activeTooltip = null;
   }
 
   raiseRequest(): void {

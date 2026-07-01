@@ -17,9 +17,10 @@
     @if (!loading) {
 
     <!-- ═══════════════════════════════════════════════════
-         HERO COMMAND BANNER
+         HERO COMMAND BANNER - FOR new and Blocked SMEs
     ═══════════════════════════════════════════════════ -->
-    <div class="relative overflow-hidden rounded-2xl mt-4 mb-6 shadow-lg
+    @if(false){
+<div class="relative overflow-hidden rounded-2xl mt-4 mb-6 shadow-lg
                 bg-gradient-to-br from-indigo-50 via-white to-violet-50
                 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900
                 border border-indigo-200 dark:border-indigo-500/20">
@@ -85,327 +86,366 @@
         }
 
       </div>
-    </div><!-- /hero banner -->
+    </div>
+    }
 
     @if (dashboard) {
 
     <!-- ═══════════════════════════════════════════════════
-         ROW 1 — QUESTIONS (2/3)  +  TOPICS & LESSONS (1/3)
+         ROW 1 — QUESTIONS (2/3)  +  LESSONS (1/3)
     ═══════════════════════════════════════════════════ -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5 items-stretch">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-4 mb-5 items-stretch">
 
       <!-- ──────────────── QUESTIONS (wide) ──────────────── -->
-      @if (dashboard.questions) {
       <div class="lg:col-span-2 group bg-cm-surface rounded-2xl border border-cm-border overflow-hidden
                   flex flex-col transition-all duration-200 ease-out
                   hover:shadow-2xl hover:border-indigo-500/30">
 
-        <!-- gradient header -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 p-6">
-          <div class="absolute inset-0 opacity-[0.07]"
-               style="background-image: radial-gradient(circle, white 1px, transparent 1px);
-                      background-size: 28px 28px;"></div>
-          <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/8 pointer-events-none"></div>
+        <!-- ── GRADIENT HEADER ── -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 px-6 pt-5 pb-7">
 
-          <div class="relative flex items-start justify-between gap-6">
+          <!-- ambient blobs -->
+          <div class="absolute -left-10 -top-10 w-52 h-52 rounded-full bg-indigo-400/20 blur-3xl pointer-events-none"></div>
+          <div class="absolute right-10 -bottom-10 w-44 h-44 rounded-full bg-purple-400/20 blur-3xl pointer-events-none"></div>
+          <div class="absolute right-0 top-0 w-32 h-32 rounded-full bg-violet-300/10 blur-2xl pointer-events-none"></div>
 
-            <!-- Left: approved fraction -->
-            <div class="flex-1 min-w-0">
-              <p class="text-indigo-200 text-[10px] font-bold uppercase tracking-widest mb-3">Approved &amp; Live</p>
+          <div class="relative">
 
-              <div class="flex items-baseline gap-2.5 mb-1">
-                <p class="text-7xl font-black text-white leading-none tracking-tight">
-                  {{ dashboard.questions.totalApproved }}
+            <!-- top bar: live badge left — pending pill + ⓘ right -->
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-2.5">
+                <span class="relative flex h-2 w-2 shrink-0">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-300"></span>
+                </span>
+                <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-200/80">Question Bank</span>
+              </div>
+              <div class="flex items-center gap-2">
+                @if ((dashboard.questions?.totalPending ?? 0) > 0) {
+                <button (click)="goToQuestionViewer()"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold
+                         bg-amber-400/20 border border-amber-300/30 text-amber-200
+                         hover:bg-amber-400/30 active:scale-95 transition-all duration-150">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse shrink-0"></span>
+                  {{ dashboard.questions?.totalPending }} pending
+                </button>
+                }
+                <button (click)="openTooltip('questions')"
+                  class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 flex items-center justify-center
+                         text-white/70 hover:text-white transition-all duration-150 shrink-0">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- hero split: big number left — approval ring right -->
+            <div class="flex items-center gap-6">
+
+              <!-- LEFT: approved count + progress bar -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-end gap-3 mb-2 leading-none">
+                  <span class="text-[4.5rem] font-black text-white leading-none tracking-tight">
+                    {{ dashboard.questions?.totalApproved ?? 0 }}
+                  </span>
+                  <span class="text-lg font-semibold text-indigo-300 mb-2 shrink-0">
+                    / {{ dashboard.questions?.totalQuestions ?? 0 }}
+                  </span>
+                </div>
+                <p class="text-sm font-semibold text-indigo-200 mb-5">
+                  questions approved &amp; live
                 </p>
-                <div class="flex flex-col">
-                  <span class="text-indigo-300 text-xl font-bold leading-none">/ {{ dashboard.questions.totalQuestions }}</span>
-                  <span class="text-indigo-300 text-xs font-medium mt-1">total</span>
+                <!-- fill bar -->
+                <div class="space-y-1.5">
+                  <div class="h-1.5 w-full rounded-full bg-white/20 overflow-hidden">
+                    <div class="h-full rounded-full bg-emerald-400 transition-all duration-1000 ease-out"
+                         [style.width.%]="approvalRate"></div>
+                  </div>
+                  <div class="flex justify-between text-[11px]">
+                    <span class="text-emerald-300 font-semibold">{{ approvalRate }}% approved</span>
+                    <span class="text-indigo-300/60">{{ (dashboard.questions?.totalQuestions ?? 0) - (dashboard.questions?.totalApproved ?? 0) }} not yet live</span>
+                  </div>
                 </div>
               </div>
 
-              <p class="text-indigo-300 text-sm font-medium mt-2">questions in production</p>
-
-              @if ((dashboard.questions.totalPending ?? 0) > 0) {
-              <div class="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg
-                          bg-amber-400/20 border border-amber-300/30">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse shrink-0"></span>
-                <span class="text-amber-200 text-xs font-semibold">{{ dashboard.questions.totalPending }} pending review</span>
+              <!-- RIGHT: SVG donut ring -->
+              <div class="shrink-0 flex flex-col items-center gap-2">
+                <div class="relative w-28 h-28">
+                  <!-- ring SVG — circumference of r=15.9155 ≈ 100, so dasharray values = % directly -->
+                  <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="15.9155"
+                      fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3.2"/>
+                    <circle cx="18" cy="18" r="15.9155"
+                      fill="none" stroke="#34d399" stroke-width="3.2"
+                      stroke-linecap="round"
+                      [attr.stroke-dasharray]="approvalRate + ' ' + (100 - approvalRate)"/>
+                  </svg>
+                  <!-- centered label -->
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-3xl font-black text-white leading-none">{{ approvalRate }}</span>
+                    <span class="text-sm font-bold text-emerald-300 leading-none mt-0.5">%</span>
+                  </div>
+                </div>
+                <p class="text-[11px] font-semibold text-indigo-200/80 text-center">approval rate</p>
               </div>
-              }
-            </div>
 
-            <!-- Right: approval ring -->
-            <div class="flex flex-col items-center gap-1 shrink-0">
-              <svg viewBox="0 0 36 36" class="w-24 h-24 drop-shadow-lg">
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2.5"/>
-                <circle cx="18" cy="18" r="15.9" fill="none"
-                        stroke="white" stroke-width="2.5" stroke-linecap="round"
-                        [attr.stroke-dasharray]="approvalRate + ' 100'"
-                        stroke-dashoffset="25"/>
-                <text x="18" y="15" text-anchor="middle"
-                      fill="white" font-size="7.5" font-weight="900"
-                      font-family="system-ui, sans-serif">{{ approvalRate }}%</text>
-                <text x="18" y="22.5" text-anchor="middle"
-                      fill="rgba(199,210,254,0.85)" font-size="3.5" font-weight="600"
-                      font-family="system-ui, sans-serif">approval</text>
-              </svg>
-              <p class="text-indigo-300 text-[10px] font-semibold">Quality score</p>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- compact stats: non-hero counts only -->
-        <div class="px-5 py-2.5 border-b border-cm-border flex flex-wrap items-baseline gap-x-5 gap-y-1">
-          <div class="flex items-baseline gap-1.5">
-            <span class="text-xl font-black text-amber-600 dark:text-amber-400 leading-none">{{ dashboard.questions.totalPending ?? '0' }}</span>
-            <span class="text-[11px] text-cm-text-muted font-medium">Pending</span>
-          </div>
-          <span class="text-cm-text-muted/30 select-none hidden sm:inline">|</span>
-          <div class="flex items-baseline gap-1.5">
-            <span class="text-xl font-black text-indigo-600 dark:text-indigo-400 leading-none">{{ dashboard.questions.totalTrivia ?? '0' }}</span>
-            <span class="text-[11px] text-cm-text-muted font-medium">Trivia</span>
-          </div>
-          <span class="text-cm-text-muted/30 select-none hidden sm:inline">|</span>
-          <div class="flex items-baseline gap-1.5">
-            <span class="text-xl font-black text-violet-600 dark:text-violet-400 leading-none">{{ dashboard.questions.totalGeneral ?? '0' }}</span>
-            <span class="text-[11px] text-cm-text-muted font-medium">Interview</span>
-          </div>
-          @if ((dashboard.questions.totalWhitelisted ?? 0) > 0) {
-          <span class="text-cm-text-muted/30 select-none hidden sm:inline">|</span>
-          <div class="flex items-baseline gap-1.5">
-            <span class="text-xl font-black text-cm-text-secondary leading-none">{{ dashboard.questions.totalWhitelisted }}</span>
-            <span class="text-[11px] text-cm-text-muted font-medium">Whitelisted</span>
-          </div>
-          }
-        </div>
-
-        <!-- category proportion bar -->
-        <div class="px-5 py-4 border-b border-cm-border">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-cm-text-secondary mb-3">Category breakdown</p>
-          <div class="space-y-2.5">
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-cm-text-secondary w-16 shrink-0">Trivia</span>
-              <div class="flex-1 h-2 rounded-full bg-cm-surface-raised overflow-hidden">
-                <div class="h-full rounded-full bg-indigo-500 transition-all duration-700"
-                     [style.width.%]="triviaRate"></div>
-              </div>
-              <span class="text-xs font-bold text-cm-text-primary shrink-0 w-16 text-right">
-                {{ dashboard.questions.totalTrivia ?? '0' }} <span class="font-normal text-cm-text-muted">({{ triviaRate }}%)</span>
-              </span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-cm-text-secondary w-16 shrink-0">Interview</span>
-              <div class="flex-1 h-2 rounded-full bg-cm-surface-raised overflow-hidden">
-                <div class="h-full rounded-full bg-violet-500 transition-all duration-700"
-                     [style.width.%]="100 - triviaRate"></div>
-              </div>
-              <span class="text-xs font-bold text-cm-text-primary shrink-0 w-16 text-right">
-                {{ dashboard.questions.totalGeneral ?? '0' }} <span class="font-normal text-cm-text-muted">({{ 100 - triviaRate }}%)</span>
-              </span>
             </div>
           </div>
         </div>
 
-        <!-- CTAs -->
-        <div class="mt-auto px-5 py-4 flex flex-wrap gap-2">
-          <button (click)="goToCreateQuestion()"
-            class="flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
-                   bg-indigo-500 text-white text-sm font-bold
-                   hover:bg-indigo-600 active:scale-[0.98] transition-all duration-150">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Add Question
-          </button>
+        <!-- ── STAT CARDS (3 col with icons) ── -->
+        @if (dashboard.questions) {
+        <div class="grid grid-cols-3 divide-x divide-cm-border border-b border-cm-border">
+
+          <!-- Pending -->
           <button (click)="goToQuestionViewer()"
-            class="flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
-                   border border-amber-400/50 text-amber-600 dark:text-amber-400 text-sm font-bold
-                   hover:bg-amber-400/10 active:scale-[0.98] transition-all duration-150">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            Review Pending
-            @if ((dashboard.questions.totalPending ?? 0) > 0) {
-            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full
-                         bg-amber-400 text-white text-[9px] font-black leading-none">
-              {{ dashboard.questions.totalPending }}
-            </span>
-            }
-          </button>
-          <button (click)="goToQuestions()"
-            class="flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
-                   border border-cm-border text-cm-text-secondary text-sm font-semibold
-                   hover:bg-cm-surface-hover hover:text-cm-text-primary active:scale-[0.98]
-                   transition-all duration-150">
-            View All
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      </div>
-      }
-
-      <!-- ──────────────── RIGHT COLUMN: Topics + Lessons ──────────────── -->
-      <div class="flex flex-col gap-5">
-
-        <!-- TOPICS -->
-        @if (dashboard.topics) {
-        <div class="group bg-cm-surface rounded-2xl border border-cm-border overflow-hidden
-                    flex flex-col flex-1 transition-all duration-200 ease-out
-                    hover:shadow-xl hover:border-emerald-500/30">
-
-          <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-600 px-5 py-5">
-            <div class="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10 pointer-events-none"></div>
-            <div class="relative flex items-start justify-between gap-3">
-              <div>
-                <p class="text-emerald-100 text-[10px] font-bold uppercase tracking-widest mb-1">Topics</p>
-                <div class="flex items-baseline gap-2">
-                  <p class="text-4xl font-black text-white leading-none">{{ dashboard.topics.totalActive }}</p>
-                  <span class="text-emerald-200 text-lg font-semibold">/ {{ dashboard.topics.total }}</span>
-                </div>
-                <p class="text-emerald-200 text-xs font-medium mt-1">active of total</p>
-              </div>
-              <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0
-                          group-hover:bg-white/30 transition-colors duration-150">
-                <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="px-5 py-4 flex-1">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-[11px] text-cm-text-secondary font-semibold">Active coverage</span>
-              <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">{{ topicsActiveRate }}%</span>
-            </div>
-            <div class="h-2 rounded-full bg-cm-surface-raised overflow-hidden mb-4">
-              <div class="h-full rounded-full bg-emerald-500 transition-all duration-700"
-                   [style.width.%]="topicsActiveRate"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div class="text-center p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-                <p class="text-lg font-black text-emerald-600 dark:text-emerald-400">{{ dashboard.topics.totalActive ?? '0' }}</p>
-                <p class="text-[10px] text-cm-text-muted mt-0.5">Active</p>
-              </div>
-              <div class="text-center p-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
-                <p class="text-lg font-black text-amber-600 dark:text-amber-400">{{ dashboard.topics.totalPending ?? '0' }}</p>
-                <p class="text-[10px] text-cm-text-muted mt-0.5">Pending</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="px-5 pb-4 border-t border-cm-border pt-4">
-            <button (click)="goToTopicManager()"
-              class="w-full py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold
-                     hover:bg-emerald-600 active:scale-[0.98]
-                     transition-all duration-150 flex items-center justify-center gap-2">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            class="flex items-center gap-3 px-5 py-4 hover:bg-cm-surface-hover transition-colors duration-150 text-left w-full">
+            <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20
+                        flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              Manage Topics
+            </div>
+            <div class="min-w-0">
+              <p class="text-xl font-black text-amber-600 dark:text-amber-400 leading-none">
+                {{ dashboard.questions.totalPending ?? 0 }}
+              </p>
+              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate">Awaiting review</p>
+            </div>
+          </button>
+
+          <!-- Trivia -->
+          <div class="flex items-center gap-3 px-5 py-4 hover:bg-cm-surface-hover transition-colors duration-150 cursor-default">
+            <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20
+                        flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <p class="text-xl font-black text-indigo-600 dark:text-indigo-400 leading-none">
+                {{ dashboard.questions.totalTrivia ?? 0 }}
+              </p>
+              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate">Trivia MCQ</p>
+            </div>
+          </div>
+
+          <!-- Interview -->
+          <div class="flex items-center gap-3 px-5 py-4 hover:bg-cm-surface-hover transition-colors duration-150 cursor-default">
+            <div class="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20
+                        flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <p class="text-xl font-black text-violet-600 dark:text-violet-400 leading-none">
+                {{ dashboard.questions.totalGeneral ?? 0 }}
+              </p>
+              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate">Interview open-ended</p>
+            </div>
+          </div>
+
+        </div>
+        } @else {
+        <!-- empty state -->
+        <div class="flex-1 flex items-center gap-6 px-6 py-7 border-b border-cm-border">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20
+                      flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/>
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold text-cm-text-primary mb-0.5">No questions yet</p>
+            <p class="text-xs text-cm-text-muted leading-relaxed">
+              Add Trivia or Interview questions — they power every quiz and assessment learners take.
+            </p>
+          </div>
+          <div class="group/tip relative shrink-0">
+            <button class="inline-flex items-center gap-1.5 text-xs text-cm-brand font-semibold px-3 py-1.5 rounded-lg
+                           bg-cm-brand/5 border border-cm-brand/20 hover:bg-cm-brand/10 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              How it works
             </button>
+            <div class="absolute bottom-full right-0 mb-2 w-60 px-3 py-2.5 z-20
+                        bg-cm-surface-raised border border-cm-border rounded-xl shadow-xl
+                        text-left text-xs text-cm-text-secondary leading-relaxed
+                        opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity duration-150">
+              <p class="font-bold text-cm-text-primary mb-1">Two question types:</p>
+              <p><span class="font-semibold text-indigo-400">Trivia</span> — MCQ for quick checks.</p>
+              <p class="mt-1"><span class="font-semibold text-violet-400">Interview</span> — open-ended for deep evaluation.</p>
+              <p class="mt-1.5 text-cm-text-muted">Questions go through an approval flow before going live to learners.</p>
+            </div>
           </div>
         </div>
         }
 
-        <!-- LESSONS -->
-        @if (dashboard.lessons) {
-        <div class="group bg-cm-surface rounded-2xl border border-cm-border overflow-hidden
-                    flex flex-col flex-1 transition-all duration-200 ease-out
-                    hover:shadow-xl hover:border-amber-500/30">
+        <!-- ── CTAs ── -->
+        <div class="mt-auto px-5 py-4 flex flex-wrap gap-2">
+          <button (click)="goToCreateQuestion()"
+            class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
+                   bg-indigo-500 text-white text-sm font-bold
+                   hover:bg-indigo-600 active:scale-[0.98] transition-all duration-150">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            {{ dashboard.questions ? 'Add Question' : 'Add Your First Question' }}
+          </button>
+          <button (click)="goToQuestionViewer()"
+            class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
+                   border border-amber-400/50 text-amber-600 dark:text-amber-400 text-sm font-bold
+                   hover:bg-amber-400/10 active:scale-[0.98] transition-all duration-150">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Review Pending
+            @if ((dashboard.questions?.totalPending ?? 0) > 0) {
+            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full
+                         bg-amber-400 text-white text-[9px] font-black leading-none">
+              {{ dashboard.questions?.totalPending }}
+            </span>
+            }
+          </button>
+          <button (click)="goToQuestions()"
+            class="flex-1 min-w-[100px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
+                   border border-cm-border text-cm-text-secondary text-sm font-semibold
+                   hover:bg-cm-surface-hover hover:text-cm-text-primary active:scale-[0.98] transition-all duration-150">
+            View All
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-          <div class="relative overflow-hidden bg-gradient-to-br from-amber-500 to-orange-600 px-5 py-5">
-            <div class="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10 pointer-events-none"></div>
-            <div class="relative flex items-start justify-between gap-3">
-              <div>
-                <p class="text-amber-100 text-[10px] font-bold uppercase tracking-widest mb-1">Lessons</p>
-                <div class="flex items-baseline gap-2">
-                  <p class="text-4xl font-black text-white leading-none">{{ dashboard.lessons.totalCompleted ?? '0' }}</p>
-                  <span class="text-amber-200 text-lg font-semibold">/ {{ dashboard.lessons.totalLessonsCreated ?? '0' }}</span>
-                </div>
-                <p class="text-amber-200 text-xs font-medium mt-1">completed of created</p>
+      <!-- ──────────────── LESSONS (1/3) ──────────────── -->
+      <div class="group bg-cm-surface rounded-2xl border border-cm-border overflow-hidden
+                  flex flex-col transition-all duration-200 ease-out
+                  hover:shadow-xl hover:border-amber-500/30">
+
+        <div class="relative overflow-hidden bg-gradient-to-br from-amber-500 to-orange-600 px-5 py-5">
+          <div class="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10 pointer-events-none"></div>
+          <div class="relative flex items-start justify-between gap-3">
+            <div>
+              <p class="text-amber-100 text-[10px] font-bold uppercase tracking-widest mb-1">Lessons</p>
+              <div class="flex items-baseline gap-2">
+                <p class="text-4xl font-black text-white leading-none">{{ dashboard.lessons?.totalCompleted ?? 0 }}</p>
+                <span class="text-amber-200 text-lg font-semibold">/ {{ dashboard.lessons?.totalLessonsCreated ?? 0 }}</span>
               </div>
-              <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0
+              <p class="text-amber-200 text-xs font-medium mt-1">completed of created</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center
                           group-hover:bg-white/30 transition-colors duration-150">
                 <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
+              <button (click)="openTooltip('lessons')"
+                class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 flex items-center justify-center
+                       text-white/70 hover:text-white transition-all duration-150">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </button>
             </div>
           </div>
+        </div>
 
-          <div class="px-5 py-4 flex-1">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-[11px] text-cm-text-secondary font-semibold">Completion rate</span>
-              <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">{{ lessonsCompleteRate }}%</span>
+        @if (dashboard.lessons) {
+        <div class="px-5 py-4 flex-1">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] text-cm-text-secondary font-semibold">Completion rate</span>
+            <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">{{ lessonsCompleteRate }}%</span>
+          </div>
+          <div class="h-2 rounded-full bg-cm-surface-raised overflow-hidden mb-4">
+            <div class="h-full rounded-full bg-amber-500 transition-all duration-700"
+                 [style.width.%]="lessonsCompleteRate"></div>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="text-center p-2 rounded-xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20">
+              <p class="text-sm font-black text-sky-600 dark:text-sky-400">{{ dashboard.lessons.totalViews ?? 0 }}</p>
+              <p class="text-[10px] text-cm-text-muted mt-0.5">Views</p>
             </div>
-            <div class="h-2 rounded-full bg-cm-surface-raised overflow-hidden mb-4">
-              <div class="h-full rounded-full bg-amber-500 transition-all duration-700"
-                   [style.width.%]="lessonsCompleteRate"></div>
+            <div class="text-center p-2 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+              <p class="text-sm font-black text-amber-600 dark:text-amber-400">{{ dashboard.lessons.totalPending ?? 0 }}</p>
+              <p class="text-[10px] text-cm-text-muted mt-0.5">Pending</p>
             </div>
-            <div class="grid grid-cols-3 gap-2">
-              <div class="text-center p-2 rounded-xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20">
-                <p class="text-sm font-black text-sky-600 dark:text-sky-400">{{ dashboard.lessons.totalViews ?? '0' }}</p>
-                <p class="text-[10px] text-cm-text-muted mt-0.5">Views</p>
-              </div>
-              <div class="text-center p-2 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
-                <p class="text-sm font-black text-amber-600 dark:text-amber-400">{{ dashboard.lessons.totalPending ?? '0' }}</p>
-                <p class="text-[10px] text-cm-text-muted mt-0.5">Pending</p>
-              </div>
-              <div class="text-center p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-                <p class="text-sm font-black text-emerald-600 dark:text-emerald-400">{{ dashboard.lessons.totalCompleted ?? '0' }}</p>
-                <p class="text-[10px] text-cm-text-muted mt-0.5">Done</p>
-              </div>
+            <div class="text-center p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
+              <p class="text-sm font-black text-emerald-600 dark:text-emerald-400">{{ dashboard.lessons.totalCompleted ?? 0 }}</p>
+              <p class="text-[10px] text-cm-text-muted mt-0.5">Done</p>
             </div>
           </div>
-
-          <div class="px-5 pb-4 border-t border-cm-border pt-4">
-            <button (click)="goToLessons()"
-              class="w-full py-2.5 rounded-xl bg-amber-500 text-white text-sm font-bold
-                     hover:bg-amber-600 active:scale-[0.98]
-                     transition-all duration-150 flex items-center justify-center gap-2">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-              View Lessons
-            </button>
+        </div>
+        } @else {
+        <div class="flex-1 flex flex-col items-center justify-center px-5 py-6 text-center">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20
+                      flex items-center justify-center mb-3">
+            <svg class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <p class="text-sm font-bold text-cm-text-primary mb-1">No lessons yet</p>
+          <p class="text-xs text-cm-text-muted mb-3">Structure your subject knowledge into guided lessons for learners.</p>
+          <div class="group/tip relative inline-flex items-center gap-1 text-xs text-cm-brand font-semibold cursor-help">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            What are lessons?
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 px-3 py-2.5 z-20
+                        bg-cm-surface-raised border border-cm-border rounded-xl shadow-xl
+                        text-left text-xs text-cm-text-secondary leading-relaxed
+                        opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity duration-150">
+              <p class="font-bold text-cm-text-primary mb-1">Lessons guide learners</p>
+              <p>Each lesson is a structured unit tied to a topic. Assign reading material, videos, or written content. Learners complete them in sequence.</p>
+            </div>
           </div>
         </div>
         }
 
-      </div><!-- /right column -->
+        <div class="mt-auto px-5 pb-4 border-t border-cm-border pt-4">
+          <button (click)="goToLessons()"
+            class="w-full py-2.5 rounded-xl bg-amber-500 text-white text-sm font-bold
+                   hover:bg-amber-600 active:scale-[0.98]
+                   transition-all duration-150 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+            {{ dashboard.lessons ? 'View Lessons' : 'Create First Lesson' }}
+          </button>
+        </div>
+      </div>
 
     </div><!-- /row 1 -->
 
 
     <!-- ═══════════════════════════════════════════════════
-         ROW 2 — QUIZZES (1/3)  +  ATTEMPTS (2/3)
+         ROW 2 — QUIZZES (1/3)  +  TOPIC MANAGER (2/3)
     ═══════════════════════════════════════════════════ -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5 items-stretch">
 
       <!-- ──────────────── QUIZZES ──────────────── -->
-      @if (dashboard.quizzes) {
       <div class="group bg-cm-surface rounded-2xl border border-cm-border overflow-hidden
                   flex flex-col transition-all duration-200 ease-out
                   hover:shadow-xl hover:border-violet-500/30">
 
         <div class="relative overflow-hidden bg-gradient-to-br from-violet-500 via-purple-600 to-fuchsia-700 px-5 py-6">
-          <div class="absolute inset-0 opacity-[0.07]"
-               style="background-image: linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px),
-                                        linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px);
-                      background-size: 20px 20px;"></div>
           <div class="absolute -right-4 -top-4 w-28 h-28 rounded-full bg-white/10 pointer-events-none"></div>
-
           <div class="relative flex items-start justify-between gap-3">
             <div>
               <div class="flex items-center gap-2 mb-2">
                 <p class="text-violet-200 text-[10px] font-bold uppercase tracking-widest">Quizzes</p>
-                @if ((dashboard.quizzes.totalQuizCreated ?? 0) > 0) {
+                @if ((dashboard.quizzes?.totalQuizCreated ?? 0) > 0) {
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
                              bg-emerald-400/20 border border-emerald-400/30 text-emerald-300 text-[9px] font-bold">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -414,20 +454,50 @@
                 }
               </div>
               <p class="text-6xl font-black text-white leading-none tracking-tight">
-                {{ dashboard.quizzes.totalQuizCreated }}
+                {{ dashboard.quizzes?.totalQuizCreated ?? 0 }}
               </p>
               <p class="text-violet-200 text-xs font-medium mt-2">quizzes published</p>
             </div>
-            <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0
-                        group-hover:bg-white/30 transition-colors duration-150">
-              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center
+                          group-hover:bg-white/30 transition-colors duration-150">
+                <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <button (click)="openTooltip('quizzes')"
+                class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 flex items-center justify-center
+                       text-white/70 hover:text-white transition-all duration-150">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
 
-        <div class="mt-auto px-5 py-4 flex flex-col gap-2.5 flex-1 justify-end">
+        @if (!dashboard.quizzes) {
+        <div class="flex-1 flex flex-col items-center justify-center px-5 py-6 text-center">
+          <p class="text-sm font-bold text-cm-text-primary mb-1">No quizzes yet</p>
+          <p class="text-xs text-cm-text-muted mb-3">Create quizzes from your approved questions to test learners.</p>
+          <div class="group/tip relative inline-flex items-center gap-1 text-xs text-cm-brand font-semibold cursor-help">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            How quizzes work
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 px-3 py-2.5 z-20
+                        bg-cm-surface-raised border border-cm-border rounded-xl shadow-xl
+                        text-left text-xs text-cm-text-secondary leading-relaxed
+                        opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity duration-150">
+              <p class="font-bold text-cm-text-primary mb-1">Quizzes = Questions in action</p>
+              <p>Select approved questions, set a time limit and passing score, then publish. Learners attempt the quiz and results are tracked automatically.</p>
+              <p class="mt-1 text-cm-text-muted">You need approved questions before creating a quiz.</p>
+            </div>
+          </div>
+        </div>
+        }
+
+        <div class="mt-auto px-5 py-4 flex flex-col gap-2.5" [class.flex-1]="!!dashboard.quizzes" [class.justify-end]="!!dashboard.quizzes">
           <button (click)="goToCreateQuiz()"
             class="w-full py-2.5 rounded-xl bg-violet-500 text-white text-sm font-bold
                    hover:bg-violet-600 active:scale-[0.98]
@@ -435,7 +505,7 @@
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
             </svg>
-            Create Quiz
+            {{ dashboard.quizzes ? 'Create Quiz' : 'Create First Quiz' }}
           </button>
           <button (click)="goToQuizzes()"
             class="w-full py-2 rounded-xl border border-cm-border text-cm-text-secondary text-sm font-semibold
@@ -448,124 +518,143 @@
           </button>
         </div>
       </div>
-      }
 
-      <!-- ──────────────── ATTEMPTS (wide) ──────────────── -->
-      @if (dashboard.attempts) {
-      <div class="lg:col-span-2 bg-cm-surface rounded-2xl border border-cm-border overflow-hidden flex flex-col
-                  transition-all duration-200 ease-out hover:shadow-xl hover:border-sky-500/20">
+      <!-- ──────────────── TOPIC MANAGER ──────────────── -->
+      <div class="lg:col-span-2 group bg-cm-surface rounded-2xl border border-cm-border overflow-hidden
+                  flex flex-col transition-all duration-200 ease-out
+                  hover:shadow-xl hover:border-emerald-500/30">
 
-        <!-- vivid gradient header with 3 hero KPIs -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-sky-500 via-cyan-500 to-teal-600 px-6 py-5">
-          <div class="absolute inset-0 opacity-[0.07]"
-               style="background-image: radial-gradient(circle, white 1px, transparent 1px);
-                      background-size: 24px 24px;"></div>
-          <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/10 pointer-events-none"></div>
-
-          <div class="relative">
-            <p class="text-sky-100 text-[10px] font-bold uppercase tracking-widest mb-4">Quiz Attempts</p>
-            <div class="grid grid-cols-3 gap-4">
-              <div>
-                <p class="text-4xl font-black text-white leading-none">{{ dashboard.attempts.total }}</p>
-                <p class="text-sky-200 text-xs font-medium mt-1">Total attempts</p>
+        <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-600 px-5 py-5">
+          <div class="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10 pointer-events-none"></div>
+          <div class="relative flex items-start justify-between gap-3">
+            <div>
+              <p class="text-emerald-100 text-[10px] font-bold uppercase tracking-widest mb-1">Topic Manager</p>
+              <div class="flex items-baseline gap-2">
+                <p class="text-4xl font-black text-white leading-none">{{ dashboard.topics?.totalActive ?? 0 }}</p>
+                <span class="text-emerald-200 text-lg font-semibold">/ {{ dashboard.topics?.total ?? 0 }}</span>
               </div>
-              <div>
-                <p class="text-4xl font-black text-white leading-none">{{ dashboard.attempts.distinctUsers }}</p>
-                <p class="text-sky-200 text-xs font-medium mt-1">Unique learners</p>
+              <p class="text-emerald-200 text-xs font-medium mt-1">active of total</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center
+                          group-hover:bg-white/30 transition-colors duration-150">
+                <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
               </div>
-              <div>
-                <p class="text-4xl font-black text-white leading-none">{{ correctRate }}<span class="text-xl text-sky-200 font-bold">%</span></p>
-                <p class="text-sky-200 text-xs font-medium mt-1">Accuracy rate</p>
-              </div>
+              <button (click)="openTooltip('topics')"
+                class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 flex items-center justify-center
+                       text-white/70 hover:text-white transition-all duration-150">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- answer distribution -->
-        <div class="px-6 py-4 flex-1">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-cm-text-secondary mb-3">Answer distribution</p>
-
-          <!-- segmented bar -->
-          <div class="h-3 rounded-full overflow-hidden flex gap-px bg-cm-surface-raised mb-3">
-            <div class="h-full bg-emerald-500 rounded-l-full transition-all duration-700 min-w-[2px]"
-                 [style.width.%]="correctRate"
-                 [title]="'Correct: ' + dashboard.attempts.totalCorrect"></div>
-            <div class="h-full bg-red-500 transition-all duration-700 min-w-[2px]"
-                 [style.width.%]="wrongRate"
-                 [title]="'Wrong: ' + dashboard.attempts.totalWrong"></div>
-            <div class="h-full bg-amber-400 rounded-r-full transition-all duration-700 min-w-[2px]"
-                 [style.width.%]="100 - correctRate - wrongRate"
-                 [title]="'Skipped: ' + dashboard.attempts.totalSkipped"></div>
+        <div class="px-5 py-4 flex-1">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] text-cm-text-secondary font-semibold">Active coverage</span>
+            <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">{{ topicsActiveRate }}%</span>
           </div>
-
-          <!-- legend with actual counts -->
-          <div class="grid grid-cols-3 gap-3">
-            <div class="flex items-center gap-2.5 p-3 rounded-xl
-                        bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-              <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500 shrink-0"></span>
-              <div>
-                <p class="text-sm font-black text-emerald-600 dark:text-emerald-400 leading-none">{{ dashboard.attempts.totalCorrect }}</p>
-                <p class="text-[10px] text-cm-text-muted mt-0.5">Correct ({{ correctRate }}%)</p>
-              </div>
+          <div class="h-2 rounded-full bg-cm-surface-raised overflow-hidden mb-4">
+            <div class="h-full rounded-full bg-emerald-500 transition-all duration-700"
+                 [style.width.%]="topicsActiveRate"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="text-center p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
+              <p class="text-lg font-black text-emerald-600 dark:text-emerald-400">{{ dashboard.topics.totalActive ?? '0' }}</p>
+              <p class="text-[10px] text-cm-text-muted mt-0.5">Active</p>
             </div>
-            <div class="flex items-center gap-2.5 p-3 rounded-xl
-                        bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
-              <span class="w-2.5 h-2.5 rounded-sm bg-red-500 shrink-0"></span>
-              <div>
-                <p class="text-sm font-black text-red-600 dark:text-red-400 leading-none">{{ dashboard.attempts.totalWrong }}</p>
-                <p class="text-[10px] text-cm-text-muted mt-0.5">Wrong ({{ wrongRate }}%)</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-2.5 p-3 rounded-xl
-                        bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
-              <span class="w-2.5 h-2.5 rounded-sm bg-amber-400 shrink-0"></span>
-              <div>
-                <p class="text-sm font-black text-amber-600 dark:text-amber-400 leading-none">{{ dashboard.attempts.totalSkipped }}</p>
-                <p class="text-[10px] text-cm-text-muted mt-0.5">Skipped ({{ 100 - correctRate - wrongRate }}%)</p>
-              </div>
+            <div class="text-center p-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+              <p class="text-lg font-black text-amber-600 dark:text-amber-400">{{ dashboard.topics.totalPending ?? '0' }}</p>
+              <p class="text-[10px] text-cm-text-muted mt-0.5">Pending</p>
             </div>
           </div>
         </div>
 
+        <div class="mt-auto px-5 pb-4 border-t border-cm-border pt-4 flex flex-col gap-2">
+          <button (click)="goToCreateTopic()"
+            class="w-full py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold
+                   hover:bg-emerald-600 active:scale-[0.98]
+                   transition-all duration-150 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Topic
+          </button>
+          <button (click)="goToTopicManager()"
+            class="w-full py-2 rounded-xl border border-cm-border text-cm-text-secondary text-sm font-semibold
+                   hover:bg-cm-surface-hover hover:text-cm-text-primary active:scale-[0.98]
+                   transition-all duration-150 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            Manage All Topics
+          </button>
+        </div>
       </div>
-      }
 
     </div><!-- /row 2 -->
 
 
     <!-- ═══════════════════════════════════════════════════
-         ROW 3 — ACTIVITY CHART
+         ROW 3 — ACTIVITY TREND (full width)
     ═══════════════════════════════════════════════════ -->
     @if (currentModule && timeframeData) {
     <div class="bg-cm-surface rounded-2xl border border-cm-border mb-8 overflow-hidden">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-cm-border
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-cm-border
                   bg-gradient-to-r from-cm-brand-dim to-transparent">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-cm-brand-dim border border-cm-brand/20 flex items-center justify-center">
-            <svg class="w-4 h-4 text-cm-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+        <!-- title row — always visible, ⓘ stays here on mobile -->
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-cm-brand-dim border border-cm-brand/20 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-cm-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-cm-text-primary">Activity Trend</h3>
+              <p class="text-xs text-cm-text-muted mt-0.5">Daily &amp; weekly contribution timeline</p>
+            </div>
+          </div>
+          <!-- ⓘ always top-right; on sm+ it moves to after the toggles via the sibling div -->
+          <button (click)="openTooltip('activity')"
+            class="sm:hidden w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center
+                   text-cm-text-muted hover:text-cm-brand hover:border-cm-brand/30 transition-all duration-150 shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-          </div>
-          <div>
-            <h3 class="text-sm font-bold text-cm-text-primary">Activity Trend</h3>
-            <p class="text-xs text-cm-text-muted mt-0.5">Daily &amp; weekly contribution timeline</p>
-          </div>
-        </div>
-        <div class="flex rounded-xl border border-cm-border overflow-hidden">
-          <button (click)="onModuleChange({ value: 'Questions' })"
-            [ngClass]="currentModule === 'Questions'
-              ? 'bg-cm-brand text-white font-bold'
-              : 'bg-cm-surface text-cm-text-secondary hover:bg-cm-surface-hover'"
-            class="px-5 py-2 text-sm font-semibold transition-colors duration-150">
-            Questions
           </button>
-          <button (click)="onModuleChange({ value: 'Quizzes' })"
-            [ngClass]="currentModule === 'Quizzes'
-              ? 'bg-cm-brand text-white font-bold'
-              : 'bg-cm-surface text-cm-text-secondary hover:bg-cm-surface-hover'"
-            class="px-5 py-2 text-sm font-semibold transition-colors duration-150 border-l border-cm-border">
-            Quizzes
+        </div>
+        <!-- toggle + ⓘ row — full width on mobile, inline on sm+ -->
+        <div class="flex items-center gap-3">
+          <div class="flex flex-1 sm:flex-none rounded-xl border border-cm-border overflow-hidden">
+            <button (click)="onModuleChange({ value: 'Questions' })"
+              [ngClass]="currentModule === 'Questions'
+                ? 'bg-cm-brand text-white font-bold'
+                : 'bg-cm-surface text-cm-text-secondary hover:bg-cm-surface-hover'"
+              class="flex-1 sm:flex-none px-5 py-2 text-sm font-semibold transition-colors duration-150">
+              Questions
+            </button>
+            <button (click)="onModuleChange({ value: 'Quizzes' })"
+              [ngClass]="currentModule === 'Quizzes'
+                ? 'bg-cm-brand text-white font-bold'
+                : 'bg-cm-surface text-cm-text-secondary hover:bg-cm-surface-hover'"
+              class="flex-1 sm:flex-none px-5 py-2 text-sm font-semibold transition-colors duration-150 border-l border-cm-border">
+              Quizzes
+            </button>
+          </div>
+          <!-- ⓘ only visible on sm+ here; hidden duplicate above handles mobile -->
+          <button (click)="openTooltip('activity')"
+            class="hidden sm:flex w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border items-center justify-center
+                   text-cm-text-muted hover:text-cm-brand hover:border-cm-brand/30 transition-all duration-150 shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -579,4 +668,325 @@
     } <!-- end @if(!loading) -->
 
   </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       WIDGET DETAIL SLIDEOUT
+  ═══════════════════════════════════════════════════ -->
+
+  <!-- backdrop -->
+  <div class="fixed inset-0 bg-black/40 z-[1000] transition-opacity duration-300"
+       [class.opacity-0]="!activeTooltip"
+       [class.pointer-events-none]="!activeTooltip"
+       (click)="closeTooltip()"></div>
+
+  <!-- panel -->
+  <div class="fixed inset-y-0 right-0 w-full sm:w-80 bg-cm-surface border-l border-cm-border z-[1001]
+              flex flex-col shadow-2xl transition-transform duration-300 ease-out"
+       [class.translate-x-full]="!activeTooltip">
+
+    <!-- colored header per widget -->
+    <div class="px-5 py-4 flex items-center justify-between shrink-0"
+         [ngClass]="{
+           'bg-gradient-to-r from-indigo-500 to-violet-600': activeTooltip === 'questions',
+           'bg-gradient-to-r from-amber-500 to-orange-500': activeTooltip === 'lessons',
+           'bg-gradient-to-r from-violet-500 to-fuchsia-600': activeTooltip === 'quizzes',
+           'bg-gradient-to-r from-emerald-500 to-teal-600': activeTooltip === 'topics',
+           'bg-cm-surface-raised border-b border-cm-border': activeTooltip === 'activity'
+         }">
+      <div>
+        @if (activeTooltip === 'questions') {
+          <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-200 mb-0.5">Widget Guide</p>
+          <h3 class="text-base font-black text-white">Question Bank</h3>
+        }
+        @if (activeTooltip === 'lessons') {
+          <p class="text-[10px] font-bold uppercase tracking-widest text-amber-200 mb-0.5">Widget Guide</p>
+          <h3 class="text-base font-black text-white">Lessons</h3>
+        }
+        @if (activeTooltip === 'quizzes') {
+          <p class="text-[10px] font-bold uppercase tracking-widest text-violet-200 mb-0.5">Widget Guide</p>
+          <h3 class="text-base font-black text-white">Quizzes</h3>
+        }
+        @if (activeTooltip === 'topics') {
+          <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-200 mb-0.5">Widget Guide</p>
+          <h3 class="text-base font-black text-white">Topic Manager</h3>
+        }
+        @if (activeTooltip === 'activity') {
+          <p class="text-[10px] font-bold uppercase tracking-widest text-cm-text-muted mb-0.5">Widget Guide</p>
+          <h3 class="text-base font-black text-cm-text-primary">Activity Trend</h3>
+        }
+      </div>
+      <button (click)="closeTooltip()"
+        class="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150"
+        [ngClass]="activeTooltip === 'activity'
+          ? 'bg-cm-surface-hover text-cm-text-muted hover:text-cm-text-primary'
+          : 'bg-white/20 hover:bg-white/30 text-white'">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- scrollable content -->
+    <div class="flex-1 overflow-y-auto p-5 space-y-6">
+
+      <!-- QUESTIONS -->
+      @if (activeTooltip === 'questions') {
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Overview</p>
+        <p class="text-sm text-cm-text-secondary leading-relaxed">
+          Your question bank is the foundation of all assessments on the platform. Questions you create go through a review cycle before going live to learners.
+        </p>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Metrics explained</p>
+        <div class="space-y-2">
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-emerald-500 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Live (Approved)</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Questions reviewed, approved, and actively serving learners in quizzes.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-amber-400 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Pending</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Submitted but awaiting admin review. These are not visible to learners yet.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-indigo-500 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Trivia</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Multiple-choice factual questions. Best for quick knowledge checks and gamified learning.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-violet-500 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Interview</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Open-ended questions for deeper evaluation, used in interview prep tracks.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Pro tips</p>
+        <ul class="space-y-2.5">
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-indigo-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Aim for an approval rate above <span class="font-bold text-cm-text-primary">70%</span> — it signals well-scoped, accurate questions.</span>
+          </li>
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-indigo-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Balance Trivia and Interview questions to serve both quick learners and serious candidates.</span>
+          </li>
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-indigo-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Review pending questions regularly — a large backlog slows your content going live.</span>
+          </li>
+        </ul>
+      </div>
+      }
+
+      <!-- LESSONS -->
+      @if (activeTooltip === 'lessons') {
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Overview</p>
+        <p class="text-sm text-cm-text-secondary leading-relaxed">
+          Lessons are structured learning units assigned to topics. Learners work through them in sequence to build knowledge before attempting assessments.
+        </p>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Metrics explained</p>
+        <div class="space-y-2">
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-amber-500 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Completed / Created</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Lessons fully written and published vs. total lessons started. Higher is better.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-sky-500 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Views</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Total times learners have opened and read your lessons.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-amber-400 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Pending</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Lessons drafted but not yet submitted for review or completion.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Pro tips</p>
+        <ul class="space-y-2.5">
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-amber-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Keep each lesson focused on a <span class="font-bold text-cm-text-primary">single concept</span> — shorter lessons have higher completion rates.</span>
+          </li>
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-amber-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Add lessons before quizzes for any topic — learners perform better with structured pre-reading.</span>
+          </li>
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-amber-500 font-black shrink-0 mt-0.5">→</span>
+            <span>High view counts with low completion suggest the lesson may be too long or complex.</span>
+          </li>
+        </ul>
+      </div>
+      }
+
+      <!-- QUIZZES -->
+      @if (activeTooltip === 'quizzes') {
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Overview</p>
+        <p class="text-sm text-cm-text-secondary leading-relaxed">
+          Quizzes are timed assessments built from your approved questions. Once published, learners can attempt them and their scores are tracked automatically.
+        </p>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">How it works</p>
+        <div class="space-y-3">
+          <div class="flex gap-3">
+            <span class="w-6 h-6 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400
+                         text-[10px] font-black flex items-center justify-center shrink-0">1</span>
+            <p class="text-xs text-cm-text-secondary pt-0.5">You need <span class="font-bold text-cm-text-primary">approved questions</span> before creating a quiz.</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="w-6 h-6 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400
+                         text-[10px] font-black flex items-center justify-center shrink-0">2</span>
+            <p class="text-xs text-cm-text-secondary pt-0.5">Select questions, set a time limit, passing score, and number of attempts allowed.</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="w-6 h-6 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400
+                         text-[10px] font-black flex items-center justify-center shrink-0">3</span>
+            <p class="text-xs text-cm-text-secondary pt-0.5">Publish the quiz — it becomes live immediately for learners enrolled in your subject.</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="w-6 h-6 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400
+                         text-[10px] font-black flex items-center justify-center shrink-0">4</span>
+            <p class="text-xs text-cm-text-secondary pt-0.5">Track attempt counts, accuracy rates, and pass rates from your dashboard.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Pro tips</p>
+        <ul class="space-y-2.5">
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-violet-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Create <span class="font-bold text-cm-text-primary">topic-specific quizzes</span> rather than one large quiz — learners retain more with focused assessments.</span>
+          </li>
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-violet-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Mix Trivia and Interview questions to assess both recall and deeper understanding.</span>
+          </li>
+        </ul>
+      </div>
+      }
+
+      <!-- TOPICS -->
+      @if (activeTooltip === 'topics') {
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Overview</p>
+        <p class="text-sm text-cm-text-secondary leading-relaxed">
+          Topics are the building blocks of your subject. They organise your questions, lessons, and quizzes into coherent sections that learners navigate through.
+        </p>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Metrics explained</p>
+        <div class="space-y-2">
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-emerald-500 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Active</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Topics visible to learners with at least one piece of published content attached.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-amber-400 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Pending</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Topics created but not yet activated — no content attached or awaiting admin approval.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-teal-400 shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Active coverage %</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">The ratio of active topics to total. Higher coverage means more of your subject is accessible to learners.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Pro tips</p>
+        <ul class="space-y-2.5">
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-emerald-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Create topics <span class="font-bold text-cm-text-primary">before adding content</span> — questions and lessons are linked to topics.</span>
+          </li>
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-emerald-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Aim for 100% active coverage so learners have no gaps in your subject map.</span>
+          </li>
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-emerald-500 font-black shrink-0 mt-0.5">→</span>
+            <span>Keep topic names short and clear — learners use them to navigate your subject.</span>
+          </li>
+        </ul>
+      </div>
+      }
+
+      <!-- ACTIVITY TREND -->
+      @if (activeTooltip === 'activity') {
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Overview</p>
+        <p class="text-sm text-cm-text-secondary leading-relaxed">
+          The Activity Trend chart shows your daily and weekly contribution timeline — how consistently you are adding content to the platform.
+        </p>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Reading the chart</p>
+        <div class="space-y-2">
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-cm-brand shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Questions view</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Each bar represents how many questions you submitted on that day or in that week.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 p-3 rounded-xl bg-cm-surface-raised border border-cm-border">
+            <div class="w-1 rounded-full bg-cm-brand shrink-0 self-stretch"></div>
+            <div>
+              <p class="text-xs font-bold text-cm-text-primary">Quizzes view</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Shows quiz creation activity over time — useful for tracking your publishing cadence.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-3">Pro tips</p>
+        <ul class="space-y-2.5">
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-cm-brand font-black shrink-0 mt-0.5">→</span>
+            <span>Consistent daily contributions outperform sporadic bursts — aim for a steady rhythm.</span>
+          </li>
+          <li class="flex gap-2.5 text-xs text-cm-text-secondary">
+            <span class="text-cm-brand font-black shrink-0 mt-0.5">→</span>
+            <span>Switch between <span class="font-bold text-cm-text-primary">Daily and Weekly</span> views — daily shows patterns, weekly shows overall productivity.</span>
+          </li>
+        </ul>
+      </div>
+      }
+
+    </div>
+  </div>
+
 </section>

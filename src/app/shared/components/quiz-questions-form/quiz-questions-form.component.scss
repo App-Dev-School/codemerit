@@ -1,12 +1,353 @@
-/* CDK drag placeholder */
-.cdk-drag-placeholder {
-  opacity: 0.3;
-}
-
-.cdk-drag-animating {
-  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-
+// ── CDK drag ──────────────────────────────────────────────────────────────
+.cdk-drag-placeholder { opacity: 0.3; }
+.cdk-drag-animating { transition: transform 250ms cubic-bezier(0, 0, 0.2, 1); }
 .cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// ── Cards ─────────────────────────────────────────────────────────────────
+// Inside the #1a2540 step-panel. bg-cm-surface-raised = #1e293b in dark mode,
+// which is lighter than the panel — creates correct visual elevation.
+.qf-card,
+.qf-filter-card {
+  background: var(--cm-surface-raised);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.qf-card {
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+}
+
+// ── Card header ────────────────────────────────────────────────────────────
+.qf-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(99, 102, 241, 0.09);
+  flex-shrink: 0;
+}
+
+.qf-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--cm-text-primary);
+}
+
+// ── Filter form ────────────────────────────────────────────────────────────
+.qf-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+}
+
+.qf-select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--cm-text-primary);
+  font-size: 0.8125rem;
+  font-family: inherit;
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  option { background: #1e293b; }
+
+  &:focus {
+    border-color: var(--cm-brand);
+    box-shadow: 0 0 0 3px var(--cm-brand-ring);
+  }
+
+  &[multiple] { height: 7rem; padding: 0.25rem; }
+}
+
+// ── Click-to-open dropdown (subjects / topics in quiz-builder mode) ───────
+.qf-dropdown-wrap {
+  position: relative;
+}
+
+.qf-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--cm-text-primary);
+  font-size: 0.8125rem;
+  font-family: inherit;
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: rgba(255, 255, 255, 0.22); }
+  &:focus { outline: none; border-color: var(--cm-brand); box-shadow: 0 0 0 3px var(--cm-brand-ring); }
+
+  &--active {
+    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(99, 102, 241, 0.08);
+
+    .qf-dropdown-label { color: #a5b4fc; }
+  }
+}
+
+.qf-dropdown-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--cm-text-secondary);
+}
+
+.qf-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--cm-surface-raised);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.625rem;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.qf-option-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.12);
+
+  i { font-size: 10px; color: var(--cm-text-muted); flex-shrink: 0; }
+
+  input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--cm-text-primary);
+    font-size: 0.75rem;
+    font-family: inherit;
+    padding: 0.25rem 0;
+    &::placeholder { color: var(--cm-text-muted); }
+  }
+}
+
+.qf-option-list {
+  max-height: 7.5rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.qf-option-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--cm-text-primary);
+  transition: background 0.1s;
+
+  &:hover { background: rgba(255, 255, 255, 0.06); }
+
+  span { flex: 1; min-width: 0; }
+}
+
+.qf-option-empty {
+  padding: 0.625rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--cm-text-muted);
+  margin: 0;
+}
+
+// ── Filter actions ─────────────────────────────────────────────────────────
+.qf-actions { display: flex; gap: 0.5rem; }
+
+.qf-btn-reset {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: var(--cm-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: rgba(255, 255, 255, 0.07); }
+}
+
+.qf-btn-apply {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.625rem;
+  border: none;
+  background: var(--cm-brand);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  &:hover { opacity: 0.88; }
+}
+
+// ── Search bar ────────────────────────────────────────────────────────────
+.qf-search-bar {
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.qf-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.625rem;
+  padding: 0 0.75rem;
+
+  i { font-size: 11px; color: var(--cm-text-muted); }
+
+  input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--cm-text-primary);
+    font-size: 0.8125rem;
+    font-family: inherit;
+    padding: 0.5rem 0;
+    &::placeholder { color: var(--cm-text-muted); }
+  }
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--cm-text-muted);
+    font-size: 11px;
+    transition: color 0.15s;
+    &:hover { color: var(--cm-text-primary); }
+  }
+}
+
+// ── Question rows ──────────────────────────────────────────────────────────
+.qf-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.1s ease;
+
+  &:hover { background: rgba(255, 255, 255, 0.04); }
+  &:last-child { border-bottom: none; }
+}
+
+.qf-q-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cm-text-primary);
+  line-height: 1.45;
+}
+
+.qf-q-level {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+// ── Add button footer ─────────────────────────────────────────────────────
+.qf-add-footer {
+  padding: 0.625rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.qf-add-btn {
+  width: 100%;
+  padding: 0.55rem;
+  border-radius: 0.625rem;
+  border: none;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  transition: opacity 0.2s, transform 0.15s;
+
+  &:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+  &:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+}
+
+// ── Selected rows ─────────────────────────────────────────────────────────
+.qf-sel-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  &:last-child { border-bottom: none; }
+
+  &:hover .qf-sel-remove {
+    opacity: 1;
+  }
+}
+
+.qf-sel-remove {
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+  }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────
+.qf-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  text-align: center;
 }

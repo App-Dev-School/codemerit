@@ -1,54 +1,120 @@
-<div class="quiz-builder-container">
-  <!-- Stepper Header -->
-  <div class="stepper-header">
-    <div class="step" [class.active]="currentStep === 0" [class.completed]="currentStep > 0">
-      <div class="step-circle">
-        @if (currentStep > 0) {
-          <mat-icon>check</mat-icon>
-        } @else {
-          1
-        }
-      </div>
-      <span class="step-label">Quiz Info</span>
+<section class="content1">
+
+<!-- Particle background: fixed/full-viewport, z-index:0, pointer-events:none.
+     Placed as sibling of .quiz-builder so it sits BELOW the builder (z-index:1)
+     in the root stacking context, letting particles show through the semi-
+     transparent builder background. -->
+<app-particle-canvas></app-particle-canvas>
+
+<div class="quiz-builder">
+
+  <!-- ── Header ──────────────────────────────────────────────── -->
+  <div class="builder-header">
+    <h1 class="builder-title">
+      @if (editMode) {
+        Edit <span class="text-gradient">Quiz</span>
+      } @else {
+        Build a <span class="text-gradient">New Quiz</span>
+      }
+    </h1>
+    <p class="builder-subtitle">
+      {{ editMode
+        ? 'Update your quiz details, questions, and settings.'
+        : 'Set up and publish your quiz in three simple steps.' }}
+    </p>
+  </div>
+
+  <!-- ── Stepper ─────────────────────────────────────────────── -->
+  <div class="stepper-wrapper">
+    <div class="stepper-track"></div>
+    <div class="stepper-fill"
+         [style.width]="'calc(' + (currentStep / 2 * 100) + '% - ' + (currentStep / 2 * 2.5) + 'rem)'">
     </div>
-    <div class="step-connector" [class.active]="currentStep >= 1"></div>
-    <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
-      <div class="step-circle">
-        @if (currentStep > 1) {
-          <mat-icon>check</mat-icon>
-        } @else {
-          2
-        }
+    <div class="stepper-indicators">
+
+      <!-- Step 1: Quiz Info -->
+      <div class="step-item">
+        <div [class]="currentStep > 0 ? 'step-btn step-btn--done' : 'step-btn step-btn--active'">
+          @if (currentStep > 0) {
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:1.1rem;height:1.1rem">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+          } @else { 1 }
+        </div>
+        <span [class]="currentStep > 0 ? 'step-label step-label--done' : 'step-label step-label--active'">
+          Quiz Info
+        </span>
       </div>
-      <span class="step-label">Questions</span>
-    </div>
-    <div class="step-connector" [class.active]="currentStep >= 2"></div>
-    <div class="step" [class.active]="currentStep === 2">
-      <div class="step-circle">3</div>
-      <span class="step-label">Settings</span>
+
+      <!-- Step 2: Questions -->
+      <div class="step-item">
+        <div [class]="currentStep > 1 ? 'step-btn step-btn--done' : currentStep === 1 ? 'step-btn step-btn--active' : 'step-btn step-btn--pending'">
+          @if (currentStep > 1) {
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:1.1rem;height:1.1rem">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+          } @else { 2 }
+        </div>
+        <span [class]="currentStep > 1 ? 'step-label step-label--done' : currentStep === 1 ? 'step-label step-label--active' : 'step-label step-label--pending'">
+          Questions
+        </span>
+      </div>
+
+      <!-- Step 3: Settings -->
+      <div class="step-item">
+        <div [class]="currentStep === 2 ? 'step-btn step-btn--active' : 'step-btn step-btn--pending'">
+          3
+        </div>
+        <span [class]="currentStep === 2 ? 'step-label step-label--active' : 'step-label step-label--pending'">
+          Settings
+        </span>
+      </div>
+
     </div>
   </div>
 
+  <!-- ── Alert banner ────────────────────────────────────────── -->
   @if (currentStep === 1 && questionCountAlertMessage) {
-    <div class="alert alert-warning">
-      <mat-icon>info</mat-icon>
+    <div class="alert-info">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:1.1rem;height:1.1rem;flex-shrink:0">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
       <span>{{ questionCountAlertMessage }}</span>
     </div>
   }
 
-  <!-- Stepper Content -->
-  <div class="builder-content">
+  <!-- ── Step content ─────────────────────────────────────────── -->
+  <div class="builder-body">
+
     @if (currentStep === 0) {
-      <div class="step-content" style="max-width: 600px; margin: 0 auto">
-        <app-quiz-form
-          (formSubmitted)="onQuizFormSubmit($event)"
-          (formValidityChanged)="onQuizFormValidityChanged($event)"
-          [formData]="quizFormData"
-        ></app-quiz-form>
+      <div class="step-panel">
+        <h2 class="step-heading">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="step-icon" style="color:#60a5fa">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+          Quiz Information
+        </h2>
+        <div class="step-inner">
+          <app-quiz-form
+            (formSubmitted)="onQuizFormSubmit($event)"
+            (formValidityChanged)="onQuizFormValidityChanged($event)"
+            [formData]="quizFormData"
+          ></app-quiz-form>
+        </div>
       </div>
     }
+
     @if (currentStep === 1) {
-      <div class="step-content">
+      <div class="step-panel">
+        <h2 class="step-heading">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="step-icon" style="color:#c084fc">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Select Questions
+        </h2>
         <app-quiz-questions-form
           [mode]="'quiz-builder'"
           (questionsAdded)="onQuestionsAdded($event)"
@@ -61,68 +127,70 @@
         ></app-quiz-questions-form>
       </div>
     }
+
     @if (currentStep === 2) {
-      <div class="step-content" style="max-width: 500px; margin: 0 auto">
-        <app-quiz-settings-form
-          (formSubmitted)="onSettingsFormSubmit($event)"
-          [initialSettings]="quizSettingsData"
-        ></app-quiz-settings-form>
+      <div class="step-panel">
+        <h2 class="step-heading">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="step-icon" style="color:#34d399">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+          </svg>
+          Quiz Settings
+        </h2>
+        <div class="step-inner step-inner--sm">
+          <app-quiz-settings-form
+            (formSubmitted)="onSettingsFormSubmit($event)"
+            [initialSettings]="quizSettingsData"
+          ></app-quiz-settings-form>
+        </div>
       </div>
     }
+
   </div>
 
-  <!-- Stepper Actions -->
-  <div class="stepper-actions">
-    <button
-      mat-stroked-button
-      color="primary"
-      (click)="prevStep()"
-      [disabled]="currentStep === 0"
-    >
-      <mat-icon>keyboard_arrow_left</mat-icon>
-      Previous
+  <!-- ── Navigation ──────────────────────────────────────────── -->
+  <div class="builder-nav">
+    <button class="btn-back" [class.btn-hidden]="currentStep === 0" (click)="prevStep()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:1rem;height:1rem">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Back
     </button>
-    <span class="flex-grow"></span>
+
     @if (currentStep < 2) {
-      <button
-        mat-flat-button
-        color="accent"
-        (click)="nextStep()"
-        [disabled]="!canProceedToNext"
-      >
-        Next
-        <mat-icon>keyboard_arrow_right</mat-icon>
+      <button class="btn-action" (click)="nextStep()" [disabled]="!canProceedToNext">
+        Continue
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:1rem;height:1rem">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
       </button>
     }
+
     @if (currentStep === 2) {
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="editMode ? editQuiz() : publishQuiz()"
-        [disabled]="!allStepsValid || loading"
-      >
+      <button class="btn-action"
+              (click)="editMode ? editQuiz() : publishQuiz()"
+              [disabled]="!allStepsValid || loading">
         @if (loading) {
-          <mat-icon class="spin">sync</mat-icon>
-          {{
-  isDraftMode
-    ? (editMode ? 'Saving Changes...' : 'Saving Draft...')
-    : (editMode ? 'Updating...' : 'Publishing...')
-}}
+          <svg class="btn-spinner" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" style="opacity:.25"/>
+            <path fill="currentColor" style="opacity:.75"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+          </svg>
+          {{ isDraftMode ? (editMode ? 'Saving Changes...' : 'Saving Draft...') : (editMode ? 'Updating...' : 'Publishing...') }}
         } @else {
-          <mat-icon>
-  {{
-    isDraftMode
-      ? 'save'
-      : (editMode ? 'edit' : 'publish')
-  }}
-</mat-icon>
-        {{
-  isDraftMode
-    ? (editMode ? 'Save Changes' : 'Save Draft')
-    : (editMode ? 'Edit Quiz' : 'Publish Quiz')
-}}
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:1rem;height:1rem">
+            @if (isDraftMode) {
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+            } @else {
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            }
+          </svg>
+          {{ isDraftMode ? (editMode ? 'Save Changes' : 'Save Draft') : (editMode ? 'Update Quiz' : 'Publish Quiz') }}
         }
       </button>
     }
   </div>
+
 </div>
+</section>

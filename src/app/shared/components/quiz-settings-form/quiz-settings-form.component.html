@@ -1,42 +1,44 @@
 <form [formGroup]="settingsForm">
 
   <!-- Section header -->
-  <div class="text-center pb-4 border-b border-cm-border">
-    <h4 class="text-sm font-bold text-cm-text-primary">Customize and Publish</h4>
+  <div class="sf-header">
+    <h4 class="text-sm font-bold text-cm-text-primary">Customize &amp; Publish</h4>
     <p class="text-xs text-cm-text-muted mt-0.5">Configure how the quiz is presented to learners</p>
   </div>
 
   <!-- Settings rows -->
-  <div class="divide-y divide-cm-border">
+  <div class="sf-rows">
 
     <!-- Quiz Mode -->
-    <div class="flex items-center justify-between py-4">
-      <div class="flex items-center gap-2.5">
-        <i class="fa-solid fa-sliders text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
-        <span class="text-sm font-semibold text-cm-text-primary">Quiz Mode</span>
+    <div class="sf-row">
+      <div class="sf-row-label">
+        <i class="fa-solid fa-sliders text-indigo-400 text-[14px] w-4 text-center shrink-0"></i>
+        <div>
+          <p class="sf-row-title">Quiz Mode</p>
+        </div>
       </div>
-      <div class="flex rounded-lg border border-cm-border overflow-hidden
-                  bg-cm-surface-raised text-[11px] shrink-0">
+      <div class="sf-seg">
         @for (option of modeOptions; track option.value) {
-        <button type="button"
-                (click)="settingsForm.get('mode')?.setValue(option.value)"
-                [class]="settingsForm.get('mode')?.value === option.value
-                  ? 'px-3.5 py-1.5 font-bold text-white bg-cm-brand transition-colors'
-                  : 'px-3.5 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
-          {{ option.label }}
-        </button>
+          <button type="button"
+                  (click)="settingsForm.get('mode')?.setValue(option.value)"
+                  [class]="settingsForm.get('mode')?.value === option.value
+                    ? 'px-3.5 py-1.5 font-bold text-white bg-indigo-500 transition-colors'
+                    : 'px-3.5 py-1.5 font-medium text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+            {{ option.label }}
+          </button>
         }
       </div>
     </div>
 
     <!-- Enable Hints -->
-    <div class="flex items-center justify-between py-4">
-      <div class="flex items-center gap-2.5">
-        <i class="fa-solid fa-lightbulb text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
-        <span class="text-sm font-semibold text-cm-text-primary">Enable Hints</span>
+    <div class="sf-row">
+      <div class="sf-row-label">
+        <i class="fa-solid fa-lightbulb text-yellow-400 text-[14px] w-4 text-center shrink-0"></i>
+        <div>
+          <p class="sf-row-title">Enable Hints</p>
+        </div>
       </div>
-      <div class="flex rounded-lg border border-cm-border overflow-hidden
-                  bg-cm-surface-raised text-[11px] shrink-0">
+      <div class="sf-seg">
         <button type="button"
                 (click)="settingsForm.get('showHint')?.setValue(true)"
                 [class]="settingsForm.get('showHint')?.value === true
@@ -55,13 +57,14 @@
     </div>
 
     <!-- Show Answer -->
-    <div class="flex items-center justify-between py-4">
-      <div class="flex items-center gap-2.5">
-        <i class="fa-solid fa-eye text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
-        <span class="text-sm font-semibold text-cm-text-primary">Show Answer</span>
+    <div class="sf-row">
+      <div class="sf-row-label">
+        <i class="fa-solid fa-eye text-sky-400 text-[14px] w-4 text-center shrink-0"></i>
+        <div>
+          <p class="sf-row-title">Show Answer</p>
+        </div>
       </div>
-      <div class="flex rounded-lg border border-cm-border overflow-hidden
-                  bg-cm-surface-raised text-[11px] shrink-0">
+      <div class="sf-seg">
         <button type="button"
                 (click)="settingsForm.get('showAnswers')?.setValue(true)"
                 [class]="settingsForm.get('showAnswers')?.value === true
@@ -80,13 +83,14 @@
     </div>
 
     <!-- Enable Navigation -->
-    <div class="flex items-center justify-between py-4">
-      <div class="flex items-center gap-2.5">
-        <i class="fa-solid fa-arrows-left-right text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
-        <span class="text-sm font-semibold text-cm-text-primary">Enable Navigation</span>
+    <div class="sf-row">
+      <div class="sf-row-label">
+        <i class="fa-solid fa-arrows-left-right text-violet-400 text-[14px] w-4 text-center shrink-0"></i>
+        <div>
+          <p class="sf-row-title">Enable Navigation</p>
+        </div>
       </div>
-      <div class="flex rounded-lg border border-cm-border overflow-hidden
-                  bg-cm-surface-raised text-[11px] shrink-0">
+      <div class="sf-seg">
         <button type="button"
                 (click)="settingsForm.get('enableNavigation')?.setValue(true)"
                 [class]="settingsForm.get('enableNavigation')?.value === true
@@ -105,13 +109,14 @@
     </div>
 
     <!-- Enable Audio -->
-    <div class="flex items-center justify-between py-4">
-      <div class="flex items-center gap-2.5">
-        <i class="fa-solid fa-volume-high text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
-        <span class="text-sm font-semibold text-cm-text-primary">Enable Audio</span>
+    <div class="sf-row">
+      <div class="sf-row-label">
+        <i class="fa-solid fa-volume-high text-cyan-400 text-[14px] w-4 text-center shrink-0"></i>
+        <div>
+          <p class="sf-row-title">Enable Audio</p>
+        </div>
       </div>
-      <div class="flex rounded-lg border border-cm-border overflow-hidden
-                  bg-cm-surface-raised text-[11px] shrink-0">
+      <div class="sf-seg">
         <button type="button"
                 (click)="settingsForm.get('enableAudio')?.setValue(true)"
                 [class]="settingsForm.get('enableAudio')?.value === true
@@ -130,13 +135,14 @@
     </div>
 
     <!-- Enable Timer -->
-    <div class="flex items-center justify-between py-4">
-      <div class="flex items-center gap-2.5">
-        <i class="fa-solid fa-stopwatch text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
-        <span class="text-sm font-semibold text-cm-text-primary">Enable Timer</span>
+    <div class="sf-row">
+      <div class="sf-row-label">
+        <i class="fa-solid fa-stopwatch text-orange-400 text-[14px] w-4 text-center shrink-0"></i>
+        <div>
+          <p class="sf-row-title">Enable Timer</p>
+        </div>
       </div>
-      <div class="flex rounded-lg border border-cm-border overflow-hidden
-                  bg-cm-surface-raised text-[11px] shrink-0">
+      <div class="sf-seg">
         <button type="button"
                 (click)="settingsForm.get('enableTimer')?.setValue(true)"
                 [class]="settingsForm.get('enableTimer')?.value === true
@@ -155,13 +161,14 @@
     </div>
 
     <!-- Enable Review -->
-    <div class="flex items-center justify-between py-4">
-      <div class="flex items-center gap-2.5">
-        <i class="fa-solid fa-clipboard-check text-cm-text-secondary text-[14px] w-4 text-center shrink-0"></i>
-        <span class="text-sm font-semibold text-cm-text-primary">Enable Review</span>
+    <div class="sf-row">
+      <div class="sf-row-label">
+        <i class="fa-solid fa-clipboard-check text-emerald-400 text-[14px] w-4 text-center shrink-0"></i>
+        <div>
+          <p class="sf-row-title">Enable Review</p>
+        </div>
       </div>
-      <div class="flex rounded-lg border border-cm-border overflow-hidden
-                  bg-cm-surface-raised text-[11px] shrink-0">
+      <div class="sf-seg">
         <button type="button"
                 (click)="settingsForm.get('enableReview')?.setValue(true)"
                 [class]="settingsForm.get('enableReview')?.value === true

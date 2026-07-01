@@ -6,6 +6,7 @@ import {
   EventEmitter,
   Input,
   SimpleChanges,
+  HostListener,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -86,7 +87,49 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   filteredTopics: any[] = [];
   questionSearchControl = new FormControl('');
   selectedQuestionsControl = new FormControl<Question[]>([]);
+  subjectSearchControl = new FormControl('');
+  topicSearchControl = new FormControl('');
   quizQuestions: Question[] = [];
+  showSubjectDropdown = false;
+  showTopicDropdown = false;
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.showSubjectDropdown = false;
+    this.showTopicDropdown = false;
+  }
+
+  toggleSubjectDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showSubjectDropdown = !this.showSubjectDropdown;
+    this.showTopicDropdown = false;
+  }
+
+  toggleTopicDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showTopicDropdown = !this.showTopicDropdown;
+    this.showSubjectDropdown = false;
+  }
+
+  getSubjectLabel(): string {
+    const val = this.filterForm.get('subject')?.value;
+    if (!Array.isArray(val) || val.length === 0) return 'All Subjects';
+    if (val.length === 1) {
+      const s = (this.subjects || []).find(s => Number(s.id) === Number(val[0]));
+      return s ? (s.name ?? s.title) : '1 selected';
+    }
+    return `${val.length} selected`;
+  }
+
+  getTopicLabel(): string {
+    const val = this.filterForm.get('topic')?.value;
+    if (!Array.isArray(val) || val.length === 0) return 'All Topics';
+    if (val.length === 1) {
+      const t = (this.filteredTopics || []).find(t => Number(t.id) === Number(val[0]));
+      return t ? (t.name ?? t.title) : '1 selected';
+    }
+    return `${val.length} selected`;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -194,7 +237,9 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       authorId: 0,
     });
     this.questionSearchControl.setValue('', { emitEvent: false });
-    this.filteredTopics = [...this.topics];
+    this.subjectSearchControl.setValue('', { emitEvent: false });
+    this.topicSearchControl.setValue('', { emitEvent: false });
+    this.filteredTopics = [...(this.topics || [])];
     this.loadQuestionsFromApi(filters);
     this.filtersApplied.emit(filters);
   }
@@ -224,7 +269,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   }
 
   onQuestionToggle(question: Question, event: any): void {
-    const isChecked = event.checked;
+    const isChecked = (event.target as HTMLInputElement).checked;
     const currentSelected = this.selectedQuestionsControl.value || [];
 
     if (isChecked) {
@@ -276,6 +321,61 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     });
   }
 
+  // ── Searchable subject/topic list helpers ─────────────────────────────────
+
+  getFilteredSubjectOptions(): any[] {
+    const subjects = this.subjects || [];
+    const search = (this.subjectSearchControl.value ?? '').toLowerCase().trim();
+    if (!search) return subjects;
+    return subjects.filter(s => (s.name ?? s.title ?? '').toLowerCase().includes(search));
+  }
+
+  getFilteredTopicOptions(): any[] {
+    const topics = this.filteredTopics || [];
+    const search = (this.topicSearchControl.value ?? '').toLowerCase().trim();
+    if (!search) return topics;
+    return topics.filter(t => (t.name ?? t.title ?? '').toLowerCase().includes(search));
+  }
+
+  isSubjectSelected(id: number): boolean {
+    const val = this.filterForm.get('subject')?.value;
+    if (Array.isArray(val)) return val.map(Number).includes(Number(id));
+    return Number(val) === Number(id);
+  }
+
+  toggleSubject(id: number): void {
+    if (this.mode !== 'quiz-builder') {
+      this.filterForm.get('subject')?.setValue(id);
+      return;
+    }
+    const current: number[] = Array.isArray(this.filterForm.get('subject')?.value)
+      ? [...this.filterForm.get('subject')!.value.map(Number)]
+      : [];
+    const idx = current.indexOf(Number(id));
+    if (idx >= 0) current.splice(idx, 1); else current.push(Number(id));
+    this.filterForm.get('subject')?.setValue(current);
+    this.topicSearchControl.setValue('', { emitEvent: false });
+  }
+
+  isTopicSelected(id: number): boolean {
+    const val = this.filterForm.get('topic')?.value;
+    if (Array.isArray(val)) return val.map(Number).includes(Number(id));
+    return Number(val) === Number(id);
+  }
+
+  toggleTopic(id: number): void {
+    if (this.mode !== 'quiz-builder') {
+      this.filterForm.get('topic')?.setValue(id);
+      return;
+    }
+    const current: number[] = Array.isArray(this.filterForm.get('topic')?.value)
+      ? [...this.filterForm.get('topic')!.value.map(Number)]
+      : [];
+    const idx = current.indexOf(Number(id));
+    if (idx >= 0) current.splice(idx, 1); else current.push(Number(id));
+    this.filterForm.get('topic')?.setValue(current);
+  }
+
   getLevelDisplay(level: number | string | undefined): string {
     switch (Number(level)) {
       case 1:
@@ -290,13 +390,14 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   }
 
   private syncTopics(subjectId: number | number[] | null): void {
+    const allTopics = this.topics || [];
     if (
       subjectId === null ||
       subjectId === undefined ||
       subjectId === 0 ||
       (Array.isArray(subjectId) && subjectId.length === 0)
     ) {
-      this.filteredTopics = [...this.topics];
+      this.filteredTopics = [...allTopics];
       return;
     }
 
@@ -304,7 +405,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
       ? subjectId.map((value) => Number(value))
       : [Number(subjectId)];
 
-    this.filteredTopics = this.topics.filter((topic: any) => {
+    this.filteredTopics = allTopics.filter((topic: any) => {
       const topicSubjectId = topic.subjectId ?? topic.subject?.id;
       return subjectIds.includes(Number(topicSubjectId));
     });

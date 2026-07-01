@@ -1,1 +1,67 @@
-/* All styling handled by Tailwind utility classes */
+// ── Field group spacing ────────────────────────────────────────────────────
+.field-group { margin-bottom: 1rem; }
+
+// ── Section divider ────────────────────────────────────────────────────────
+.section-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+// ── Label ──────────────────────────────────────────────────────────────────
+.field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cm-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.375rem;
+
+  .req { color: #f87171; margin-left: 2px; }
+}
+
+// ── Input / Textarea / Select ─────────────────────────────────────────────
+// bg-cm-surface-raised = #1e293b in dark mode → lighter than #1a2540 panel ✓
+.field-input {
+  width: 100%;
+  background: var(--cm-surface-raised);
+  border: 1px solid var(--cm-border-strong);
+  color: var(--cm-text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+
+  &::placeholder { color: var(--cm-text-muted); }
+
+  &:focus {
+    border-color: var(--cm-brand);
+    box-shadow: 0 0 0 3px var(--cm-brand-ring);
+  }
+
+  // Select dropdown arrow visible on dark bg
+  option { background: #0f172a; color: var(--cm-text-primary); }
+}
+
+// ── Validation error ───────────────────────────────────────────────────────
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 11px;
+  color: #f87171;
+  margin-top: 0.3rem;
+
+  i { font-size: 10px; }
+}
+
+// ── Publish card ───────────────────────────────────────────────────────────
+.publish-card {
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(139, 92, 246, 0.12) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}

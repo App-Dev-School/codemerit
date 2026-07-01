@@ -80,8 +80,10 @@
   min-height: 130px;
   cursor: text;
   transition: border-color 0.15s;
+  outline: none;
 
-  &:focus-within {
+  &:focus-within,
+  &:focus-visible {
     border-color: var(--cm-brand);
   }
 }
