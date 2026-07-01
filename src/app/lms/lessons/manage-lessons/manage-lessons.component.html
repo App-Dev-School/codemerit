@@ -8,134 +8,195 @@
       ></app-breadcrumb>
     </div>
 
-    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <mat-card class="hoverCard">
-          <mat-card-content>
-            <div class="materialTableHeader">
-              <div class="left">
-                <ul class="header-buttons-left ms-0">
-                  <li class="tbl-title">
-                    <h2>Manage Lessons</h2>
-                  </li>
-                  <li class="tbl-search-box">
-                    <label for="lesson-search-input">
-                      <i class="material-icons search-icon">search</i>
-                    </label>
-                    <input
-                      id="lesson-search-input"
-                      placeholder="Search"
-                      type="text"
-                      (keyup)="applyFilter($event)"
-                      class="browser-default search-field"
-                      aria-label="Search lessons"
-                    />
-                  </li>
-                </ul>
-              </div>
-              <div class="right">
-                <button
-                  mat-icon-button
-                  (click)="refresh()"
-                  class="tbl-header-btn col-brown"
-                  matTooltip="Refresh"
-                >
-                  <mat-icon>refresh</mat-icon>
-                </button>
-              </div>
-            </div>
+    <!-- Card -->
+    <div class="rounded-2xl border border-cm-border bg-cm-surface shadow-sm p-5 sm:p-6 mt-3 sm:mt-0">
 
-            <div class="overflow-auto">
-              <table
-                mat-table
-                [dataSource]="dataSource"
-                matSort
-                class="mat-cell advance-table"
-              >
-                <ng-container matColumnDef="title">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <span class="mobile-label">Title:</span>
-                    <span class="truncate-text">{{ row.title }}</span>
-                  </mat-cell>
-                </ng-container>
+      <!-- Row 1: title + Add Lesson CTA -->
+      <div class="flex items-center justify-between gap-4 mb-3">
+        <h2 class="text-base font-bold text-cm-text-primary">Manage Lessons</h2>
+        <button
+          (click)="addLesson()"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
+                 bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all whitespace-nowrap shrink-0"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          </svg>
+          Add Lesson
+        </button>
+      </div>
 
-                <ng-container matColumnDef="subject">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Subject</mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <span class="mobile-label">Subject:</span>
-                    {{ row.subject }}
-                  </mat-cell>
-                </ng-container>
+      <!-- Row 2: Search + Subject filter + Refresh -->
+      <div class="flex flex-col sm:flex-row gap-2 mb-5">
 
-                <ng-container matColumnDef="topic">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Topic</mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <span class="mobile-label">Topic:</span>
-                    {{ row.topic }}
-                  </mat-cell>
-                </ng-container>
+        <!-- Search — full width on mobile, fixed on desktop -->
+        <div class="flex items-center gap-2 px-3 py-2 rounded-xl border border-cm-border bg-cm-surface-muted
+                    min-w-0 sm:w-52 overflow-hidden">
+          <svg class="w-4 h-4 text-cm-text-muted shrink-0"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search lessons…"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onFilterChange()"
+            class="flex-1 min-w-0 bg-transparent text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none border-0"
+            aria-label="Search lessons"
+          />
+        </div>
 
-                <ng-container matColumnDef="sections">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Sections</mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <span class="mobile-label">Sections:</span>
-                    {{ row.sections }}
-                  </mat-cell>
-                </ng-container>
+        <!-- Subject filter + Refresh: side-by-side on mobile, unwrapped into row on desktop -->
+        <div class="flex items-center gap-2 sm:contents">
+          <select
+            [(ngModel)]="subjectFilter"
+            (ngModelChange)="onFilterChange()"
+            class="flex-1 sm:w-64 px-3 py-2 text-sm rounded-xl border border-cm-border bg-cm-surface-muted text-cm-text-primary focus:outline-none transition-colors"
+            aria-label="Filter by subject"
+          >
+            <option value="">All Subjects</option>
+            @for (subject of subjects; track subject) {
+              <option [value]="subject">{{ subject }}</option>
+            }
+          </select>
 
-                <ng-container matColumnDef="author">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Author</mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <span class="mobile-label">Author:</span>
-                    {{ row.author }}
-                  </mat-cell>
-                </ng-container>
+          <button
+            (click)="refresh()"
+            title="Refresh"
+            class="shrink-0 p-2 rounded-xl border border-cm-border bg-cm-surface-muted text-cm-text-muted
+                   hover:text-cm-text-primary hover:bg-cm-surface-hover active:scale-95 transition-all"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </button>
+        </div>
 
-                <ng-container matColumnDef="actions">
-                  <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <button
-                      mat-icon-button
-                      color="primary"
-                      matTooltip="View Lesson"
-                      (click)="viewLesson(row)"
-                    >
-                      <mat-icon>visibility</mat-icon>
-                    </button>
-                  </mat-cell>
-                </ng-container>
+      </div>
 
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row
-                  *matRowDef="let row; columns: displayedColumns"
-                  [style.cursor]="'pointer'"
+      <!-- Loading state -->
+      @if (loading) {
+        <div class="flex flex-col items-center justify-center py-16 gap-3">
+          <img src="assets/images/icons/loading.gif" class="w-10 h-10" alt="" />
+          <p class="text-sm text-cm-text-muted">Loading lessons…</p>
+        </div>
+      }
+
+      @if (!loading) {
+
+        <!-- Table -->
+        <div class="overflow-x-auto rounded-xl border border-cm-border">
+          <table class="w-full text-sm min-w-[640px]">
+            <thead>
+              <tr class="border-b border-cm-border bg-cm-surface-muted">
+                <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary w-2/5">Title</th>
+                <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Subject</th>
+                <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Topic</th>
+                <th class="text-center px-4 py-3 font-semibold text-cm-text-secondary">Sections</th>
+                <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Author</th>
+                <th class="text-right px-4 py-3 font-semibold text-cm-text-secondary">View</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of paginatedLessons; track row.id) {
+                <tr
+                  class="border-b border-cm-border last:border-0 hover:bg-cm-surface-hover cursor-pointer transition-colors"
                   (click)="viewLesson(row)"
-                ></mat-row>
-              </table>
+                >
+                  <td class="px-4 py-3 text-cm-text-primary font-medium leading-snug">
+                    {{ row.title }}
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                 bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+                      {{ row.subject }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-cm-text-secondary">{{ row.topic }}</td>
+                  <td class="px-4 py-3 text-cm-text-secondary text-center">
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold
+                                 bg-cm-surface-raised text-cm-text-primary">
+                      {{ row.sections }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-cm-text-secondary">{{ row.author }}</td>
+                  <td class="px-4 py-3 text-right">
+                    <button
+                      (click)="$event.stopPropagation(); viewLesson(row)"
+                      title="View Lesson"
+                      class="inline-flex items-center justify-center w-8 h-8 rounded-lg
+                             text-cm-brand hover:bg-cm-brand/10 active:scale-95 transition-all"
+                    >
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
 
-              @if (loading || dataSource.data.length === 0) {
-              <div class="no-results text-center">
-                @if (loading) {
-                <img src="assets/images/icons/loading.gif" class="smallLoadingIcon" />
-                <h4 class="col-grey">Loading Lessons</h4>
-                }
-                @if (!loading && dataSource.data.length === 0) {
-                <h4 class="col-grey">{{ errorMessage || 'No lessons found.' }}</h4>
-                }
-              </div>
+        <!-- Empty state -->
+        @if (filteredLessons.length === 0) {
+          <div class="flex flex-col items-center justify-center py-16 gap-2">
+            <svg class="w-10 h-10 text-cm-text-muted opacity-40" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <p class="text-sm text-cm-text-muted">{{ errorMessage || 'No lessons found.' }}</p>
+          </div>
+        }
+
+        <!-- Pagination -->
+        @if (filteredLessons.length > pageSize) {
+          <div class="flex items-center justify-between mt-4 pt-4 border-t border-cm-border flex-wrap gap-3">
+            <p class="text-xs text-cm-text-muted">
+              Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredLessons.length }} lessons
+            </p>
+            <div class="flex items-center gap-1">
+              <!-- Prev -->
+              <button
+                (click)="prevPage()"
+                [disabled]="currentPage === 0"
+                class="p-1.5 rounded-lg hover:bg-cm-surface-hover disabled:opacity-30 disabled:cursor-not-allowed text-cm-text-muted transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+              </button>
+
+              @for (page of visiblePages; track page) {
+                <button
+                  (click)="goToPage(page)"
+                  [class]="page === currentPage
+                    ? 'w-8 h-8 rounded-lg text-xs font-bold bg-cm-brand text-white'
+                    : 'w-8 h-8 rounded-lg text-xs text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'"
+                >
+                  {{ page + 1 }}
+                </button>
               }
 
-              <mat-paginator
-                [length]="dataSource.filteredData.length"
-                [pageIndex]="0"
-                [pageSize]="10"
-                [pageSizeOptions]="[5, 10, 25, 100]"
-              ></mat-paginator>
+              <!-- Next -->
+              <button
+                (click)="nextPage()"
+                [disabled]="currentPage >= totalPages - 1"
+                class="p-1.5 rounded-lg hover:bg-cm-surface-hover disabled:opacity-30 disabled:cursor-not-allowed text-cm-text-muted transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+              </button>
             </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
+          </div>
+        }
+
+      }
     </div>
   </div>
 </section>

@@ -12,5 +12,9 @@ export const LESSONS_ROUTE: Route[] = [
     path: 'list',
     component: ManageLessonsComponent,
   },
+  {
+    path: 'create-lesson',
+    loadComponent: () => import('./create-lesson/create-lesson.component').then(c => c.CreateLessonComponent),
+  },
   { path: '**', component: Page404Component },
 ];

@@ -1,0 +1,155 @@
+/* ── Shared field primitives ─────────────────────────────────── */
+.field-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cm-text-secondary);
+  margin-bottom: 6px;
+}
+
+.field-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  border: 1px solid var(--cm-border);
+  background: var(--cm-surface-muted);
+  color: var(--cm-text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+
+  &::placeholder { color: var(--cm-text-muted); }
+  &:focus { border-color: var(--cm-brand); }
+}
+
+.field-error {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  color: #f87171;
+}
+
+/* ── Custom select (hides native arrow, adds SVG caret) ──────── */
+.select-wrap {
+  position: relative;
+}
+
+.field-select {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  border: 1px solid var(--cm-border);
+  background: var(--cm-surface-muted);
+  color: var(--cm-text-primary);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+
+  &:focus { border-color: var(--cm-brand); }
+
+  option {
+    background: var(--cm-surface);
+    color: var(--cm-text-primary);
+  }
+}
+
+.select-caret {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--cm-text-muted);
+  pointer-events: none;
+}
+
+/* ── Tiptap rich-text editor shell ───────────────────────────── */
+.tiptap-shell {
+  position: relative;
+  border: 1px solid var(--cm-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: var(--cm-surface-muted);
+  min-height: 130px;
+  cursor: text;
+  transition: border-color 0.15s;
+
+  &:focus-within {
+    border-color: var(--cm-brand);
+  }
+}
+
+.tiptap-placeholder {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  right: 14px;
+  font-size: 0.875rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--cm-text-muted);
+  pointer-events: none;
+  user-select: none;
+}
+
+tiptap-editor.tiptap-body {
+  display: block;
+
+  .ProseMirror {
+    outline: none;
+    min-height: 106px;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--cm-text-primary);
+
+    cursor: text;
+
+    &.ProseMirror-focused { outline: none; }
+
+    p { margin: 0 0 0.4em; }
+    p:last-child { margin-bottom: 0; }
+
+    ul,
+    ol {
+      padding-left: 1.25rem;
+      margin: 0.4em 0;
+    }
+
+    li { margin-bottom: 0.15em; }
+
+    h1, h2, h3 { font-weight: 700; margin: 0.5em 0 0.25em; }
+    h1 { font-size: 1.2em; }
+    h2 { font-size: 1.05em; }
+    h3 { font-size: 0.95em; }
+
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    code {
+      background: rgba(99, 102, 241, 0.12);
+      border-radius: 4px;
+      padding: 0.1em 0.35em;
+      font-size: 0.82em;
+      font-family: 'Fira Code', 'Courier New', monospace;
+    }
+
+    pre {
+      background: var(--cm-surface-raised);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 0.5em 0;
+      overflow-x: auto;
+
+      code {
+        background: none;
+        padding: 0;
+        font-size: 0.85em;
+      }
+    }
+  }
+}

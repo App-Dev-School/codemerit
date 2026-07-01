@@ -125,7 +125,7 @@ export const APP_ROUTE: Route[] = [
         component: MainLayoutComponent,
         //component: AuthLayoutComponent,
         loadChildren: () =>
-            import('./learn/lesson.routes').then((m) => m.LESSON_ROUTE),
+            import('./lms/lessons/lessons.routes').then((m) => m.LESSONS_ROUTE),
     },
     {
         path: 'interview-panel/:id',

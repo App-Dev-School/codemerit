@@ -1,13 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, Role } from '@core';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
@@ -28,35 +21,16 @@ interface LessonListItem {
   templateUrl: './manage-lessons.component.html',
   styleUrls: ['./manage-lessons.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    BreadcrumbComponent,
-    MatCardModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatPaginatorModule,
-    MatTooltipModule,
-    MatSortModule,
-  ],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent],
 })
-export class ManageLessonsComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = [
-    'title',
-    'subject',
-    'topic',
-    'sections',
-    'author',
-    'actions',
-  ];
-
-  dataSource = new MatTableDataSource<LessonListItem>([]);
+export class ManageLessonsComponent implements OnInit {
+  lessons: LessonListItem[] = [];
   loading = true;
   errorMessage = '';
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  searchQuery = '';
+  subjectFilter = '';
+  currentPage = 0;
+  readonly pageSize = 10;
 
   constructor(
     private lessonService: LessonService,
@@ -65,23 +39,7 @@ export class ManageLessonsComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.isAdmin) {
-      this.displayedColumns = [
-        'title',
-        'subject',
-        'topic',
-        'sections',
-        'author',
-        'actions',
-      ];
-    }
-
     this.loadLessons();
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   loadLessons(): void {
@@ -90,47 +48,29 @@ export class ManageLessonsComponent implements OnInit, AfterViewInit {
 
     this.lessonService.getLessons(undefined, 'all').subscribe({
       next: (response: any) => {
-        const lessons = Array.isArray(response?.data) ? response.data : [];
+        const raw = Array.isArray(response?.data) ? response.data : [];
         const currentUser = this.authService.currentUserValue;
         const isAdmin =
           currentUser?.role === Role.Admin || currentUser?.role === Role.All;
-        const visibleLessons = isAdmin
-          ? lessons
-          : lessons.filter(
-              (lesson: any) => Number(lesson?.user?.id) === Number(currentUser?.id),
+        const visible = isAdmin
+          ? raw
+          : raw.filter(
+              (l: any) => Number(l?.user?.id) === Number(currentUser?.id),
             );
 
-        this.dataSource.data = visibleLessons.map((lesson: any) => ({
-          id: lesson?.id,
-          title: lesson?.title ?? '-',
-          subject: lesson?.subject?.title ?? '-',
-          topic: lesson?.topic?.title ?? '-',
-          sections: lesson?.sections?.length ?? 0,
-          author: [lesson?.user?.firstName, lesson?.user?.lastName]
-            .filter(Boolean)
-            .join(' ') || '-',
-          slug: lesson?.slug ?? '',
+        this.lessons = visible.map((l: any) => ({
+          id: l?.id,
+          title: l?.title ?? '-',
+          subject: l?.subject?.title ?? '-',
+          topic: l?.topic?.title ?? '-',
+          sections: l?.sections?.length ?? 0,
+          author:
+            [l?.user?.firstName, l?.user?.lastName].filter(Boolean).join(' ') ||
+            '-',
+          slug: l?.slug ?? '',
         }));
 
-        this.dataSource.filterPredicate = (
-          data: LessonListItem,
-          filter: string,
-        ) => {
-          const searchText = filter.trim().toLowerCase();
-          return (
-            data.title.toLowerCase().includes(searchText) ||
-            data.subject.toLowerCase().includes(searchText) ||
-            data.topic.toLowerCase().includes(searchText) ||
-            data.author.toLowerCase().includes(searchText)
-          );
-        };
-
         this.loading = false;
-
-        setTimeout(() => {
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        });
       },
       error: () => {
         this.errorMessage = 'Unable to load lessons. Please try again.';
@@ -139,16 +79,77 @@ export class ManageLessonsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  get subjects(): string[] {
+    return [
+      ...new Set(this.lessons.map((l) => l.subject).filter((s) => s !== '-')),
+    ].sort();
+  }
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+  get filteredLessons(): LessonListItem[] {
+    const q = this.searchQuery.trim().toLowerCase();
+    return this.lessons.filter((l) => {
+      const matchesSearch =
+        !q ||
+        l.title.toLowerCase().includes(q) ||
+        l.subject.toLowerCase().includes(q) ||
+        l.topic.toLowerCase().includes(q) ||
+        l.author.toLowerCase().includes(q);
+      const matchesSubject =
+        !this.subjectFilter || l.subject === this.subjectFilter;
+      return matchesSearch && matchesSubject;
+    });
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredLessons.length / this.pageSize));
+  }
+
+  get paginatedLessons(): LessonListItem[] {
+    const start = this.currentPage * this.pageSize;
+    return this.filteredLessons.slice(start, start + this.pageSize);
+  }
+
+  get visiblePages(): number[] {
+    const total = this.totalPages;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i);
+    const start = Math.max(0, this.currentPage - 2);
+    const end = Math.min(total - 1, this.currentPage + 2);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }
+
+  get rangeStart(): number {
+    return this.filteredLessons.length === 0
+      ? 0
+      : this.currentPage * this.pageSize + 1;
+  }
+
+  get rangeEnd(): number {
+    return Math.min(
+      this.filteredLessons.length,
+      (this.currentPage + 1) * this.pageSize,
+    );
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 0;
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = page;
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 0) this.currentPage--;
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) this.currentPage++;
   }
 
   refresh(): void {
+    this.searchQuery = '';
+    this.subjectFilter = '';
+    this.currentPage = 0;
     this.loadLessons();
   }
 
@@ -161,5 +162,9 @@ export class ManageLessonsComponent implements OnInit, AfterViewInit {
     if (row.slug) {
       this.router.navigate(['/learn/overview', row.slug]);
     }
+  }
+
+  addLesson(): void {
+    this.router.navigate(['/lms/lessons/create-lesson']);
   }
 }
