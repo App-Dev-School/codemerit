@@ -1,18 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
+import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
+
 @Component({
-    selector: 'app-page500',
-    templateUrl: './page500.component.html',
-    styleUrls: ['./page500.component.scss'],
-    imports: [
-        FormsModule,
-        MatButtonModule,
-        RouterLink,
-    ]
+  selector: 'app-page500',
+  standalone: true,
+  imports: [RouterLink, ParticleCanvasComponent],
+  templateUrl: './page500.component.html',
+  styleUrls: ['./page500.component.scss'],
 })
-export class Page500Component {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() { }
-}
+export class Page500Component {}

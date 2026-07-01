@@ -1,100 +1,109 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService, Role } from '@core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OtpInputComponent } from '@shared/components/otp-input/otp-input.component';
+import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
+
 @Component({
-  selector: 'app-locked',
+  selector: 'app-verify-account',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, OtpInputComponent, ParticleCanvasComponent],
   templateUrl: './locked.component.html',
   styleUrls: ['./locked.component.scss'],
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    RouterLink,
-    OtpInputComponent
-  ]
 })
-export class LockedComponent extends UnsubscribeOnDestroyAdapter implements OnInit {
+export class VerifyAccountComponent extends UnsubscribeOnDestroyAdapter implements OnInit {
+
   authForm!: UntypedFormGroup;
-  submitted = false;
-  error = '';
-  userImg: string = 'assets/images/users/user.jpg';
+  submitted   = false;
+  verifying   = false;
+  error       = '';
+  pasteError  = '';
+  userImg     = 'assets/images/users/user.jpg';
   userFullName!: string;
-  hide = true;
+  userEmail!: string;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
     private router: Router,
-    private authService: AuthService
-  ) {
-    super();
-  }
+    private authService: AuthService,
+  ) { super(); }
+
   ngOnInit() {
-    console.log("Verify Comp :: currentUserValue", this.authService.currentUserValue);
+    const user = this.authService.currentUserValue;
+    console.log('VerifyAccount :: currentUserValue', user);
+
     this.authForm = this.formBuilder.group({
-        password: ['', [Validators.required, Validators.minLength(6)]],
-      });
-    if (this.authService.currentUserValue && this.authService.currentUserValue?.accountStatus == "PENDING") {
-      if (this.authService.currentUserValue.userImage) {
-        this.userImg = this.authService.currentUserValue.userImage;
-      }
-      this.userFullName =
-        this.authService.currentUserValue.firstName +
-        ' ' +
-        this.authService.currentUserValue.lastName;
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    });
+
+    if (user?.accountStatus === 'PENDING') {
+      if (user.userImage) this.userImg = user.userImage;
+      this.userFullName = `${user.firstName} ${user.lastName}`.trim();
+      this.userEmail    = user.email;
     } else {
       this.authService.redirectToLogin();
     }
   }
-  get f() {
-    return this.authForm.controls;
+
+  get f() { return this.authForm.controls; }
+
+  onOtpCompleted(otp: string) {
+    this.authForm.patchValue({ password: otp });
   }
 
-  onSubmit() {
-    if (this.authForm.invalid) {
-      return;
-    } else {
-      this.submitted = true;
-      const payload = {
-        email: this.authService.currentUserValue.email,
-        otp: this.f['password'].value,
-        tag: "ACC_VERIFY"
+  async pasteFromClipboard() {
+    this.pasteError = '';
+    try {
+      const text   = await navigator.clipboard.readText();
+      const digits = text.replace(/\D/g, '').slice(0, 6);
+      if (digits.length === 0) {
+        this.pasteError = 'No digits found in clipboard';
+        setTimeout(() => (this.pasteError = ''), 2500);
+        return;
       }
-      this.subs.sink = this.authService
-        .verifyAccount(payload)
-        .subscribe({
-          next: (res) => {
-            console.log("VerifyAccount #1 API responded ", res);
-            if (res && !res.error && res.data) {
-              setTimeout(() => {
-                console.log("VerifyAccount #2 User dashboard redirection ", res.data.role);
-                this.navigate();
-              }, 1000);
-            } else {
-              this.error = 'Invalid Login';
-            }
-          },
-          error: (error) => {
-            this.error = error;
-            this.submitted = false;
-          },
-        });
+      this.authForm.patchValue({ password: digits });
+      // auto-submit when a full 6-digit OTP is pasted
+      if (digits.length === 6) this.onSubmit();
+    } catch {
+      this.pasteError = 'Allow clipboard access to use this';
+      setTimeout(() => (this.pasteError = ''), 2500);
     }
   }
 
-  onOtpCompleted(otp: string) { this.authForm.patchValue({ password: otp }); }
-  
+  onSubmit() {
+    this.submitted = true;
+    if (this.authForm.invalid) return;
+
+    this.verifying = true;
+    this.error = '';
+    const payload = {
+      email: this.authService.currentUserValue.email,
+      otp:   this.f['password'].value,
+      tag:   'ACC_VERIFY',
+    };
+
+    this.subs.sink = this.authService.verifyAccount(payload).subscribe({
+      next: (res) => {
+        console.log('VerifyAccount API response', res);
+        if (res && !res.error && res.data) {
+          setTimeout(() => this.navigate(), 1000);
+        } else {
+          this.error     = res?.message || 'Invalid OTP. Please try again.';
+          this.verifying = false;
+          this.submitted = false;
+        }
+      },
+      error: (err) => {
+        this.error     = err || 'Verification failed. Please try again.';
+        this.verifying = false;
+        this.submitted = false;
+      },
+    });
+  }
+
   navigate() {
     const role = this.authService.currentUserValue.role;
     if (role === Role.All || role === Role.Admin) {
@@ -105,4 +114,5 @@ export class LockedComponent extends UnsubscribeOnDestroyAdapter implements OnIn
       this.router.navigate(['/authentication/signin']);
     }
   }
+
 }

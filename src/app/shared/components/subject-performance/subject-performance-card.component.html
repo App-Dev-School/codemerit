@@ -1,182 +1,203 @@
-<mat-card>
-  @if (subject?.isSubscribed) {
-    <!-- <mat-card-header>
-    <mat-card-title>{{subject.isSubscribed ? 'Learning ' : 'Learn '}} {{subject.title}}</mat-card-title>
-  </mat-card-header> -->
-    <mat-card-header class="header-style">
-      @if (subject?.image) {
-        <img mat-card-avatar [src]="subject?.image" class="m-b-10 subjectImg" />
-      }
-      <mat-card-title>{{ subject.title }} Performance</mat-card-title>
-      <!-- <a mat-button color="primary">
-      <i class="material-icons psr-2">trending_up</i>
-    </a> -->
-    </mat-card-header>
-  }
-  <mat-card-content>
-    <div class="row">
-      @if (subject?.isSubscribed) {
-        <div
-          [class]="compact ? 'col-5' : 'col-xl-4 col-lg-4 col-md-5 col-sm-12'"
-        >
-          <apx-chart
-            [series]="cardChartOptions.series!"
-            [chart]="cardChartOptions.chart!"
-            [plotOptions]="cardChartOptions.plotOptions!"
-            [colors]="cardChartOptions.colors!"
-            [labels]="cardChartOptions.labels!"
-          />
-          <div class="main-label text-center" style="margin-top: -16px">
-            <h6 class="scoreText m-t-0">Overall Score</h6>
-            <!-- <h6 class="text-danger">Rank #7</h6> -->
+<!-- ────────────────────────────────────────────────────────────
+     SUBJECT PERFORMANCE CARD — compact 2/3-column hero
+──────────────────────────────────────────────────────────────── -->
+
+@if(subject?.isSubscribed){
+
+<!-- ── ENROLLED STATE ─────────────────────────────────────── -->
+<div class="relative flex flex-col rounded-2xl overflow-hidden border border-cm-border h-full"
+     [style.boxShadow]="cardShadow">
+
+  <!-- Background layers -->
+  <div class="absolute inset-0 bg-cm-surface"></div>
+  <div class="absolute inset-0 opacity-[0.05]"
+       [style.backgroundColor]="subject.color || '#6366f1'"></div>
+  <div class="absolute -top-12 -right-12 w-56 h-56 rounded-full blur-3xl opacity-[0.15]"
+       [style.backgroundColor]="subject.color || '#6366f1'"></div>
+
+  <!-- Colour accent strip -->
+  <div class="h-1 w-full shrink-0 relative z-10"
+       [style.background]="'linear-gradient(90deg,' + (subject.color||'#6366f1') + ', ' + (subject.color||'#6366f1') + '40)'">
+  </div>
+
+  <!-- Content -->
+  <div class="relative z-10 p-4 lg:p-5 flex flex-col flex-1">
+
+    <!-- ── Header row ── -->
+    <div class="flex items-center justify-between gap-3 mb-4">
+      <div class="flex items-center gap-3">
+        @if(subject?.image){
+        <div class="relative shrink-0">
+          <div class="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-cm-border shadow-md">
+            <img [src]="subject.image" [alt]="subject.title" class="w-full h-full object-cover">
           </div>
+          <div class="absolute -inset-1 rounded-xl blur-md opacity-25 -z-10"
+               [style.backgroundColor]="subject.color || '#6366f1'"></div>
         </div>
-        <div
-          [class]="compact ? 'col-7' : 'col-xl-8 col-lg-8 col-md-7 col-sm-12'"
-        >
-          <ul class="list-unstyled">
-            <li>
-              <div class="mb-2">
-                <span class="progress-label">Overall Score</span>
-                <span
-                  class="float-end progress-percent label m-b-5 text-white"
-                  [style.backgroundColor]="subject.color"
-                  >{{ subject.score }}%</span
-                >
-              </div>
-              <div class="progress skill-progress m-b-20 w-100">
-                <div
-                  class="progress-bar"
-                  [style.backgroundColor]="subject.color"
-                  [style.width]="subject.score + '%'"
-                  role="progressbar"
-                  [attr.aria-valuenow]="subject.score"
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                ></div>
-              </div>
-            </li>
-            @if (showAverageAccuracy) {
-              <li>
-                <div class="mb-2">
-                  <span class="progress-label">Avg. Accuracy</span>
-                  <span
-                    class="float-end progress-percent label m-b-5"
-                    [ngClass]="'label-success text-white'"
-                    >{{ subject.avgAccuracy }}%</span
-                  >
-                </div>
-                <div class="progress skill-progress m-b-20 w-100">
-                  <div
-                    class="progress-bar"
-                    [ngClass]="'progress-bar-success'"
-                    [style.width]="subject.avgAccuracy + '%'"
-                    role="progressbar"
-                    [attr.aria-valuenow]="subject.avgAccuracy"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  ></div>
-                </div>
-              </li>
-            }
-            <li>
-              <div class="mb-2">
-                <span class="progress-label">Completion</span>
-                <span
-                  class="float-end progress-percent label m-b-5"
-                  [ngClass]="'bg-dark text-white'"
-                  >{{ subject.coverage }}%</span
-                >
-              </div>
-              <div class="progress skill-progress m-b-20 w-100">
-                <div
-                  class="progress-bar"
-                  [ngClass]="'bg-dark'"
-                  [style.width]="subject.coverage + '%'"
-                  role="progressbar"
-                  [attr.aria-valuenow]="subject.coverage"
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                ></div>
-              </div>
-            </li>
-          </ul>
+        }
+        <div>
+          <h2 class="text-lg font-black text-cm-text-primary tracking-tight leading-none">
+            {{subject.title}}
+          </h2>
+          <p class="text-[11px] text-cm-text-muted mt-0.5 font-medium">Learning Progress</p>
         </div>
-      } @else {
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-          <div class="text-center">
-            <!-- <img src="{{subject.image}}" class="subject-img" alt="{{subject.title}}" /> -->
-            <img
-              src="{{ subject.image }}"
-              class="subjectImg"
-              alt="{{ subject.title }}"
-            />
-            <h5 class="m-t-10">{{ subject.title }}</h5>
-            <mat-card-title class="cmSubHeading"
-              >Learn {{ subject.description }}</mat-card-title
-            >
-            <p class="m-t-10">
-              Enroll into {{ subject.title }} to start levelling up your skills.
-            </p>
-          </div>
-        </div>
-      }
+      </div>
+
+      <!-- Active badge -->
+      <span class="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full text-[10px] font-bold
+                   bg-green-500/10 text-green-600 border border-green-500/20 shrink-0">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+        Active
+      </span>
     </div>
-  </mat-card-content>
-  <mat-card-footer class="text-center m-t-0">
-    @if (subject?.isSubscribed) {
-      <hr class="dim-divider" />
-    } @else {
-      <hr class="dim-divider" />
-      <p
-        class="m-b-10 font-12 d-flex align-items-center justify-content-center"
-      >
-        🏆 Level up your {{ subject.title }} skills.
+
+    <!-- ── Chart + Stat cards ── -->
+    <div class="flex flex-col sm:flex-row items-center gap-4 flex-1">
+
+      <!-- Radial gauge -->
+      <div class="shrink-0 text-center">
+        <apx-chart
+          [series]="cardChartOptions.series!"
+          [chart]="cardChartOptions.chart!"
+          [plotOptions]="cardChartOptions.plotOptions!"
+          [colors]="cardChartOptions.colors!"
+          [labels]="cardChartOptions.labels!"/>
+        <p class="text-[10px] font-bold text-cm-text-muted -mt-4 tracking-widest uppercase">
+          Overall Score
+        </p>
+      </div>
+
+      <!-- Three stat mini-cards -->
+      <div class="flex-1 grid grid-cols-3 gap-2.5 w-full self-center">
+
+        <!-- Score -->
+        <div class="rounded-xl p-3 border border-cm-border bg-cm-surface-muted
+                    hover:shadow-md hover:-translate-y-0.5 hover:border-cm-border-strong
+                    transition-all duration-300 cursor-default">
+          <span class="text-[10px] font-bold text-cm-text-muted uppercase tracking-wider block mb-1.5">
+            Score
+          </span>
+          <span class="text-xl font-black leading-none block" [ngClass]="getScoreClass(subject.score)">
+            {{subject.score}}<span class="text-sm font-semibold text-cm-text-muted">%</span>
+          </span>
+          <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mt-2">
+            <div class="h-full rounded-full bar-anim bar-anim-1"
+                 [style.width]="subject.score + '%'"
+                 [style.backgroundColor]="subject.color || '#6366f1'"></div>
+          </div>
+        </div>
+
+        <!-- Accuracy -->
+        @if(showAverageAccuracy){
+        <div class="rounded-xl p-3 border border-cm-border bg-cm-surface-muted
+                    hover:shadow-md hover:-translate-y-0.5 hover:border-cm-border-strong
+                    transition-all duration-300 cursor-default">
+          <span class="text-[10px] font-bold text-cm-text-muted uppercase tracking-wider block mb-1.5">
+            Accuracy
+          </span>
+          <span class="text-xl font-black text-green-600 leading-none block">
+            {{subject.avgAccuracy}}<span class="text-sm font-semibold text-green-400">%</span>
+          </span>
+          <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mt-2">
+            <div class="h-full bg-green-500 rounded-full bar-anim bar-anim-2"
+                 [style.width]="subject.avgAccuracy + '%'"></div>
+          </div>
+        </div>
+        }
+
+        <!-- Coverage / Done -->
+        <div class="rounded-xl p-3 border border-cm-border bg-cm-surface-muted
+                    hover:shadow-md hover:-translate-y-0.5 hover:border-cm-border-strong
+                    transition-all duration-300 cursor-default">
+          <span class="text-[10px] font-bold text-cm-text-muted uppercase tracking-wider block mb-1.5">
+            Done
+          </span>
+          <span class="text-xl font-black text-cm-brand leading-none block">
+            {{subject.coverage}}<span class="text-sm font-semibold text-cm-text-muted">%</span>
+          </span>
+          <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mt-2">
+            <div class="h-full bg-cm-brand rounded-full bar-anim bar-anim-3"
+                 [style.width]="subject.coverage + '%'"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Motivational footer strip ── -->
+    <div class="mt-4 pt-3 border-t border-cm-border/50 flex items-center justify-between gap-3 flex-wrap">
+      <p class="text-[11px] text-cm-text-secondary leading-snug">
+        @if(subject.score >= 70 && subject.avgAccuracy >= 70){
+          @if(subject.score > 90 && subject.avgAccuracy > 90){
+            🎉 Topper — exceptional performance across all metrics.
+          }@else{
+            👍 Great progress — keep the momentum going.
+          }
+        }@else if(subject.score < 40){
+          ❌ More practice needed — your {{subject.title}} scores need attention.
+        }@else if(subject.score > 55 && subject.avgAccuracy > 60){
+          😊 Steady improvement — a few more sessions will push you over the top.
+        }@else{
+          💡 Take more quizzes to boost your score and accuracy.
+        }
       </p>
-      <div class="text-center p-t-20 p-b-20">
-        <button
-          mat-stroked-button
-          color="primary"
-          (click)="onEnrollSubject(subject)"
-        >
-          <i class="material-icons psr-2">trending_up</i> Start Learning
+      <button mat-stroked-button class="text-xs h-7 shrink-0" (click)="onExploreSubject(subject)">
+        <mat-icon class="text-[14px]">open_in_new</mat-icon> Details
+      </button>
+    </div>
+
+  </div>
+</div>
+
+}
+
+<!-- ── NOT YET ENROLLED ───────────────────────────────────── -->
+@if(!subject?.isSubscribed){
+
+<div class="relative rounded-2xl overflow-hidden border border-cm-border h-full"
+     [style.boxShadow]="cardShadow">
+  <div class="absolute inset-0 bg-cm-surface"></div>
+  <div class="absolute inset-0 opacity-[0.04]" [style.backgroundColor]="subject?.color || '#6366f1'"></div>
+  <div class="absolute -bottom-10 -left-10 w-56 h-56 rounded-full blur-3xl opacity-[0.08]"
+       [style.backgroundColor]="subject?.color || '#6366f1'"></div>
+
+  <div class="h-1 w-full relative z-10"
+       [style.background]="'linear-gradient(90deg,' + (subject?.color||'#6366f1') + '60, transparent)'">
+  </div>
+
+  <div class="relative z-10 flex flex-col sm:flex-row items-center gap-6 p-5 lg:p-6">
+    <!-- Subject avatar -->
+    <div class="shrink-0 text-center">
+      <div class="relative">
+        <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-cm-border shadow-xl mx-auto">
+          <img [src]="subject?.image" [alt]="subject?.title" class="w-full h-full object-cover">
+        </div>
+        <div class="absolute -inset-1.5 rounded-2xl blur-lg opacity-20 -z-10"
+             [style.backgroundColor]="subject?.color || '#6366f1'"></div>
+      </div>
+      <span class="inline-flex items-center gap-1 mt-3 px-2.5 py-1 rounded-full text-[10px] font-bold
+                   bg-cm-surface-raised border border-cm-border text-cm-text-muted">
+        Not Enrolled
+      </span>
+    </div>
+
+    <div class="flex-1 text-center sm:text-left">
+      <h2 class="text-2xl font-black text-cm-text-primary tracking-tight leading-none">
+        {{subject?.title}}
+      </h2>
+      <p class="text-xs text-cm-text-secondary mt-2 leading-relaxed max-w-md">
+        {{subject?.description}}
+      </p>
+      <div class="mt-4 flex flex-wrap gap-3 justify-center sm:justify-start">
+        <button mat-flat-button color="primary" (click)="onEnrollSubject(subject)" class="rounded-xl">
+          <mat-icon>trending_up</mat-icon> Start Learning
+        </button>
+        <button mat-stroked-button (click)="onExploreSubject(subject)" class="rounded-xl">
+          Explore First
         </button>
       </div>
-    }
+    </div>
+  </div>
+</div>
 
-    @if (subject?.isSubscribed) {
-      <p
-        class="m-b-20 m-t-0 font-12 d-flex align-items-center justify-content-center"
-      >
-        @if (subject.score >= 70 && subject.avgAccuracy >= 70) {
-          @if (subject.score > 90 && subject.avgAccuracy > 90) {
-            <i class="material-icons col-green me-2">celebration</i>
-            👏 Excellent! You are recognized as a topper. 🏆
-          } @else {
-            👍 Great! You’re levelling up your skills.
-          }
-        } @else {
-          @if (subject.score < 40) {
-            ❌ Need to improve your {{ subject.title }} skills. 😞
-          } @else {
-            @if (subject.score > 55 && subject.avgAccuracy > 60) {
-              <i class="material-icons col-green me-2">sentiment_satisfied</i>
-              Fair Performance. Keep Improving.
-            } @else {
-              <i class="material-icons col-green me-2">lightbulb_outline</i>
-              Take more quizzes to improve your score.
-            }
-          }
-        }
-      </p>
-    }
-
-    <!-- <p class="m-b-20 m-t-0 font-12 d-flex align-items-center justify-content-center">
-       @if (subject.coverage > 5 && subject.avgAccuracy < 40) { <i class="material-icons col-green me-2">pan_tool</i>
-          Oh! Your {{subject.title}} accuracy is falling down. Avoid wrong attempts.
-          }else{
-
-        }
-    </p> -->
-  </mat-card-footer>
-</mat-card>
+}

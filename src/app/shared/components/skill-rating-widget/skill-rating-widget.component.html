@@ -1,37 +1,70 @@
-<ul class="list-unstyled user-progress list-unstyled-border list-unstyled-noborder">
-  @for (skillRating of skillRatings(); track skillRating) {
-  <li class="skills-list">
-    <img alt="image" class="msr-3 rounded-circle" width="40" [src]="skillRating.imageUrl">
-    <div class="">
-      <div class="media-title font-16 font-b-500">{{ skillRating.skillName }}</div>
-      @if (skillRating.rating > 0) {
-      <!-- <div class="text-job text-muted mb-0 font-12">Rating: {{ skillRating.rating }}/5</div> -->
-      <ng-container>
-        @for (star of [1,2,3,4,5]; track star) {
-        @if (skillRating.rating >= star) {
-        <mat-icon color="warn">star</mat-icon>
-        }
-        @if (skillRating.rating < star && skillRating.rating>= star - 0.5) {
-          <mat-icon color="warn">star_half</mat-icon>
-          }
-          @if (skillRating.rating < star - 0.5) { <mat-icon color="warn">star_border</mat-icon>
-            }
-            }
-      </ng-container>
-      }
+@if(skillRatings().length === 0) {
+<div class="flex flex-col items-center justify-center py-10 text-center">
+  <div class="w-12 h-12 rounded-full bg-cm-surface-raised border border-cm-border
+              flex items-center justify-center mb-3">
+    <i class="fa-regular fa-star text-cm-text-muted text-lg"></i>
+  </div>
+  <p class="text-sm font-semibold text-cm-text-primary mb-1">No skills rated yet</p>
+  <p class="text-xs text-cm-text-muted leading-relaxed max-w-[200px] mx-auto">
+    Add your first skill rating to personalise your learning path.
+  </p>
+</div>
+}
 
+<div class="space-y-2">
+  @for(s of skillRatings(); track s.skillId) {
+  <div class="flex items-center gap-3 p-3 rounded-xl border border-cm-border
+              bg-cm-surface hover:bg-cm-surface-hover transition-colors duration-150">
+
+    <!-- Tech icon -->
+    <div class="w-10 h-10 rounded-xl border border-cm-border bg-cm-surface-raised
+                flex items-center justify-center overflow-hidden shrink-0">
+      @if(s.imageUrl) {
+        <img [src]="s.imageUrl" [alt]="s.skillName" class="w-7 h-7 object-contain">
+      } @else {
+        <i class="fa-solid fa-code text-cm-text-muted text-sm"></i>
+      }
     </div>
-    <div class="ms-auto">
-      @if (skillRating.level) {
-      <div class="media-title font-14 font-b-500">{{ skillRating.level }}</div>
-      }
-      @if (skillRating.grade) {
-      <div class="text-job text-muted mb-0 font-12">{{ skillRating.grade }}</div>
-      }
-       @if (!skillRating.knows) {
-      <div class="text-job text-muted mb-0 font-12">Not Known</div>
+
+    <!-- Info -->
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="text-xs font-bold text-cm-text-primary truncate leading-none">{{ s.skillName }}</span>
+        @if(s.level) {
+        <span class="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full
+                     bg-cm-brand-dim text-cm-brand-text border border-cm-brand/30 leading-none">
+          {{ s.level }}
+        </span>
+        }
+      </div>
+
+      @if(s.rating) {
+      <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-0.5">
+          @for(star of [1,2,3,4,5]; track star) {
+            @if(s.rating >= star) {
+              <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
+            } @else if(s.rating >= star - 0.5) {
+              <i class="fa-solid fa-star-half-stroke text-amber-400 text-[11px]"></i>
+            } @else {
+              <i class="fa-regular fa-star text-cm-border-strong text-[11px]"></i>
+            }
+          }
+        </div>
+        @if(s.grade) {
+        <span class="text-[10px] text-cm-text-muted">· {{ s.grade }}</span>
+        }
+      </div>
+      } @else if(!s.knows) {
+      <span class="inline-flex items-center gap-1 text-[10px] font-medium text-cm-text-muted">
+        <i class="fa-solid fa-circle-question text-[9px]"></i>
+        Not familiar yet
+      </span>
+      } @else {
+      <span class="text-[10px] text-cm-text-muted">Not yet rated</span>
       }
     </div>
-  </li>
+
+  </div>
   }
-</ul>
+</div>

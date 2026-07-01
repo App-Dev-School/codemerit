@@ -1,14 +1,55 @@
-<div class="recent-comment">
-  @for (comment of achievements; track comment) {
-    <div class="notice-board">
-      <div class="table-img">
-        <img class="notice-object" [src]="comment.imgSrc" alt="Achievement">
-      </div>
-      <div class="notice-body">
-        <p class="notice-heading {{comment.colorClass}} font-16 font-b-500">{{ comment.name }}</p>
-        <p>{{ comment.message }}</p>
-        <small class="text-muted">{{ comment.timestamp }}</small>
-      </div>
+@if(achievements?.length > 0){
+
+<div class="flex gap-7 overflow-x-auto pb-3 badge-scroll">
+
+  @for(badge of achievements; let i = $index; track badge){
+
+  <div class="badge-item flex-none w-[88px] flex flex-col items-center gap-2 cursor-default group">
+
+    <!-- Badge image with ambient glow -->
+    <div class="relative w-16 h-16">
+      <div class="absolute inset-0 rounded-full scale-[2.2] blur-2xl opacity-0
+                  group-hover:opacity-70 transition-opacity duration-500"
+           [style.backgroundColor]="getTier(i).glow"></div>
+      <img [src]="badge.imgSrc" [alt]="badge.name"
+           class="relative w-16 h-16 object-contain drop-shadow-lg
+                  group-hover:scale-110 transition-transform duration-300">
     </div>
+
+    <!-- Tier chip -->
+    <span class="inline-flex items-center gap-0.5 px-2 py-[2px] rounded-full
+                 text-[9px] font-black uppercase tracking-widest"
+          [style.color]="getTier(i).ring"
+          [style.backgroundColor]="getTier(i).glow">
+      ★ {{getTier(i).label}}
+    </span>
+
+    <!-- Badge name -->
+    <p class="text-[11px] font-bold text-cm-text-primary text-center leading-tight line-clamp-2">
+      {{badge.name}}
+    </p>
+
+    <!-- Earned timestamp -->
+    <p class="text-[10px] text-cm-text-muted text-center leading-snug">
+      {{badge.timestamp}}
+    </p>
+
+  </div>
   }
+
 </div>
+
+}@else{
+
+<!-- Empty state -->
+<div class="flex flex-col items-center justify-center py-8 gap-3 text-center">
+  <div class="w-14 h-14 rounded-2xl bg-cm-surface-raised flex items-center justify-center">
+    <span class="text-2xl">🎖️</span>
+  </div>
+  <div>
+    <p class="text-xs font-bold text-cm-text-primary">No badges yet</p>
+    <p class="text-[11px] text-cm-text-muted mt-0.5">Complete assessments and milestones to earn credentials</p>
+  </div>
+</div>
+
+}

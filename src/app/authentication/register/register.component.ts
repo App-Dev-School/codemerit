@@ -1,0 +1,204 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '@core/service/auth.service';
+import { SnackbarService } from '@core/service/snackbar.service';
+import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ParticleCanvasComponent],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.scss'
+})
+export class RegisterComponent implements OnInit {
+
+  currentStep = 1;
+  readonly totalSteps = 4;
+  highestStepReached = 1;
+  loading = false;
+  success = false;
+
+  form!: FormGroup;
+
+  masteryLabel = 'Beginner';
+  masteryLabelClass = 'mastery-val mastery-val--beginner';
+
+  readonly steps = [
+    { label: 'Goal Setting' },
+    { label: 'Skill Mapping' },
+    { label: 'Experience' },
+    { label: 'Become SME' },
+  ];
+
+  readonly focusAreaOptions = [
+    'Sys Architecture', 'API Design', 'Cloud Computing', 'CI/CD Pipelines',
+    'Data Modeling', 'Cybersecurity', 'Agile / Scrum', 'Testing / QA',
+  ];
+
+  readonly techData: Record<string, string[]> = {
+    frontend:  ['Web Designer - 1', 'Web Programmer', 'JavaScript Developer', 'React / Vue Specialist', 'UI Engineer', 'Frontend Architect'],
+    backend:   ['Node API Developer', 'Backend Engineer - 1', 'Backend Engineer - 2', 'Java / Spring Boot Developer', 'Python / Django Developer', 'Go Microservices Engineer'],
+    fullstack: ['MERN Stack Developer', 'MEAN Stack Developer', 'Full-Stack Engineer - 1', 'Full-Stack Web App Developer'],
+    aiml:      ['Data Scientist - 1', 'Machine Learning Engineer', 'NLP Specialist', 'Computer Vision Engineer', 'AI Researcher'],
+    data:      ['Data Engineer - 1', 'Big Data Architect', 'Database Administrator (DBA)', 'Analytics Engineer'],
+    devops:    ['Cloud Architect', 'Site Reliability Engineer (SRE)', 'DevOps Engineer - 1', 'Release Manager', 'Kubernetes Administrator'],
+    gamedev:   ['Unity Developer', 'Unreal Engine C++ Dev', 'Gameplay Programmer', 'Technical Artist'],
+    mobile:    ['iOS / Swift Developer', 'Android / Kotlin Developer', 'React Native Specialist', 'Flutter Engineer'],
+  };
+
+  availableTracks: string[] = [];
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private snackbar: SnackbarService,
+  ) {}
+
+  ngOnInit() {
+    this.form = this.fb.group({
+      techArea:        ['', Validators.required],
+      track:           [{ value: '', disabled: true }, Validators.required],
+      dreamRole:       [''],
+      masteryLevel:    [25],
+      focusAreas:      [[]],
+      yearsExperience: [null],
+      achievement:     [''],
+      firstName:       ['', [Validators.required, Validators.maxLength(20)]],
+      lastName:        ['', Validators.maxLength(20)],
+      email:           ['', [Validators.required, Validators.email]],
+      password:        ['', [Validators.required, Validators.minLength(6)]],
+    });
+  }
+
+  // ─── Computed helpers ──────────────────────────────────────────
+
+  get progressWidth(): number {
+    return ((this.currentStep - 1) / (this.totalSteps - 1)) * 100;
+  }
+
+  isCompleted(step: number): boolean { return step < this.currentStep; }
+  isActive(step: number):    boolean { return step === this.currentStep; }
+  isReachable(step: number): boolean { return step <= this.highestStepReached; }
+
+  stepBtnClass(step: number): string {
+    if (this.isCompleted(step)) return 'step-btn step-btn--done';
+    if (this.isActive(step))    return 'step-btn step-btn--active';
+    return 'step-btn step-btn--pending';
+  }
+
+  stepTextClass(step: number): string {
+    if (this.isCompleted(step)) return 'step-label step-label--done';
+    if (this.isActive(step))    return 'step-label step-label--active';
+    return 'step-label step-label--pending';
+  }
+
+  trackValue(track: string): string {
+    return track.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+  }
+
+  // ─── Form interactions ─────────────────────────────────────────
+
+  onTechAreaChange() {
+    const area = this.form.get('techArea')!.value as string;
+    this.availableTracks = this.techData[area] || [];
+    const trackCtrl = this.form.get('track')!;
+    trackCtrl.setValue('');
+    this.availableTracks.length ? trackCtrl.enable() : trackCtrl.disable();
+  }
+
+  onMasteryInput(event: Event) {
+    const val = +(event.target as HTMLInputElement).value;
+    this.form.get('masteryLevel')!.setValue(val);
+    if (val < 33)      { this.masteryLabel = 'Beginner';     this.masteryLabelClass = 'mastery-val mastery-val--beginner'; }
+    else if (val < 66) { this.masteryLabel = 'Intermediate'; this.masteryLabelClass = 'mastery-val mastery-val--mid'; }
+    else               { this.masteryLabel = 'Advanced';     this.masteryLabelClass = 'mastery-val mastery-val--advanced'; }
+  }
+
+  toggleFocusArea(area: string) {
+    const current: string[] = [...(this.form.get('focusAreas')!.value || [])];
+    const idx = current.indexOf(area);
+    idx > -1 ? current.splice(idx, 1) : current.push(area);
+    this.form.get('focusAreas')!.setValue(current);
+  }
+
+  isFocusAreaSelected(area: string): boolean {
+    return (this.form.get('focusAreas')!.value as string[]).includes(area);
+  }
+
+  // ─── Stepper navigation ────────────────────────────────────────
+
+  nextStep() {
+    if (this.currentStep === 1) {
+      const techArea = this.form.get('techArea')!.value;
+      const track    = this.form.get('track')!.value;
+      if (!techArea || !track) {
+        this.snackbar.display('snackbar-danger', 'Please select a Tech Area and Track to continue.', 'bottom', 'center');
+        return;
+      }
+    }
+    if (this.currentStep < this.totalSteps) {
+      this.currentStep++;
+      if (this.currentStep > this.highestStepReached) this.highestStepReached = this.currentStep;
+    }
+  }
+
+  prevStep() {
+    if (this.currentStep > 1) this.currentStep--;
+  }
+
+  goToStep(step: number) {
+    if (this.isReachable(step)) this.currentStep = step;
+  }
+
+  // ─── Submit ────────────────────────────────────────────────────
+
+  onSubmit() {
+    const firstName = this.form.get('firstName')!;
+    const email     = this.form.get('email')!;
+    const password  = this.form.get('password')!;
+    if (firstName.invalid || email.invalid || password.invalid) {
+      this.snackbar.display('snackbar-danger', 'Please fill all required fields correctly.', 'bottom', 'center');
+      return;
+    }
+    this.loading = true;
+    const v = this.form.getRawValue();
+    const postData = {
+      firstName:       v.firstName,
+      lastName:        v.lastName || '',
+      email:           v.email,
+      password:        v.password,
+      mobile:          null,
+      city:            null,
+      country:         'India',
+      about:           v.track || '',
+      techArea:        v.techArea,
+      track:           v.track,
+      dreamRole:       v.dreamRole,
+      masteryLevel:    v.masteryLevel,
+      focusAreas:      v.focusAreas,
+      yearsExperience: v.yearsExperience,
+      achievement:     v.achievement,
+      flow:            'Registration',
+    };
+
+    this.authService.register(postData).subscribe({
+      next: (res) => {
+        this.loading = false;
+        if (res && res.data && res.data.id) {
+          this.authService.setLocalData(res.data);
+        }
+        this.success = true;
+        setTimeout(() => this.router.navigate(['/authentication/verify']), 3000);
+      },
+      error: () => {
+        this.loading = false;
+        this.snackbar.display('snackbar-danger', 'Error connecting to server. Please try again.', 'bottom', 'center');
+      },
+    });
+  }
+
+}

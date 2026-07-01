@@ -1,9 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { Direction } from '@angular/cdk/bidi';
 import { NgTemplateOutlet } from '@angular/common';
@@ -17,7 +12,6 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation } from '@shared/animations';
 import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
-import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
@@ -30,15 +24,9 @@ import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/co
   styleUrls: ['./course-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatCheckboxModule,
-    MatTooltipModule,
     MatTabsModule,
     NgTemplateOutlet,
     CongratulationsCardComponent,
-    MedalCardComponent,
     SubjectTrackerCardComponent
   ]
 })

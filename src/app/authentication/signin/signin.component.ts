@@ -1,47 +1,36 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService, Role } from '@core';
 import { AuthConstants } from '@config/AuthConstants';
+import { AuthService, Role } from '@core';
 import { MasterService } from '@core/service/master.service';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
+import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
 import { environment } from 'src/environments/environment';
+
 @Component({
   selector: 'app-signin',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, ParticleCanvasComponent],
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss'],
-  imports: [
-    RouterLink,
-    //RouterModule,
-    MatButtonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule
-  ]
 })
-export class SigninComponent
-  extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+export class SigninComponent extends UnsubscribeOnDestroyAdapter implements OnInit {
+
   authForm!: UntypedFormGroup;
   submitted = false;
-  loading = false;
-  error = '';
-  hide = true;
+  loading   = false;
+  error     = '';
+  hide      = true;
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     private master: MasterService,
     private router: Router,
-    public route: ActivatedRoute,
-    private authService: AuthService
-  ) {
-    super();
-  }
+    public  route: ActivatedRoute,
+    private authService: AuthService,
+  ) { super(); }
 
   ngOnInit() {
     this.authForm = this.formBuilder.group({
@@ -53,109 +42,57 @@ export class SigninComponent
       this.authForm.get('password')?.setValue('180099');
     }
   }
-  get f() {
-    return this.authForm.controls;
-  }
+
+  get f() { return this.authForm.controls; }
 
   onSubmit() {
     this.error = '';
     if (this.authForm.invalid) {
-      this.error = 'Username and Password not valid !';
+      this.error = 'Please enter a valid email and password.';
       return;
-    } else {
-      this.submitted = true;
-      this.loading = true;
-      const payload = {
-        email: this.f['username'].value,
-        password: this.f['password'].value
-      }
-      this.subs.sink = this.authService
-        .login(payload)
-        .subscribe({
-          next: (res) => {
-            if (res && !res.error && res.data) {
-              setTimeout(() => {
-                const redirectUrl =
-                  localStorage.getItem(
-                    AuthConstants.REDIRECT_URL,
-                  );
-
-                if (redirectUrl) {
-                  localStorage.removeItem(
-                    AuthConstants.REDIRECT_URL,
-                  );
-
-                  this.router.navigateByUrl(
-                    redirectUrl
-                  );
-
-                  this.loading = false;
-                  this.master.fetchMasterDataFromAPI();
-                  return;
-                }
-
-                const role = this.authService.currentUserValue.role;
-                if (role === Role.All || role === Role.Admin) {
-                  this.router.navigate(['/admin/dashboard/main']);
-                } else {
-                  if (role === Role.Subscriber || role === Role.Manager) {
-                    if (this.authService.getUserJobRoles()?.length > 0) {
-                      this.redirectToLearnerDashboard();
-                    } else {
-                      this.router.navigate(['/select-job-role']);
-                    }
-                  }
-                }
-                this.loading = false;
-                //Need to verify this call
-                //Yes master data is required in many places and if we don't fetch here then it may create issue in those places
-                this.master.fetchMasterDataFromAPI();
-              }, 1000);
-            } else {
-              this.error = 'Invalid Login';
+    }
+    this.submitted = true;
+    this.loading   = true;
+    const payload = {
+      email:    this.f['username'].value,
+      password: this.f['password'].value,
+    };
+    this.subs.sink = this.authService.login(payload).subscribe({
+      next: (res) => {
+        if (res && !res.error && res.data) {
+          setTimeout(() => {
+            const redirectUrl = localStorage.getItem(AuthConstants.REDIRECT_URL);
+            if (redirectUrl) {
+              localStorage.removeItem(AuthConstants.REDIRECT_URL);
+              this.router.navigateByUrl(redirectUrl);
+              this.loading = false;
+              this.master.fetchMasterDataFromAPI();
+              return;
             }
-          },
-          error: (error) => {
-            this.error = error;
-            this.submitted = false;
+            const role = this.authService.currentUserValue.role;
+            if (role === Role.All || role === Role.Admin) {
+              this.router.navigate(['/admin/dashboard/main']);
+            } else if (role === Role.Subscriber || role === Role.Manager) {
+              this.authService.getUserJobRoles()?.length > 0
+                ? this.router.navigate(['/dashboard'])
+                : this.router.navigate(['/select-job-role']);
+            }
             this.loading = false;
-          },
-        });
-    }
+            this.master.fetchMasterDataFromAPI();
+          }, 1000);
+        } else {
+          this.error     = 'Invalid credentials. Please try again.';
+          this.submitted = false;
+          this.loading   = false;
+        }
+      },
+      error: (err) => {
+        this.error     = err || 'Login failed. Please try again.';
+        this.submitted = false;
+        this.loading   = false;
+      },
+    });
   }
 
-  activateTestLogin() {
-    this.authForm.get('username')?.setValue('user3@codemerit.com');
-    this.authForm.get('password')?.setValue('605161');
-    // this.authForm.get('username')?.setValue('mahesha@gmail.com');
-    // this.authForm.get('password')?.setValue('560950');
-  }
-
-  activateTestUserLogin() {
-    this.authForm.get('username')?.setValue('student@codemerit.com');
-    this.authForm.get('password')?.setValue('788007');
-  }
-
-  connectWithGoogle() {
-    console.log("connectWithGoogle => " + this.authService.currentUser);
-  }
-
-  navigateToSignUp() {
-    this.router.navigate(['/authentication/signup']);
-  }
-
-  onRegisterLink() {
-    this.navigateToSignUp();
-  }
-
-  redirectToLearnerDashboard() {
-    if(this.authService.currentUserValue){
-      if (this.authService.getUserJobRoles()?.length > 0) {
-      this.router.navigate(['/dashboard']);
-    }else{
-      this.router.navigate(['/dashboard/start']);
-    }
-    }
-  }
-
+  navigateToRegister() { this.router.navigate(['/authentication/register']); }
 }

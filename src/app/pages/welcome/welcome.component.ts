@@ -1,11 +1,4 @@
-import { JsonPipe } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatRippleModule } from '@angular/material/core';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '@core';
 import { RatingType } from '@core/models/rating-type';
@@ -14,9 +7,7 @@ import { SkillType } from '@core/models/skill-type';
 import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { CertificateModel, CertificateTemplateId } from '@shared/components/certificate/certificate.model';
-import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
 import { MedalCardComponent } from "@shared/components/medal-card/medal-card.component";
 import { ReportListComponent } from '@shared/components/report-list/report-list.component';
@@ -131,24 +122,10 @@ export const certificateModels: CertificateModel[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
   imports: [
-    JsonPipe,
     RouterLink,
-    NgScrollbar,
-    MatCardModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatRippleModule,
-    MatIconModule,
     LearnerWelcomeCardComponent,
-    CertificateComponent,
-    SubjectSkillRatingComponent,
-    CongratulationsCardComponent,
-    SkillRatingWidgetComponent,
-    ReportListComponent,
-    MedalCardComponent
+    MeritListWidgetComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
   //  animations: [
   //     trigger('fadeOut', [
   //       transition(':leave', [
@@ -169,6 +146,14 @@ export class WelcomeComponent implements OnInit {
   subjectsByRole: { [role: string]: Course[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
   certificateModels: CertificateModel[] = [];
+
+  meritList = [
+    { id: 1, name: 'Vishal Kumar',  username: 'vishal',  designationName: 'Angular Architect', score: 96, avgAccuracy: 92, image: 'assets/images/users/user.jpg' },
+    { id: 2, name: 'Priya Sharma',  username: 'priya',   designationName: 'Frontend Dev',      score: 91, avgAccuracy: 88 },
+    { id: 3, name: 'Arjun Patel',   username: 'arjun',   designationName: 'Full Stack Dev',    score: 87, avgAccuracy: 84 },
+    { id: 4, name: 'Golda Maria',   username: 'golda',   designationName: 'Intern',            score: 82, avgAccuracy: 79 },
+    { id: 5, name: 'Taylor Star',   username: 'taylor',  designationName: 'Contributor',       score: 75, avgAccuracy: 71 },
+  ];
 
   skillRatings: SkillRating[] = [
     {
@@ -262,7 +247,6 @@ export class WelcomeComponent implements OnInit {
     }
   ];
 
-  @ViewChild('swiperEx') swiperRef!: ElementRef<any>;
 
   constructor(private router: Router,
     private master: MasterService,
@@ -378,6 +362,55 @@ export class WelcomeComponent implements OnInit {
         console.log('Navigation completed!');
       });
     }
+  }
+
+  certMeta(id: CertificateTemplateId): { accentColor: string; iconBg: string; iconColor: string; icon: string; label: string } {
+    const map: Record<string, { accentColor: string; iconBg: string; iconColor: string; icon: string; label: string }> = {
+      [CertificateTemplateId.MilestoneCompletion]: {
+        accentColor: '#818cf8', iconBg: 'rgba(99,102,241,0.12)', iconColor: '#818cf8',
+        icon: 'fa-solid fa-trophy', label: 'Milestone',
+      },
+      [CertificateTemplateId.InternshipCompletion]: {
+        accentColor: '#34d399', iconBg: 'rgba(52,211,153,0.12)', iconColor: '#34d399',
+        icon: 'fa-solid fa-graduation-cap', label: 'Internship',
+      },
+      [CertificateTemplateId.WorkExperience]: {
+        accentColor: '#fbbf24', iconBg: 'rgba(251,191,36,0.12)', iconColor: '#fbbf24',
+        icon: 'fa-solid fa-briefcase', label: 'Work Experience',
+      },
+      [CertificateTemplateId.Appreciation]: {
+        accentColor: '#fb7185', iconBg: 'rgba(251,113,133,0.12)', iconColor: '#fb7185',
+        icon: 'fa-solid fa-heart', label: 'Appreciation',
+      },
+    };
+    return map[id] ?? { accentColor: '#6366f1', iconBg: 'rgba(99,102,241,0.12)', iconColor: '#6366f1', icon: 'fa-solid fa-certificate', label: 'Certificate' };
+  }
+
+  gradeColor(grade: string): string {
+    const map: Record<string, string> = {
+      'Excellent': '#34d399',
+      'Good':      '#818cf8',
+      'Average':   '#fbbf24',
+      'Poor':      '#f87171',
+    };
+    return map[grade] ?? '#818cf8';
+  }
+
+  difficultyMeta(difficulty: string): { label: string; color: string; bg: string } {
+    const map: Record<string, { label: string; color: string; bg: string }> = {
+      'Beginner':     { label: 'Beginner',     color: '#34d399', bg: 'rgba(52,211,153,0.12)'  },
+      'Intermediate': { label: 'Intermediate', color: '#fbbf24', bg: 'rgba(251,191,36,0.12)'  },
+      'Advanced':     { label: 'Advanced',     color: '#f87171', bg: 'rgba(248,113,113,0.12)' },
+    };
+    return map[difficulty] ?? { label: difficulty, color: '#818cf8', bg: 'rgba(99,102,241,0.12)' };
+  }
+
+  formatIssuedDate(date: Date): string {
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+
+  viewCertificate(cert: CertificateModel): void {
+    this.snackService.display('snackbar-dark', `${cert.platformName || cert.skillName} — full view coming soon`, 'bottom', 'center');
   }
 
   //separate component and then implement

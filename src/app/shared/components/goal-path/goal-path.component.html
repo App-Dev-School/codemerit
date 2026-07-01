@@ -1,70 +1,79 @@
-<swiper-container #swiperEx [config]="swiperConfig" slides-per-view="1" space-between="10">
-  <!-- <div class="swiper-wrapper"> -->
-  @for (topic of topics; let i = $index; track i) {
-  <swiper-slide class="stepper-slide">
-    <mat-card class="card">
-      <mat-card-content>
-        <!-- Step Circle -->
-        <div class="step-circle mb-2 m-t-10 d-flex justify-content-center align-items-center"
-          [ngStyle]="{'background-color':color}">
-          {{ i + 1 }}
-        </div>
-        <!-- Topic Info -->
-        <h4 class="text-center cmSubHeading m-t-0">{{ topic.title }}</h4>
-        <h5 class="text-center font-12 col-grey">Milestone - {{ i+1 }} / {{topics.length}}</h5>
-        <hr class="dim-divider">
+<swiper-container #swiperEx [config]="swiperConfig" slides-per-view="1" space-between="14">
+  @for(topic of topics; let i = $index; track i){
+  <swiper-slide class="pb-6">
 
-        <ul class="list-unstyled p-r-10 p-l-10">
-          <li>
-            <div class="mb-2">
-              <span class="progress-label">Milestone Score</span>
-              <span class="float-end progress-percent label m-b-5 text-white" [ngClass]="'label-success text-white'">{{
-                topic.score
-                }}%</span>
-            </div>
-            <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="topic.score + '%'"
-                role="progressbar" [attr.aria-valuenow]="topic.score" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-          </li>
-          <li>
-            <div class="mb-2">
-              <span class="progress-label">Accuracy</span>
-              <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success text-white'">{{
-                topic.avgAccuracy
-                }}%</span>
-            </div>
-            <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="topic.avgAccuracy + '%'"
-                role="progressbar" [attr.aria-valuenow]="topic.avgAccuracy" aria-valuemin="0" aria-valuemax="100">
-              </div>
-            </div>
-          </li>
-          <li>
-            <div class="mb-2">
-              <span class="progress-label">Completion</span>
-              <span class="float-end progress-percent label m-b-5" [ngClass]="'bg-dark text-white'">{{ topic.coverage
-                }}%</span>
-            </div>
-            <div class="progress skill-progress m-b-20 w-100">
-              <div class="progress-bar" [ngClass]="'bg-dark'" [style.width]="topic.coverage + '%'" role="progressbar"
-                [attr.aria-valuenow]="topic.coverage" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-          </li>
-        </ul>
-        <hr class="dim-divider">
-        <div class="text-center container-auth-form-btn m-b-10">
-          <button mat-stroked-button color="primary" class="m-b-0" (click)="onTakeNextQuiz(topic)">
-           🎯 Take Next Challenge
-          </button>
-          <!-- <p class="text-center font-12 col-grey m-t-5 m-b-5">OR</p>
-          <button mat-flat-button color="primary" class="m-t-0" (click)="onTakeNextQuiz(null)">
-            Test {{title}} Mastery
-          </button> -->
+    <div class="flex flex-col rounded-2xl overflow-hidden border border-cm-border
+                bg-cm-surface hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 h-full">
+
+      <!-- Gradient top bar using subject colour -->
+      <div class="h-1.5 w-full shrink-0"
+           [style.background]="'linear-gradient(90deg, ' + (color || '#6366f1') + ', ' + (color || '#6366f1') + '50)'"></div>
+
+      <!-- Card header -->
+      <div class="flex items-center gap-3 px-4 pt-4 pb-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black text-white shrink-0 shadow-sm"
+             [style.backgroundColor]="color || '#6366f1'">
+          {{i + 1}}
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="text-sm font-black text-cm-text-primary truncate leading-tight">{{topic.title}}</h4>
+          <p class="text-[11px] text-cm-text-muted mt-0.5">Milestone {{i+1}} / {{topics.length}}</p>
+        </div>
+        @if(topic.isCompleted){
+        <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+          <mat-icon class="text-white leading-none" style="font-size:14px">check</mat-icon>
+        </div>
+        }
+      </div>
+
+      <!-- Stats -->
+      <div class="px-4 pb-3 space-y-2.5 flex-1">
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-[11px] text-cm-text-muted font-medium">Score</span>
+            <span class="text-[11px] font-black text-green-600">{{topic.score}}%</span>
+          </div>
+          <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
+            <div class="h-full bg-green-500 rounded-full transition-all duration-700 ease-out"
+                 [style.width]="topic.score + '%'"></div>
+          </div>
         </div>
 
-      </mat-card-content>
-    </mat-card>
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-[11px] text-cm-text-muted font-medium">Accuracy</span>
+            <span class="text-[11px] font-black text-cm-brand">{{topic.avgAccuracy}}%</span>
+          </div>
+          <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
+            <div class="h-full bg-cm-brand rounded-full transition-all duration-700 ease-out"
+                 [style.width]="topic.avgAccuracy + '%'"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-[11px] text-cm-text-muted font-medium">Coverage</span>
+            <span class="text-[11px] font-black text-cm-text-secondary">{{topic.coverage}}%</span>
+          </div>
+          <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700 ease-out"
+                 [style.width]="topic.coverage + '%'"
+                 [style.backgroundColor]="color || '#6366f1'"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Button — plain Tailwind, matches subject colour -->
+      <div class="px-4 pb-4 pt-2">
+        <button class="w-full py-2.5 rounded-xl text-sm font-bold text-white cursor-pointer border-0
+                       hover:opacity-90 active:scale-[0.98] transition-all duration-200 outline-none"
+                [style.backgroundColor]="color || '#6366f1'"
+                (click)="onTakeNextQuiz(topic)">
+          🎯 Take Challenge
+        </button>
+      </div>
+
+    </div>
   </swiper-slide>
   }
 </swiper-container>

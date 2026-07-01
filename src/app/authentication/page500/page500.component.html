@@ -1,34 +1,35 @@
-<div class="auth-container">
-  <div class="row auth-main">
-    <div class="col-sm-6 px-0 d-none d-sm-block">
-      <div class="left-img" style="background-image: url(assets/images/pages/bg-05.png);">
-      </div>
+<app-particle-canvas />
+
+<div class="error-page">
+  <div class="error-card">
+
+    <div class="error-code">
+      <span class="text-gradient">500</span>
     </div>
-    <div class="col-sm-6 auth-form-section">
-      <div class="form-section">
-        <div class="auth-wrapper">
-          <form>
-            <span class="error-header p-b-45">
-              500
-            </span>
-            <span class="error-subheader2 p-b-5">
-              Oops, Something went wrong. Please try after some times.
-            </span>
-            <div class="container-auth-form-btn mt-5">
-              <button [routerLink]="'/app/welcome'" mat-flat-button color="primary" class="auth-form-btn" type="submit">
-                Go To Home Page
-              </button>
-            </div>
-            <div class="w-full p-t-15 p-b-15 text-center">
-              <div>
-                <a routerLink="/authentication/signin" class="txt1">
-                  Need Help?
-                </a>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+
+    <div class="error-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+      </svg>
     </div>
+
+    <h1 class="error-title">Something Went Wrong</h1>
+    <p class="error-subtitle">
+      An unexpected error occurred on our end. Please try again in a moment.
+    </p>
+
+    <a routerLink="/app/welcome" class="action-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Try Again
+    </a>
+
+    <div class="help-wrap">
+      <a routerLink="/authentication/signin" class="help-link">Need help? Sign in</a>
+    </div>
+
   </div>
 </div>

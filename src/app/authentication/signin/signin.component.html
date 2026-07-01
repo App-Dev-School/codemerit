@@ -1,91 +1,120 @@
-<div class="auth-container">
-  <div class="row auth-main">
-    <div class="col-sm-6 px-0 d-none d-sm-block brand-bg1">
-      <div class="left-img" style="background-image: url(assets/images/pages/signin.svg);">
-      </div>
-    </div>
-    <div class="col-sm-6 auth-form-section">
-      <div class="form-section">
-        <div class="auth-wrapper">
-          @if(!submitted){
-          <div class="loginHeader text-center">
-            <div class="text-center mb-3" routerLink="/app/welcome">
-            <img src="./../../../assets/images/logo.png" alt="codemerit" class="logo animEntry" />
-          </div>
-          <p class="auth-signup-text floating">Ready to Discover Your Interview Readiness? </p>
-          <hr class="dim-divider">
-          <h6 class="login-title pullUp">Log into your account</h6>
-          </div>
+<div class="signin-page">
+  <app-particle-canvas></app-particle-canvas>
 
-          <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
-            <div class="row">
-              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="fill">
-                  <mat-label>E-mail</mat-label>
-                  <input matInput formControlName="username" />
-                  <mat-icon class="material-icons-outlined p-3" matSuffix>face</mat-icon>
-                  @if (authForm.get('username')!.hasError('required')) {
-                  <mat-error>
-                    E-mail is required
-                  </mat-error>
-                  }
-                </mat-form-field>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="fill">
-                  <mat-label>Password</mat-label>
-                  <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
-                  <mat-icon class="material-icons-outlined pwd-toggle p-3" matSuffix (click)="hide = !hide">
-                    {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                  @if (authForm.get('password')!.hasError('required')) {
-                  <mat-error>
-                    Password is required
-                  </mat-error>
-                  }
-                </mat-form-field>
-              </div>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-5">
-              <div class="form-check">
-                <label class="form-check-label">
-                  <input class="form-check-input" type="checkbox" value=""> Remember me
-                  <span class="form-check-sign">
-                    <span class="check"></span>
-                  </span>
-                </label>
-              </div>
-              <a class="txt1" routerLink="/authentication/forgot-password">Forgot Password?</a>
-            </div>
-            @if (error) {
-            <div class="alert alert-danger mt-3 mb-3">{{error}}</div>
-            }
-            <div class="container-auth-form-btn">
-              <div style="text-align:center">
-                <button mat-flat-button color="accent" [class.auth-spinner]="loading" [disabled]="loading"
-                  class="auth-form-btn" [disabled]="!authForm.valid " type="submit">Login</button>
-              </div>
+  <div class="signin-card">
 
-              <h6 class="social-login-title">OR</h6>
-              <div style="text-align:center">
-                <!-- <button (click)="connectWithGoogle()" mat-flat-button color="danger" [class.auth-spinner]="loading"
-                  [disabled]="loading" class="auth-form-btn"><i class="fab fa-google"></i> Connect with Google</button> -->
-                  <h6 class="link-msg"> New to CodeMerit ? <a routerLink="/authentication/signup" class="sign-up-link">Register Now
-            </a></h6>
-              </div>
-            </div>
-          </form>
-          }@else{
-          <div class="loading text-center">
-        <img src="assets/images/icons/cube.gif" class="loader" alt="Authenticating">
-         <h5>Authenticating User</h5>
-        <h6>Please wait ...</h6>
+    <!-- ── Loading state ─────────────────────────────── -->
+    @if (submitted && loading) {
+      <div class="loading-state">
+        <img src="assets/images/icons/cube.gif" class="loading-gif" alt="Authenticating"/>
+        <p class="loading-title">Authenticating</p>
+        <p class="loading-sub">Please wait…</p>
       </div>
+    }
+
+    <!-- ── Form ──────────────────────────────────────── -->
+    @if (!submitted || !loading) {
+      <!-- Logo -->
+      <div class="logo-wrap" routerLink="/app/welcome">
+        <img src="assets/images/logo-dark.png" alt="CodeMerit" class="logo"/>
+      </div>
+
+      <!-- Heading -->
+      <div class="card-header">
+        <h1 class="card-title">Welcome <span class="text-gradient">Back</span></h1>
+        <p class="card-subtitle">Access your personalised Skill Assessment Dashboard.</p>
+      </div>
+
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- Email -->
+        <div class="form-field">
+          <label class="form-label">Email Address</label>
+          <div class="input-wrap">
+            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                    d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+            </svg>
+            <input formControlName="username" type="email"
+                   placeholder="you@domain.com" class="glass-input"/>
+          </div>
+          @if (f['username'].touched && f['username'].hasError('required')) {
+            <p class="field-error">Email is required.</p>
+          }
+          @if (f['username'].touched && f['username'].hasError('email')) {
+            <p class="field-error">Please enter a valid email.</p>
           }
         </div>
-      </div>
-    </div>
+
+        <!-- Password -->
+        <div class="form-field">
+          <label class="form-label">Password</label>
+          <div class="input-wrap">
+            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            <input formControlName="password" [type]="hide ? 'password' : 'text'"
+                   placeholder="••••••••" class="glass-input"/>
+            <button type="button" class="pwd-toggle" (click)="hide = !hide" tabindex="-1">
+              @if (hide) {
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                </svg>
+              } @else {
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              }
+            </button>
+          </div>
+          @if (f['password'].touched && f['password'].hasError('required')) {
+            <p class="field-error">Password is required.</p>
+          }
+        </div>
+
+        <!-- Remember me + Forgot password -->
+        <div class="form-row-between">
+          <label class="remember-label">
+            <input type="checkbox" class="remember-check"/> Remember me
+          </label>
+          <a routerLink="/authentication/forgot-password" class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <!-- Error banner -->
+        @if (error) {
+          <div class="error-banner">{{ error }}</div>
+        }
+
+        <!-- Submit -->
+        <button type="submit" class="login-btn" [disabled]="loading || authForm.invalid">
+          @if (loading) {
+            <svg class="btn-spinner" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" style="opacity:.25"/>
+              <path fill="currentColor" style="opacity:.75"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+            </svg>
+            Signing in…
+          } @else {
+            Sign In
+          }
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="or-divider"><span>OR</span></div>
+
+      <!-- Register link -->
+      <p class="register-note">
+        New to CodeMerit?
+        <a routerLink="/authentication/register" class="register-link">Create an account</a>
+      </p>
+    }
 
   </div>
 </div>

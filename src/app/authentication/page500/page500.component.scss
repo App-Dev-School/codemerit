@@ -1,0 +1,75 @@
+@use '../auth-base' as auth;
+
+:host       { @include auth.page-host; }
+.error-page { @include auth.page-wrapper; }
+
+.error-card {
+  @include auth.glass-card;
+  width: 100%;
+  max-width: 28rem;
+  padding: 3rem 2.5rem;
+  text-align: center;
+}
+
+// ── Large error code ──────────────────────────────────────────
+.error-code {
+  font-size: clamp(5rem, 18vw, 8rem);
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.text-gradient { @include auth.text-gradient; }
+
+// ── Warning icon ──────────────────────────────────────────────
+.error-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+
+  svg {
+    width: 2rem;
+    height: 2rem;
+    color: #f87171;
+  }
+}
+
+// ── Text ──────────────────────────────────────────────────────
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.75rem;
+}
+
+.error-subtitle {
+  font-size: 0.88rem;
+  color: #9ca3af;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+// ── Button ────────────────────────────────────────────────────
+.action-btn {
+  @include auth.action-btn;
+  display: inline-flex;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+
+  svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: 0.5rem;
+  }
+}
+
+// ── Help link ─────────────────────────────────────────────────
+.help-wrap { text-align: center; }
+.help-link  { @include auth.back-link; }

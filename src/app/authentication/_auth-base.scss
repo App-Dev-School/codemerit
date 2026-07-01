@@ -1,0 +1,166 @@
+// ─────────────────────────────────────────────────────────────
+//  Shared mixins for all dark auth pages
+//  Usage: @use '../_auth-base' as auth;  (from a component subfolder)
+//         then @include auth.<mixin-name>; inside each class rule
+// ─────────────────────────────────────────────────────────────
+
+// ── Page host (the component :host element) ───────────────────
+@mixin page-host {
+  display: block;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  background: #0f172a;
+  font-family: 'Poppins', sans-serif;
+  color: white;
+}
+
+// ── Full-viewport flex wrapper ────────────────────────────────
+@mixin page-wrapper {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
+}
+
+// ── Glassmorphism card base ───────────────────────────────────
+@mixin glass-card {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+// ── Blue → purple gradient text ───────────────────────────────
+@mixin text-gradient {
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// ── Glass input field ─────────────────────────────────────────
+// $padding-left: override for fields that have an icon on the left
+@mixin glass-input($padding-left: 1rem) {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.72rem 1rem 0.72rem $padding-left;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+  &:focus:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #8b5cf6;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+  }
+
+  option    { background: #0f172a; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ── Input wrapper with icon slots ─────────────────────────────
+@mixin input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+@mixin input-icon {
+  position: absolute;
+  left: 0.85rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+// ── Form label ────────────────────────────────────────────────
+@mixin form-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  margin-bottom: 0.4rem;
+}
+
+// ── Validation error ──────────────────────────────────────────
+@mixin field-error {
+  font-size: 0.74rem;
+  color: #f87171;
+  margin-top: 0.25rem;
+}
+
+// ── Error banner (API / submit errors) ────────────────────────
+@mixin error-banner {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  border-radius: 0.6rem;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+}
+
+// ── Blue → purple gradient action button ──────────────────────
+@mixin action-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: box-shadow 0.25s ease, transform 0.2s ease, opacity 0.2s;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 0 22px rgba(139, 92, 246, 0.45);
+    transform: translateY(-1px);
+  }
+
+  &:disabled { opacity: 0.65; cursor: not-allowed; }
+}
+
+// ── Spinning loader icon ──────────────────────────────────────
+@mixin btn-spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+  animation: auth-spin 0.8s linear infinite;
+}
+
+// ── Shared back / secondary link ──────────────────────────────
+@mixin back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  svg { width: 1rem; height: 1rem; }
+  &:hover { color: #e2e8f0; }
+}
+
+// ── Keyframe (scoped name avoids conflicts) ───────────────────
+@keyframes auth-spin { to { transform: rotate(360deg); } }

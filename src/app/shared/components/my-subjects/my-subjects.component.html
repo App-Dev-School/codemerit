@@ -1,47 +1,70 @@
-<div class="row">
-  @for(subject of subjects|async;track subject){
-    <div class="col-lg-3 col-md-3 col-sm-12" (click)="switchSubject(subject?.slug)">
-      <mat-card class="hoverCard">
-        <mat-card-content>
-          <div class="subjectHeader">
-            <img src="{{subject?.image}}" alt="{{subject?.title}}" class="subjectImage">
-            <mat-card-title class="text">{{subject.title}}</mat-card-title>
-          </div>
-          <p class="font-12">{{subject.description}}</p>
-          <!-- <p class="font-12">{{subject.goal}} Trivia</p> -->
-          @if(!minimal){
-          @if(subject?.isSubscribed){
-            <ul class="list-unstyled">
-              <li>
-                <div class="mb-2">
-                  <span class="progress-label">Coverage</span>
-                  <span class="float-end progress-percent label m-b-5" [ngClass]="'label-success'">{{subject.practice_percentage}}%</span>
-                </div>
-                <div class="progress skill-progress m-b-20 w-100">
-                  <div class="progress-bar" [ngClass]="'progress-bar-success'" [style.width]="subject.practice_percentage + '%'"
-                  role="progressbar" [attr.aria-valuenow]="subject.practice_percentage" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </li>
-            </ul>
-          }@else{
-            <!-- <p class="m-b-0 font-12 d-flex"><i class="material-icons col-green psr-2">trending_up</i> Continue Practice
-            </p> -->
-            <!-- <mat-card-footer class="example-card-footer">
-              <mat-chip-set aria-label="Tags">
-                <mat-chip>12 Lessons</mat-chip>
-                <mat-chip>{{subject?.numQuestions}} Questions</mat-chip>
-              </mat-chip-set>
-            </mat-card-footer> -->
-            <mat-card-actions align="end">
-              <button (click)="subscribeSubject(subject.slug)" mat-button mat-ripple>Explore</button>
-            </mat-card-actions>
-          }
+@let list = displaySubjects$ | async;
+
+<!-- Empty / no results -->
+@if (list !== null && list?.length === 0) {
+  <div class="subj-empty">
+    <mat-icon class="subj-empty__icon">search_off</mat-icon>
+    <p class="subj-empty__text">No subjects match your search.</p>
+  </div>
+}
+
+<!-- Flexible card grid — no section wrappers -->
+<div class="subj-grid">
+  @for (subject of list; track subject.id) {
+
+    <div class="subj-card" (click)="switchSubject(subject?.slug)">
+
+      <!-- Icon area -->
+      <div class="subj-card__icon-wrap" [style.background]="getSubjectColor(subject) + '18'">
+        @if (subject?.image) {
+          <img [src]="subject.image" [alt]="subject.title" class="subj-card__icon-img">
+        } @else {
+          <span class="subj-card__icon-initials"
+                [style.color]="getSubjectColor(subject)">
+            {{ getInitials(subject.title) }}
+          </span>
         }
-        </mat-card-content>
-        <!-- @if(!subject.isSubscribed){
-          Enroll to start learning and assessing your skills.
-        } -->
-      </mat-card>
+        <!-- Enrolled indicator dot -->
+        @if (subject?.isSubscribed) {
+          <span class="subj-card__enrolled-dot" title="Enrolled">
+            <mat-icon>check</mat-icon>
+          </span>
+        }
+      </div>
+
+      <!-- Info -->
+      <div class="subj-card__info">
+        <div class="subj-card__title-row">
+          <h3 class="subj-card__title">{{ subject.title }}</h3>
+          @if (subject?.isSubscribed) {
+            <span class="subj-enrolled-badge">Enrolled</span>
+          }
+        </div>
+        <p class="subj-card__desc">{{ subject.description }}</p>
+      </div>
+
+      <!-- Progress (subscribed only) -->
+      @if (subject?.isSubscribed && subject?.practice_percentage > 0) {
+        <div class="subj-card__progress">
+          <div class="subj-progress-row">
+            <span class="subj-progress-label">Coverage</span>
+            <span class="subj-progress-val">{{ subject.practice_percentage }}%</span>
+          </div>
+          <div class="subj-progress-track">
+            <div class="subj-progress-fill"
+                 [style.width]="subject.practice_percentage + '%'"
+                 [style.background]="getSubjectColor(subject)">
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Hover arrow -->
+      <div class="subj-card__arrow" [style.color]="getSubjectColor(subject)">
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+
     </div>
+
   }
 </div>

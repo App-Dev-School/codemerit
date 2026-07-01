@@ -1,250 +1,277 @@
 @if (mode === "filter-only") {
-  <div class="quiz-questions-form filter-only-mode">
-    <mat-card>
-      <mat-card-header class="header-style">
-        <mat-card-title>{{ title }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ng-container *ngTemplateOutlet="questionFilterForm"></ng-container>
-      </mat-card-content>
-    </mat-card>
+  <div class="rounded-2xl border border-cm-border-strong bg-cm-surface overflow-hidden
+              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div class="px-5 py-4 border-b border-cm-border
+                bg-gradient-to-br from-violet-50/60 to-cm-surface
+                dark:from-violet-500/5 dark:to-transparent">
+      <h3 class="text-sm font-bold text-cm-text-primary">{{ title }}</h3>
+    </div>
+    <div class="p-5">
+      <ng-container *ngTemplateOutlet="questionFilterForm"></ng-container>
+    </div>
   </div>
 } @else {
-  <div class="quiz-questions-form row g-3">
-    <div class="col-12 col-md-6 d-flex flex-column h-100">
-      <ng-container *ngTemplateOutlet="selectQuestionCard"></ng-container>
-    </div>
-
-    <div class="col-12 col-md-6 d-flex flex-column h-100">
-      <ng-container *ngTemplateOutlet="selectedQuestionCard"></ng-container>
-    </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <ng-container *ngTemplateOutlet="selectQuestionCard"></ng-container>
+    <ng-container *ngTemplateOutlet="selectedQuestionCard"></ng-container>
   </div>
 }
 
+
+<!-- ── Filter Form Template ── -->
 <ng-template #questionFilterForm>
-  <form [formGroup]="filterForm" class="mb-2">
-    <div class="row g-2 p-20">
-      <div class="col-12 col-md-12">
-        <mat-form-field appearance="fill" class="w-100">
-          <mat-label>Subject</mat-label>
-          <mat-select
-            formControlName="subject"
-            [multiple]="mode === 'quiz-builder'"
-          >
-            @for (item of subjects; track item.id) {
-              <mat-option [value]="item.id">{{
-                item.name ?? item.title
-              }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-12 col-md-12">
-        <mat-form-field appearance="fill" class="example-full-width">
-          <mat-label class="mb-2">Select Topic(s)</mat-label>
-          <mat-select
-            formControlName="topic"
-            [multiple]="mode === 'quiz-builder'"
-          >
-            @for (item of filteredTopics; track item.id) {
-              <mat-option [value]="item.id">{{
-                item.name ?? item.title
-              }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-12 col-md-12">
-        <mat-form-field appearance="fill" class="w-100">
-          <mat-label>Level</mat-label>
-          <mat-select formControlName="level">
-            <mat-option value="">All</mat-option>
-            <mat-option value="Easy">Easy</mat-option>
-            <mat-option value="Intermediate">Intermediate</mat-option>
-            <mat-option value="Advanced">Advanced</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      @if (mode === "filter-only") {
-        <div class="col-12 col-md-12">
-          <mat-form-field appearance="fill" class="w-100">
-            <mat-label>Author</mat-label>
-            <mat-select formControlName="authorId">
-              <mat-option [value]="0">All</mat-option>
-              @for (author of authors; track author.id) {
-                <mat-option [value]="author.id">{{ author.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-      }
+  <form [formGroup]="filterForm" class="space-y-3">
+
+    <!-- Subject -->
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">Subject</label>
+      <select formControlName="subject"
+              [attr.multiple]="mode === 'quiz-builder' ? '' : null"
+              [attr.size]="mode === 'quiz-builder' ? 4 : null"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none cursor-pointer
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+        @if (mode !== 'quiz-builder') {
+          <option value="">All Subjects</option>
+        }
+        @for (item of subjects; track item.id) {
+          <option [value]="item.id">{{ item.name ?? item.title }}</option>
+        }
+      </select>
     </div>
-    <div class="row g-2 mt-1">
-      <div class="col">
-        <button
-          mat-stroked-button
-          color="primary"
-          type="button"
-          (click)="resetFilters()"
-        >
-          Reset
-        </button>
-      </div>
-      <div class="col text-end">
-        <button
-          mat-flat-button
-          color="accent"
-          type="button"
-          (click)="applyFilters()"
-        >
-          Apply
-        </button>
-      </div>
+
+    <!-- Topic -->
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">Topic(s)</label>
+      <select formControlName="topic"
+              [attr.multiple]="mode === 'quiz-builder' ? '' : null"
+              [attr.size]="mode === 'quiz-builder' ? 4 : null"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none cursor-pointer
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+        @if (mode !== 'quiz-builder') {
+          <option value="">All Topics</option>
+        }
+        @for (item of filteredTopics; track item.id) {
+          <option [value]="item.id">{{ item.name ?? item.title }}</option>
+        }
+      </select>
     </div>
+
+    <!-- Level -->
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">Difficulty</label>
+      <select formControlName="level"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none cursor-pointer
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+        <option value="">All Levels</option>
+        <option value="Easy">Easy</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Advanced">Advanced</option>
+      </select>
+    </div>
+
+    <!-- Author (filter-only mode) -->
+    @if (mode === "filter-only") {
+    <div class="space-y-1.5">
+      <label class="block text-[11px] font-bold text-cm-text-muted uppercase tracking-wider">Author</label>
+      <select formControlName="authorId"
+              class="w-full bg-cm-surface-muted border border-cm-border text-cm-text-primary text-sm
+                     rounded-xl px-4 py-2.5 outline-none cursor-pointer
+                     focus:ring-2 focus:ring-cm-brand/30 focus:border-cm-brand transition-all">
+        <option [value]="0">All Authors</option>
+        @for (author of authors; track author.id) {
+          <option [value]="author.id">{{ author.name }}</option>
+        }
+      </select>
+    </div>
+    }
+
+    <!-- Actions -->
+    <div class="flex items-center gap-2 pt-1">
+      <button type="button" (click)="resetFilters()"
+              class="flex-1 py-2.5 rounded-xl text-xs font-semibold text-cm-text-secondary
+                     bg-cm-surface-raised border border-cm-border
+                     hover:bg-cm-surface-hover hover:text-cm-text-primary
+                     active:scale-[0.98] transition-all duration-150">
+        Reset
+      </button>
+      <button type="button" (click)="applyFilters()"
+              class="flex-1 py-2.5 rounded-xl text-xs font-bold text-white
+                     bg-cm-brand hover:opacity-90 active:scale-[0.98] transition-all duration-150">
+        Apply Filters
+      </button>
+    </div>
+
   </form>
 </ng-template>
 
+
+<!-- ── Available Questions Card ── -->
 <ng-template #selectQuestionCard>
-  <mat-card>
-    <mat-card-header class="header-style">
-      <mat-card-title>
-        {{
-          showFilter
-            ? "Find Questions"
-            : "Available Questions (" + getAvailableQuestions().length + ")"
-        }}</mat-card-title
-      >
+  <div class="rounded-2xl border border-cm-border-strong bg-cm-surface overflow-hidden
+              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none
+              flex flex-col" style="min-height: 420px;">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-3.5 border-b border-cm-border
+                bg-gradient-to-br from-violet-50/60 to-cm-surface
+                dark:from-violet-500/5 dark:to-transparent shrink-0">
+      <h3 class="text-sm font-bold text-cm-text-primary">
+        {{ showFilter ? "Find Questions" : "Available (" + getAvailableQuestions().length + ")" }}
+      </h3>
       @if (!showFilter) {
-        <button mat-button color="primary" type="button" (click)="toggleFilter()">
-          Filter
-        </button>
+      <button type="button" (click)="toggleFilter()"
+              class="inline-flex items-center gap-1.5 text-xs font-semibold text-cm-brand
+                     hover:opacity-75 transition-opacity">
+        <i class="fa-solid fa-filter text-[10px]"></i> Filter
+      </button>
       }
-    </mat-card-header>
-    <mat-card-content>
-      <!-- Display if the Filter link is clicked, switch back to list when form is submitted -->
+    </div>
+
+    <!-- Body -->
+    <div class="flex-1 flex flex-col overflow-hidden min-h-0">
+
       @if (showFilter) {
-        <ng-container *ngTemplateOutlet="questionFilterForm"></ng-container>
+        <div class="p-5 overflow-y-auto flex-1">
+          <ng-container *ngTemplateOutlet="questionFilterForm"></ng-container>
+        </div>
       } @else {
+        <!-- Search bar -->
         @if (filteredQuestions.length > 0) {
-          <mat-form-field appearance="fill" class="w-100">
-            <mat-label>Search filtered questions</mat-label>
-            <input
-              matInput
-              type="search"
-              [formControl]="questionSearchControl"
-              placeholder="Search by question"
-            />
+        <div class="px-4 py-2.5 border-b border-cm-border bg-cm-surface-muted shrink-0">
+          <div class="flex items-center gap-2 bg-cm-surface border border-cm-border rounded-lg px-3">
+            <i class="fa-solid fa-magnifying-glass text-cm-text-muted text-[11px] shrink-0"></i>
+            <input type="search" [formControl]="questionSearchControl"
+                   placeholder="Search questions…"
+                   class="flex-1 bg-transparent text-sm text-cm-text-primary py-2 outline-none
+                          placeholder:text-cm-text-muted min-w-0">
             @if (questionSearchControl.value) {
-              <button
-                mat-icon-button
-                matSuffix
-                type="button"
-                aria-label="Clear search"
-                (click)="questionSearchControl.setValue('')"
-              >
-                <mat-icon>close</mat-icon>
+              <button type="button" (click)="questionSearchControl.setValue('')"
+                      class="shrink-0 text-cm-text-muted hover:text-cm-text-primary transition p-0.5">
+                <i class="fa-solid fa-xmark text-[11px]"></i>
               </button>
             }
-          </mat-form-field>
-        }
-        @if (getAvailableQuestions().length > 0) {
-          <div class="scrollbar-container">
-            <ng-scrollbar style="height: 300px" visibility="hover">
-              <div class="question-list">
-                @for (question of getAvailableQuestions(); track question.selectionKey) {
-                  <div class="question-item">
-                    <div class="d-flex align-items-center">
-                      <mat-checkbox
-                        [checked]="isQuestionSelected(question)"
-                        (change)="onQuestionToggle(question, $event)"
-                        color="primary"
-                      >
-                      </mat-checkbox>
-                      <div class="ms-3 question-content">
-                        <h4>{{ question.title }}</h4>
-                        <div class="d-flex question-meta">
-                          <span class="question-category">{{
-                            question.topic
-                          }}</span>
-                          <span class="question-priority">{{ getLevelDisplay(question?.level) }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                }
-              </div>
-            </ng-scrollbar>
           </div>
-          <!-- Footer -->
-          <div class="mt-3">
-            <button
-              mat-flat-button
-              color="primary"
-              class="w-100 py-2"
-              [disabled]="!selectedQuestionsControl.value?.length"
-              (click)="addSelectedQuestions()"
-            >
-              Add Selected Questions
+        </div>
+        }
+
+        @if (getAvailableQuestions().length > 0) {
+          <!-- Question list -->
+          <div class="flex-1 overflow-y-auto min-h-0" style="scrollbar-width: thin;">
+            <div class="divide-y divide-cm-border">
+              @for (question of getAvailableQuestions(); track question.selectionKey) {
+              <label class="flex items-start gap-3 px-4 py-3 cursor-pointer
+                            hover:bg-cm-surface-hover transition-colors duration-100">
+                <input type="checkbox"
+                       [checked]="isQuestionSelected(question)"
+                       (change)="onQuestionToggle(question, $event)"
+                       class="mt-0.5 w-4 h-4 rounded shrink-0 cursor-pointer accent-indigo-500">
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-semibold text-cm-text-primary leading-snug">{{ question.title }}</p>
+                  <div class="flex items-center gap-2 mt-1 flex-wrap">
+                    @if (question.topic) {
+                    <span class="text-[10px] text-cm-text-muted">{{ question.topic }}</span>
+                    }
+                    @if (question.level) {
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded
+                                 bg-cm-brand-dim text-cm-brand-text">
+                      {{ getLevelDisplay(question?.level) }}
+                    </span>
+                    }
+                  </div>
+                </div>
+              </label>
+              }
+            </div>
+          </div>
+
+          <!-- Add button footer -->
+          <div class="px-4 py-3 border-t border-cm-border bg-cm-surface-muted shrink-0">
+            <button type="button"
+                    [disabled]="!selectedQuestionsControl.value?.length"
+                    (click)="addSelectedQuestions()"
+                    class="w-full py-2.5 rounded-xl text-xs font-bold text-white
+                           bg-cm-brand hover:opacity-90
+                           disabled:opacity-40 disabled:cursor-not-allowed
+                           active:scale-[0.98] transition-all duration-150
+                           flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-plus text-[10px]"></i> Add Selected Questions
             </button>
           </div>
+
         } @else {
-          <div class="no-data-container text-center">
-            <img
-              src="assets/images/icons/empty.png"
-              class="loadingIcon m-t-20"
-            />
-            <p class="col-grey">No question available.</p>
+          <!-- Empty state -->
+          <div class="flex-1 flex flex-col items-center justify-center py-10 text-center px-4">
+            <img src="assets/images/icons/empty.png" class="w-12 h-12 object-contain mb-3 opacity-50">
+            <p class="text-xs text-cm-text-muted">No questions available.</p>
           </div>
         }
       }
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </ng-template>
 
+
+<!-- ── Selected Questions Card ── -->
 <ng-template #selectedQuestionCard>
-  <mat-card>
-    <mat-card-header class="header-style">
-      <mat-card-title
-        >Selected Questions ({{ quizQuestions.length }})</mat-card-title
-      >
-    </mat-card-header>
-    <mat-card-content>
+  <div class="rounded-2xl border border-cm-border-strong bg-cm-surface overflow-hidden
+              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none
+              flex flex-col" style="min-height: 420px;">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-3.5 border-b border-cm-border
+                bg-gradient-to-br from-violet-50/60 to-cm-surface
+                dark:from-violet-500/5 dark:to-transparent shrink-0">
+      <h3 class="text-sm font-bold text-cm-text-primary">
+        Selected ({{ quizQuestions.length }})
+      </h3>
       @if (quizQuestions.length > 0) {
-        <ng-scrollbar style="height: 300px" visibility="hover">
-          <div
-            class="question-list"
-            cdkDropList
-            (cdkDropListDropped)="drop($event)"
-          >
+      <span class="text-[10px] text-cm-text-muted font-medium">Drag to reorder</span>
+      }
+    </div>
+
+    <!-- Body -->
+    <div class="flex-1 flex flex-col overflow-hidden min-h-0">
+      @if (quizQuestions.length > 0) {
+        <div class="flex-1 overflow-y-auto min-h-0" style="scrollbar-width: thin;">
+          <div cdkDropList (cdkDropListDropped)="drop($event)" class="divide-y divide-cm-border">
             @for (question of quizQuestions; track question.selectionKey) {
-              <div class="question-item" cdkDrag>
-                <div class="d-flex align-items-center">
-                  <div class="task-handle" cdkDragHandle>
-                    <mat-icon aria-hidden="false">drag_indicator</mat-icon>
-                  </div>
-                  <div class="ms-3 question-content">
-                    <h4>{{ question.title }}</h4>
-                  </div>
-                </div>
-                <div class="question-actions">
-                  <button
-                    mat-icon-button
-                    matTooltip="Remove Question"
-                    (click)="removeQuestionFromQuiz(question)"
-                  >
-                    <mat-icon class="material-icons-outlined">close</mat-icon>
-                  </button>
-                </div>
-              </div>
+            <div class="group flex items-center gap-3 px-4 py-3" cdkDrag>
+              <!-- Drag handle -->
+              <button cdkDragHandle type="button"
+                      class="shrink-0 text-cm-text-muted hover:text-cm-text-primary
+                             cursor-grab active:cursor-grabbing transition-colors">
+                <i class="fa-solid fa-grip-vertical text-[12px]"></i>
+              </button>
+              <!-- Title -->
+              <p class="flex-1 min-w-0 text-xs font-medium text-cm-text-primary leading-snug truncate">
+                {{ question.title }}
+              </p>
+              <!-- Remove -->
+              <button type="button"
+                      (click)="removeQuestionFromQuiz(question)"
+                      title="Remove question"
+                      class="shrink-0 w-6 h-6 flex items-center justify-center rounded
+                             text-cm-text-muted hover:text-rose-400
+                             hover:bg-rose-50 dark:hover:bg-rose-500/10
+                             opacity-0 group-hover:opacity-100
+                             transition-all duration-150">
+                <i class="fa-solid fa-xmark text-[10px]"></i>
+              </button>
+            </div>
             }
           </div>
-        </ng-scrollbar>
+        </div>
       } @else {
-        <div class="no-data-container text-center">
-          <img src="assets/images/icons/empty.png" class="loadingIcon m-t-20" />
-          <p class="col-grey">No question selected.</p>
+        <div class="flex-1 flex flex-col items-center justify-center py-10 text-center px-4">
+          <img src="assets/images/icons/empty.png" class="w-12 h-12 object-contain mb-3 opacity-50">
+          <p class="text-xs text-cm-text-muted">No questions selected yet.</p>
+          <p class="text-[11px] text-cm-text-muted mt-1">Find questions on the left and add them here.</p>
         </div>
       }
-    </mat-card-content>
-  </mat-card>
+    </div>
+
+  </div>
 </ng-template>

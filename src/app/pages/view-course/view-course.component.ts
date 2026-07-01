@@ -1,32 +1,24 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { register } from 'swiper/element/bundle';
 import { Direction } from '@angular/cdk/bidi';
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
 import { Course, Subject } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation } from '@shared/animations';
-import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
-import { MedalCardComponent } from '@shared/components/medal-card/medal-card.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
-import { QuizService } from 'src/app/quiz/quiz.service';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
 import { CertificateModel } from '@shared/components/certificate/certificate.model';
 import { certificateModels } from '../welcome/welcome.component';
 import { CertificateComponent } from '@shared/components/certificate/certificate.component';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 
 @Component({
@@ -37,21 +29,14 @@ import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/m
   imports: [
     CommonModule,
     MatButtonModule,
-    MatCardModule,
     MatIconModule,
-    MatCheckboxModule,
     MatTooltipModule,
-    MatTabsModule,
-    NgTemplateOutlet,
-    CongratulationsCardComponent,
-    MedalCardComponent,
     SubjectTrackerCardComponent,
     MeritListWidgetComponent,
     CertificateComponent
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  ]
 })
-export class ViewCourseComponent implements OnInit, AfterViewInit {
+export class ViewCourseComponent implements OnInit {
   pageTitle = 'ViewCourse';
   loading = true;
   loadingText = '';
@@ -63,14 +48,7 @@ export class ViewCourseComponent implements OnInit, AfterViewInit {
   otherSubjects: Subject[] = [];
   courseData: any[];
   showSubjectAction = false;
-  courseChartConfig = {
-    showTitle: false,
-    showSubtitle: false,
-    showIcon: false,
-    showLegend: false
-  };
   certificateModels: CertificateModel[] = [];
-  @ViewChild('swiperEx') swiperRef!: ElementRef<any>;
   meritList: any[] = [
     {
       "id": 1,
@@ -157,11 +135,9 @@ export class ViewCourseComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     private _bottomSheet: MatBottomSheet,
     public authService: AuthService,
-    private quizService: QuizService,
     private snackService: SnackbarService
   ) {
     console.log(this.pageTitle, "User ", this.authService.currentUser);
-    register();
     this.userData = this.authService.currentUserValue;
     if (this.userData) {
       const userJobRoles = this.authService.getUserJobRoles();
@@ -367,24 +343,16 @@ export class ViewCourseComponent implements OnInit, AfterViewInit {
       this.router.navigate(['/dashboard/learn', subject?.slug]);
   }
 
-  ngAfterViewInit(): void {
-    // Swiper is automatically initialized via web component
-  }
-
-  prevSlide(): void {
-    const swiper = this.swiperRef?.nativeElement?.swiper;
-    if (!swiper) return;
-    swiper.slidePrev();
-  }
-
-
-  nextSlide(): void {
-    const swiper = this.swiperRef?.nativeElement?.swiper;
-    if (!swiper) return;
-    swiper.slideNext();
-  }
-
   takeQuiz() {
     this.snackService.display('snackbar-dark', 'Feature coming soon.', 'bottom', 'center');
+  }
+
+  isJobEnrolled(userId: number, jobId: number): boolean {
+    if (userId && jobId) {
+      // Implement logic to check if user is enrolled in the job
+      const enrolledJobs = this.authService.getUserJobRoles();
+      return enrolledJobs.some(job => job.userId === userId && job.jobRoleId === jobId);
+    }
+    return false;
   }
 }

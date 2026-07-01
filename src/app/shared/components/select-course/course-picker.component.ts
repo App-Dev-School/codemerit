@@ -1,29 +1,20 @@
-// chart-card4.component.ts
-import { AsyncPipe, NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatRippleModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MasterService } from '@core/service/master.service';
-import { Observable, of } from 'rxjs';
+
+interface SubjectGroups {
+  mandatory:   any[];
+  recommended: any[];
+  optional:    any[];
+}
 
 @Component({
   selector: 'app-course-picker',
-  imports: [
-    AsyncPipe,
-    NgClass,
-    MatCardModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatRippleModule,
-    MatIconModule
-  ],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './course-picker.component.html',
   styleUrls: ['./course-picker.component.scss']
 })
@@ -31,20 +22,23 @@ export class CoursePickerComponent implements OnInit {
   @Input() minimal = true;
   @Input() currentCourses: number[] = [];
   @Input() actionMode: 'view' | 'enroll' | 'skill-rating' = 'view';
-  courses: Observable<any>;
   @Output() subjectSelected = new EventEmitter<string>();
+
+  courses: any[] = [];
   isLoading = true;
   mode: 'dialog' | 'route' = 'route';
   userId?: string;
 
-  constructor(private master: MasterService, private router: Router,
+  constructor(
+    private master: MasterService,
+    private router: Router,
     private route: ActivatedRoute,
     @Optional() public dialogRef?: MatDialogRef<CoursePickerComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data?: any) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: any,
+  ) {
     if (this.dialogRef) {
       this.mode = 'dialog';
       this.userId = data?.id;
-      console.log("CoursePicker Dialog Data ", data);
     } else {
       this.mode = 'route';
       this.route.paramMap.subscribe(params => {
@@ -55,17 +49,53 @@ export class CoursePickerComponent implements OnInit {
 
   ngOnInit(): void {
     const allJobRoles = this.master.jobRoles;
-    if(allJobRoles && allJobRoles.length > 0){
-    const liveJobRoles = allJobRoles.filter(item => item.isPublished);
-    this.courses = of(liveJobRoles);
+    if (allJobRoles?.length) {
+      this.courses = allJobRoles.filter(j => j.isPublished);
     }
     this.isLoading = false;
   }
 
-  switchJobRole(course: any) {
-    this.subjectSelected.emit(course.slug);
+  isEnrolled(job: any): boolean {
+    return job.isSubscribed || this.currentCourses.includes(+job.id);
+  }
+
+  getRoleAccent(id: number): string {
+    const accents = ['indigo', 'violet', 'emerald', 'sky', 'rose', 'amber', 'teal'];
+    return accents[id % accents.length];
+  }
+
+  getSubjectGroups(subjects: any[]): SubjectGroups {
+    if (!subjects?.length) return { mandatory: [], recommended: [], optional: [] };
+
+    const getType = (s: any): string =>
+      (s.type ?? s.pivot?.type ?? s.category ?? '').toLowerCase();
+    const hasTypes = subjects.some(s => getType(s));
+
+    if (!hasTypes) {
+      return { mandatory: subjects, recommended: [], optional: [] };
+    }
+
+    const isMandatory   = (s: any) => ['mandatory', 'core', 'required', 'must'].includes(getType(s));
+    const isRecommended = (s: any) => getType(s) === 'recommended';
+    const isOptional    = (s: any) => ['optional', 'elective', 'bonus'].includes(getType(s));
+
+    return {
+      mandatory:   subjects.filter(isMandatory),
+      recommended: subjects.filter(isRecommended),
+      optional:    subjects.filter(isOptional),
+    };
+  }
+
+  getActionLabel(): string {
+    return this.actionMode === 'skill-rating' ? 'Start Evaluation'
+         : this.actionMode === 'enroll'       ? 'Enroll Now'
+         : 'Explore';
+  }
+
+  switchJobRole(job: any) {
+    this.subjectSelected.emit(job.slug);
     if (this.mode === 'dialog' && this.dialogRef) {
-    this.dialogRef.close(course.slug);
+      this.dialogRef.close(job.slug);
     }
   }
 

@@ -1,29 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
 
 import { Direction } from '@angular/cdk/bidi';
-import { NgTemplateOutlet } from '@angular/common';
-import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core';
 import { Subject } from '@core/models/subject';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
-import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
-import { NgScrollbar } from 'ngx-scrollbar';
 import { Observable, of } from 'rxjs';
 import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
 import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
@@ -35,26 +28,20 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
   animations: [slideInOutAnimation, fadeInAnimation],
   imports: [
     RouterLink,
-    NgTemplateOutlet,
-    MatTabsModule,
     MatButtonModule,
-    MatCardModule,
     MatIconModule,
-    MatCheckboxModule,
     MatTooltipModule,
-    NgScrollbar,
-    MatChip, MatChipSet,
     TopicsListComponent,
     MeritListWidgetComponent,
     RecentCommentsComponent,
     SubjectPerformanceCardComponent,
     SkillRatingWidgetComponent,
     GoalPathComponent,
-    CertificateComponent
   ]
 })
 export class DashboardComponent implements OnInit {
   pageTitle = 'SubjectDashboard';
+  activeTab: string = 'milestones';
   loading = true;
   loadingText = 'Loading Subject Dashboard';
   showContent = true;

@@ -1,40 +1,192 @@
-<div class="card">
-    <div class="body">
-        <div class="row align-items-center">
-            <div class="col-md-8 mb-0">
-                <div class="font-b-500 font-25 col-blue mb-2">{{ isVisitor ? 'Welcome Guest' : 'Welcome back'}}
-                </div>
-                <p class="font-b-500 mb-4">Start by creating a job profile that matches your career aspirations. This
-                    helps us personalize your assessments, certify your skills, and help connect you with opportunities
-                    . </p>
-                <div class="row justify-content-center">
-                    <div class="col-lg-4 col-sm-4">
-                        <div class="p-15 m-10 card-1">
-                            <h5 class="m-t-20 mb-0 text-primary">Add Job Profile </h5>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-4">
-                        <div class="p-15 m-10 card-2">
-                            <h5 class="m-t-20 mb-0 text-danger">Take Assessment </h5>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-4">
-                        <div class="p-15 m-10 card-3">
-                            <h5 class="m-t-20 mb-0 text-success">Finish Onboarding </h5>
-                        </div>
-                    </div>
-                    <div>
-                        <button mat-flat-button class="adminBtn" (click)="login()">
-                            Start Your Onboarding <mat-icon>keyboard_arrow_right</mat-icon>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-0">
-                <div class="animSvg" style="width:100%;height:300px;"></div>
-                <!-- <img src="assets/images/pages/onboard.svg" alt="" class="w-100 image-top">
-                 <img src="assets/images/pages/3.svg" alt="" class="w-100 image-top"> -->
-            </div>
-        </div>
+<div class="bg-cm-surface
+            border border-cm-border
+            rounded-2xl overflow-hidden shadow-sm">
+
+  <!-- ── Card Header ── -->
+  <div class="bg-gradient-to-r from-cm-surface-muted to-indigo-50/40
+              dark:to-indigo-950/40
+              px-6 py-5 border-b border-cm-border
+              flex items-center justify-between gap-4">
+    <div class="min-w-0">
+      <h2 class="text-base font-bold text-cm-text-primary tracking-tight truncate">
+        {{ isVisitor ? 'Welcome to CodeMerit' : 'Welcome back, ' + authData?.firstName }}
+      </h2>
+      <p class="text-xs text-cm-text-secondary mt-0.5">
+        {{ isVisitor ? 'Begin your journey to career recognition' : 'Keep going — you\'re making great progress' }}
+      </p>
     </div>
+
+    <!-- Progress badge -->
+    <div class="flex items-center gap-3 shrink-0">
+      <div class="text-right hidden sm:block">
+        <p class="text-[10px] text-cm-text-secondary font-semibold uppercase tracking-wider">Journey</p>
+        <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 leading-none">
+          {{ progressPercent }}<span class="text-xs text-cm-text-secondary">%</span>
+        </p>
+      </div>
+      <!-- Circular progress ring -->
+      <div class="relative w-12 h-12 flex-shrink-0">
+        <svg class="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="20" stroke-width="3.5" stroke="currentColor"
+                  class="text-cm-surface-raised" fill="none"/>
+          <circle cx="24" cy="24" r="20" stroke-width="3.5" fill="none"
+                  stroke="url(#prog-gradient)" stroke-linecap="round"
+                  [attr.stroke-dasharray]="125.6"
+                  [attr.stroke-dashoffset]="125.6 - (125.6 * progressPercent / 100)"
+                  class="transition-all duration-700"/>
+          <defs>
+            <linearGradient id="prog-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#6366f1"/>
+              <stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center
+                     text-[11px] font-bold text-cm-text-primary">
+          {{ currentStep }}/{{ steps.length }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Stepper Track ── -->
+  <div class="px-6 pt-7 pb-5 bg-cm-surface-muted border-b border-cm-border">
+    <div class="relative flex justify-between items-start">
+
+      <!-- Track line -->
+      <div class="absolute top-5 left-5 right-5 h-0.5 bg-cm-surface-raised">
+        <div class="h-full bg-gradient-to-r from-indigo-500 via-amber-400 to-emerald-500
+                    transition-all duration-700 ease-in-out rounded-full"
+             [style.width.%]="progressPercent">
+        </div>
+      </div>
+
+      <!-- Step nodes -->
+      @for (step of steps; track step.label; let i = $index) {
+        <div class="relative flex flex-col items-center z-10 flex-1 min-w-0">
+
+          <!-- Done -->
+          @if (getStepStatus(i) === 'done') {
+            <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center
+                        shadow-md shadow-indigo-200 dark:shadow-indigo-500/20
+                        ring-4 ring-indigo-100 dark:ring-indigo-500/10">
+              <i class="material-icons-outlined text-white select-none" style="font-size:18px">check</i>
+            </div>
+          }
+
+          <!-- Active -->
+          @if (getStepStatus(i) === 'active') {
+            <div class="relative w-10 h-10">
+              <span [class]="'absolute inset-0 rounded-full animate-ping opacity-50 ' + step.pingClass"></span>
+              <div [class]="'relative w-10 h-10 rounded-full flex items-center justify-center shadow-md border-2 '
+                            + 'bg-cm-surface ' + step.ringClass">
+                <i class="material-icons-outlined select-none" [class]="step.textClass" style="font-size:18px">
+                  {{ step.icon }}
+                </i>
+              </div>
+            </div>
+          }
+
+          <!-- Pending -->
+          @if (getStepStatus(i) === 'pending') {
+            <div class="w-10 h-10 rounded-full bg-cm-surface-raised
+                        border-2 border-cm-border-strong
+                        flex items-center justify-center">
+              <i class="material-icons-outlined text-cm-text-secondary select-none" style="font-size:18px">
+                {{ step.icon }}
+              </i>
+            </div>
+          }
+
+          <!-- Label -->
+          <div class="mt-3 text-center px-0.5 w-full">
+            <p [class]="'text-[11px] font-semibold leading-tight ' + (
+                getStepStatus(i) === 'done'   ? 'text-indigo-500 dark:text-indigo-400' :
+                getStepStatus(i) === 'active' ? step.textClass :
+                'text-cm-text-secondary')">
+              {{ step.label }}
+            </p>
+            <p class="text-[10px] text-cm-text-muted mt-0.5 hidden md:block leading-tight">
+              {{ step.subtitle }}
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── Active Step Detail ── -->
+  <div class="px-6 pb-6 pt-5 bg-cm-surface">
+    <div [class]="'rounded-xl border p-4 transition-all duration-300 ' + activeStep.bgClass + ' ' + activeStep.borderClass">
+      <div class="flex items-start gap-4">
+
+        <!-- Icon -->
+        <div [class]="'w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 border shadow-sm '
+                      + 'bg-cm-surface ' + activeStep.borderClass">
+          <i class="material-icons-outlined select-none" [class]="activeStep.textClass" style="font-size:22px">
+            {{ activeStep.icon }}
+          </i>
+        </div>
+
+        <!-- Text -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap mb-1">
+            <span [class]="'text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md '
+                          + 'bg-cm-surface border ' + activeStep.borderClass + ' ' + activeStep.textClass">
+              Step {{ currentStep + 1 }} of {{ steps.length }}
+            </span>
+            <span class="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Current
+            </span>
+          </div>
+          <h3 class="text-sm font-bold text-cm-text-primary leading-snug">{{ activeStep.ctaTitle }}</h3>
+          <p class="text-xs text-cm-text-secondary mt-1 leading-relaxed">{{ activeStep.ctaDesc }}</p>
+        </div>
+
+        <!-- CTA (desktop) -->
+        <button (click)="handleCTA()"
+                [class]="'hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white '
+                         + 'transition-colors duration-150 flex-shrink-0 ' + activeStep.btnClass">
+          {{ activeStep.ctaBtn }}
+          <i class="material-icons-outlined select-none" style="font-size:14px">arrow_forward</i>
+        </button>
+      </div>
+
+      <!-- CTA (mobile) -->
+      <button (click)="handleCTA()"
+              [class]="'sm:hidden mt-3 w-full flex items-center justify-center gap-1.5 px-4 py-2.5 '
+                       + 'rounded-lg text-xs font-bold text-white transition-colors duration-150 ' + activeStep.btnClass">
+        {{ activeStep.ctaBtn }}
+        <i class="material-icons-outlined select-none" style="font-size:14px">arrow_forward</i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Footer: upcoming steps ── -->
+  <div class="px-6 pb-5 pt-4 border-t border-cm-border bg-cm-surface-muted
+              flex items-center gap-2 flex-wrap">
+    <span class="text-[10px] text-cm-text-secondary font-semibold uppercase tracking-wider mr-1">
+      Up next:
+    </span>
+    @for (step of steps; track step.label; let i = $index) {
+      @if (getStepStatus(i) === 'pending') {
+        <span [class]="'inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border font-medium '
+                      + 'bg-cm-surface ' + step.borderClass + ' ' + step.textClass">
+          <i class="material-icons-outlined select-none" style="font-size:11px">{{ step.icon }}</i>
+          {{ step.label }}
+        </span>
+      }
+    }
+    @if (progressPercent === 100) {
+      <span class="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md font-semibold
+                   bg-emerald-50 dark:bg-emerald-500/10
+                   border border-emerald-200 dark:border-emerald-500/30
+                   text-emerald-700 dark:text-emerald-400">
+        <i class="material-icons-outlined select-none" style="font-size:11px">verified</i>
+        Journey Complete!
+      </span>
+    }
+  </div>
+
 </div>

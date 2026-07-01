@@ -1,30 +1,63 @@
-@if(showContent){
-@if(isLoading){
-<div class="overlay"></div>
-<div class="animToast loading">
-  <img src="assets/images/icons/loading.gif" class="miniLoadingIcon">
-  <h4 class="cmSubHeading">Loading Subjects</h4>
-  <h5 class="font-14">Please wait</h5>
-</div>
-}@else {
-<section class="fullScreen" [@slideInOut]>
-   <button (click)="onCancel()" aria-label="Cancel" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; cursor: pointer; z-index: 10;">
-       <mat-icon class="sidebar-icon">close</mat-icon>
-    </button>
-  <div class="container">
-    <div class="row m-t-10 m-b-10 clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h3 class="text-center cmHeading m-t-10">Select a Skill</h3>
-      </div>
-    </div>
+@if (showContent) {
 
-    <div class="row m-t-10 clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <app-my-subjects [subjects]="subjects" (subjectSelected)="onSubjectChange($event)"
-          (onSubscribe)="onSubscribe($event)"></app-my-subjects>
+  <!-- ── Fullscreen overlay ─────────────────────────────────────────── -->
+  <div class="ss-overlay" [@overlayFade] (click)="onCancel()">
+
+    <!-- Loading state -->
+    @if (isLoading) {
+      <div class="ss-loading" (click)="$event.stopPropagation()">
+        <img src="assets/images/icons/loading.gif" class="w-12 mx-auto">
+        <p class="mt-3 text-sm font-medium text-slate-300">Loading subjects…</p>
       </div>
-    </div>
+    }
+
+    <!-- Content panel -->
+    @if (!isLoading) {
+      <div class="ss-panel" [@panelSlide] (click)="$event.stopPropagation()">
+
+        <!-- Panel header -->
+        <div class="ss-panel__header">
+          <div>
+            <h2 class="ss-panel__title">Select a Subject</h2>
+            <p class="ss-panel__subtitle">
+              Pick the skill you want to practice or assess today.
+            </p>
+          </div>
+
+          <div class="ss-panel__controls">
+            <!-- Search -->
+            <div class="ss-search">
+              <mat-icon class="ss-search__icon">search</mat-icon>
+              <input class="ss-search__input"
+                     type="text"
+                     placeholder="Search subjects…"
+                     [(ngModel)]="searchQuery"
+                     (click)="$event.stopPropagation()">
+              @if (searchQuery) {
+                <button class="ss-search__clear" (click)="searchQuery = ''; $event.stopPropagation()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
+            </div>
+
+            <!-- Close -->
+            <button class="ss-close" (click)="onCancel()" aria-label="Close">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Subject grid -->
+        <div class="ss-panel__body">
+          <app-my-subjects
+            [subjects]="subjects"
+            [searchQuery]="searchQuery"
+            (subjectSelected)="onSubjectChange($event)">
+          </app-my-subjects>
+        </div>
+
+      </div>
+    }
   </div>
-</section>
-}
+
 }
