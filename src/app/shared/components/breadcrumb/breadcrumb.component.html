@@ -1,6 +1,14 @@
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <ul class="breadcrumb">
-        </ul>
-    </div>
+<div class="flex flex-col gap-0.5">
+  <h4 class="text-base font-bold text-cm-text-primary leading-tight">{{ title }}</h4>
+  @if ((items && items.length > 0) || active_item) {
+  <nav class="flex items-center gap-1" aria-label="Breadcrumb">
+    @for (item of items; track item) {
+    <span class="text-xs text-cm-text-muted">{{ item }}</span>
+    <span class="text-xs text-cm-text-muted mx-1 opacity-50">/</span>
+    }
+    @if (active_item) {
+    <span class="text-xs font-medium text-cm-brand">{{ active_item }}</span>
+    }
+  </nav>
+  }
 </div>

@@ -1,126 +1,87 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import { CommonModule, DatePipe, formatDate, NgClass } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import {
-  MAT_DATE_LOCALE,
-  MatOptionModule,
-  MatRippleModule,
-} from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import {
-  MatSnackBar
-} from '@angular/material/snack-bar';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '@core';
-import { rowsAnimation, TableExportUtil } from '@shared';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
-import { TableShowHideColumnComponent } from '@shared/components/table-show-hide-column/table-show-hide-column.component';
-import { debounceTime, distinctUntilChanged, fromEvent, map, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-list-users',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }],
-  animations: [rowsAnimation],
   imports: [
     BreadcrumbComponent,
-    FeatherIconsComponent,
     CommonModule,
-    RouterLink,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatOptionModule,
-    MatCheckboxModule,
-    MatTableModule,
-    MatSortModule,
     NgClass,
-    MatRippleModule,
-    MatProgressSpinnerModule,
-    MatMenuModule,
-    MatPaginatorModule,
+    FormsModule,
+    RouterLink,
     DatePipe,
-    TableShowHideColumnComponent,
   ],
 })
-export class ListUserComponent implements OnInit, AfterViewInit, OnDestroy {
-  columnDefinitions = [
-    { def: 'name', label: 'Name', type: 'text', visible: true },
-    { def: 'country', label: 'Country', type: 'address', visible: true },
-    { def: 'email', label: 'Email', type: 'email', visible: true },
-    { def: 'date', label: 'Join Date', type: 'date', visible: true },
-    { def: 'verified', label: 'Status', type: 'text', visible: true },
-    { def: 'actions', label: 'Actions', type: 'actionBtn', visible: true },
-  ];
+export class ListUserComponent implements OnInit, OnDestroy {
 
-  dataSource = new MatTableDataSource<User>([]);
-  selection = new SelectionModel<User>(true, []);
-  contextMenuPosition = { x: '0px', y: '0px' };
+  allUsers: User[] = [];
   isLoading = true;
-  private destroy$ = new Subject<void>();
-  eventDetails: any = null;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('filter') filter!: ElementRef;
-  @ViewChild(MatMenuTrigger) contextMenu?: MatMenuTrigger;
+  searchQuery = '';
+  currentPage = 0;
+  readonly pageSize = 20;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
-    public httpClient: HttpClient,
     public router: Router,
     public authService: AuthService,
-    private snackBar: MatSnackBar,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+  ) {}
 
-  ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
-      this.eventDetails = params;
-    });
+  // ── Computed ──────────────────────────────────────────────
 
-    //this.loadData(this.eventDetails.start);
-    this.loadData();
+  get filteredUsers(): User[] {
+    const q = this.searchQuery.trim().toLowerCase();
+    if (!q) return this.allUsers;
+    return this.allUsers.filter(u =>
+      ((u.firstName || '') + ' ' + (u.lastName || '')).toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q) ||
+      (u.country || '').toLowerCase().includes(q) ||
+      (u.designation || '').toLowerCase().includes(q)
+    );
   }
 
-  ngAfterViewInit() {
-    fromEvent(this.filter.nativeElement, 'input')
-      .pipe(
-        map((event: any) => event.target.value.trim().toLowerCase()),
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe((value) => {
-        this.dataSource.filter = value;
-      });
+  get paginatedUsers(): User[] {
+    const start = this.currentPage * this.pageSize;
+    return this.filteredUsers.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredUsers.length / this.pageSize);
+  }
+
+  get rangeStart(): number {
+    return this.filteredUsers.length === 0 ? 0 : this.currentPage * this.pageSize + 1;
+  }
+
+  get rangeEnd(): number {
+    return Math.min((this.currentPage + 1) * this.pageSize, this.filteredUsers.length);
+  }
+
+  get visiblePages(): number[] {
+    const total = this.totalPages;
+    const cur = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i);
+    const pages = new Set<number>([0, total - 1, cur]);
+    for (let d = -2; d <= 2; d++) {
+      const p = cur + d;
+      if (p >= 0 && p < total) pages.add(p);
+    }
+    return Array.from(pages).sort((a, b) => a - b);
+  }
+
+  // ── Lifecycle ─────────────────────────────────────────────
+
+  ngOnInit() {
+    this.loadData();
   }
 
   ngOnDestroy() {
@@ -128,139 +89,62 @@ export class ListUserComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  refresh() {
-    this.loadData();
-  }
-
-  getDisplayedColumns(): string[] {
-    return this.columnDefinitions
-      .filter((cd) => cd.visible)
-      .map((cd) => cd.def);
-  }
+  // ── Data ──────────────────────────────────────────────────
 
   loadData() {
+    this.isLoading = true;
     this.authService.getAllUsers().subscribe({
       next: (data) => {
-        const users = data.data || [];
-        this.dataSource.data = users;
-
-        this.dataSource.filterPredicate = (data: User, filter: string): boolean => {
-          const searchStr = (
-            (data.firstName || '') +
-            ' ' +
-            (data.lastName || '') +
-            ' ' +
-            (data.email || '') +
-            ' ' +
-            (data.country || '') +
-            ' ' +
-            (data.designation || '')
-          )
-            .toLowerCase()
-            .trim();
-
-          return searchStr.includes(filter);
-        };
-
+        this.allUsers = data.data || [];
+        this.currentPage = 0;
         this.isLoading = false;
-        this.refreshTable();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+      },
     });
   }
 
-  private refreshTable() {
-    this.paginator.pageIndex = 0;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
+  refresh() { this.loadData(); }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value
-      .trim()
-      .toLowerCase();
-    this.dataSource.filter = filterValue;
-  }
+  onSearchChange() { this.currentPage = 0; }
 
-  addNew() {
-    this.router.navigate(['/users/create']).then(() => {
-      console.log('Navigation create user completed!');
-    });
-  }
+  // ── Navigation ────────────────────────────────────────────
 
-  viewUser(row: User) {
-    console.log(row, " ###viewUser");
-    this.router.navigate(['/users/view', row.username]).then(() => {
-      console.log('Navigation view user completed!');
-    });
-  }
+  addNew() { this.router.navigate(['/users/create']); }
 
-  editUser(row: User) {
-    this.router.navigate(['/users/edit', row.username]).then(() => {
-      console.log('Navigation edit user completed!');
-    });
-  }
+  viewUser(row: User) { this.router.navigate(['/users/view', row.username]); }
 
-  deleteUser(row: User) {
-    // const dialogRef = this.dialog.open(TopicDeleteComponent, {
-    //   data: row,
-    // });
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result) {
-    //     this.dataSource.data = this.dataSource.data.filter(
-    //       (record) => record.id !== row.id
-    //     );
-    //     this.refreshTable();
-    //     this.showNotification(
-    //       'snackbar-danger',
-    //       row.title+' deleted Successfully.',
-    //       'bottom',
-    //       'center'
-    //     );
-    //   }
-    // });
-  }
+  editUser(row: User) { this.router.navigate(['/users/edit', row.username]); }
 
-  exportExcel() {
-    const exportData = this.dataSource.filteredData.map((x) => ({
-      FirstName: x.firstName,
-      LastName: x.lastName,
-      Email: x.email,
-      Date: formatDate(new Date(x.createdAt), 'yyyy-MM-dd', 'en') || '',
-      // Time: x.time,
-      // Mobile: x.mobile,
-      // Doctor: x.doctor,
-      // Injury: x.injury,
-      // AppointmentStatus: x.appointmentStatus,
-      // VisitType: x.visitType,
-      // PaymentStatus: x.paymentStatus,
-      // InsuranceProvider: x.insuranceProvider,
-      // Notes: x.notes,
+  // ── Export ────────────────────────────────────────────────
+
+  exportCsv() {
+    const rows = this.filteredUsers.map(u => ({
+      FirstName: u.firstName,
+      LastName: u.lastName,
+      Email: u.email,
+      Country: u.country || '',
+      Joined: u.createdAt ? formatDate(new Date(u.createdAt), 'yyyy-MM-dd', 'en') : '',
+      Status: u.accountStatus || '',
     }));
-
-    TableExportUtil.exportToExcel(exportData, 'excel');
+    const header = Object.keys(rows[0] ?? {}).join(',');
+    const csv = [header, ...rows.map(r => Object.values(r).map(v => `"${v}"`).join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'users.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
-  isAllSelected() {
-    return this.selection.selected.length === this.dataSource.data.length;
-  }
+  // ── Pagination ────────────────────────────────────────────
 
-  masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach((row) => this.selection.select(row));
-  }
+  prevPage() { if (this.currentPage > 0) this.currentPage--; }
 
-  onContextMenu(event: MouseEvent, item: User) {
-    event.preventDefault();
-    this.contextMenuPosition = {
-      x: `${event.clientX}px`,
-      y: `${event.clientY}px`,
-    };
-    if (this.contextMenu) {
-      this.contextMenu.menuData = { item };
-      this.contextMenu.menu?.focusFirstItem('mouse');
-      this.contextMenu.openMenu();
-    }
-  }
+  nextPage() { if (this.currentPage < this.totalPages - 1) this.currentPage++; }
+
+  goToPage(page: number) { this.currentPage = page; }
 }

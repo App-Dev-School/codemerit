@@ -1,11 +1,36 @@
-<div class="container">
-  <div mat-dialog-content>
-    <h4>Are you sure that you want to Revoke {{ data?.name ?? 'this permission'}} permanently?</h4>
+<div class="p-1 min-w-[320px]">
+  <div mat-dialog-content class="mb-5">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-full bg-cm-danger-dim flex items-center justify-center shrink-0 mt-0.5">
+        <svg class="w-5 h-5 text-cm-danger-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+        </svg>
+      </div>
+      <div>
+        <h4 class="text-sm font-bold text-cm-text-primary mb-1">Revoke Permission</h4>
+        <p class="text-xs text-cm-text-secondary leading-relaxed">
+          Are you sure you want to revoke
+          <strong class="text-cm-text-primary">{{ data?.name ?? 'this permission' }}</strong>
+          permanently? This action cannot be undone.
+        </p>
+      </div>
+    </div>
   </div>
-  <div mat-dialog-actions class="mb-1">
-    <button mat-flat-button class="formCancelBtn" (click)="confirmRevoke()">
+  <div mat-dialog-actions class="flex items-center gap-2 justify-end">
+    <button mat-dialog-close type="button"
+      class="inline-flex items-center px-4 py-2 rounded-xl border border-cm-border
+             text-xs font-medium text-cm-text-secondary bg-cm-surface-muted
+             hover:bg-cm-surface-hover active:scale-95 transition-all">
+      Cancel
+    </button>
+    <button type="button" (click)="confirmRevoke()"
+      class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cm-danger text-white
+             text-xs font-semibold hover:opacity-90 active:scale-95 transition-all">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
       Revoke
     </button>
-    <button mat-flat-button mat-dialog-close color="accent" tabindex="-1">Cancel</button>
   </div>
 </div>

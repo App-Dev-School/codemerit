@@ -1,4 +1,3 @@
-import { TextFieldModule } from '@angular/cdk/text-field';
 import { Component, Inject, OnInit, Optional, OnDestroy } from '@angular/core';
 import {
   AbstractControl,
@@ -10,15 +9,7 @@ import {
   ValidatorFn,
   Validators
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChip } from '@angular/material/chips';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Status } from '@core/models/status.enum';
 import { Subject } from '@core/models/subject';
@@ -33,8 +24,6 @@ import StarterKit from '@tiptap/starter-kit';
 import Code from '@tiptap/extension-code';
 import { TiptapEditorDirective } from 'ngx-tiptap';
 import { SnackbarService } from '@core/service/snackbar.service';
-import { NgScrollbar } from 'ngx-scrollbar';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { AuthService, User } from '@core';
 
 @Component({
@@ -42,40 +31,82 @@ import { AuthService, User } from '@core';
   templateUrl: './question-form.component.html',
   styleUrls: ['./question-form.component.scss'],
   imports: [
-    MatButtonModule,
-    MatIconModule,
     FormsModule,
     ReactiveFormsModule,
     NgTemplateOutlet,
-    NgScrollbar,
-    TextFieldModule,
-    MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatCheckboxModule,
-    MatChip,
-    TiptapEditorDirective
+    TiptapEditorDirective,
   ]
 })
 export class QuestionFormPage implements OnInit, OnDestroy {
   editor: Editor;
   answerEditor: Editor;
-  //questionSource:any;
   questionSlug: string;
   action: string;
   actionText: string;
   dialogTitle: string;
   loading: boolean;
   submitted: boolean;
-  topicImage = 'assets/images/icons/topic.png';
   questionForm: UntypedFormGroup;
   initialFormValue: any;
   questionItem: QuestionItem | QuestionItemDetail;
   subjects: Subject[] = [];
   topics: TopicItem[] = [];
   authData: User;
+
+  // Searchable dropdown state
+  subjectSearch = '';
+  topicSearch = '';
+  showSubjectPanel = false;
+  showTopicPanel = false;
+
+  get filteredSubjects(): Subject[] {
+    const q = this.subjectSearch.toLowerCase();
+    return q ? this.subjects.filter(s => s.title.toLowerCase().includes(q)) : this.subjects;
+  }
+
+  get filteredTopics(): TopicItem[] {
+    const q = this.topicSearch.toLowerCase();
+    return q ? this.topics.filter(t => t.title.toLowerCase().includes(q)) : this.topics;
+  }
+
+  get selectedSubjectName(): string {
+    const id = this.questionForm?.get('subjectId')?.value;
+    return this.subjects.find(s => '' + s.id === '' + id)?.title || '';
+  }
+
+  selectSubject(subject: Subject): void {
+    this.questionForm.patchValue({ subjectId: '' + subject.id, topicIds: [] });
+    this.subjectSearch = '';
+    this.showSubjectPanel = false;
+    this.topics = this.masterSrv.topics.filter(t => t.subjectId == subject.id);
+  }
+
+  isTopicSelected(id: number): boolean {
+    return ((this.questionForm?.get('topicIds')?.value ?? []) as number[]).includes(id);
+  }
+
+  toggleTopic(id: number): void {
+    const current: number[] = this.questionForm?.get('topicIds')?.value ?? [];
+    const updated = current.includes(id) ? current.filter(x => x !== id) : [...current, id];
+    this.questionForm.patchValue({ topicIds: updated });
+  }
+
+  getSelectedTopics(): TopicItem[] {
+    const ids: number[] = this.questionForm?.get('topicIds')?.value ?? [];
+    return this.masterSrv.topics.filter(t => ids.includes(t.id));
+  }
+
+  removeTopic(id: number): void {
+    this.toggleTopic(id);
+  }
+
+  onSubjectBlur(): void {
+    setTimeout(() => { this.showSubjectPanel = false; this.subjectSearch = ''; }, 200);
+  }
+
+  onTopicBlur(): void {
+    setTimeout(() => { this.showTopicPanel = false; this.topicSearch = ''; }, 200);
+  }
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -225,14 +256,6 @@ export class QuestionFormPage implements OnInit, OnDestroy {
       const hasAtLeastOneCorrect = options?.some(opt => opt.correct);
       return hasAtLeastOneCorrect ? null : { noCorrectOption: true };
     };
-  }
-
-  getTopicTitleById(id: number): string {
-    if (this.topics.length > 0) {
-      const topic = this.topics.find(t => t.id === id);
-      return topic ? topic.title : '';
-    }
-    return '';
   }
 
   onCancel() {

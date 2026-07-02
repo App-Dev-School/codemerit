@@ -7,7 +7,6 @@ import {
   MatDialogClose,
 } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { QuestionService } from '../../questions.service';
 
 export interface DialogData {
@@ -24,7 +23,6 @@ export interface DialogData {
         MatDialogTitle,
         MatDialogContent,
         MatDialogActions,
-        MatButtonModule,
         MatDialogClose,
     ]
 })

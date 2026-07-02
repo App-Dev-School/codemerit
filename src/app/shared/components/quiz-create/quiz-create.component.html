@@ -11,7 +11,9 @@
     </div>
     <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-green-500
                 flex items-center justify-center">
-      <mat-icon class="text-white leading-none" style="font-size:12px">check</mat-icon>
+      <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+      </svg>
     </div>
   </div>
 
@@ -23,12 +25,14 @@
   </div>
 
   <div class="w-full space-y-2 pt-1">
-    <button mat-flat-button color="primary" class="w-full h-11 rounded-xl font-bold"
-            (click)="launchQuiz()" type="button">
-      <mat-icon>play_arrow</mat-icon> Start Quiz Now
+    <button type="button" (click)="launchQuiz()"
+      class="w-full h-11 rounded-xl font-bold text-sm bg-cm-brand text-white
+             hover:opacity-90 active:scale-95 transition-all inline-flex items-center justify-center gap-2">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      Start Quiz Now
     </button>
-    <button mat-button class="w-full text-cm-text-muted text-sm"
-            (click)="close()" type="button">
+    <button type="button" (click)="close()"
+      class="w-full text-sm font-medium text-cm-text-muted hover:text-cm-text-secondary transition-colors py-2">
       Will Take Later
     </button>
   </div>
@@ -42,7 +46,7 @@
 @if(requestConfirmed && loading){
 <div class="flex flex-col min-w-[300px]">
 
-  <!-- Sweep progress bar (same pattern as browse-quizzes) -->
+  <!-- Sweep progress bar -->
   <div class="loading-bar-track">
     <div class="loading-bar-fill"></div>
   </div>
@@ -58,7 +62,7 @@
       <p class="text-xs text-cm-text-muted">Crafting your personalised assessment…</p>
     </div>
 
-    <!-- Step dots — [style.*] bindings so Tailwind JIT isn't required -->
+    <!-- Step dots -->
     <div class="flex items-center gap-2">
       @for(msg of messages; let i = $index; track i){
       <div class="rounded-full transition-all duration-500" style="height:6px"
@@ -67,7 +71,6 @@
              ? 'var(--cm-brand)' : 'var(--cm-surface-raised)'">
       </div>
       }
-      <!-- Final "almost done" dot -->
       <div class="rounded-full transition-all duration-500" style="height:6px"
            [style.width]="finished ? '24px' : '6px'"
            [style.backgroundColor]="finished ? '#22c55e' : 'var(--cm-surface-raised)'">
@@ -84,28 +87,27 @@
 @if(!requestConfirmed){
 <div class="relative flex flex-col min-w-[340px] max-w-[460px]">
 
-  <!-- ── Dismiss button — top-right of dialog ── -->
+  <!-- Dismiss button -->
   @if(!(data && data?.editMode)){
-    <!--close position fix -->
-  <button class="absolute top-3 right-3 z-20
-                 w-8 h-8 rounded-lg border border-cm-border
-                 bg-cm-surface-raised
-                 inline-flex items-center justify-center
-                 text-cm-text-secondary
-                 hover:bg-cm-surface-hover hover:text-cm-text-primary
-                 transition-colors duration-150 cursor-pointer"
-          (click)="close()" aria-label="Dismiss" type="button">
-    <mat-icon style="font-size:16px;width:16px;height:16px;
-                     display:flex;align-items:center;justify-content:center;
-                     line-height:1">close</mat-icon>
+  <button type="button" (click)="close()" aria-label="Dismiss"
+    class="absolute top-3 right-3 z-20 w-8 h-8 rounded-lg border border-cm-border
+           bg-cm-surface-raised inline-flex items-center justify-center
+           text-cm-text-secondary hover:bg-cm-surface-hover hover:text-cm-text-primary
+           transition-colors duration-150 cursor-pointer">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
   </button>
   }
 
-  <!-- ── Dialog header ── -->
+  <!-- Dialog header -->
   <div class="flex items-start gap-3 px-6 pt-6 pb-4 border-b border-cm-border">
     <div class="w-10 h-10 rounded-xl bg-cm-brand-dim border border-cm-brand/20
                 flex items-center justify-center shrink-0">
-      <mat-icon class="text-cm-brand" style="font-size:20px">quiz</mat-icon>
+      <svg class="w-5 h-5 text-cm-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+      </svg>
     </div>
     <div class="flex-1 min-w-0 pr-10">
       @if(data?.title){
@@ -121,118 +123,166 @@
     </div>
   </div>
 
-  <!-- ── Form ── -->
+  <!-- Form -->
   <form [formGroup]="quizConfigForm" (ngSubmit)="onSubmit()">
 
     <!-- Admin-only fields -->
     @if(authData && authData.role === 'Admin'){
     <div class="grid grid-cols-2 gap-3 px-6 pt-5 pb-1">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
-        <mat-label>No. of Questions</mat-label>
-        <input type="number" matInput formControlName="numQuestions" min="3" max="20">
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
-        <mat-label>Difficulty Level</mat-label>
-        <input type="text" matInput formControlName="level" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-          @for(option of levels; track option){
-          <mat-option [value]="option.value">{{option.name}}</mat-option>
+      <div>
+        <label class="block text-xs font-semibold text-cm-text-secondary mb-1.5">No. of Questions</label>
+        <input type="number" formControlName="numQuestions" min="3" max="20"
+          class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                 text-sm text-cm-text-primary placeholder-cm-text-muted
+                 focus:outline-none focus:ring-2 focus:ring-cm-brand-ring focus:border-cm-brand
+                 transition-colors">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-cm-text-secondary mb-1.5">Difficulty Level</label>
+        <select formControlName="level"
+          class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                 text-sm text-cm-text-primary focus:outline-none focus:ring-2 focus:ring-cm-brand-ring
+                 focus:border-cm-brand transition-colors appearance-none">
+          @for(option of levels; track option.value){
+          <option [value]="option.value">{{option.name}}</option>
           }
-        </mat-autocomplete>
-      </mat-form-field>
+        </select>
+      </div>
     </div>
     <div class="h-px bg-cm-border mx-6 mb-2"></div>
     }
 
-    <!-- ── Settings rows ── -->
+    <!-- Settings rows -->
     <div class="divide-y divide-cm-border px-5 bg-cm-surface-muted">
 
       <!-- Quiz Mode -->
       <div class="flex items-center justify-between py-3">
         <div class="flex items-center gap-2.5">
-          <mat-icon class="text-cm-text-secondary shrink-0"
-                    style="font-size:17px;width:17px;height:17px;line-height:17px">tune</mat-icon>
+          <svg class="w-4 h-4 text-cm-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+          </svg>
           <span class="text-sm font-bold text-cm-text-primary">Quiz Mode</span>
         </div>
-        <mat-button-toggle-group class="quiz-toggle" formControlName="mode" appearance="standard">
-          <mat-button-toggle value="Default">Default</mat-button-toggle>
-          <mat-button-toggle value="Interactive">Interactive</mat-button-toggle>
-        </mat-button-toggle-group>
+        <div class="flex text-xs rounded-lg overflow-hidden border border-cm-border">
+          @for(opt of ['Default','Interactive']; track opt){
+          <button type="button" (click)="quizConfigForm.get('mode')?.setValue(opt)"
+            [class]="quizConfigForm.get('mode')?.value === opt
+              ? 'px-3 py-1.5 font-semibold bg-cm-brand text-white'
+              : 'px-3 py-1.5 font-medium text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-raised'">
+            {{opt}}
+          </button>
+          }
+        </div>
       </div>
 
       <!-- Enable Hints -->
       <div class="flex items-center justify-between py-3">
         <div class="flex items-center gap-2.5">
-          <mat-icon class="text-cm-text-secondary shrink-0"
-                    style="font-size:17px;width:17px;height:17px;line-height:17px">lightbulb_outline</mat-icon>
+          <svg class="w-4 h-4 text-cm-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
           <span class="text-sm font-bold text-cm-text-primary">Enable Hints</span>
         </div>
-        <mat-button-toggle-group class="quiz-toggle" formControlName="showHint" appearance="standard">
-          <mat-button-toggle [value]="true">Yes</mat-button-toggle>
-          <mat-button-toggle [value]="false">No</mat-button-toggle>
-        </mat-button-toggle-group>
+        <div class="flex text-xs rounded-lg overflow-hidden border border-cm-border">
+          @for(opt of [{label:'Yes',val:true},{label:'No',val:false}]; track opt.label){
+          <button type="button" (click)="quizConfigForm.get('showHint')?.setValue(opt.val)"
+            [class]="quizConfigForm.get('showHint')?.value === opt.val
+              ? 'px-3 py-1.5 font-semibold bg-cm-brand text-white'
+              : 'px-3 py-1.5 font-medium text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-raised'">
+            {{opt.label}}
+          </button>
+          }
+        </div>
       </div>
 
       <!-- Show Answer -->
       <div class="flex items-center justify-between py-3">
         <div class="flex items-center gap-2.5">
-          <mat-icon class="text-cm-text-secondary shrink-0"
-                    style="font-size:17px;width:17px;height:17px;line-height:17px">visibility</mat-icon>
+          <svg class="w-4 h-4 text-cm-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
           <span class="text-sm font-bold text-cm-text-primary">Show Answer</span>
         </div>
-        <mat-button-toggle-group class="quiz-toggle" formControlName="showAnswers" appearance="standard">
-          <mat-button-toggle [value]="true">Yes</mat-button-toggle>
-          <mat-button-toggle [value]="false">No</mat-button-toggle>
-        </mat-button-toggle-group>
+        <div class="flex text-xs rounded-lg overflow-hidden border border-cm-border">
+          @for(opt of [{label:'Yes',val:true},{label:'No',val:false}]; track opt.label){
+          <button type="button" (click)="quizConfigForm.get('showAnswers')?.setValue(opt.val)"
+            [class]="quizConfigForm.get('showAnswers')?.value === opt.val
+              ? 'px-3 py-1.5 font-semibold bg-cm-brand text-white'
+              : 'px-3 py-1.5 font-medium text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-raised'">
+            {{opt.label}}
+          </button>
+          }
+        </div>
       </div>
 
       <!-- Navigator -->
       <div class="flex items-center justify-between py-3">
         <div class="flex items-center gap-2.5">
-          <mat-icon class="text-cm-text-secondary shrink-0"
-                    style="font-size:17px;width:17px;height:17px;line-height:17px">navigation</mat-icon>
+          <svg class="w-4 h-4 text-cm-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
           <span class="text-sm font-bold text-cm-text-primary">Navigator</span>
         </div>
-        <mat-button-toggle-group class="quiz-toggle" formControlName="enableNavigation" appearance="standard">
-          <mat-button-toggle [value]="true">ON</mat-button-toggle>
-          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
-        </mat-button-toggle-group>
+        <div class="flex text-xs rounded-lg overflow-hidden border border-cm-border">
+          @for(opt of [{label:'ON',val:true},{label:'OFF',val:false}]; track opt.label){
+          <button type="button" (click)="quizConfigForm.get('enableNavigation')?.setValue(opt.val)"
+            [class]="quizConfigForm.get('enableNavigation')?.value === opt.val
+              ? 'px-3 py-1.5 font-semibold bg-cm-brand text-white'
+              : 'px-3 py-1.5 font-medium text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-raised'">
+            {{opt.label}}
+          </button>
+          }
+        </div>
       </div>
 
       <!-- Audio -->
       <div class="flex items-center justify-between py-3">
         <div class="flex items-center gap-2.5">
-          <mat-icon class="text-cm-text-secondary shrink-0"
-                    style="font-size:17px;width:17px;height:17px;line-height:17px">volume_up</mat-icon>
+          <svg class="w-4 h-4 text-cm-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m-3.536-9.536a5 5 0 000 7.072M9 12H5.5a1 1 0 000 2H9"/>
+          </svg>
           <span class="text-sm font-bold text-cm-text-primary">Audio</span>
         </div>
-        <mat-button-toggle-group class="quiz-toggle" formControlName="enableAudio" appearance="standard">
-          <mat-button-toggle [value]="true">ON</mat-button-toggle>
-          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
-        </mat-button-toggle-group>
+        <div class="flex text-xs rounded-lg overflow-hidden border border-cm-border">
+          @for(opt of [{label:'ON',val:true},{label:'OFF',val:false}]; track opt.label){
+          <button type="button" (click)="quizConfigForm.get('enableAudio')?.setValue(opt.val)"
+            [class]="quizConfigForm.get('enableAudio')?.value === opt.val
+              ? 'px-3 py-1.5 font-semibold bg-cm-brand text-white'
+              : 'px-3 py-1.5 font-medium text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-raised'">
+            {{opt.label}}
+          </button>
+          }
+        </div>
       </div>
 
       <!-- Timer -->
       <div class="flex items-center justify-between py-3">
         <div class="flex items-center gap-2.5">
-          <mat-icon class="text-cm-text-secondary shrink-0"
-                    style="font-size:17px;width:17px;height:17px;line-height:17px">timer</mat-icon>
+          <svg class="w-4 h-4 text-cm-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
           <span class="text-sm font-bold text-cm-text-primary">Timer</span>
         </div>
-        <mat-button-toggle-group class="quiz-toggle" formControlName="enableAudio" appearance="standard">
-          <mat-button-toggle [value]="true">ON</mat-button-toggle>
-          <mat-button-toggle [value]="false">OFF</mat-button-toggle>
-        </mat-button-toggle-group>
+        <div class="flex text-xs rounded-lg overflow-hidden border border-cm-border">
+          @for(opt of [{label:'ON',val:true},{label:'OFF',val:false}]; track opt.label){
+          <button type="button" (click)="quizConfigForm.get('enableAudio')?.setValue(opt.val)"
+            [class]="quizConfigForm.get('enableAudio')?.value === opt.val
+              ? 'px-3 py-1.5 font-semibold bg-cm-brand text-white'
+              : 'px-3 py-1.5 font-medium text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-raised'">
+            {{opt.label}}
+          </button>
+          }
+        </div>
       </div>
 
     </div>
 
-    <!-- ── Footer actions ── -->
+    <!-- Footer actions -->
     <div class="px-6 pt-4 pb-5 border-t border-cm-border mt-1">
-      <button mat-flat-button color="primary"
-              class="w-full h-11 rounded-xl font-bold text-sm"
-              [disabled]="!quizConfigForm.valid || loading"
-              type="submit">
+      <button type="submit"
+        class="w-full h-11 rounded-xl font-bold text-sm bg-cm-brand text-white
+               hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="!quizConfigForm.valid || loading">
         {{ (data && data?.editMode) ? 'Continue' : 'Generate Assessment' }}
       </button>
     </div>

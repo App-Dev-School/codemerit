@@ -1,7 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import {
   ActivatedRoute,
   NavigationCancel,
@@ -40,8 +38,6 @@ import { Subscription } from 'rxjs';
     ]),
   ],
   imports: [
-    MatIconModule,
-    MatButtonModule,
     CoursePickerComponent,
   ],
 })

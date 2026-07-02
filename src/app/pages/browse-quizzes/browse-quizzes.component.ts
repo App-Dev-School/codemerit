@@ -5,11 +5,6 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
 import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from '@core/service/auth.service';
 import { RightSidebarService } from '@core/service/rightsidebar.service';
@@ -23,12 +18,7 @@ import { QuizThumbnailComponent } from '@shared/components/quiz-thumbnail/quiz-t
   selector: 'app-standard-quiz',
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
     FormsModule,
-    MatIcon,
-    MatSelectModule,
-    MatFormFieldModule,
     QuizFilterSidebarComponent,
     QuizThumbnailComponent
   ],

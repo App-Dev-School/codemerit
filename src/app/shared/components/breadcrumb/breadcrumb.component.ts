@@ -1,11 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { FeatherModule } from 'angular-feather';
 
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
     styleUrls: ['./breadcrumb.component.scss'],
-    imports: [FeatherModule]
+    imports: []
 })
 export class BreadcrumbComponent {
   @Input()

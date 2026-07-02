@@ -1,8 +1,5 @@
-import { CommonModule } from "@angular/common";
 import { Component, Inject } from "@angular/core";
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetModule, MatBottomSheetRef } from "@angular/material/bottom-sheet";
-import { MatIconModule } from "@angular/material/icon";
-import { MatListModule } from '@angular/material/list';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from "@angular/material/bottom-sheet";
 import { Router } from "@angular/router";
 import { AuthService } from "@core/service/auth.service";
 import { ShareService } from "@core/service/share.service";
@@ -11,12 +8,7 @@ import { SnackbarService } from "@core/service/snackbar.service";
     selector: 'app-share-bottom-sheet',
     templateUrl: 'share-bottom-sheet.html',
     styleUrls: ['./share-bottom-sheet.scss'],
-    imports: [
-        CommonModule,
-        MatBottomSheetModule,
-        MatListModule,
-        MatIconModule
-    ]
+    imports: []
 })
 export class ShareBottomSheetComponent {
     loading = false;

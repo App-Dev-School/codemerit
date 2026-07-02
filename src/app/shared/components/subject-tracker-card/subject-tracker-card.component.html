@@ -99,11 +99,16 @@
   <!-- ── Footer: action buttons ────────────────────────────────── -->
   @if(!profileMode){
   <div class="px-4 pb-4 pt-2 flex gap-2">
-    <button (click)="onViewPath()" mat-stroked-button color="primary" class="flex-1 !text-xs !h-8">
+    <button type="button" (click)="onViewPath()"
+      class="flex-1 py-1.5 rounded-xl border border-cm-border text-xs font-semibold
+             text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+             active:scale-95 transition-all">
       Explore
     </button>
     @if(item?.numTrivia > 0){
-    <button (click)="onTakeQuiz()" mat-flat-button color="accent" class="flex-1 !text-xs !h-8">
+    <button type="button" (click)="onTakeQuiz()"
+      class="flex-1 py-1.5 rounded-xl bg-cm-brand text-white text-xs font-semibold
+             hover:opacity-90 active:scale-95 transition-all">
       {{item.attempted > 0 ? 'Next Quiz' : 'Test Skills'}}
     </button>
     }

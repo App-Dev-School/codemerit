@@ -1,6 +1,4 @@
 import { Component, Input, input, OnInit } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import {
   ApexChart,
   ApexFill,
@@ -27,7 +25,7 @@ export interface ChartConfig {
 
 @Component({
     selector: 'app-quiz-progress',
-    imports: [MatCardModule, NgApexchartsModule, MatIconModule],
+    imports: [NgApexchartsModule],
     templateUrl: './quiz-progress.component.html',
     styleUrl: './quiz-progress.component.scss'
 })

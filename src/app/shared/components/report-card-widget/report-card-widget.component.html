@@ -1,25 +1,22 @@
-<div class="plain-card">
-    <div class="card-inner">
-        <p class="tx-primary m-b-10 font-b-500">{{ heading() }}</p>
-        <div class="row">
-            <div class="col-4">
-                <label class="font-b-500 font-16">Today</label>
-                <p>{{ todayCount() }}</p>
-            </div>
-            <div class="col-4">
-                <label class="font-b-500 font-16">This Week</label>
-                <p>{{ weekCount() }}</p>
-            </div>
-            <div class="col-4">
-                <label class="font-b-500 font-16">This Month</label>
-                <p>{{ monthCount() }}</p>
-            </div>
-        </div>
-        <div class="progress shadow-style">
-            <div class="progress-bar" [style.width]="progressPercentage() + '%'" [style.backgroundColor]="progressColor()"
-                role="progressbar" [attr.aria-valuenow]="progressPercentage()" aria-valuemin="0" aria-valuemax="100">
-                {{ progressPercentage() }}%
-            </div>
-        </div>
+<div class="rounded-xl border border-cm-border bg-cm-surface p-4 mb-4 hover:bg-cm-surface-hover transition-colors">
+  <p class="text-sm font-semibold text-cm-text-primary mb-3">{{ heading() }}</p>
+  <div class="grid grid-cols-3 gap-2 mb-4">
+    <div class="text-center">
+      <p class="text-xs text-cm-text-muted mb-0.5">Today</p>
+      <p class="text-lg font-bold text-cm-text-primary">{{ todayCount() }}</p>
     </div>
+    <div class="text-center">
+      <p class="text-xs text-cm-text-muted mb-0.5">This Week</p>
+      <p class="text-lg font-bold text-cm-text-primary">{{ weekCount() }}</p>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-cm-text-muted mb-0.5">This Month</p>
+      <p class="text-lg font-bold text-cm-text-primary">{{ monthCount() }}</p>
+    </div>
+  </div>
+  <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
+    <div class="h-full rounded-full transition-all duration-500"
+         [style.width]="progressPercentage() + '%'"
+         [style.backgroundColor]="progressColor()"></div>
+  </div>
 </div>

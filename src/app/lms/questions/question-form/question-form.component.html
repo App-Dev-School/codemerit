@@ -1,18 +1,7 @@
 @if (!data) {
   <section class="content">
-    <div class="content-block p-t-20">
-      <mat-card class="question-form-card">
-        @if (!submitted) {
-          <mat-card-header class="header-style">
-            <mat-card-title>{{
-              action === "edit" ? "Update Question" : "Add New Question"
-            }}</mat-card-title>
-          </mat-card-header>
-        }
-        <mat-card-content>
-          <ng-container *ngTemplateOutlet="formContainer"></ng-container>
-        </mat-card-content>
-      </mat-card>
+    <div class="content-block">
+      <ng-container *ngTemplateOutlet="formContainer"></ng-container>
     </div>
   </section>
 } @else {
@@ -20,317 +9,305 @@
 }
 
 <ng-template #formContainer>
-  <!-- @if (!submitted) {
-  <div class="block-header">
-    <h5 class="m-t-20 m-l-20">{{ action === 'edit' ? 'Update Question' : 'Add New Question'}}</h5>
+<div class="qf-wrap" [class.qf-wrap--dialog]="!!data">
+
+  <!-- ── Header ── -->
+  <div class="qf-header">
+    <div>
+      <p class="qf-header__title">{{ action === 'edit' ? 'Update Question' : 'Create Question' }}</p>
+      <p class="qf-header__sub">{{ action === 'edit' ? 'Edit question details below' : 'Fill in details to add a new question' }}</p>
+    </div>
+    @if (data) {
+    <button type="button" class="qf-close" (click)="onCancel()">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    }
   </div>
-  } -->
-  <div class="row">
-    <div class="col-12">
-      @if (submitted) {
-        <div class="overlay"></div>
-        <div class="animToast loading">
-          <img src="assets/images/icons/loading.gif" class="loadingIcon" />
-          <h4>{{ actionText }}</h4>
-          <h5>Please wait ...</h5>
+
+  @if (submitted) {
+  <!-- ── Loading ── -->
+  <div class="qf-loading">
+    <img src="assets/images/icons/loading.gif" class="qf-loading__icon" alt="">
+    <p class="qf-loading__title">{{ actionText }}</p>
+    <p class="qf-loading__sub">Please wait…</p>
+  </div>
+
+  } @else {
+  <form [formGroup]="questionForm" (ngSubmit)="submit()" class="qf-form">
+
+    <!-- ── Scrollable body ── -->
+    <div class="qf-body">
+
+      <!-- Question -->
+      <div class="qf-field">
+        <label class="qf-label qf-label--req">Question</label>
+        <div class="qf-tiptap">
+          <tiptap-editor [editor]="editor"></tiptap-editor>
         </div>
-      } @else {
-        <form
-          class="register-form m-4"
-          [formGroup]="questionForm"
-          (ngSubmit)="submit()"
-        >
-          <ng-scrollbar visibility="hover">
-            <div class="row">
-              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                
-                <!-- <mat-form-field class="example-full-width" appearance="fill">
-                  <mat-label>Question</mat-label>
-                  <textarea
-                    matInput
-                    formControlName="question"
-                    rows="2"
-                    cdkTextareaAutosize
-                    #autosize="cdkTextareaAutosize"
-                  >{{questionSource}}</textarea>
-                </mat-form-field> -->
-                <mat-label>Question</mat-label>
-                <div class="tiptap-mat-wrapper">
-                  <tiptap-editor [editor]="editor" class="tiptap-mat-textarea"></tiptap-editor>
-                </div>
-                @if (questionForm.get("question")?.hasError("minLength")) {
-                    <mat-error> Question is too short </mat-error>
+      </div>
+
+      <!-- Type + Subject -->
+      <div class="qf-grid-2">
+
+        <div class="qf-field">
+          <label class="qf-label qf-label--req">Type</label>
+          <select class="qf-select" formControlName="questionType">
+            <option value="">Select type…</option>
+            <option value="Trivia">Trivia</option>
+            <option value="General">General</option>
+          </select>
+        </div>
+
+        <!-- Subject searchable -->
+        <div class="qf-field">
+          <label class="qf-label qf-label--req">Subject</label>
+          <div class="qf-dd">
+            <button type="button" class="qf-dd__trigger" [class.qf-dd__trigger--open]="showSubjectPanel"
+                    (click)="showSubjectPanel = !showSubjectPanel" (blur)="onSubjectBlur()">
+              <span [class.qf-dd__placeholder]="!selectedSubjectName">
+                {{ selectedSubjectName || 'Select subject…' }}
+              </span>
+              <svg class="qf-dd__chevron" [class.qf-dd__chevron--up]="showSubjectPanel"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            @if (showSubjectPanel) {
+            <div class="qf-dd__panel">
+              <div class="qf-dd__search">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input [(ngModel)]="subjectSearch" [ngModelOptions]="{standalone:true}"
+                       (keydown)="$event.stopPropagation()" placeholder="Search subjects…" autofocus>
+              </div>
+              <div class="qf-dd__list">
+                @for (s of filteredSubjects; track s.id) {
+                <button type="button" class="qf-dd__item"
+                        [class.qf-dd__item--sel]="'' + s.id === questionForm.get('subjectId')?.value"
+                        (mousedown)="selectSubject(s)">
+                  {{ s.title }}
+                  @if ('' + s.id === questionForm.get('subjectId')?.value) {
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                  </svg>
                   }
-                <!-- </mat-form-field> -->
-              </div>
-
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="fill">
-                  <mat-label>Question Type</mat-label>
-                  <mat-select formControlName="questionType">
-                    <mat-option value="Trivia">Trivia</mat-option>
-                    <mat-option value="General">General</mat-option>
-                    <!-- <mat-option value="Survey">Survey</mat-option> -->
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
-                <mat-form-field class="example-full-width" appearance="fill">
-                  <mat-label>Select Subject</mat-label>
-                  <mat-select formControlName="subjectId">
-                    @for (subject of subjects; track subject) {
-                      <mat-option value="{{ subject.id }}">{{
-                        subject.title
-                      }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                <mat-form-field appearance="fill" class="example-full-width">
-                  <mat-label class="mb-2">Select Topic(s)</mat-label>
-                  <mat-select formControlName="topicIds" multiple>
-                    <mat-select-trigger>
-                      @for (
-                        option of questionForm.get("topicIds")?.value ?? [];
-                        track option
-                      ) {
-                        <mat-chip class="chip-spacing">{{
-                          getTopicTitleById(option)
-                        }}</mat-chip>
-                      }
-                    </mat-select-trigger>
-                    @for (item of topics; track item.id) {
-                      <mat-option [value]="item.id">{{
-                        item.title
-                      }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <!-- Other Dynamic Fields -->
-            @if (questionForm.get("questionType")?.value === "Trivia") {
-              <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                  <mat-label class="mb-2">Enter Options</mat-label>
-                  <small class="text-muted ms-2"
-                    >Minimum 2 options required</small
-                  >
-                  <div formArrayName="options">
-                    @for (
-                      option of options.controls;
-                      let i = $index;
-                      track option
-                    ) {
-                      <div class="option-item mb-2" [formGroupName]="i">
-                        <div class="d-flex align-items-center gap-2">
-                          <mat-checkbox
-                            formControlName="correct"
-                            class="me-2"
-                          ></mat-checkbox>
-                          <mat-form-field
-                            class="flex-grow-1 mb-0"
-                            appearance="fill"
-                          >
-                            <mat-label>Option {{ i + 1 }}</mat-label>
-                            <input
-                              matInput
-                              formControlName="option"
-                              placeholder="Enter option text"
-                              required
-                            />
-                          </mat-form-field>
-
-                          <button
-                            mat-icon-button
-                            color="warn"
-                            type="button"
-                            (click)="removeOption(i)"
-                            [disabled]="options.length <= 2"
-                          >
-                            <mat-icon>delete</mat-icon>
-                          </button>
-                        </div>
-                      </div>
-                    }
-                  </div>
-
-                  <button
-                    mat-mini-fab
-                    color="primary"
-                    type="button"
-                    (click)="addOption()"
-                  >
-                    <mat-icon>add</mat-icon>
-                  </button>
-
-                  @if (
-                    questionForm.get("options")?.hasError("noCorrectOption")
-                  ) {
-                    <div class="text-danger mt-10">
-                      At least one option must be marked as correct.
-                    </div>
-                  }
-                </div>
-              </div>
-            }
-
-            <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                  <!-- <mat-form-field class="example-full-width" appearance="fill">
-                    <mat-label>Answer (Optional)</mat-label>
-                    <textarea
-                      matInput
-                      formControlName="answer"
-                      placeholder="Enter an answer for the question"
-                      rows="3"
-                      cdkTextareaAutosize
-                      #autosize="cdkTextareaAutosize"
-                      [cdkAutosizeMinRows]="3"
-                      [cdkAutosizeMaxRows]="3"
-                      style="resize: none; overflow: hidden"
-                    ></textarea>
-                  </mat-form-field> -->
-                  <mat-label>Answer (Optional)</mat-label>
-                <div class="tiptap-mat-wrapper">
-                  <tiptap-editor [editor]="answerEditor" class="tiptap-mat-textarea1"></tiptap-editor>
-                </div>
-                </div>
-              </div>
-              
-            <div class="row">
-              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                <mat-checkbox
-                  class="example-margin"
-                  formControlName="hideOtherFields"
-                  checked
-                  >Hide other optional fields
-                </mat-checkbox>
-              </div>
-            </div>
-
-            @if (!questionForm.get("hideOtherFields")?.value) {
-              <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                  <mat-form-field class="example-full-width" appearance="fill">
-                    <mat-label>Hint (Optional)</mat-label>
-                    <textarea
-                      matInput
-                      formControlName="hint"
-                      placeholder="Enter a hint for the question"
-                      rows="3"
-                      cdkTextareaAutosize
-                      #autosize="cdkTextareaAutosize"
-                      [cdkAutosizeMinRows]="1"
-                      [cdkAutosizeMaxRows]="1"
-                      style="resize: none; overflow: hidden"
-                    ></textarea>
-                  </mat-form-field>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
-                  <mat-form-field class="example-full-width" appearance="fill">
-                    <mat-label>Select Level</mat-label>
-                    <mat-select formControlName="level">
-                      <mat-option value="1">Easy</mat-option>
-                      <mat-option value="2">Intermediate</mat-option>
-                      <mat-option value="3">Advanced</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                @if (authData?.role === "Admin") {
-                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
-                    <mat-form-field
-                      class="example-full-width"
-                      appearance="fill"
-                    >
-                      <mat-label>Question Status</mat-label>
-                      <mat-select formControlName="status">
-                        <mat-option value="Active">Active</mat-option>
-                        <mat-option value="Pending">Pending</mat-option>
-                        <mat-option value="Inactive">Inactive</mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
+                </button>
+                } @empty {
+                <p class="qf-dd__empty">No subjects found</p>
                 }
-
-                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
-                  <mat-form-field class="example-full-width" appearance="fill">
-                    <mat-label>Total Marks</mat-label>
-                    <input
-                      matInput
-                      formControlName="marks"
-                      type="number"
-                      min="1"
-                      max="99"
-                      maxlength="2"
-                      (keydown)="restrictInput($event)"
-                      placeholder="Maximum marks"
-                    />
-                  </mat-form-field>
-                </div>
-
-                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
-                  <mat-form-field class="example-full-width" appearance="fill">
-                    <mat-label>Order Index</mat-label>
-                    <input
-                      matInput
-                      formControlName="orderId"
-                      type="number"
-                      min="1"
-                      max="99"
-                      maxlength="2"
-                      (keydown)="restrictInput($event)"
-                      placeholder="Serial no. for sequence"
-                    />
-                  </mat-form-field>
-                </div>
-
-                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2">
-                  <mat-form-field class="example-full-width" appearance="fill">
-                    <mat-label>Allowed Time (seconds)</mat-label>
-                    <input
-                      matInput
-                      formControlName="timeAllowed"
-                      type="number"
-                      min="10"
-                      max="600"
-                      maxlength="3"
-                      (keydown)="restrictInput($event)"
-                      placeholder="Max time allowed"
-                    />
-                  </mat-form-field>
-                </div>
               </div>
+            </div>
             }
-          </ng-scrollbar>
+          </div>
+        </div>
 
-          <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-              <button
-                mat-flat-button
-                class="btn-space"
-                color="primary"
-                [disabled]="!questionForm.valid"
-              >
-                Submit
+      </div>
+
+      <!-- Topics searchable multi-select -->
+      <div class="qf-field">
+        <label class="qf-label qf-label--req">Topics</label>
+
+        @if (getSelectedTopics().length > 0) {
+        <div class="qf-chips">
+          @for (t of getSelectedTopics(); track t.id) {
+          <span class="qf-chip">
+            {{ t.title }}
+            <button type="button" class="qf-chip__rm" (click)="removeTopic(t.id)">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </span>
+          }
+        </div>
+        }
+
+        <div class="qf-dd">
+          <button type="button" class="qf-dd__trigger" [class.qf-dd__trigger--open]="showTopicPanel"
+                  (click)="showTopicPanel = !showTopicPanel" (blur)="onTopicBlur()">
+            <span class="qf-dd__placeholder">
+              @if (getSelectedTopics().length > 0) {
+                {{ getSelectedTopics().length }} topic{{ getSelectedTopics().length !== 1 ? 's' : '' }} selected — add more
+              } @else {
+                Select topics…
+              }
+            </span>
+            <svg class="qf-dd__chevron" [class.qf-dd__chevron--up]="showTopicPanel"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          @if (showTopicPanel) {
+          <div class="qf-dd__panel">
+            <div class="qf-dd__search">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <input [(ngModel)]="topicSearch" [ngModelOptions]="{standalone:true}"
+                     (keydown)="$event.stopPropagation()" placeholder="Search topics…" autofocus>
+            </div>
+            <div class="qf-dd__list">
+              @for (t of filteredTopics; track t.id) {
+              <button type="button" class="qf-dd__item qf-dd__item--multi"
+                      [class.qf-dd__item--sel]="isTopicSelected(t.id)"
+                      (mousedown)="toggleTopic(t.id)">
+                <span class="qf-dd__check" [class.qf-dd__check--on]="isTopicSelected(t.id)">
+                  @if (isTopicSelected(t.id)) {
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  }
+                </span>
+                {{ t.title }}
               </button>
-              <button mat-raised-button color="warn" (click)="onCancel()">
-                Cancel
-              </button>
+              } @empty {
+              <p class="qf-dd__empty">No topics found</p>
+              }
             </div>
           </div>
-        </form>
+          }
+        </div>
+      </div>
+
+      <!-- Options (Trivia only) -->
+      @if (questionForm.get('questionType')?.value === 'Trivia') {
+      <div class="qf-field">
+        <div class="qf-label-row">
+          <label class="qf-label">Options</label>
+          <span class="qf-label-hint">Minimum 2 — check ✓ the correct answer</span>
+        </div>
+        <div formArrayName="options" class="qf-options">
+          @for (option of options.controls; let i = $index; track option) {
+          <div class="qf-option" [formGroupName]="i">
+            <span class="qf-opt-letter">{{ ['A','B','C','D','E'][i] }}</span>
+            <label class="qf-opt-check" [class.qf-opt-check--on]="option.get('correct')?.value"
+                   [title]="option.get('correct')?.value ? 'Correct answer' : 'Mark as correct'">
+              <input type="checkbox" formControlName="correct" class="sr-only">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </label>
+            <input class="qf-input qf-opt-text" formControlName="option"
+                   placeholder="Enter option text…">
+            <button type="button" class="qf-opt-del" (click)="removeOption(i)"
+                    [disabled]="options.length <= 2" title="Remove option">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </div>
+          }
+        </div>
+        <button type="button" class="qf-add-opt" (click)="addOption()">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          </svg>
+          Add Option
+        </button>
+        @if (questionForm.get('options')?.hasError('noCorrectOption')) {
+        <p class="qf-error">Mark at least one option as correct.</p>
+        }
+      </div>
       }
+
+      <!-- Answer / Explanation -->
+      <div class="qf-field">
+        <label class="qf-label">
+          {{ questionForm.get('questionType')?.value === 'Trivia' ? 'Explanation (Optional)' : 'Answer (Optional)' }}
+        </label>
+        <div class="qf-tiptap qf-tiptap--sm">
+          <tiptap-editor [editor]="answerEditor"></tiptap-editor>
+        </div>
+      </div>
+
+      <!-- Toggle optional -->
+      <label class="qf-toggle">
+        <input type="checkbox" formControlName="hideOtherFields" class="sr-only">
+        <span class="qf-toggle__track" [class.qf-toggle__track--on]="questionForm.get('hideOtherFields')?.value">
+          <span class="qf-toggle__thumb"></span>
+        </span>
+        <span class="qf-toggle__lbl">Hide optional fields</span>
+      </label>
+
+      <!-- Optional fields -->
+      @if (!questionForm.get('hideOtherFields')?.value) {
+
+      <div class="qf-section-divider">
+        <span>Optional Fields</span>
+      </div>
+
+      <div class="qf-field">
+        <label class="qf-label">Hint (Optional)</label>
+        <textarea class="qf-textarea" formControlName="hint" rows="2"
+                  placeholder="Enter a hint for the question…"></textarea>
+      </div>
+
+      <div class="qf-grid-3">
+        <div class="qf-field">
+          <label class="qf-label qf-label--req">Level</label>
+          <select class="qf-select" formControlName="level">
+            <option value="">Select…</option>
+            <option value="1">Easy</option>
+            <option value="2">Intermediate</option>
+            <option value="3">Advanced</option>
+          </select>
+        </div>
+        <div class="qf-field">
+          <label class="qf-label">Marks</label>
+          <input class="qf-input" type="number" formControlName="marks"
+                 min="1" max="99" placeholder="e.g. 5" (keydown)="restrictInput($event)">
+        </div>
+        <div class="qf-field">
+          <label class="qf-label qf-label--req">Time (sec)</label>
+          <input class="qf-input" type="number" formControlName="timeAllowed"
+                 min="10" max="600" placeholder="e.g. 60" (keydown)="restrictInput($event)">
+        </div>
+      </div>
+
+      @if (authData?.role === 'Admin') {
+      <div class="qf-grid-2">
+        <div class="qf-field">
+          <label class="qf-label">Status</label>
+          <select class="qf-select" formControlName="status">
+            <option value="Active">Active</option>
+            <option value="Pending">Pending</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="qf-field">
+          <label class="qf-label">Order Index</label>
+          <input class="qf-input" type="number" formControlName="orderId"
+                 min="1" placeholder="Sequence no." (keydown)="restrictInput($event)">
+        </div>
+      </div>
+      } @else {
+      <div class="qf-field" style="max-width: 200px">
+        <label class="qf-label">Order Index</label>
+        <input class="qf-input" type="number" formControlName="orderId"
+               min="1" placeholder="Sequence no." (keydown)="restrictInput($event)">
+      </div>
+      }
+
+      }
+      <!-- /optional fields -->
+
     </div>
-  </div>
+    <!-- /body -->
+
+    <!-- ── Footer ── -->
+    <div class="qf-footer">
+      <button type="button" class="qf-btn qf-btn--ghost" (click)="onCancel()">Cancel</button>
+      <button type="submit" class="qf-btn qf-btn--primary" [disabled]="!questionForm.valid">
+        {{ action === 'edit' ? 'Update Question' : 'Add Question' }}
+      </button>
+    </div>
+
+  </form>
+  }
+
+</div>
 </ng-template>

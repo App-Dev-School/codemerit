@@ -164,6 +164,18 @@ export class LmsDashboardMainComponent implements OnInit {
     return Math.round((q.totalTrivia / q.totalQuestions) * 100);
   }
 
+  get pendingRate(): number {
+    const q = this.dashboard?.questions;
+    if (!q?.totalQuestions) return 0;
+    return Math.round(((q.totalPending ?? 0) / q.totalQuestions) * 100);
+  }
+
+  get interviewRate(): number {
+    const q = this.dashboard?.questions;
+    if (!q?.totalQuestions) return 0;
+    return Math.round(((q.totalGeneral ?? 0) / q.totalQuestions) * 100);
+  }
+
   get topicsActiveRate(): number {
     const t = this.dashboard?.topics;
     if (!t?.total) return 0;

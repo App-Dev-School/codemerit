@@ -12,20 +12,36 @@
             Have you gone through the topic
           </h5>
           <h2 class="text-center m-b-20" [style.color]="subject?.color">{{ topic.title }} ?</h2>
-          <mat-button-toggle-group formControlName="knows" class="center-toggle m-b-20">
-            <mat-button-toggle [value]="true">Yes<span class="only-desktop">. I confirm</span></mat-button-toggle>
-            <mat-button-toggle [value]="false">No<span class="only-desktop">t yet</span></mat-button-toggle>
-          </mat-button-toggle-group>
+
+          <!-- knows toggle -->
+          <div class="flex justify-center m-b-20">
+            <div class="flex text-sm rounded-xl overflow-hidden border border-cm-border">
+              @for (opt of [{label:'Yes. I confirm', val: true},{label:'Not yet', val: false}]; track opt.label) {
+              <button type="button" (click)="getTopicGroup(topic.title).get('knows')?.setValue(opt.val)"
+                [class]="getTopicGroup(topic.title).get('knows')?.value === opt.val
+                  ? 'px-5 py-2 font-semibold bg-cm-brand text-white transition-colors'
+                  : 'px-5 py-2 font-medium text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-raised transition-colors'">
+                {{ opt.label }}
+              </button>
+              }
+            </div>
+          </div>
 
           @if (knowsTopic(topic.title)) {
           <div class="m-b-15">
             <h5 class="text-center">What is your expertise level?</h5>
-            <mat-button-toggle-group formControlName="level" class="center-toggle m-b-30">
-              <mat-button-toggle value="Basic">Basic <span class="only-desktop"> (Theory)</span></mat-button-toggle>
-              <mat-button-toggle value="Working">Working <span class="only-desktop">
-                  (Hands-on)</span></mat-button-toggle>
-              <mat-button-toggle value="Expert">Expert <span class="only-desktop"> / Mastery</span></mat-button-toggle>
-            </mat-button-toggle-group>
+            <div class="flex justify-center m-b-30">
+              <div class="flex text-sm rounded-xl overflow-hidden border border-cm-border mt-2">
+                @for (lvl of [{label:'Basic (Theory)', val:'Basic'},{label:'Working (Hands-on)', val:'Working'},{label:'Expert / Mastery', val:'Expert'}]; track lvl.val) {
+                <button type="button" (click)="getTopicGroup(topic.title).get('level')?.setValue(lvl.val)"
+                  [class]="getTopicGroup(topic.title).get('level')?.value === lvl.val
+                    ? 'px-4 py-2 font-semibold bg-cm-brand text-white text-xs transition-colors'
+                    : 'px-4 py-2 font-medium text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-raised text-xs transition-colors'">
+                  {{ lvl.label }}
+                </button>
+                }
+              </div>
+            </div>
           </div>
 
           <div class="rating-section m-b-15">
@@ -46,19 +62,29 @@
             <app-skill-rating [rating]="getSummaryStats().avgRating" [readOnly]="true"></app-skill-rating>
             <h5>Expertise Score: {{ getSummaryStats().seniorityScore }}</h5>
           </div>
-          <button mat-raised-button color="primary" class="m-t-20" (click)="nextSlide()">Submit Self Rating</button>
+          <button type="button" (click)="nextSlide()"
+            class="mt-5 px-6 py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold
+                   hover:opacity-90 active:scale-95 transition-all">
+            Submit Self Rating
+          </button>
         </div>
       </swiper-slide>
     </swiper-container>
   </div>
 
   <div class="footer">
-    <button mat-stroked-button (click)="prevSlide()" [disabled]="currentIndex === 0">
+    <button type="button" (click)="prevSlide()" [disabled]="currentIndex === 0"
+      class="px-5 py-2 rounded-xl border border-cm-border text-sm font-semibold
+             text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+             disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all">
       Previous
     </button>
 
-    <button mat-raised-button color="primary" (click)="nextSlide()"
-      [disabled]="isSummarySlide ? false : isCurrentSlideInvalid()">
+    <button type="button" (click)="nextSlide()"
+      [disabled]="isSummarySlide ? false : isCurrentSlideInvalid()"
+      class="px-5 py-2 rounded-xl bg-cm-brand text-white text-sm font-semibold
+             hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed
+             active:scale-95 transition-all">
       {{ isSummarySlide ? 'Submit' : (isLastSlide ? 'Finish' : 'Next') }}
     </button>
   </div>

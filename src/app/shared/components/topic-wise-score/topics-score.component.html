@@ -1,16 +1,15 @@
-<ul class="list-unstyled">
+<ul class="list-none p-0 space-y-4">
   @for (source of topicScores; track source) {
   <li>
-    <div class="mb-2">
-      <span class="progress-label">{{ source.title }}</span>
-      <span class="float-end progress-percent label m-b-5 text-white" [ngClass]="'label-primary'">{{ source.coverage
-        }}%</span>
+    <div class="flex items-center justify-between mb-1.5">
+      <span class="text-xs font-medium text-cm-text-secondary">{{ source.title }}</span>
+      <span class="text-xs font-bold text-cm-brand px-1.5 py-0.5 rounded bg-cm-brand-dim">{{ source.coverage }}%</span>
     </div>
-    <div class="progress skill-progress m-b-20 w-100">
-      <div class="progress-bar" [ngClass]="'label-primary'" [style.width]="source.coverage + '%'" role="progressbar"
-        [attr.aria-valuenow]="source.coverage" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
+      <div class="h-full bg-cm-brand rounded-full transition-all duration-500"
+           [style.width]="source.coverage + '%'"></div>
     </div>
-    <hr class="dim-divider">
+    <hr class="dim-divider mt-3">
   </li>
   }
 </ul>

@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 import { CourseProgressComponent } from '../course-progress/course-progress.component';
-import { MatButton } from '@angular/material/button';
 import { User } from '@core/models/user';
 
 @Component({
@@ -11,8 +9,6 @@ import { User } from '@core/models/user';
   styleUrls: ['./subject-tracker-card.component.scss'],
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButton,
     CourseProgressComponent
   ]
 })

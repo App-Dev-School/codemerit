@@ -1,107 +1,182 @@
 <section class="content">
   <div class="content-block">
-    <div class="block-header">
-      <!-- breadcrumb -->
-      <app-breadcrumb [title]="'All permissions'" [items]="['permissions']" [active_item]="'All permissions'"></app-breadcrumb>
-    </div>
-    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="card">
-          <div class="materialTableHeader">
-            <div class="left">
-              <ul class="header-buttons-left ms-0">
-                <li class="tbl-title">
-                  <h2> User Permissions </h2>
-                </li>
-                <li class="tbl-search-box">
-                  <label for="search-input"><i class="material-icons search-icon">search</i></label>
-                  <input id="search-input" placeholder="Search" type="text" #filter (keyup)="applyFilter($event)"
-                    class="browser-default search-field" aria-label="Search box">
-                </li>
-              </ul>
-            </div>
-            <div class="right">
-              <div class="right-side-btn">
-                <button mat-icon-button (click)="addNew()" class="tbl-header-btn col-green" matTooltip="Add">
-                  <mat-icon>add_circle_outline</mat-icon>
-                </button>
-                <button mat-icon-button (click)="refresh()" class="tbl-header-btn col-brown" matTooltip="Refresh">
-                  <mat-icon>refresh</mat-icon>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="overflow-auto">
-            <div class="responsive_table">
-              <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
-               
-                @for (column of columnDefinitions; track column) {
-                  @if (column.type === 'actionBtn') {
-                    <!-- Skip this column -->
-                  } @else {
-                    <ng-container [matColumnDef]="column.def">
-                      <mat-header-cell *matHeaderCellDef mat-sort-header>
-                        <span class="truncate-text">{{ column.label }}</span>
-                      </mat-header-cell>
-                      <mat-cell *matCellDef="let row">
-                        <span class="mobile-label">{{ column.label }}:</span>
-                         @if (column.def === 'userFullName') {
-                          <div class="p-10">
-                            <div>{{ row.user?.firstName }} {{ row.user?.lastName }}</div>
-                          </div>
-                        }@else{
-                          @if (column.def === 'permissionName') {
-                          <div class="p-10">
-                            <div> {{ row.permissionName }}</div>
-                            <div class="badge bg-primary">{{ row.resourceName ? row.resourceName : (row.resourceType ? row.resourceType : 'Full Access') }}</div>
-                          </div>
-                        } @else if (column.def === 'userCreatedAt') {
-                          <span class="truncate-text">{{ row.user?.createdAt | date:'dd/MM/yyyy' }}</span>
-                        } @else {
-                          <span class="truncate-text">{{ row[column.def] }}</span>
-                        }
-                        }
-                      </mat-cell>
-                    </ng-container>
-                  }
-                }
-              
-                <!-- actions -->
-                <ng-container matColumnDef="actions">
-                  <mat-header-cell class="pr-0" *matHeaderCellDef>Actions</mat-header-cell>
-                  <mat-cell *matCellDef="let row; let i=index;" class="pr-0">                 
-                    <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="revokeItem(row)"
-                      class="tbl-action-btn">
-                      <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-revoke'"></app-feather-icons>
-                    </button>
-                  </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
-                <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: getDisplayedColumns();"
-                   [style.cursor]="'pointer'" matRipple>
-                </mat-row>
-              </table>
-              <!-- Loading spinner -->
-              @if (isLoading) {
-              <div class="tbl-spinner">
-                <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
-                </mat-progress-spinner>
-              </div>
-              }
 
-             @if (isLoading || dataSource.data.length === 0) {
-              <div class="no-results text-center" [style.display]="dataSource.data.length === 0 ? '' : 'none'">
-              <img src="assets/images/icons/loading.gif" class="smallLoadingIcon">
-                <h4 class="col-grey">Loading Permissions</h4>
-              </div>
-              }
-              <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
-                [pageSizeOptions]="[5, 10, 25, 100]">
-              </mat-paginator>
-            </div>
-          </div>
+    <div class="block-header">
+      <app-breadcrumb [title]="'All Permissions'" [items]="['Permissions']" [active_item]="'All Permissions'"></app-breadcrumb>
+    </div>
+
+    <div class="rounded-2xl border border-cm-border bg-cm-surface shadow-sm p-4 sm:p-5 mt-2">
+
+      <!-- ── Header ── -->
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-base font-bold text-cm-text-primary">User Permissions</h2>
+          <p class="text-xs text-cm-text-muted mt-0.5">{{ allPermissions.length }} total</p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button (click)="refresh()" title="Refresh"
+            class="shrink-0 p-2 rounded-xl border border-cm-border bg-cm-surface-raised text-cm-text-muted
+                   hover:text-cm-text-primary hover:bg-cm-surface-hover active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </button>
+          <button (click)="addNew()"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
+                   bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Permission
+          </button>
         </div>
       </div>
+
+      <!-- ── Search ── -->
+      <div class="flex items-center gap-2 px-3 py-2 rounded-xl border border-cm-border
+                  bg-cm-surface-muted mb-4">
+        <svg class="w-4 h-4 text-cm-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" placeholder="Search permissions, users…"
+               [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+               class="flex-1 bg-transparent text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none border-0">
+        @if (searchQuery) {
+        <button (click)="searchQuery = ''; onSearchChange()"
+          class="text-cm-text-muted hover:text-cm-text-primary transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        }
+      </div>
+
+      <!-- ── Loading ── -->
+      @if (isLoading) {
+      <div class="flex flex-col items-center justify-center py-16 gap-3">
+        <img src="assets/images/icons/loading.gif" class="w-10 h-10" alt="">
+        <p class="text-sm text-cm-text-muted">Loading permissions…</p>
+      </div>
+      }
+
+      @if (!isLoading) {
+
+      <!-- ── Table ── -->
+      <div class="overflow-x-auto rounded-xl border border-cm-border">
+        <table class="w-full text-sm min-w-[480px]">
+          <thead>
+            <tr class="border-b border-cm-border bg-cm-surface-muted">
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">User</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Permission</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden md:table-cell">Grant Date</th>
+              <th class="text-right px-4 py-3 font-semibold text-cm-text-secondary">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of paginatedPermissions; track row.id) {
+            <tr class="border-b border-cm-border last:border-0 hover:bg-cm-surface-hover transition-colors">
+
+              <!-- User -->
+              <td class="px-4 py-3">
+                <p class="font-medium text-cm-text-primary">
+                  {{ row.user?.firstName }} {{ row.user?.lastName }}
+                </p>
+                @if (row.user?.email) {
+                <p class="text-xs text-cm-text-muted">{{ row.user.email }}</p>
+                }
+              </td>
+
+              <!-- Permission -->
+              <td class="px-4 py-3">
+                <p class="font-medium text-cm-text-primary mb-1">{{ row.permissionName }}</p>
+                @if (row.resourceName || row.resourceType) {
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium
+                             bg-cm-brand-dim text-cm-brand-text">
+                  {{ row.resourceName || row.resourceType }}
+                </span>
+                } @else {
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium
+                             bg-cm-surface-raised border border-cm-border text-cm-text-muted">
+                  Full Access
+                </span>
+                }
+              </td>
+
+              <!-- Grant Date -->
+              <td class="px-4 py-3 hidden md:table-cell">
+                <span class="text-cm-text-secondary text-xs">
+                  {{ row.user?.createdAt ? (row.user.createdAt | date:'dd/MM/yyyy') : '—' }}
+                </span>
+              </td>
+
+              <!-- Actions -->
+              <td class="px-4 py-3 text-right">
+                <button (click)="revokeItem(row)"
+                        title="Revoke permission"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg
+                               text-cm-text-muted hover:text-cm-danger-text hover:bg-cm-danger-dim
+                               active:scale-95 transition-all">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </td>
+
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── Empty state ── -->
+      @if (filteredPermissions.length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 gap-2">
+        <svg class="w-10 h-10 text-cm-text-muted opacity-40" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+        <p class="text-sm text-cm-text-muted">No permissions found.</p>
+      </div>
+      }
+
+      <!-- ── Pagination ── -->
+      @if (filteredPermissions.length > pageSize) {
+      <div class="flex items-center justify-between mt-4 pt-4 border-t border-cm-border flex-wrap gap-3">
+        <p class="text-xs text-cm-text-muted">
+          Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredPermissions.length }}
+        </p>
+        <div class="flex items-center gap-1">
+          <button (click)="prevPage()" [disabled]="currentPage === 0"
+            class="p-1.5 rounded-lg hover:bg-cm-surface-hover disabled:opacity-30 disabled:cursor-not-allowed text-cm-text-muted transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          @for (page of visiblePages; track page) {
+          <button (click)="goToPage(page)"
+            [class]="page === currentPage
+              ? 'w-8 h-8 rounded-lg text-xs font-bold bg-cm-brand text-white'
+              : 'w-8 h-8 rounded-lg text-xs text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+            {{ page + 1 }}
+          </button>
+          }
+          <button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1"
+            class="p-1.5 rounded-lg hover:bg-cm-surface-hover disabled:opacity-30 disabled:cursor-not-allowed text-cm-text-muted transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      }
+
+      }
+      <!-- /!isLoading -->
+
     </div>
+
   </div>
 </section>

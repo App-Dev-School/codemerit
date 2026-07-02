@@ -27,7 +27,7 @@
           <div class="ss-panel__controls">
             <!-- Search -->
             <div class="ss-search">
-              <mat-icon class="ss-search__icon">search</mat-icon>
+              <svg class="ss-search__icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               <input class="ss-search__input"
                      type="text"
                      placeholder="Search subjects…"
@@ -35,14 +35,14 @@
                      (click)="$event.stopPropagation()">
               @if (searchQuery) {
                 <button class="ss-search__clear" (click)="searchQuery = ''; $event.stopPropagation()">
-                  <mat-icon>close</mat-icon>
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
               }
             </div>
 
             <!-- Close -->
             <button class="ss-close" (click)="onCancel()" aria-label="Close">
-              <mat-icon>close</mat-icon>
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
           </div>
         </div>

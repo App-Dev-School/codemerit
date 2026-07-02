@@ -1,14 +1,93 @@
 <section class="content">
   <div class="content-block">
+
     <div class="block-header">
-      <app-breadcrumb
-        [title]="'All Questions'"
-        [items]="['Questions']"
-        [active_item]="'All Questions'"
-      ></app-breadcrumb>
+      <app-breadcrumb [title]="'All Questions'" [items]="['Questions']" [active_item]="'All Questions'"></app-breadcrumb>
     </div>
-    @if (showFilterPanel) {
-      <div class="table-filter-panel">
+
+    <div class="rounded-2xl border border-cm-border bg-cm-surface shadow-sm p-4 sm:p-5 mt-2">
+
+      <!-- ── Header row ── -->
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-base font-bold text-cm-text-primary">Manage Questions</h2>
+          <p class="text-xs text-cm-text-muted mt-0.5">{{ allQuestions.length }} total</p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button (click)="navigateToViewer()"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-cm-border
+                   text-sm font-medium text-cm-text-secondary bg-cm-surface-raised
+                   hover:text-cm-brand hover:border-cm-brand/40 active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            Review
+          </button>
+          <button (click)="addNew()"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
+                   bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Question
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Toolbar ── -->
+      <div class="flex flex-col sm:flex-row gap-2 mb-4">
+
+        <div class="flex items-center gap-2 px-3 py-2 rounded-xl border border-cm-border
+                    bg-cm-surface-muted flex-1 min-w-0 overflow-hidden">
+          <svg class="w-4 h-4 text-cm-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" placeholder="Search questions, subjects, topics…"
+                 [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+                 class="flex-1 min-w-0 bg-transparent text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none border-0">
+          @if (searchQuery) {
+          <button (click)="searchQuery = ''; onSearchChange()"
+            class="text-cm-text-muted hover:text-cm-text-primary transition-colors shrink-0">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+          }
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button (click)="toggleFilterPanel()"
+            class="relative inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-all shrink-0"
+            [class]="showFilterPanel
+              ? 'border-cm-brand bg-cm-brand/8 text-cm-brand'
+              : 'border-cm-border bg-cm-surface-muted text-cm-text-secondary hover:text-cm-brand hover:border-cm-brand/40'">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+            </svg>
+            Filters
+            @if (hasActiveFilters) {
+            <span class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-cm-brand text-white
+                         text-[9px] font-bold flex items-center justify-center leading-none">!</span>
+            }
+          </button>
+
+          <button (click)="refresh()" title="Refresh"
+            class="shrink-0 p-2 rounded-xl border border-cm-border bg-cm-surface-muted text-cm-text-muted
+                   hover:text-cm-text-primary hover:bg-cm-surface-hover active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ── Filter panel ── -->
+      @if (showFilterPanel) {
+      <div class="mb-4 rounded-xl border border-cm-border overflow-hidden">
         <app-quiz-questions-form
           [mode]="'filter-only'"
           [subjects]="subjects"
@@ -19,261 +98,192 @@
           (filtersApplied)="onFiltersApplied($event)"
         ></app-quiz-questions-form>
       </div>
-    } @else {
-      <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <div class="card">
-            <div class="materialTableHeader">
-              <div class="left">
-                <ul class="header-buttons-left ms-0">
-                  <li class="tbl-title">
-                    <h2>Manage Questions</h2>
-                  </li>
-                  <li class="tbl-search-box">
-                    <label for="search-input"
-                      ><i class="material-icons search-icon">search</i></label
-                    >
-                    <input
-                      id="search-input"
-                      placeholder="Search"
-                      type="text"
-                      #filter
-                      (keyup)="applyFilter($event)"
-                      class="browser-default search-field"
-                      aria-label="Search box"
-                    />
-                  </li>
-                </ul>
-              </div>
-              <div class="right">
-                <div class="right-side-btn">
-                  <button
-                    mat-icon-button
-                    [hidden]="!selection.hasValue()"
-                    (click)="removeSelectedRows()"
-                    class="tbl-header-btn col-red"
-                    matTooltip="Delete"
-                  >
-                    <mat-icon>delete_outline</mat-icon>
-                  </button>
+      }
 
-                  <button
-                    mat-icon-button
-                    (click)="toggleFilterPanel()"
-                    class="tbl-header-btn col-blue"
-                    matTooltip="Filter"
-                  >
-                    <mat-icon>tune</mat-icon>
-                  </button>
+      <!-- ── Loading ── -->
+      @if (isLoading) {
+      <div class="flex flex-col items-center justify-center py-16 gap-3">
+        <img src="assets/images/icons/loading.gif" class="w-10 h-10" alt="">
+        <p class="text-sm text-cm-text-muted">Loading questions…</p>
+      </div>
+      }
 
-                  <button
-                    mat-icon-button
-                    (click)="addNew()"
-                    class="tbl-header-btn col-green"
-                    matTooltip="Add"
-                  >
-                    <mat-icon>add_circle_outline</mat-icon>
+      @if (!isLoading) {
+
+      <!-- ── Table ── -->
+      <div class="overflow-x-auto rounded-xl border border-cm-border">
+        <table class="w-full text-sm min-w-[620px]">
+          <thead>
+            <tr class="border-b border-cm-border bg-cm-surface-muted">
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary w-[44%]">Question</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Subject</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden md:table-cell">Topic</th>
+              <th class="text-center px-4 py-3 font-semibold text-cm-text-secondary">Status</th>
+              <th class="text-right px-4 py-3 font-semibold text-cm-text-secondary">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of paginatedQuestions; track row.id) {
+            <tr class="border-b border-cm-border last:border-0 hover:bg-cm-surface-hover cursor-pointer transition-colors"
+                (click)="editCall(row)">
+
+              <!-- Question -->
+              <td class="px-4 py-3">
+                <p class="text-cm-text-primary font-medium leading-snug line-clamp-2 mb-1.5">
+                  {{ getPlainText(row.question) }}
+                </p>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold"
+                        [class]="row.questionType === 'Trivia'
+                          ? 'bg-cm-brand-dim text-cm-brand-text'
+                          : 'bg-cm-info-dim text-cm-info-text'">
+                    {{ row.questionType }}
+                  </span>
+                  @if (row.level) {
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium
+                               bg-cm-surface-raised border border-cm-border text-cm-text-muted">
+                    {{ getLevelDisplay(row.level) }}
+                  </span>
+                  }
+                </div>
+              </td>
+
+              <!-- Subject -->
+              <td class="px-4 py-3">
+                @if (row.subject?.title) {
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                             bg-cm-brand-dim text-cm-brand-text whitespace-nowrap">
+                  {{ row.subject.title }}
+                </span>
+                } @else {
+                <span class="text-cm-text-muted text-xs">—</span>
+                }
+              </td>
+
+              <!-- Topic -->
+              <td class="px-4 py-3 hidden md:table-cell">
+                @if (row.topics?.length > 0) {
+                <div class="flex items-center gap-1 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                               bg-cm-surface-raised border border-cm-border text-cm-text-secondary">
+                    {{ row.topics[0]?.title }}
+                  </span>
+                  @if (row.topics.length > 1) {
+                  <span class="text-[10px] text-cm-text-muted">+{{ row.topics.length - 1 }}</span>
+                  }
+                </div>
+                } @else {
+                <span class="text-cm-text-muted text-xs">—</span>
+                }
+              </td>
+
+              <!-- Status -->
+              <td class="px-4 py-3">
+                <div class="flex flex-col items-center gap-1">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap"
+                        [class]="row.status === 'Active'
+                          ? 'bg-cm-success-dim text-cm-success-text'
+                          : row.status === 'Pending'
+                          ? 'bg-cm-warning-dim text-cm-warning-text'
+                          : 'bg-cm-danger-dim text-cm-danger-text'">
+                    {{ row.status }}
+                  </span>
+                  @if (isWhitelisted(row)) {
+                  <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-cm-success-text">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    Whitelisted
+                  </span>
+                  }
+                </div>
+              </td>
+
+              <!-- Actions -->
+              <td class="px-4 py-3 text-right">
+                <div class="inline-flex items-center gap-1 justify-end">
+                  <button (click)="$event.stopPropagation(); editCall(row)"
+                          [disabled]="!canEditQuestion(row)"
+                          title="Edit"
+                          class="inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                 text-cm-text-muted hover:text-cm-brand hover:bg-cm-brand/10
+                                 disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
                   </button>
-                  <button
-                    mat-icon-button
-                    (click)="refresh()"
-                    class="tbl-header-btn col-brown"
-                    matTooltip="Refresh"
-                  >
-                    <mat-icon>refresh</mat-icon>
+                  <button (click)="$event.stopPropagation(); deleteItem(row)"
+                          title="Delete"
+                          class="inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                 text-cm-text-muted hover:text-cm-danger-text hover:bg-cm-danger-dim
+                                 active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
                   </button>
                 </div>
-              </div>
-            </div>
-            <div class="overflow-auto">
-              <div class="responsive_table">
-                <table
-                  mat-table
-                  [dataSource]="dataSource"
-                  matSort
-                  class="mat-cell advance-table"
-                  style="table-layout: fixed; width: 100%"
-                >
-                  @for (column of columnDefinitions; track column) {
-                    <!-- Skip rendering if column.label is "select" or "action" -->
-                    @if (
-                      column.type === "check" || column.type === "actionBtn"
-                    ) {
-                      <!-- Skip this column -->
-                    } @else {
-                      @if (column.def == "status") {
-                        <ng-container [matColumnDef]="column.def">
-                          <mat-header-cell
-                            [ngClass]="column.class"
-                            *matHeaderCellDef
-                            mat-sort-header
-                          >
-                            <span class="truncate-text">{{
-                              column.label
-                            }}</span>
-                          </mat-header-cell>
-                          <mat-cell
-                            *matCellDef="let row"
-                            [ngClass]="column.class"
-                            [matTooltip]="row.name"
-                          >
-                            <span class="mobile-label"
-                              >{{ column.label }}:</span
-                            >
-                            <div class="status-cell">
-                              <span
-                                class="badge"
-                                [ngClass]="{
-                                  'badge-solid-purple':
-                                    row.status === 'Pending',
-                                  'badge-solid-green': row.status === 'Active',
-                                  'badge-solid-red': row.status === 'Inactive',
-                                }"
-                              >
-                                {{ row[column.def] }}
-                              </span>
-                              @if (isWhitelisted(row)) {
-                                <mat-icon
-                                  class="whitelist-icon"
-                                  matTooltip="WhiteListed"
-                                  >check_circle</mat-icon
-                                >
-                              }
-                            </div>
-                          </mat-cell>
-                        </ng-container>
-                      } @else {
-                        <ng-container [matColumnDef]="column.def">
-                          <mat-header-cell
-                            [ngClass]="column.class"
-                            *matHeaderCellDef
-                            mat-sort-header
-                          >
-                            <span class="truncate-text">{{
-                              column.label
-                            }}</span>
-                          </mat-header-cell>
-                          <mat-cell
-                            *matCellDef="let row"
-                            [ngClass]="column.class"
-                            [matTooltip]="row.name"
-                          >
-                            @if (!["question"].includes(column.def)) {
-                              <span class="mobile-label"
-                                >{{ column.label }}:</span
-                              >
-                            }
-                            @if (column.def == "question") {
-                              <!-- <div class="full-text bold-text">
-                                {{ row[column.def] }}
-                              </div> -->
-                               <div class="tiptap" [innerHTML]="row[column.def]"></div>
+              </td>
 
-                              <!-- <div class="badge bg-primary">{{ row.level ? row.level : 'N/A' }}</div> -->
-                            } @else {
-                              @if (column.def == "subject") {
-                                <div class="full-text">
-                                  {{ row[column.def]?.title }}
-                                </div>
-                              } @else {
-                                @if (column.def == "topics") {
-                                  <div class="full-text">
-                                    {{ row[column.def][0]?.title }}
-                                  </div>
-                                } @else {
-                                  <span class="truncate-text">{{
-                                    row[column.def]
-                                  }}</span>
-                                }
-                              }
-                            }
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-                            <!-- <span class="truncate-text">
-                      {{ row[column.def] }}
-                    </span> -->
-                          </mat-cell>
-                        </ng-container>
-                      }
-                    }
-                  }
+      <!-- ── Empty state ── -->
+      @if (filteredQuestions.length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 gap-2">
+        <svg class="w-10 h-10 text-cm-text-muted opacity-40" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-sm text-cm-text-muted">{{ noResultsMessage || 'No questions found.' }}</p>
+        @if (searchQuery) {
+        <button (click)="searchQuery = ''; onSearchChange()"
+          class="text-xs text-cm-brand hover:underline mt-1">Clear search</button>
+        }
+      </div>
+      }
 
-                  <!-- actions -->
-                  <ng-container matColumnDef="actions">
-                    <mat-header-cell class="pr-0" *matHeaderCellDef
-                      >Actions</mat-header-cell
-                    >
-                    <mat-cell *matCellDef="let row; let i = index" class="pr-0">
-                      <button
-                        mat-icon-button
-                        color="accent"
-                        [disabled]="((authService.currentUserValue?.role === userRole.Admin || authService.currentUserValue?.role === userRole.All) && row?.isWhitelisted)"
-                        [matTooltip]="'Edit'"
-                        (click)="$event.stopPropagation()"
-                        (click)="editCall(row)"
-                        class="tbl-action-btn"
-                      >
-                        <app-feather-icons
-                          [icon]="'edit'"
-                          [class]="'tbl-fav-edit'"
-                        ></app-feather-icons>
-                      </button>
-                      <button
-                        mat-icon-button
-                        color="accent"
-                        (click)="$event.stopPropagation()"
-                        (click)="deleteItem(row)"
-                        class="tbl-action-btn"
-                      >
-                        <app-feather-icons
-                          [icon]="'trash-2'"
-                          [class]="'tbl-fav-delete'"
-                        ></app-feather-icons>
-                      </button>
-                    </mat-cell>
-                  </ng-container>
-                  <mat-header-row
-                    *matHeaderRowDef="getDisplayedColumns()"
-                  ></mat-header-row>
-                  <mat-row
-                    [@rowsAnimation]=""
-                    *matRowDef="let row; columns: getDisplayedColumns()"
-                    (click)="viewCall(row)"
-                    [style.cursor]="'pointer'"
-                    matRipple
-                  >
-                  </mat-row>
-                </table>
-                <!-- Loading spinner -->
-                @if (isLoading || dataSource.data.length === 0) {
-                  <div
-                    class="no-results text-center"
-                    [style.display]="dataSource.data.length === 0 ? '' : 'none'"
-                  >
-                    @if (isLoading) {
-                      <img
-                        src="assets/images/icons/loading.gif"
-                        class="smallLoadingIcon"
-                      />
-                      <h4 class="col-grey">Loading Questions</h4>
-                    }
-                    @if (dataSource.data.length === 0) {
-                      <h4 class="col-grey">{{ noResultsMessage }}</h4>
-                    }
-                  </div>
-                }
-                <mat-paginator
-                  #paginator
-                  [length]="dataSource.filteredData.length"
-                  [pageIndex]="0"
-                  [pageSize]="10"
-                  [pageSizeOptions]="[5, 10, 25, 100]"
-                >
-                </mat-paginator>
-              </div>
-            </div>
-          </div>
+      <!-- ── Pagination ── -->
+      @if (filteredQuestions.length > pageSize) {
+      <div class="flex items-center justify-between mt-4 pt-4 border-t border-cm-border flex-wrap gap-3">
+        <p class="text-xs text-cm-text-muted">
+          Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredQuestions.length }} questions
+        </p>
+        <div class="flex items-center gap-1">
+          <button (click)="prevPage()" [disabled]="currentPage === 0"
+            class="p-1.5 rounded-lg hover:bg-cm-surface-hover disabled:opacity-30 disabled:cursor-not-allowed text-cm-text-muted transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          @for (page of visiblePages; track page) {
+          <button (click)="goToPage(page)"
+            [class]="page === currentPage
+              ? 'w-8 h-8 rounded-lg text-xs font-bold bg-cm-brand text-white'
+              : 'w-8 h-8 rounded-lg text-xs text-cm-text-secondary hover:bg-cm-surface-hover transition-colors'">
+            {{ page + 1 }}
+          </button>
+          }
+          <button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1"
+            class="p-1.5 rounded-lg hover:bg-cm-surface-hover disabled:opacity-30 disabled:cursor-not-allowed text-cm-text-muted transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
         </div>
       </div>
-    }
+      }
+
+      }
+      <!-- /!isLoading -->
+
+    </div>
+
   </div>
 </section>

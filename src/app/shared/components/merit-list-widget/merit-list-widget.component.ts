@@ -1,6 +1,5 @@
 
 import { Component, Input } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
 
 interface MeritList {
   id: number;
@@ -17,7 +16,7 @@ interface MeritList {
 
 @Component({
     selector: 'app-merit-list-widget',
-    imports: [MatIcon],
+    imports: [],
     templateUrl: './merit-list-widget.component.html',
     styleUrl: './merit-list-widget.component.scss'
 })

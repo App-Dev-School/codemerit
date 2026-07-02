@@ -1,174 +1,248 @@
 <div class="fixed inset-0 flex flex-col overflow-hidden bg-slate-950 text-slate-50">
 
-    @if (loading) {
-    <div class="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
-      <div class="relative">
-        <div class="h-16 w-16 animate-spin rounded-full border-4 border-slate-700 border-t-indigo-400"></div>
-        <div class="absolute inset-0 h-16 w-16 animate-ping rounded-full border border-indigo-500/20"></div>
+  @if (loading) {
+  <div class="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
+    <div class="relative">
+      <div class="h-16 w-16 animate-spin rounded-full border-4 border-slate-700 border-t-indigo-400"></div>
+      <div class="absolute inset-0 h-16 w-16 animate-ping rounded-full border border-indigo-500/20"></div>
+    </div>
+    <div class="space-y-1.5">
+      <h2 class="text-xl font-bold text-white">Loading lesson...</h2>
+      <p class="text-sm text-slate-300">Preparing your lesson content.</p>
+    </div>
+  </div>
+  }
+
+  @if (!loading && errorMessage) {
+  <div class="fixed inset-0 flex flex-col items-center justify-center bg-slate-950 px-6 text-center">
+    <div class="w-full max-w-md space-y-6">
+      <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-rose-500/30 bg-rose-500/10">
+        <svg class="h-10 w-10 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
       </div>
-      <div class="space-y-1.5">
-        <h2 class="text-xl font-bold text-white">Loading lesson...</h2>
-        <p class="text-sm text-slate-300">Preparing your lesson slides.</p>
+      <div class="rounded-2xl border border-rose-500/25 bg-rose-500/10 p-8 shadow-xl shadow-rose-900/20">
+        <h2 class="text-xl font-bold text-white">{{ errorMessage }}</h2>
+        <p class="mt-3 text-sm leading-relaxed text-slate-300">Please try again or return to the lessons list.</p>
+      </div>
+      <button
+        class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-white/30 hover:bg-white/20"
+        (click)="exitLesson()"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Back to lessons
+      </button>
+    </div>
+  </div>
+  }
+
+  @if (!loading && !errorMessage && lesson?.title) {
+
+  <!-- ===== HEADER ===== -->
+  <header class="z-30 flex-shrink-0 border-b border-white/[0.08] bg-slate-950/95 backdrop-blur-md">
+    <div class="flex items-center gap-2.5 px-3 py-2.5 sm:px-5 sm:py-3">
+
+      <!-- Back -->
+      <button
+        class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white transition hover:bg-white/15 sm:h-9 sm:w-9"
+        (click)="exitLesson()"
+        aria-label="Exit lesson"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+      </button>
+
+      <!-- Subject avatar -->
+      @if (lesson.subject?.image) {
+      <img [src]="lesson.subject.image" alt="" class="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-white/20 sm:h-8 sm:w-8" />
+      }
+
+      <!-- Title & sub-label -->
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-sm font-bold leading-tight text-white">{{ lesson.title }}</p>
+        @if (lesson.sections?.length > 1) {
+        <p class="mt-0.5 text-[11px] font-medium text-slate-400">Section {{ currentSection + 1 }} of {{ lesson.sections.length }}</p>
+        }
+      </div>
+
+      <!-- Right badges -->
+      <div class="flex flex-shrink-0 items-center gap-1.5">
+        @if (lesson.sections?.length > 1) {
+        <span class="rounded-full border border-indigo-400/30 bg-indigo-500/15 px-2.5 py-1 text-xs font-bold tabular-nums text-indigo-200">
+          {{ currentSection + 1 }}/{{ lesson.sections.length }}
+        </span>
+        }
+        @if (completed) {
+        <span class="rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2.5 py-1 text-xs font-bold text-emerald-300">✓</span>
+        }
+      </div>
+    </div>
+
+    <!-- Progress strip (multi-section only) -->
+    @if (lesson.sections?.length > 1) {
+    <div class="h-0.5 w-full bg-slate-800/80">
+      <div class="h-full bg-indigo-500 transition-all duration-500" [style.width.%]="progressPercent"></div>
+    </div>
+    }
+  </header>
+
+  <!-- ===== CONTENT ===== -->
+  <main class="flex min-h-0 flex-1 flex-col overflow-hidden">
+
+    <!-- SINGLE SECTION — static knowledge card -->
+    @if (lesson.sections?.length === 1) {
+    <div class="flex-1 overflow-y-auto">
+      <div class="mx-auto w-full max-w-2xl px-4 py-6 sm:px-8 sm:py-10">
+
+        <!-- Eyebrow badge -->
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-indigo-300">
+          <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.396 0 2.695.378 3.75 1.032A7.967 7.967 0 0112.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0012.5 4c-1.396 0-2.695.378-3.75 1.032A7.968 7.968 0 009 4.804z" />
+          </svg>
+          Knowledge
+        </span>
+
+        <!-- Section title (serif) -->
+        <h2 class="lesson-title mt-4 text-[1.75rem] font-bold leading-tight text-white sm:text-4xl">
+          {{ lesson.sections[0].title || lesson.title }}
+        </h2>
+
+        <!-- Gradient divider -->
+        <div class="mb-7 mt-5 h-px bg-gradient-to-r from-indigo-500/50 via-indigo-400/15 to-transparent"></div>
+
+        <!-- Body (serif) -->
+        <div class="lesson-prose lesson-body">
+          <div class="prose prose-invert max-w-none" [innerHTML]="lesson.sections[0].description || lesson.sections[0].body"></div>
+        </div>
+
+        <!-- Spacer so footer doesn't overlap on mobile -->
+        <div class="h-4"></div>
       </div>
     </div>
     }
 
-    @if (!loading && errorMessage) {
-    <div class="fixed inset-0 flex flex-col items-center justify-center bg-slate-950 px-6 text-center">
-      <div class="w-full max-w-md space-y-6">
-        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-rose-500/30 bg-rose-500/10">
-          <svg class="h-10 w-10 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9 3.75h.008v.008H12v-.008z" />
-          </svg>
-        </div>
-        <div class="rounded-2xl border border-rose-500/25 bg-rose-500/10 p-8 shadow-xl shadow-rose-900/20">
-          <h2 class="text-xl font-bold text-white">{{ errorMessage }}</h2>
-          <p class="mt-3 text-sm leading-relaxed text-slate-300">Please try again or return to the lessons list.</p>
-        </div>
-        <button
-          class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-white/30 hover:bg-white/20"
-          (click)="exitLesson()"
-        >
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-          </svg>
-          Back to lessons
-        </button>
-      </div>
-    </div>
-    }
+    <!-- MULTI-SECTION — swiper slider -->
+    @if (lesson.sections?.length > 1) {
+    <swiper-container
+      #swiperEx
+      slides-per-view="1"
+      space-between="0"
+      allow-touch-move="true"
+      class="flex-1 min-h-0 h-full w-full"
+      (slidechange)="swiperSlideChanged($event)"
+    >
+      @for (section of lesson.sections; track section.id ?? $index) {
+      <swiper-slide>
+        <div class="h-full w-full overflow-y-auto">
+          <div class="mx-auto w-full max-w-2xl px-4 py-6 sm:px-8 sm:py-8">
 
-    @if (!loading && !errorMessage && lesson?.title) {
-    <header class="sticky top-0 z-30 border-b border-white/[0.08] bg-slate-950/90 backdrop-blur-md">
-      <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
-        <div class="flex min-w-0 items-center gap-3">
-          <button
-            class="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white transition hover:border-white/25 hover:bg-white/15"
-            (click)="exitLesson()"
-            aria-label="Exit lesson"
-          >
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-            </svg>
-          </button>
+            <!-- Eyebrow badge -->
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-indigo-300">
+              Section {{ $index + 1 }}
+            </span>
 
-          @if (lesson.subject?.image) {
-          <img [src]="lesson.subject.image" alt="lesson icon" class="h-9 w-9 flex-shrink-0 rounded-full object-cover ring-1 ring-white/20" />
-          }
+            <!-- Section title (serif) -->
+            <h3 class="lesson-title mt-4 text-[1.6rem] font-bold leading-tight text-white sm:text-3xl">
+              {{ section.title || 'Section ' + ($index + 1) }}
+            </h3>
 
-          <div class="min-w-0">
-            <p class="truncate text-sm font-bold text-white">{{ lesson.title }}</p>
-            <p class="text-xs font-medium text-slate-400">
-              Slide {{ currentSection + 1 }} of {{ lesson.sections?.length || 1 }}
-            </p>
-          </div>
-        </div>
+            <!-- Gradient divider -->
+            <div class="mb-6 mt-4 h-px bg-gradient-to-r from-indigo-500/50 via-indigo-400/15 to-transparent"></div>
 
-        <div class="flex flex-shrink-0 items-center gap-2">
-          <span class="rounded-full border border-indigo-400/30 bg-indigo-500/15 px-3 py-1 text-xs font-bold text-indigo-200">
-            {{ currentSection + 1 }}/{{ lesson.sections?.length || 1 }}
-          </span>
-          @if (completed) {
-          <span class="rounded-full border border-emerald-400/30 bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-300">
-            ✓ Completed
-          </span>
-          }
-        </div>
-      </div>
-    </header>
-
-    <main class="flex flex-1 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-      <div class="mx-auto flex h-full w-full max-w-6xl flex-col overflow-hidden">
-        @if (lesson.sections?.length > 0) {
-        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center gap-2.5">
-            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Progress</span>
-            <div class="h-1.5 w-32 overflow-hidden rounded-full bg-slate-800">
-              <div class="h-full rounded-full bg-indigo-500 transition-all duration-500" [style.width.%]="progressPercent"></div>
+            <!-- Body (serif) -->
+            <div class="lesson-prose lesson-body">
+              <div class="prose prose-invert max-w-none" [innerHTML]="section.description || section.body"></div>
             </div>
-            <span class="text-xs font-bold text-indigo-300">{{ currentSection + 1 }}/{{ lesson.sections.length }}</span>
-          </div>
 
-          <div class="flex items-center gap-2">
-            <button
-              class="rounded-full border border-white/15 bg-white/[0.07] px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/25 hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-30"
-              [disabled]="currentSection === 0"
-              (click)="onSlidePrev()"
-            >
-              ← Previous
-            </button>
-            <button
-              class="rounded-full border border-indigo-500/40 bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-md shadow-indigo-900/40 transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
-              [disabled]="currentSection >= lesson.sections.length - 1"
-              (click)="onSlideNext()"
-            >
-              Next →
-            </button>
+            <!-- Spacer so footer doesn't overlap -->
+            <div class="h-4"></div>
           </div>
         </div>
-
-        <div class="flex-1 overflow-hidden rounded-[2rem] border border-white/[0.08] bg-gradient-to-br from-[#0d1117] via-slate-900 to-[#0d1117] shadow-2xl shadow-black/60">
-          <swiper-container
-            #swiperEx
-            slides-per-view="1"
-            space-between="10"
-            allow-touch-move="true"
-            class="h-full min-h-0"
-            (slidechange)="swiperSlideChanged($event)"
-          >
-            @for (section of lesson.sections; track section.id ?? $index) {
-            <swiper-slide class="h-full">
-              <div class="flex h-full flex-col p-5 sm:p-7 lg:p-9">
-                <div class="mb-5 flex items-start justify-between gap-4">
-                  <div class="min-w-0 flex-1">
-                    <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-indigo-400">Lesson Section</p>
-                    <h3 class="mt-1.5 text-2xl font-bold leading-tight text-white">
-                      {{ section.title || 'Section ' + ($index + 1) }}
-                    </h3>
-                  </div>
-                  <div class="flex-shrink-0 rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-xs font-bold tabular-nums text-slate-200">
-                    {{ $index + 1 }} / {{ lesson.sections.length }}
-                  </div>
-                </div>
-
-                <div class="lesson-prose flex-1 overflow-y-auto rounded-xl border border-white/[0.06] bg-slate-950/70 p-5 shadow-inner sm:p-7">
-                  <div class="prose prose-invert max-w-none" [innerHTML]="section.description || section.body"></div>
-                </div>
-              </div>
-            </swiper-slide>
-            }
-          </swiper-container>
-        </div>
-        }
-
-        @if (!lesson.sections?.length) {
-        <div class="flex flex-1 items-center justify-center rounded-[2rem] border border-dashed border-white/10 bg-slate-900/40 p-8 text-center">
-          <div>
-            <h3 class="text-xl font-bold text-white">No lesson sections available</h3>
-            <p class="mt-2 text-sm text-slate-300">This lesson is empty right now. Please come back later.</p>
-          </div>
-        </div>
-        }
-      </div>
-    </main>
-
-    <footer class="border-t border-white/[0.08] bg-slate-950/95 px-4 py-4 sm:px-6 lg:px-8">
-      <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
-        <button
-          class="rounded-full border border-white/15 bg-white/[0.07] px-5 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-white/25 hover:bg-white/15"
-          (click)="exitLesson()"
-        >
-          Exit lesson
-        </button>
-        <button
-          class="rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-900/40 transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
-          (click)="markAsComplete()"
-          [disabled]="completed"
-        >
-          {{ completed ? '✓ Completed' : 'Mark as complete' }}
-        </button>
-      </div>
-    </footer>
+      </swiper-slide>
+      }
+    </swiper-container>
     }
+
+    <!-- EMPTY STATE -->
+    @if (!lesson.sections?.length) {
+    <div class="flex flex-1 items-center justify-center p-8 text-center">
+      <div>
+        <h3 class="text-xl font-bold text-white">No lesson sections available</h3>
+        <p class="mt-2 text-sm text-slate-300">This lesson is empty right now. Please come back later.</p>
+      </div>
+    </div>
+    }
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="z-30 flex-shrink-0 border-t border-white/[0.08] bg-slate-950/95 px-3 py-3 sm:px-6 sm:py-4">
+    <div class="mx-auto flex max-w-2xl items-center justify-between gap-3">
+
+      <!-- MULTI-SECTION footer controls -->
+      @if (lesson.sections?.length > 1) {
+      <button
+        class="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.07] px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:bg-white/15 disabled:pointer-events-none disabled:opacity-30"
+        [disabled]="currentSection === 0"
+        (click)="onSlidePrev()"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        <span class="hidden sm:inline">Previous</span>
+      </button>
+
+      @if (currentSection < (lesson.sections?.length ?? 1) - 1) {
+      <button
+        class="flex flex-1 items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-indigo-900/40 transition hover:bg-indigo-500 sm:flex-none sm:px-6"
+        (click)="onSlideNext()"
+      >
+        Next
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+      </button>
+      }
+
+      @if (currentSection >= (lesson.sections?.length ?? 1) - 1) {
+      <button
+        class="flex flex-1 items-center justify-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-900/40 transition hover:bg-emerald-500 disabled:pointer-events-none disabled:opacity-50 sm:flex-none sm:px-6"
+        (click)="markAsComplete()"
+        [disabled]="completed"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+        </svg>
+        {{ completed ? 'Completed!' : 'Complete lesson' }}
+      </button>
+      }
+      }
+
+      <!-- SINGLE-SECTION footer controls -->
+      @if (lesson.sections?.length === 1) {
+      <button
+        class="rounded-full border border-white/15 bg-white/[0.07] px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:bg-white/15"
+        (click)="exitLesson()"
+      >
+        Exit
+      </button>
+      <button
+        class="flex flex-1 items-center justify-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-900/40 transition hover:bg-emerald-500 disabled:pointer-events-none disabled:opacity-50 sm:flex-none sm:px-6"
+        (click)="markAsComplete()"
+        [disabled]="completed"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+        </svg>
+        {{ completed ? 'Completed!' : 'Complete lesson' }}
+      </button>
+      }
+
+    </div>
+  </footer>
+  }
 
 </div>

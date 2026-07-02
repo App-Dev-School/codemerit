@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
 import { QuizResult } from '@core/models/quiz';
 import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
 
@@ -19,7 +17,7 @@ interface Particle {
   selector: 'app-quiz-result',
   templateUrl: './quiz-result.component.html',
   styleUrl: './quiz-result.component.scss',
-  imports: [CommonModule, MatButton, MatIcon, QuizProgressComponent]
+  imports: [CommonModule, QuizProgressComponent]
 })
 export class QuizResultComponent implements AfterViewInit, OnDestroy {
 

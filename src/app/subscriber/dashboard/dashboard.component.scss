@@ -1,40 +1,88 @@
 /* ── Section entrance animation ─────────────────────────────────── */
 @keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .dash-section {
   animation: fadeSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Stagger each section by ~100ms */
 .dash-section:nth-child(1) { animation-delay: 0.05s; }
 .dash-section:nth-child(2) { animation-delay: 0.15s; }
 .dash-section:nth-child(3) { animation-delay: 0.25s; }
 .dash-section:nth-child(4) { animation-delay: 0.35s; }
 .dash-section:nth-child(5) { animation-delay: 0.45s; }
 
+/* ── Tab button primitives ───────────────────────────────────────── */
+.tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border-radius: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+  outline: none;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.tab-active {
+  background: var(--cm-surface);
+  color: var(--cm-brand);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--cm-border);
+}
+
+.tab-inactive {
+  color: var(--cm-text-muted);
+
+  &:hover {
+    color: var(--cm-text-secondary);
+    background: var(--cm-surface-hover);
+  }
+}
+
+.tab-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  line-height: 16px !important;
+}
+
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.tab-count-active {
+  background: var(--cm-brand-dim);
+  color: var(--cm-brand-text);
+}
+
+.tab-count-inactive {
+  background: var(--cm-surface-hover);
+  color: var(--cm-text-muted);
+}
+
 /* ── Loading overlay ─────────────────────────────────────────────── */
 .subjectLoader {
   min-width: min(90%, 360px);
 }
 
-/* ── Thin scrollbar for sidebar overflow containers ─────────────── */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: var(--cm-surface-raised);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--cm-border-strong);
-  border-radius: 4px;
-}
+/* ── Thin scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--cm-surface-raised); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--cm-border-strong); border-radius: 4px; }

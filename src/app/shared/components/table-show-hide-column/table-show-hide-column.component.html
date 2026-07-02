@@ -1,19 +1,30 @@
-<button mat-icon-button class="col-indigo" [matMenuTriggerFor]="columnMenu" matTooltip="Show/Hide Column">
-    <mat-icon>filter_list</mat-icon>
-</button>
+<div class="relative inline-block">
+  <button type="button" (click)="showDropdown = !showDropdown; $event.stopPropagation()"
+          title="Show/Hide Columns"
+          class="w-9 h-9 flex items-center justify-center rounded-lg
+                 border border-cm-border text-cm-text-muted bg-cm-surface
+                 hover:bg-cm-surface-raised hover:text-cm-text-primary
+                 transition-all duration-150">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"/>
+    </svg>
+  </button>
 
-<!-- Mat Menu -->
-<mat-menu #columnMenu="matMenu" class="column-menu show-hide-column" [overlapTrigger]="false">
-    <div style="padding: 0px 15px; max-height: 300px; overflow: auto; min-width: 200px;">
-        <span class="table-column-label">Show/Hide Column</span>
-        <mat-divider></mat-divider>
+  @if (showDropdown) {
+  <div class="absolute right-0 top-full mt-1 z-50 min-w-[200px] max-h-[300px] overflow-y-auto
+              bg-cm-surface border border-cm-border rounded-xl shadow-xl py-2"
+       (click)="$event.stopPropagation()">
+    <p class="px-3 pb-2 text-[11px] font-bold uppercase tracking-wider text-cm-text-muted
+              border-b border-cm-border mb-2">Show / Hide Columns</p>
 
-        @for (cd of columnDefinitions(); track $index) {
-        <div class="mb-1.5">
-            <mat-checkbox [(ngModel)]="cd.visible" color="primary">
-                {{ cd.label }}
-            </mat-checkbox>
-        </div>
-        }
-    </div>
-</mat-menu>
+    @for (cd of columnDefinitions(); track $index) {
+    <label class="flex items-center gap-2.5 px-3 py-1.5 cursor-pointer
+                  hover:bg-cm-surface-raised transition-colors">
+      <input type="checkbox" [(ngModel)]="cd.visible"
+             class="w-3.5 h-3.5 rounded accent-[#6366f1] cursor-pointer">
+      <span class="text-xs text-cm-text-primary">{{ cd.label }}</span>
+    </label>
+    }
+  </div>
+  }
+</div>

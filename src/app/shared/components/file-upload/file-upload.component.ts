@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Component, ElementRef, HostListener, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 @Component({
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
@@ -14,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
         },
     ],
     styleUrls: ['./file-upload.component.scss'],
-    imports: [MatButtonModule]
+    imports: []
 })
 export class FileUploadComponent implements ControlValueAccessor {
   onChange!: Function;

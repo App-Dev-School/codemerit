@@ -1,136 +1,148 @@
 <section class="content">
   <div class="content-block">
-    <div class="block-header m-t-20 m-b-20">
-      <h1 class="align-center font-32 m-t-20">Up-Skilling & Work Experience
-      </h1>
-      <h4 class="align-center font-15">
-        Choose a subscription plan that fits your learning goals. Whether you're preparing for your first job, aiming to
-        sharpen your skills, or gain experience working on a project with a team.
-      </h4>
-    </div>
-    <div class="row clearfix">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-        <div class="demo m-t-20">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-4 col-sm-6">
-                <div class="pricingTable greenColor">
-                  <div class="pricingTable-header">
-                    <img class="iconImg" src="assets/images/icons/merit.png">
-                    <div class="price-value">
-                      <span class="month">Join Basic to get started.</span>
-                    </div>
-                  </div>
-                  <h3 class="heading">Basic</h3>
-                  <div class="pricing-content">
-                    <ul>
-                      <li>
-                        Browse all job roles & subjects
-                      </li>
-                      <li>
-                        <b>Access</b> to Free Quizzes
-                      </li>
-                      <li>
-                        <b>1 Free Mock Exam</b>
-                      </li>
-                      <li>
-                        Multi Level <b>Skill Assessment</b>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="pricingTable-signup" (click)="signUp()">
-                    @if (userData && userData.email && userData.id) {
-                    <a (click)="subscribe('Basic')" href="#">Continue with Basic</a>
-                    }@else {
-                    <a (click)="signUp()" href="#">sign up</a>
-                    }
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 col-sm-6">
-                <div class="pricingTable blueColor">
-                  <div class="pricingTable-header">
-                    <img class="iconImg" src="assets/images/icons/certificate.png">
-                    <div class="price-value">
-                      <span class="month">Go Premium for full access.</span>
-                    </div>
-                  </div>
-                  <h3 class="heading">PREMIUM</h3>
-                  <div class="pricing-content">
-                    <ul>
-                      <li>
-                        🔓 Access to All Types of Quizzes
-                      </li>
-                      <li>
-                        📈 Prepare for real-world interview
-                      </li>
-                      <li>
-                        🏆 Track progress and compare performance
-                      </li>
-                      <li>
-                        <b>3+</b> Certifications
-                      </li>
-                      <li>
-                        🎯 1 Mock Interview with AI & Human
-                      </li>
-                      <li>
-                        Group Guidance Session
-                      </li>
-                       <li>
-                        Career tips, resume help, Q&A
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="pricingTable-signup">
-                    @if (userData && userData.email && userData.id) {
-                    <a (click)="subscribe('Premium')" href="#">Go Premium</a>
-                    }@else {
-                    <a (click)="signUp()" href="#">sign up</a>
-                    }
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 col-sm-6">
-                <div class="pricingTable redColor">
-                  <div class="pricingTable-header">
-                    <img class="iconImg" src="assets/images/icons/upgrade.png">
-                    <div class="price-value">
-                      <span class="month">🤝 Become a part of our team for collaborative growth.</span>
-                    </div>
-                  </div>
-                  <h3 class="heading">TEAM</h3>
-                  <div class="pricing-content">
-                    <ul>
-                      <li>
-                        🔄 <b>Acquire</b> Work Experience
-                      </li>
-                      <li>
-                        🧑‍🏫 Access to Team Meetings & Project Resources
-                      </li>
-                      <li>
-                        📊 <b>Real-Time</b> Project Collaboration
-                      </li>
-                      <li>
-                        📊 Internship Offer + Work Experience
-                      </li>
-                    </ul>
-                    <p>👉 Available via partner companies or by invitation.</p>
-                  </div>
-                  <div class="pricingTable-signup">
-                    @if (userData && userData.email && userData.id) {
-                    <a (click)="subscribe('Team')" href="#">Apply as Intern</a>
-                    }@else {
-                    <a (click)="signUp()" href="#">sign up</a>
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
+    <!-- Hero -->
+    <div class="text-center py-10 max-w-2xl mx-auto">
+      <h1 class="text-2xl sm:text-3xl font-bold text-cm-text-primary mb-3 leading-tight">
+        Up-Skilling &amp; Work Experience
+      </h1>
+      <p class="text-sm text-cm-text-secondary leading-relaxed">
+        Choose a subscription plan that fits your learning goals. Whether you're preparing for your first job,
+        sharpening skills, or gaining real-world project experience.
+      </p>
+    </div>
+
+    <!-- Pricing cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12 max-w-5xl mx-auto">
+
+      <!-- Basic -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-6 flex flex-col
+                  hover:border-cm-success/40 hover:shadow-lg transition-all">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-xl bg-cm-success-dim flex items-center justify-center shrink-0">
+            <img src="assets/images/icons/merit.png" class="w-7 h-7 object-contain" alt="">
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-cm-text-primary">Basic</h3>
+            <p class="text-xs text-cm-success-text font-semibold">Free forever</p>
           </div>
         </div>
+        <p class="text-xs text-cm-text-muted mb-5 leading-relaxed">Join Basic to start your skill journey.</p>
 
+        <ul class="space-y-3 flex-1 mb-6">
+          <li class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-cm-success-text shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-xs text-cm-text-secondary">Browse all job roles &amp; subjects</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-cm-success-text shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-xs text-cm-text-secondary">Access to <strong>Free Quizzes</strong></span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-cm-success-text shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-xs text-cm-text-secondary"><strong>1 Free</strong> Mock Exam</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-cm-success-text shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-xs text-cm-text-secondary">Multi Level <strong>Skill Assessment</strong></span>
+          </li>
+        </ul>
+
+        @if (userData && userData.email && userData.id) {
+        <button (click)="subscribe('Basic')"
+          class="w-full py-2.5 rounded-xl border-2 border-cm-success text-cm-success-text text-sm font-semibold
+                 hover:bg-cm-success-dim active:scale-95 transition-all">
+          Continue with Basic
+        </button>
+        } @else {
+        <button (click)="signUp()"
+          class="w-full py-2.5 rounded-xl border-2 border-cm-success text-cm-success-text text-sm font-semibold
+                 hover:bg-cm-success-dim active:scale-95 transition-all">
+          Sign Up Free
+        </button>
+        }
       </div>
+
+      <!-- Premium (highlighted) -->
+      <div class="relative rounded-2xl border-2 border-cm-brand bg-cm-surface p-6 flex flex-col shadow-xl">
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
+          <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-cm-brand text-white text-xs font-bold shadow">
+            ★ Most Popular
+          </span>
+        </div>
+        <div class="flex items-center gap-3 mb-4 mt-2">
+          <div class="w-12 h-12 rounded-xl bg-cm-brand-dim flex items-center justify-center shrink-0">
+            <img src="assets/images/icons/certificate.png" class="w-7 h-7 object-contain" alt="">
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-cm-text-primary">Premium</h3>
+            <p class="text-xs text-cm-brand font-semibold">Full access</p>
+          </div>
+        </div>
+        <p class="text-xs text-cm-text-muted mb-5 leading-relaxed">Complete skill development and interview readiness.</p>
+
+        <ul class="space-y-3 flex-1 mb-6">
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-brand shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">🔓 Access to All Types of Quizzes</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-brand shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">📈 Prepare for real-world interviews</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-brand shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">🏆 Track progress &amp; compare performance</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-brand shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary"><strong>3+</strong> Certifications</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-brand shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">🎯 1 Mock Interview with AI &amp; Human</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-brand shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">Group Guidance Sessions</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-brand shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">Career tips, resume help, Q&amp;A</span></li>
+        </ul>
+
+        @if (userData && userData.email && userData.id) {
+        <button (click)="subscribe('Premium')"
+          class="w-full py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold
+                 hover:opacity-90 active:scale-95 transition-all">
+          Go Premium
+        </button>
+        } @else {
+        <button (click)="signUp()"
+          class="w-full py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold
+                 hover:opacity-90 active:scale-95 transition-all">
+          Sign Up
+        </button>
+        }
+      </div>
+
+      <!-- Team -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-6 flex flex-col
+                  hover:border-cm-warning/40 hover:shadow-lg transition-all">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-xl bg-cm-warning-dim flex items-center justify-center shrink-0">
+            <img src="assets/images/icons/upgrade.png" class="w-7 h-7 object-contain" alt="">
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-cm-text-primary">Team</h3>
+            <p class="text-xs text-cm-warning-text font-semibold">By invitation</p>
+          </div>
+        </div>
+        <p class="text-xs text-cm-text-muted mb-5 leading-relaxed">Collaborative real-world growth with a partner team.</p>
+
+        <ul class="space-y-3 flex-1 mb-4">
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-warning-text shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">🔄 <strong>Acquire</strong> Work Experience</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-warning-text shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">🧑‍🏫 Team Meetings &amp; Project Resources</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-warning-text shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">📊 <strong>Real-Time</strong> Project Collaboration</span></li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-cm-warning-text shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-xs text-cm-text-secondary">📊 Internship Offer + Work Experience</span></li>
+        </ul>
+        <p class="text-xs text-cm-text-muted italic mb-5">👉 Available via partner companies or by invitation.</p>
+
+        @if (userData && userData.email && userData.id) {
+        <button (click)="subscribe('Team')"
+          class="w-full py-2.5 rounded-xl border-2 border-cm-warning text-cm-warning-text text-sm font-semibold
+                 hover:bg-cm-warning-dim active:scale-95 transition-all">
+          Apply as Intern
+        </button>
+        } @else {
+        <button (click)="signUp()"
+          class="w-full py-2.5 rounded-xl border-2 border-cm-warning text-cm-warning-text text-sm font-semibold
+                 hover:bg-cm-warning-dim active:scale-95 transition-all">
+          Sign Up
+        </button>
+        }
+      </div>
+
     </div>
   </div>
 </section>

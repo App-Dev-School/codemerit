@@ -7,17 +7,6 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import {
-  MatButtonModule
-} from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatOptionModule, MatRippleModule } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
 import { RatingType } from '@core/models/rating-type';
 import { SkillRating } from '@core/models/skill-rating';
 import { SkillType } from '@core/models/skill-type';
@@ -37,17 +26,7 @@ import { register } from 'swiper/element/bundle';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatIcon,
-    MatRadioModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatCheckboxModule,
-    MatRippleModule,
-    MatInputModule,
     SkillRatingComponent,
-    MatTableModule,
   ],
 })
 

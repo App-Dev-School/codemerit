@@ -1,34 +1,76 @@
-<div class="share-preview" (click)="copyLink(data?.url)">
-  <div class="preview-content">
-    <h5 class="title">{{ data?.title }}</h5>
-    <h5 class="subtitle">{{ data?.text }}</h5>
-
-    <div class="url-row">
-      <p class="url">{{ data?.url }}</p>
-      <mat-icon class="copy-icon">content_copy</mat-icon>
+<div class="p-4">
+  <!-- Link preview -->
+  <div (click)="copyLink(data?.url)"
+       class="rounded-xl border border-cm-border bg-cm-surface-muted p-4 mb-4 cursor-pointer
+              hover:bg-cm-surface-hover transition-colors">
+    <h5 class="text-sm font-bold text-cm-text-primary mb-1">{{ data?.title }}</h5>
+    <p class="text-xs text-cm-text-muted mb-3">{{ data?.text }}</p>
+    <div class="flex items-center justify-between gap-2">
+      <span class="text-xs text-cm-brand truncate">{{ data?.url }}</span>
+      <svg class="w-4 h-4 text-cm-text-muted shrink-0" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+      </svg>
     </div>
   </div>
-</div>
 
-<div class="social-share-container">
-  <h4 class="m-b-20 m-t-10 m-b-10 font-12 d-flex align-items-center justify-content-center">
-    <i class="material-icons me-2">share</i> Share Your Achievement
-  </h4>
+  <!-- Section title -->
+  <div class="flex items-center gap-2 mb-3">
+    <svg class="w-4 h-4 text-cm-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+    </svg>
+    <p class="text-xs font-semibold text-cm-text-secondary uppercase tracking-wide">Share Your Achievement</p>
+  </div>
 
-<mat-nav-list>
-  <div mat-list-item (click)="shareOnlyText()">
-    <h6 class="m-b-0">Share with anyone</h6>
-    <span class="font-12 m-t-0">Shares text and url using native sharing across multiple apps</span>
-    <hr class="dim-divider">
+  <!-- Share options -->
+  <div class="space-y-1">
+    <button (click)="shareOnlyText()"
+      class="w-full flex items-start gap-3 p-3 rounded-xl hover:bg-cm-surface-hover transition-colors text-left">
+      <div class="w-9 h-9 rounded-lg bg-cm-brand-dim flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-cm-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-cm-text-primary">Share with anyone</p>
+        <p class="text-xs text-cm-text-muted">Shares text and URL via native sharing</p>
+      </div>
+    </button>
+
+    <hr class="border-cm-border">
+
+    <button (click)="shareWithHtml2Canvas()"
+      class="w-full flex items-start gap-3 p-3 rounded-xl hover:bg-cm-surface-hover transition-colors text-left">
+      <div class="w-9 h-9 rounded-lg bg-cm-success-dim flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-cm-success-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-cm-text-primary">Capture Image & Share</p>
+        <p class="text-xs text-cm-text-muted">Shares your report image across apps</p>
+      </div>
+    </button>
+
+    <hr class="border-cm-border">
+
+    <button (click)="shareWithDomToImage()"
+      class="w-full flex items-start gap-3 p-3 rounded-xl hover:bg-cm-surface-hover transition-colors text-left">
+      <div class="w-9 h-9 rounded-lg bg-cm-info-dim flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-cm-info-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-cm-text-primary">Share Report Image</p>
+        <p class="text-xs text-cm-text-muted">Custom image via DomToImage</p>
+      </div>
+    </button>
   </div>
-  <div mat-list-item (click)="shareWithHtml2Canvas()">
-    <h6 class="m-b-0">Capture Image & Share</h6>
-    <span class="font-12 m-t-0">Shares your report image across multiple apps</span>
-    <hr class="dim-divider">
-  </div>
-  <div mat-list-item (click)="shareWithDomToImage()">
-    <h6 class="m-b-0">Share Report Image</h6>
-    <span class="font-12 m-t-0">Shares a custom Image using DomToImage</span>
-  </div>
-</mat-nav-list>
 </div>

@@ -39,8 +39,14 @@ export class MasterService {
   ) {
     const stored = localStorage.getItem(this.storageKey);
     if (stored) {
-      this.data = JSON.parse(stored);
-      this.dataLoaded.next(true);
+      const parsed = JSON.parse(stored);
+      // Handle old cache format where the full API response wrapper was saved instead of
+      // just the data object. Detect by checking if subjects array is nested under .data.
+      const candidate: MasterData = parsed?.subjects ? parsed : parsed?.data;
+      if (candidate?.subjects) {
+        this.data = candidate;
+        this.dataLoaded.next(true);
+      }
     }
   }
 
@@ -57,7 +63,8 @@ export class MasterService {
           if (!res.error) {
             console.log('MasterDataFlow Topics', res.data.topics);
             this.data = res.data;
-            localStorage.setItem(this.storageKey, JSON.stringify(res));
+            // Save only res.data so the constructor can read it back as MasterData directly.
+            localStorage.setItem(this.storageKey, JSON.stringify(res.data));
             this.dataLoaded.next(true);
           }
         }),

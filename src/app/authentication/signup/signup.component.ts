@@ -1,8 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
 import { User } from '@core';
@@ -17,9 +15,7 @@ import { LoginFormComponent } from '@shared/components/login-form/login-form.com
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    MatProgressSpinnerModule,
     RouterLink,
-    MatButtonModule,
     LoginFormComponent,
     AsyncPipe
   ]

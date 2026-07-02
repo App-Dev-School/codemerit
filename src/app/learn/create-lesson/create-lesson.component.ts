@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { Editor } from '@tiptap/core';
 import Code from '@tiptap/extension-code';
@@ -24,12 +18,6 @@ import { LessonService } from '../lesson.service';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatIconModule,
     TiptapEditorDirective
   ]
 })
@@ -102,8 +90,9 @@ export class CreateLessonComponent implements OnInit, OnDestroy {
       };
       this.lessonService.createLesson(payload).subscribe({
         next: (res) => {
-          this.snackService.display('snackbar-dark', res?.message ?? 'Lesson created successfully', 'bottom', 'center');
+          this.snackService.display('snackbar-dark', res?.message ?? 'Your new lesson is created successfully.', 'bottom', 'center');
           this.resetForm();
+          this.router.navigate(['/learn/overview', res?.data?.lesson?.slug]);
         },
         error: (error) => {
           this.snackService.display('snackbar-dark', error?.error?.message ?? 'Failed to create lesson', 'bottom', 'center');

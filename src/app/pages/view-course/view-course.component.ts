@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Direction } from '@angular/cdk/bidi';
 import { CommonModule } from '@angular/common';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
@@ -28,9 +25,6 @@ import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/m
   animations: [fadeInAnimation],
   imports: [
     CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
     SubjectTrackerCardComponent,
     MeritListWidgetComponent,
     CertificateComponent

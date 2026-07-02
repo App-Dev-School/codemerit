@@ -8,12 +8,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChip } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AuthService, Role } from '@core';
@@ -39,12 +34,7 @@ interface Quiz {
   imports: [
     CommonModule,
     NgClass,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
     SafePipe,
-    MatChip,
   ],
 })
 export class QuestionViewerComponent implements OnInit, AfterViewInit {
@@ -225,6 +215,16 @@ export class QuestionViewerComponent implements OnInit, AfterViewInit {
         //this.onQuestionChange(result.data);
       }
     });
+  }
+
+  getChoiceClass(choice: { id: number; option: string; correct: boolean }, question: FullQuestion): string {
+    if (this.mode === 0) {
+      return choice.correct ? 'qv-opt--correct' : '';
+    }
+    if (question.selectedChoice === choice.id) {
+      return choice.correct ? 'qv-opt--correct' : 'qv-opt--wrong';
+    }
+    return '';
   }
 
   isCodeQuestion(text: string): boolean {

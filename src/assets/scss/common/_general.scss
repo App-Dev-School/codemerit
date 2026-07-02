@@ -57,11 +57,12 @@ dl {
 
 section {
   &.content {
-    margin: 35px 27px 0 260px;
+    /* top: 60px fixed header + 16px breathing room */
+    margin: 76px 27px 0 260px;
     min-height: calc(100vh - 76px);
     @include mix.transition(0.5s);
     .content-block {
-      padding: 25px 0px 0px 25px;
+      padding: 0 0 0 25px;
     }
   }
 }
@@ -149,6 +150,16 @@ section {
 }
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* ── Material dialog: use app surface bg (not pure white) ────── */
+.mat-mdc-dialog-surface {
+  background: var(--cm-surface-muted) !important;
+}
+
+/* ── Material dialog: responsive width on mobile ─────────────── */
+.cdk-overlay-pane {
+  max-width: min(500px, 95vw) !important;
 }
 .h1,
 h1 {

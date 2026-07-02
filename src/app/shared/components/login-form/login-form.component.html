@@ -1,219 +1,199 @@
-@if(!submitted){
-<div class="form-section">
-    <div class="auth-wrapper">
-        <div class="loginHeader text-center">
-            <div class="text-center mb-3" routerLink="/app/welcome">
-                <img src="./../../../assets/images/logo.png" alt="codemerit" class="logo animEntry" />
-            </div>
-            @if (data && data?.title) {
-            <h6 class="welcome-msg text-center"> {{data?.title}} </h6>
-            }@else {
-            <h6 class="welcome-msg text-center">{{isNewUser ? 'Create CodeMerit Account' : 'Login to your CodeMerit
-                Account'}}</h6>
-            }
+@if (!submitted) {
+<div class="flex items-center justify-center min-h-[420px]">
+  <div class="w-full max-w-md">
 
-            @if (data && data?.message) {
-            <p class="auth-signup-text text-center">{{data?.message}}</p>
-            }@else {
-            <p class="auth-signup-text text-center floating">
-                {{ isNewUser ? 'Choose Your Career Goal. Track Your Progress.' : 'Access your personalized Skill
-                Assessment Dashboard.'}}
-            </p>
-            }
-        </div>
-
-        @if (isNewUser) {
-        <form [@fadeIn] class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
-            <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                    <mat-form-field class="example-full-width" appearance="fill">
-                        <mat-label>First Name</mat-label>
-                        <input matInput formControlName="firstName" required>
-                        @if (authForm.get('firstName')!.hasError('required')) {
-                        <mat-error>
-                            First name is required
-                        </mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                    <mat-form-field class="example-full-width" appearance="fill">
-                        <mat-label>Last Name</mat-label>
-                        <input matInput formControlName="lastName">
-                        @if (authForm.get('lastName')!.hasError('required')) {
-                        <mat-error>
-                            Last name is required
-                        </mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-12col-lg-12 col-md-12 col-sm-12">
-                    <mat-form-field class="example-full-width" appearance="fill">
-                        <mat-label>Email</mat-label>
-                        <input matInput formControlName="email" required>
-                        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>mail</mat-icon>
-                        @if (authForm.get('email')!.hasError('required') || authForm.get('email')!.touched) {
-                        <mat-error>
-                            Please enter a valid email address
-                        </mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-            </div>
-
-            @if (!data) {
-            <!-- <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                    <mat-form-field class="example-full-width" appearance="fill">
-                        <mat-label>City</mat-label>
-                        <input matInput formControlName="city" required>
-                        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>location_city</mat-icon>
-                        @if (authForm.get('city')!.hasError('required')) {
-                        <mat-error>
-                            Please let us know your city.
-                        </mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                    <mat-form-field class="example-full-width" appearance="fill">
-                        <mat-label>Country</mat-label>
-                        <input matInput formControlName="country" type="text" [matAutocomplete]="autoCountry" required>
-                        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>globe</mat-icon>
-                        <mat-autocomplete #autoCountry="matAutocomplete" [displayWith]="displayCountry">
-                            @for (country of filteredCountries | async; track country) {
-                            <mat-option [value]="country.name">
-                                {{country.name}}
-                            </mat-option>
-                            }
-                        </mat-autocomplete>
-
-                        @if (authForm.get('country')!.hasError('required')) {
-                        <mat-error>
-                            Please let us know your country.
-                        </mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-            </div> -->
-
-            <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                    <mat-form-field class="example-full-width">
-                        <mat-label>What describes you best?</mat-label>
-                        <input type="text" matInput formControlName="about" [matAutocomplete]="auto">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayRole">
-                            @for (option of filteredOptions | async; track option) {
-                            <mat-option [value]="option.label">
-                                {{option.label}}
-                            </mat-option>
-                            }
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-            </div>
-            }
-
-
-            <div class="container-auth-form-btn">
-                <button mat-flat-button color="accent" class="auth-form-btn" [disabled]="!authForm.valid || submitted"
-                    type="submit">
-                    Register
-                </button>
-            </div>
-        </form>
-        }@else{
-        <form [@fadeIn] class="validate-form" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
-            <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                    <mat-form-field class="example-full-width" appearance="fill">
-                        <mat-label>E-mail</mat-label>
-                        <input matInput formControlName="username" />
-                        <mat-icon class="material-icons-outlined p-3" matSuffix>face</mat-icon>
-                        @if (loginForm.get('username')!.hasError('required')) {
-                        <mat-error>
-                            E-mail is required
-                        </mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
-                    <mat-form-field class="example-full-width" appearance="fill">
-                        <mat-label>Password</mat-label>
-                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
-                        <mat-icon class="material-icons-outlined pwd-toggle p-3" matSuffix (click)="hide = !hide">
-                            {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        @if (loginForm.get('password')!.hasError('required')) {
-                        <mat-error>
-                            Password is required
-                        </mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-5">
-                <div class="form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="checkbox" value=""> Remember me
-                        <span class="form-check-sign">
-                            <span class="check"></span>
-                        </span>
-                    </label>
-                </div>
-                <a class="txt1" routerLink="/authentication/forgot-password">Forgot Password?</a>
-            </div>
-            @if (error) {
-            <div class="alert alert-danger mt-3 mb-3">{{error}}</div>
-            }
-            <div class="container-auth-form-btn">
-                <div style="text-align:center">
-                    <button mat-flat-button color="accent" [class.auth-spinner]="loading" [disabled]="loading"
-                        class="auth-form-btn" [disabled]="!loginForm.valid " type="submit">Login</button>
-                </div>
-            </div>
-        </form>
-        }
-
-        @if (isNewUser) {
-        <h6 class="social-login-title">OR</h6>
-        <div class="text-center m-b-10">
-            <h6 class="link-msg"> Already Registered? <span class="sign-up-link" (click)="onLoginLinkClick()">
-                    Login here
-                </span></h6>
-        </div>
-        }@else{
-        <h6 class="social-login-title">OR</h6>
-        <div style="text-align:center">
-            <h6 class="link-msg"> New to CodeMerit ?
-                <span class="sign-up-link" (click)="onRegisterLinkClick()">
-                    Register Now
-                </span>
-            </h6>
-        </div>
-        }
-
-        @if (data && data.action) {
-        <div class="text-center m-t-20">
-            <button (click)="dismiss(null)" mat-flat-button color="accent" style="background-color:#e91e63;">
-                {{data.action}}</button>
-        </div>
-        }
+    <!-- Logo + heading -->
+    <div class="text-center mb-6">
+      <div class="cursor-pointer inline-block mb-4" routerLink="/app/welcome">
+        <img src="./../../../assets/images/logo.png" alt="codemerit" class="logo animEntry h-10 mx-auto" />
+      </div>
+      @if (data && data?.title) {
+      <h5 class="text-base font-bold text-cm-text-primary">{{ data?.title }}</h5>
+      } @else {
+      <h5 class="text-base font-bold text-cm-text-primary">
+        {{ isNewUser ? 'Create CodeMerit Account' : 'Login to your Account' }}
+      </h5>
+      }
+      @if (data && data?.message) {
+      <p class="text-xs text-cm-text-muted mt-1">{{ data?.message }}</p>
+      } @else {
+      <p class="text-xs text-cm-text-muted mt-1 floating">
+        {{ isNewUser ? 'Choose Your Career Goal. Track Your Progress.' : 'Access your personalized Skill Assessment Dashboard.' }}
+      </p>
+      }
     </div>
-</div>
-}@else{
-<div class="loading text-center">
-    <img src="assets/images/icons/cube.gif" class="loader" alt="Authenticating">
+
+    <!-- Register form -->
     @if (isNewUser) {
-    <h5>Registering Account</h5>
-    <h6>Please wait a moment</h6>
-    }@else{
-    <h5>Authenticating User</h5>
-    <h6>Please wait ...</h6>
+    <form [@fadeIn] [formGroup]="authForm" (ngSubmit)="onSubmit()">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">First Name <span class="text-cm-danger-text">*</span></label>
+          <input formControlName="firstName" type="text" placeholder="First name"
+            class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                   text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                   focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+          @if (authForm.get('firstName')?.touched && authForm.get('firstName')?.hasError('required')) {
+          <p class="text-xs text-cm-danger-text mt-1">First name is required</p>
+          }
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Last Name</label>
+          <input formControlName="lastName" type="text" placeholder="Last name"
+            class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                   text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                   focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Email <span class="text-cm-danger-text">*</span></label>
+        <input formControlName="email" type="email" placeholder="email@example.com"
+          class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                 text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                 focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+        @if (authForm.get('email')?.touched && (authForm.get('email')?.hasError('required') || authForm.get('email')?.hasError('email'))) {
+        <p class="text-xs text-cm-danger-text mt-1">Please enter a valid email address</p>
+        }
+      </div>
+
+      @if (!data) {
+      <div class="mb-3">
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">What describes you best?</label>
+        <input type="text" formControlName="about" placeholder="e.g. IT Student, Frontend Developer..."
+               [matAutocomplete]="auto"
+          class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                 text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                 focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayRole">
+          @for (option of filteredOptions | async; track option) {
+          <mat-option [value]="option.label">{{ option.label }}</mat-option>
+          }
+        </mat-autocomplete>
+      </div>
+      }
+
+      <button type="submit" [disabled]="!authForm.valid || submitted"
+        class="w-full py-2.5 mt-2 rounded-xl bg-cm-brand text-white text-sm font-semibold
+               hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        Register
+      </button>
+    </form>
+
+    } @else {
+
+    <!-- Login form -->
+    <form [@fadeIn] [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+
+      <div class="mb-3">
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">E-mail</label>
+        <input formControlName="username" type="email" placeholder="your@email.com"
+          class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                 text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                 focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+        @if (loginForm.get('username')?.touched && loginForm.get('username')?.hasError('required')) {
+        <p class="text-xs text-cm-danger-text mt-1">E-mail is required</p>
+        }
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Password</label>
+        <div class="relative">
+          <input formControlName="password" [type]="hide ? 'password' : 'text'" placeholder="••••••"
+            class="w-full pl-3 pr-10 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                   text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                   focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+          <button type="button" (click)="hide = !hide"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-cm-text-muted hover:text-cm-text-primary transition-colors">
+            @if (hide) {
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+            </svg>
+            } @else {
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            }
+          </button>
+        </div>
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) {
+        <p class="text-xs text-cm-danger-text mt-1">Password is required</p>
+        }
+      </div>
+
+      <div class="flex items-center justify-between mb-4">
+        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+          <input type="checkbox" class="w-3.5 h-3.5 rounded border-cm-border accent-cm-brand">
+          <span class="text-xs text-cm-text-muted">Remember me</span>
+        </label>
+        <a class="text-xs text-cm-brand hover:underline" routerLink="/authentication/forgot-password">
+          Forgot Password?
+        </a>
+      </div>
+
+      @if (error) {
+      <div class="rounded-xl bg-cm-danger-dim border border-cm-danger/20 px-3 py-2.5 text-xs text-cm-danger-text mb-3">
+        {{ error }}
+      </div>
+      }
+
+      <button type="submit" [disabled]="loading || !loginForm.valid"
+        class="w-full py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold
+               hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all
+               flex items-center justify-center gap-2">
+        @if (loading) {
+        <span class="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+        }
+        Login
+      </button>
+
+    </form>
     }
+
+    <!-- Switch mode -->
+    <div class="text-center mt-5">
+      <span class="text-xs text-cm-text-muted">— OR —</span>
+      @if (isNewUser) {
+      <p class="text-xs text-cm-text-secondary mt-2">
+        Already registered?
+        <span class="text-cm-brand cursor-pointer hover:underline font-semibold" (click)="onLoginLinkClick()">
+          Login here
+        </span>
+      </p>
+      } @else {
+      <p class="text-xs text-cm-text-secondary mt-2">
+        New to CodeMerit?
+        <span class="text-cm-brand cursor-pointer hover:underline font-semibold" (click)="onRegisterLinkClick()">
+          Register Now
+        </span>
+      </p>
+      }
+    </div>
+
+    @if (data && data.action) {
+    <div class="text-center mt-4">
+      <button (click)="dismiss(null)"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-600 text-white text-sm font-semibold
+               hover:bg-pink-700 active:scale-95 transition-all">
+        {{ data.action }}
+      </button>
+    </div>
+    }
+
+  </div>
+</div>
+} @else {
+<!-- Authenticating state -->
+<div class="flex flex-col items-center justify-center py-16 gap-4">
+  <img src="assets/images/icons/cube.gif" class="w-16 h-16" alt="Authenticating">
+  @if (isNewUser) {
+  <h5 class="text-sm font-bold text-cm-text-primary">Registering Account</h5>
+  <p class="text-xs text-cm-text-muted">Please wait a moment</p>
+  } @else {
+  <h5 class="text-sm font-bold text-cm-text-primary">Authenticating User</h5>
+  <p class="text-xs text-cm-text-muted">Please wait...</p>
+  }
 </div>
 }

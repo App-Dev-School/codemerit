@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { Subject } from '@core/models/subject';
 import {
   ApexChart,
@@ -33,8 +31,6 @@ interface MeritIndicators {
   selector: 'app-subject-performance-card',
   imports: [
     CommonModule,
-    MatIconModule,
-    MatButtonModule,
     NgApexchartsModule,
   ],
   templateUrl: './subject-performance-card.component.html',

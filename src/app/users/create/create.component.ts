@@ -1,15 +1,9 @@
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
 import { User } from '@core';
@@ -19,29 +13,18 @@ import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { combineLatest, map, Observable, of, startWith } from 'rxjs';
+import { map, Observable, of, startWith } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { MatCard, MatCardContent } from "@angular/material/card";
 @Component({
   selector: 'app-create-user',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
   imports: [
     BreadcrumbComponent,
-    FormsModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatOptionModule,
-    MatSelectModule,
     MatAutocompleteModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
+    MatOptionModule,
     AsyncPipe,
-    MatCard, MatCardContent
   ]
 })
 export class CreateUserComponent implements OnInit, OnDestroy {

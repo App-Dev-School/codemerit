@@ -1,41 +1,51 @@
-<div class="card-block">
+<div class="p-4">
   @if (loading) {
-   <div class="no-data-container text-center">
-    <img src="assets/images/icons/loading.gif" class="smallLoadingIcon m-t-20" />
-    <h5 class="col-grey">{{loadingTxt}}</h5>
-    <small>Please wait</small>
+  <div class="flex flex-col items-center justify-center py-10 gap-3">
+    <div class="w-8 h-8 rounded-full border-2 border-cm-brand border-t-transparent animate-spin"></div>
+    <h5 class="text-sm font-medium text-cm-text-primary">{{loadingTxt}}</h5>
+    <small class="text-xs text-cm-text-muted">Please wait</small>
   </div>
-  }@else {
-  <div class="row">
-    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-      <div class="text-center">
-        <img src="assets/images/users/user.jpg" class="userProfile" />
-        <h5>{{courseItem.title}}</h5>
-        <!-- <h6>{{courseItem | json}} </h6> -->
-        <p class="font-12">Set your goal as {{courseItem.title}} to start a comprehensive skill assessment journey.</p>
-        <hr class="dim-divider">
-        <!-- Stacked subject image loading effect -->
-        @if (courseItem && courseItem?.subjects) {
-        <div class="subject-image-group">
-          @for (item of courseItem?.subjects; track item) {
-          <img [src]="item.image ?? 'assets/images/tech/placeholder.png'" class="floating" [alt]="item.title">
-          }
-        </div>
-        }
-        <hr class="dim-divider">
-      </div>
+  } @else {
+
+  <!-- Course header -->
+  <div class="text-center mb-5">
+    <div class="w-16 h-16 rounded-full bg-cm-surface-raised mx-auto mb-3 overflow-hidden border border-cm-border">
+      <img src="assets/images/users/user.jpg" class="w-full h-full object-cover" alt="" />
     </div>
+    <h5 class="text-base font-bold text-cm-text-primary mb-1">{{courseItem.title}}</h5>
+    <p class="text-xs text-cm-text-muted leading-relaxed max-w-xs mx-auto">
+      Set your goal as {{courseItem.title}} to start a comprehensive skill assessment journey.
+    </p>
   </div>
-  <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 w-100">
-    <button mat-flat-button color="primary" (click)="dismiss($event)" rippleEffect class="w-100 w-md-auto">
+
+  <!-- Subject image group -->
+  @if (courseItem && courseItem?.subjects) {
+  <div class="flex items-center justify-center gap-2 mb-4 flex-wrap">
+    @for (item of courseItem?.subjects; track item) {
+    <img [src]="item.image ?? 'assets/images/tech/placeholder.png'"
+         [alt]="item.title"
+         class="w-10 h-10 rounded-lg object-contain border border-cm-border bg-cm-surface-muted floating"
+         [title]="item.title">
+    }
+  </div>
+  }
+
+  <hr class="border-cm-border mb-4">
+
+  <!-- Actions -->
+  <div class="flex items-center gap-3">
+    <button (click)="dismiss($event)" type="button"
+      class="flex-1 py-2.5 rounded-xl border border-cm-border text-sm font-medium
+             text-cm-text-secondary bg-cm-surface-muted
+             hover:border-cm-danger/40 hover:text-cm-danger-text active:scale-95 transition-all">
       Cancel
     </button>
-     <!-- <button mat-stroked-button color="primary" (click)="viewCourseDetails()" class="w-100 w-md-auto">
-      View Course Details
-    </button> -->
-    <button mat-stroked-button color="primary" (click)="doSetUserDesignation()" class="w-100 w-md-auto">
+    <button (click)="doSetUserDesignation()" type="button"
+      class="flex-1 py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold
+             hover:opacity-90 active:scale-95 transition-all">
       Enroll Me
     </button>
   </div>
+
   }
 </div>

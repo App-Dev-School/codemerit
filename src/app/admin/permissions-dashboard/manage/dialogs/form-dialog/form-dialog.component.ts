@@ -8,14 +8,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
   MatDialogClose,
   MatDialogRef
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Permission, UserPermissionItem } from '@core/models/permission.model';
@@ -33,8 +31,6 @@ export interface DialogData {
   templateUrl: './form-dialog.component.html',
   styleUrls: ['./form-dialog.component.scss'],
   imports: [
-    MatButtonModule,
-    MatIconModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,

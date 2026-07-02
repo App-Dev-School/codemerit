@@ -1,9 +1,7 @@
 <section class="content">
   <div class="content-block">
-    <div class="row clearfix">
-      <div class="col-12">
-        <app-subject-skill-rating *ngIf="currentSubject?.id" [subjectId]="currentSubject?.id" (completed)="onSubmit($event)"></app-subject-skill-rating>
-      </div>
-    </div>
+    @if (currentSubject?.id) {
+    <app-subject-skill-rating [subjectId]="currentSubject.id" (completed)="onSubmit($event)"></app-subject-skill-rating>
+    }
   </div>
 </section>

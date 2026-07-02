@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { TopicsListComponent } from '@shared/components/topics-listing/topics-list.component';
 
 import { Direction } from '@angular/cdk/bidi';
@@ -28,9 +25,6 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
   animations: [slideInOutAnimation, fadeInAnimation],
   imports: [
     RouterLink,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
     TopicsListComponent,
     MeritListWidgetComponent,
     RecentCommentsComponent,

@@ -30,6 +30,26 @@
   --cm-brand-text:      #4338ca;     /* brand color on light bg       */
   --cm-brand-ring:      rgba(99, 102, 241, 0.35);
 
+  /* ── Status: Success ── */
+  --cm-success:         #10b981;     /* emerald-500                   */
+  --cm-success-dim:     rgba(16, 185, 129, 0.10);
+  --cm-success-text:    #059669;     /* emerald-600                   */
+
+  /* ── Status: Warning ── */
+  --cm-warning:         #f59e0b;     /* amber-500                     */
+  --cm-warning-dim:     rgba(245, 158, 11, 0.10);
+  --cm-warning-text:    #d97706;     /* amber-600                     */
+
+  /* ── Status: Danger ── */
+  --cm-danger:          #ef4444;     /* red-500                       */
+  --cm-danger-dim:      rgba(239, 68, 68, 0.10);
+  --cm-danger-text:     #dc2626;     /* red-600                       */
+
+  /* ── Status: Info ── */
+  --cm-info:            #3b82f6;     /* blue-500                      */
+  --cm-info-dim:        rgba(59, 130, 246, 0.10);
+  --cm-info-text:       #2563eb;     /* blue-600                      */
+
   /* ── Sidebar (interview panel) ── */
   --cm-sidebar-bg:      #f1f5f9;     /* matches surface-raised        */
   --cm-sidebar-gradient: linear-gradient(170deg, #e2e8f0 0%, #edf0f4 30%, #f1f5f9 65%, #f8fafc 100%);
@@ -70,6 +90,26 @@
   --cm-brand-dim:       rgba(99, 102, 241, 0.12);
   --cm-brand-text:      #818cf8;
   --cm-brand-ring:      rgba(129, 140, 248, 0.40);
+
+  /* ── Status: Success ── */
+  --cm-success:         #34d399;     /* emerald-400                   */
+  --cm-success-dim:     rgba(52, 211, 153, 0.12);
+  --cm-success-text:    #34d399;
+
+  /* ── Status: Warning ── */
+  --cm-warning:         #fbbf24;     /* amber-400                     */
+  --cm-warning-dim:     rgba(251, 191, 36, 0.12);
+  --cm-warning-text:    #fbbf24;
+
+  /* ── Status: Danger ── */
+  --cm-danger:          #f87171;     /* red-400                       */
+  --cm-danger-dim:      rgba(248, 113, 113, 0.12);
+  --cm-danger-text:     #f87171;
+
+  /* ── Status: Info ── */
+  --cm-info:            #60a5fa;     /* blue-400                      */
+  --cm-info-dim:        rgba(96, 165, 250, 0.12);
+  --cm-info-text:       #60a5fa;
 
   /* ── Sidebar (interview panel) ── */
   --cm-sidebar-bg:      #000000;

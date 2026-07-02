@@ -1,10 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
@@ -30,10 +26,6 @@ register();
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MatTabsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
     QuizFormComponent,
     QuizQuestionsFormComponent,
     QuizSettingsFormComponent,

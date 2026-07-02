@@ -20,9 +20,9 @@
            'bg-cm-surface border-cm-border': !group.isStarted && !group.isCompleted
          }">
       @if(group.isCompleted){
-        <mat-icon class="text-white leading-none" style="font-size:15px">check</mat-icon>
+        <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
       }@else if(group.isStarted){
-        <mat-icon class="text-white leading-none" style="font-size:15px">play_arrow</mat-icon>
+        <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       }@else{
         <span class="text-xs font-black text-cm-text-muted">{{i + 1}}</span>
       }
@@ -61,7 +61,9 @@
         @if(group.numTrivia > 0){
         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold shrink-0
                      bg-cm-surface-raised border border-cm-border text-cm-text-secondary">
-          <mat-icon style="font-size:12px">quiz</mat-icon>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
           {{group.numTrivia}}
         </span>
         }
@@ -111,7 +113,9 @@
 
         @if(userData && userRole === 'Admin'){
         <span class="inline-flex items-center gap-1 text-[11px] text-cm-text-muted">
-          <mat-icon style="font-size:12px">transfer_within_a_station</mat-icon>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
           {{group.totalAttempts}}
         </span>
         }
@@ -122,19 +126,26 @@
           🏆 Completed
         </span>
         }@else if(group.numTrivia > 0){
-        <button mat-flat-button color="primary" class="text-xs h-8 rounded-lg"
-                (click)="onTopicQuiz(group)">
+        <button type="button" (click)="onTopicQuiz(group)"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                 bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
           💡 Take Quiz
         </button>
         }
 
         @if(group.numLessons > 0){
-        <button mat-stroked-button class="text-xs h-8 rounded-lg"
-                [matTooltip]="group.coverage >= 100 ? 'Revise lessons' : 'Continue learning'"
-                (click)="onTopicExplore(group)">
-          <mat-icon style="font-size:14px">
-            {{group.coverage >= 100 ? 'history' : (group.coverage > 0 ? 'play_arrow' : 'lock_outline')}}
-          </mat-icon>
+        <button type="button" (click)="onTopicExplore(group)"
+          [title]="group.coverage >= 100 ? 'Revise lessons' : 'Continue learning'"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                 border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+                 active:scale-95 transition-all">
+          @if(group.coverage >= 100){
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          }@else if(group.coverage > 0){
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          }@else{
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          }
           {{group.coverage >= 100 ? 'Revise' : (group.coverage > 0 ? 'Learn' : 'Start')}}
         </button>
         }

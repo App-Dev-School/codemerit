@@ -100,47 +100,57 @@
 
 <!-- ── Subject Tabs Template ── -->
 <ng-template #courseSubjectSummary>
-  <mat-tab-group mat-align-tabs="start">
+  <!-- Tab bar -->
+  <div class="flex border-b border-cm-border mb-4">
+    @for (tab of [{label:'In Progress'},{label:'To Start'}]; track tab.label; let i = $index) {
+    <button type="button" (click)="activeTabIndex = i"
+      [class]="activeTabIndex === i
+        ? 'px-4 py-2.5 text-xs font-bold text-cm-brand border-b-2 border-cm-brand -mb-px bg-transparent'
+        : 'px-4 py-2.5 text-xs font-medium text-cm-text-muted border-b-2 border-transparent -mb-px hover:text-cm-text-primary transition-colors'">
+      {{tab.label}}
+    </button>
+    }
+  </div>
 
-    <mat-tab label="In Progress">
-      @if (attemptedSubjects?.length > 0) {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-        @for (item of attemptedSubjects; track item.id) {
-        <app-subject-tracker-card
-          [user]="userData" [item]="item"
-          (launchSubjectExplorer)="launchSubjectExplorer($event)"
-          (takeQuiz)="openQuizLauncher(item)">
-        </app-subject-tracker-card>
-        }
-      </div>
-      } @else {
-      <div class="py-12 text-center">
-        <i class="fa-regular fa-clock text-cm-text-muted text-2xl mb-3 block"></i>
-        <p class="text-sm text-cm-text-muted">No subjects in progress yet. Start with a subject to get going!</p>
-      </div>
+  <!-- In Progress panel -->
+  @if (activeTabIndex === 0) {
+    @if (attemptedSubjects?.length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      @for (item of attemptedSubjects; track item.id) {
+      <app-subject-tracker-card
+        [user]="userData" [item]="item"
+        (launchSubjectExplorer)="launchSubjectExplorer($event)"
+        (takeQuiz)="openQuizLauncher(item)">
+      </app-subject-tracker-card>
       }
-    </mat-tab>
+    </div>
+    } @else {
+    <div class="py-12 text-center">
+      <i class="fa-regular fa-clock text-cm-text-muted text-2xl mb-3 block"></i>
+      <p class="text-sm text-cm-text-muted">No subjects in progress yet. Start with a subject to get going!</p>
+    </div>
+    }
+  }
 
-    <mat-tab label="To Start">
-      @if (otherSubjects?.length > 0) {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-        @for (item of otherSubjects; track item.id) {
-        <app-subject-tracker-card
-          [user]="userData" [item]="item"
-          (launchSubjectExplorer)="launchSubjectExplorer($event)"
-          (takeQuiz)="openQuizLauncher(item)">
-        </app-subject-tracker-card>
-        }
-      </div>
-      } @else {
-      <div class="py-12 text-center">
-        <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-3 block"></i>
-        <p class="text-sm text-cm-text-muted">All subjects have been started. Keep up the good work!</p>
-      </div>
+  <!-- To Start panel -->
+  @if (activeTabIndex === 1) {
+    @if (otherSubjects?.length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      @for (item of otherSubjects; track item.id) {
+      <app-subject-tracker-card
+        [user]="userData" [item]="item"
+        (launchSubjectExplorer)="launchSubjectExplorer($event)"
+        (takeQuiz)="openQuizLauncher(item)">
+      </app-subject-tracker-card>
       }
-    </mat-tab>
-
-  </mat-tab-group>
+    </div>
+    } @else {
+    <div class="py-12 text-center">
+      <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-3 block"></i>
+      <p class="text-sm text-cm-text-muted">All subjects have been started. Keep up the good work!</p>
+    </div>
+    }
+  }
 </ng-template>
 
 

@@ -1,258 +1,383 @@
-@if (!completed) {
 <section class="content">
   <div class="content-block">
-    <div class="block-header"></div>
-    <div class="question-viewer d-flex flex-column vh-100">
-      @if (loading) {
-      <div class="overlay"></div>
-      <div class="animToast loading">
-        <img src="assets/images/icons/cube.gif" class="loadingIcon" />
-        <h4>{{ loadingText }}</h4>
-        <h5>Please wait...</h5>
-      </div>
-      }
-      <!-- MAIN SWIPER CONTENT -->
-      @if (!loading) {
-      <div class="m-t-10">
-        @if (questions?.length > 0) {
-        <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100">
-          @for (question of questions; track $index) {
-          <swiper-slide>
-            <div class="row clearfix">
-              <div class="col-lg-8 col-md-8 col-sm-12">
-                <div class="question-card">
-                  @if (question.title) {
-                  <h4 class="mb-3">{{ question?.title }}</h4>
-                  }
-                  <div [class.tiptap]="isCodeQuestion(question?.question)" [class.question]="!isCodeQuestion(question?.question)" [innerHTML]="question?.question"></div>
-                  @if (
-                  question?.topics && question?.topics.length > 0
-                  ) {
-                  <div class="list-group-item m-b-20">
-                    @for (topic of question?.topics; track topic) {
-                    <span class="badge col-indigo">{{
-                      topic.title
-                      }}</span>
-                    }
-                  </div>
-                  }
-                  <hr class="dim-divider" />
-                  @if (question?.questionType === "General" && question?.answer) {
-                  <h5 class="cmSmallTitle">Answer:</h5>
-                  <!-- <p class="m-b-20 font-normal">
-                              {{ question?.answer }}
-                            </p> -->
-                  <div class="tiptap" [innerHTML]="question?.answer"></div>
-                  }
-                  @if (question?.questionType === "Trivia" && question?.options) {
-                  @for (choice of question.options; track choice) {
-                  @if (mode === 0) {
-                  <mat-card class="choice p-2 rounded mb-2" [ngClass]="{
-                                  selected: question.hasAnswered,
-                                  correct: choice.correct,
-                                }">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span>{{ choice.option }}</span>
 
-                      @if (choice.correct) {
-                      <img src="assets/images/icons/ic_correct.png" class="icon-right" />
-                      }
-                    </div>
-                  </mat-card>
-                  } @else {
-                  <mat-card (click)="
-                                  optionSelected('' + choice.id, question)
-                                " class="choice p-2 rounded mb-2" [ngClass]="{
-                                  selected:
-                                    question.selectedChoice === choice.id,
-                                  correct:
-                                    question.selectedChoice === choice.id,
-                                  wrong: question.selectedChoice === choice.id,
-                                }">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span>{{ choice.option }}</span>
-
-                      @if (question.selectedChoice === choice.id) {
-                      <img src="assets/images/icons/ic_correct.png" class="icon-right" />
-                      }
-                      @if (question.selectedChoice === choice.id) {
-                      <img src="assets/images/icons/ic_wrong.png" class="icon-wrong" />
-                      }
-                    </div>
-                  </mat-card>
-                  }
-                  }
-                  }
-                </div>
-                <hr class="dim-divider" />
-                @if (canEditQuestion(question)) {
-                <small class="text-center col-grey" (click)="
-                              routeEditQuestionPage(question?.slug, question)
-                            ">Edit this {{question?.questionType}} question
-                </small>
-                <hr class="dim-divider" />
-                }
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-12">
-                <div class="question-card">
-                  @if (question?.hint) {
-                  <h5 class="cmSmallTitle">Hint</h5>
-                  <p class="m-b-20 font-normal">
-                    {{ question?.hint }}
-                  </p>
-                  }
-                  @if (question?.questionType === "Trivia" && question?.answer) {
-                  <hr class="dim-divider" />
-                  <h5 class="cmSmallTitle">Answer:</h5>
-                  <!-- <p class="m-b-20 font-normal">
-                              {{ question?.answer }}
-                            </p> -->
-                  <div class="tiptap" [innerHTML]="question?.answer"></div>
-                  }
-                  <div class="questionInfo">
-                    @if (question?.subject?.title) {
-                    <span class="mb-3 icon-text"><mat-icon>bookmark_border</mat-icon>
-                      {{ question?.subject?.title }}</span>
-                    }
-                    @if (question.questionType) {
-                    <span class="mb-3 icon-text"><mat-icon>{{
-                        question?.questionType === "Trivia"
-                        ? "check_boxcheck_box"
-                        : "check_boxcheck_box"
-                        }}</mat-icon>
-                      {{ question?.questionType }}</span>
-                    }
-                    @if (question.level) {
-                    <span class="mb-3 icon-text"><mat-icon>school</mat-icon>
-                      {{ getLevelDisplay(question?.level) }}</span>
-                    }
-                    <!-- <span class="mb-3 icon-text"><mat-icon>beenhere</mat-icon>
-                      #{{ question?.id }}</span> -->
-
-                    @if (question.timeAllowed) {
-                    <span class="mb-3 icon-text"><mat-icon>alarm_on</mat-icon>
-                      {{ question?.timeAllowed / 60.0 }}s</span>
-                    }
-                    @if (question.marks) {
-                    <span class="mb-3 icon-text"><mat-icon>control_point</mat-icon>
-                      {{ question?.marks }}</span>
-                    }
-                    @if (question.status) {
-                    <span class="mb-3 icon-text"><mat-icon>public</mat-icon>
-                      {{ question?.status }}</span>
-                    }
-                    <!-- @if (question.whitelisted) {
-                    <span class="mb-3 icon-text"><mat-icon>check_circle</mat-icon> Approved</span>
-                    } -->
-                    @if (question?.userCreatedBy) {
-                    <span class="mb-3 icon-text"><mat-icon>person</mat-icon>
-
-                      {{
-                      question?.userCreatedBy?.firstName?.trim()
-                      ? question?.userCreatedBy?.firstName
-                      : question?.userCreatedBy?.username
-                      }}</span>
-                    }
-                    @if (question.createdAt) {
-                    <span class="mb-3 icon-text"><mat-icon>access_time</mat-icon>
-                      {{
-                      question?.createdAt | date: "mediumDate"
-                      }}</span>
-                    }
-                  </div>
-                  @if (question.topics) {
-                  <mat-chip-set aria-label="Tags">
-                    @for (item of question.topics; track $index) {
-                    <mat-chip>{{ item?.title }}</mat-chip>
-                    }
-                  </mat-chip-set>
-                  }
-                  <hr class="dim-divider" />
-                  <button mat-raised-button color="dark" (click)="editQuestion(question)"
-                    [disabled]="!canEditQuestion(question)">
-                    <mat-icon>edit</mat-icon> Edit Question
-                  </button>
-                  @if (isAdmin) {
-                  <hr class="dim-divider" />
-                  <button mat-raised-button [color]="
-                                whitelistStates[question?.id]
-                                  ? 'accent'
-                                  : 'dark'
-                              " (click)="whitelistQuestion(question)" [disabled]="whitelistStates[question?.id]">
-                    <mat-icon>{{
-                      whitelistStates[question?.id]
-                      ? "check_circle"
-                      : "add_circle"
-                      }}</mat-icon>
-                    {{
-                    whitelistStates[question?.id]
-                    ? "WhiteListed"
-                    : "WhiteList"
-                    }}
-                  </button>
-                  }
-                  <hr class="dim-divider" />
-                    <p class="col-grey text-center m-t-10">
-              {{ $index + 1 }} of {{ questions?.length }}
-            </p>
-                </div>
-              </div>
-            </div>
-          </swiper-slide>
-          }
-        </swiper-container>
-        }
-      </div>
-      }
-      <!-- FOOTER -->
-      @if (!loading) {
-      <mat-toolbar color="accent" class="footer-toolbar">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-4 text-start">
-              @if (currentQuestionId > 0) {
-              <button mat-flat-button color="warn" (click)="onSlidePrev()">
-                <mat-icon>keyboard_arrow_left</mat-icon> Prev
-              </button>
-              }
-            </div>
-            <div class="col-4 text-center">
-              <button mat-raised-button color="dark" (click)="exitViewer()">
-                <mat-icon>cancel</mat-icon> Exit
-              </button>
-            </div>
-            <div class="col-4 text-end">
-              <button mat-flat-button color="primary" (click)="onSlideNext()">
-                <mat-icon>keyboard_arrow_right</mat-icon>
-                {{
-                currentQuestionId === questions.length - 1
-                ? "Complete"
-                : "Next"
-                }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </mat-toolbar>
-      }
-    </div>
-  </div>
-</section>
-}
-
-@if (completed) {
-<div class="quiz-result-container">
-  <div class="content-block">
-    <div class="overlay"></div>
-    <div class="animToast hint">
-      <h4>Finish Review</h4>
-      <h6 class="col-grey">
-        You have reviewed all the last fetched questions.
-      </h6>
-      <button mat-raised-button color="dark" (click)="exitViewer()">
-        <mat-icon>cancel</mat-icon> Exit Viewer
-      </button>
-    </div>
+<!-- ── Loading overlay ─────────────────────────────── -->
+@if (loading) {
+<div class="fixed inset-0 bg-black/60 z-[1100] flex items-center justify-center backdrop-blur-sm">
+  <div class="bg-cm-surface rounded-2xl p-8 text-center border border-cm-border shadow-2xl max-w-xs w-full mx-4">
+    <img src="assets/images/icons/cube.gif" class="w-14 h-14 mx-auto mb-3" alt="">
+    <p class="text-sm font-bold text-cm-text-primary">{{ loadingText }}</p>
+    <p class="text-xs text-cm-text-muted mt-1">Please wait…</p>
   </div>
 </div>
 }
+
+<!-- ── Completed screen ─────────────────────────────── -->
+@if (completed) {
+<div class="viewer-wrap flex items-center justify-center">
+  <div class="text-center px-6">
+    <div class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+      <svg class="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+    <h2 class="text-xl font-black text-cm-text-primary mb-1">All questions reviewed</h2>
+    <p class="text-sm text-cm-text-muted mb-6">You've reached the end of this review session.</p>
+    <button (click)="exitViewer()"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cm-brand text-white text-sm font-bold
+             hover:opacity-90 active:scale-95 transition-all">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+      </svg>
+      Exit Viewer
+    </button>
+  </div>
+</div>
+}
+
+<!-- ── Main viewer ─────────────────────────────── -->
+@if (!completed) {
+<div class="viewer-wrap">
+
+  <!-- thin progress strip -->
+  <div class="h-0.5 bg-cm-surface-raised shrink-0">
+    <div class="h-full bg-cm-brand transition-all duration-500 ease-out"
+         [style.width.%]="questions?.length ? ((currentQuestionId + 1) / questions.length) * 100 : 0"></div>
+  </div>
+
+  <!-- ── Top bar ── -->
+  <div class="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-cm-border shrink-0">
+
+    <!-- left: type / subject / level / approved badges -->
+    <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+      @if (currentQuestion?.questionType) {
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
+            [ngClass]="currentQuestion.questionType === 'Trivia'
+              ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-400'
+              : 'bg-violet-500/10 border-violet-500/20 text-violet-600 dark:text-violet-400'">
+        {{ currentQuestion.questionType }}
+      </span>
+      }
+      @if (currentQuestion?.subject?.title) {
+      <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                   bg-cm-surface-raised border border-cm-border text-cm-text-secondary">
+        {{ currentQuestion.subject.title }}
+      </span>
+      }
+      @if (currentQuestion?.level) {
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                   bg-cm-surface-raised border border-cm-border text-cm-text-muted">
+        {{ getLevelDisplay(currentQuestion.level) }}
+      </span>
+      }
+      @if (currentQuestion && whitelistStates[currentQuestion.id]) {
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium
+                   bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+        Approved
+      </span>
+      }
+    </div>
+
+    <!-- right: prominent counter + exit -->
+    <div class="flex items-center gap-2 shrink-0">
+      <div class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cm-surface-raised border border-cm-border">
+        <span class="text-sm font-black text-cm-text-primary tabular-nums">{{ currentQuestionId + 1 }}</span>
+        <span class="text-xs text-cm-text-muted font-medium tabular-nums">/ {{ questions?.length ?? 0 }}</span>
+      </div>
+      <button (click)="exitViewer()"
+        class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center
+               text-cm-text-muted hover:text-red-500 hover:border-red-500/40 hover:bg-red-500/5
+               active:scale-90 transition-all duration-150">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Swiper content area ── -->
+  @if (!loading && questions?.length > 0) {
+  <div class="flex-1 min-h-0">
+    <swiper-container #swiperEx slides-per-view="1" space-between="0" allow-touch-move="false" class="h-full">
+
+      @for (question of questions; track question.id; let i = $index) {
+      <swiper-slide>
+        <div class="h-full overflow-y-auto">
+          <div class="px-4 sm:px-5 py-3">
+
+            <!-- ── Compact header strip ── -->
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-7 h-7 rounded-lg bg-cm-brand/10 border border-cm-brand/20
+                           flex items-center justify-center text-xs font-black text-cm-brand tabular-nums shrink-0">
+                {{ i + 1 }}
+              </span>
+              <span class="text-[11px] text-cm-text-muted">of {{ questions?.length }}</span>
+              <div class="flex-1"></div>
+              @if (question.status) {
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
+                    [ngClass]="question.status === 'Active' || question.status === 'Approved'
+                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                      : question.status === 'Pending'
+                      ? 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400'
+                      : 'bg-cm-surface-raised border-cm-border text-cm-text-muted'">
+                {{ question.status }}
+              </span>
+              }
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border"
+                    [ngClass]="whitelistStates[question.id]
+                      ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-600 dark:text-emerald-400'
+                      : 'bg-amber-500/8 border-amber-500/20 text-amber-600 dark:text-amber-400'">
+                @if (whitelistStates[question.id]) {
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Whitelisted
+                } @else {
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                Pending
+                }
+              </span>
+            </div>
+
+            <!-- ── Two-column body ── -->
+            <div class="flex flex-col lg:flex-row gap-4">
+
+              <!-- ═══ LEFT ~60%: question ═══ -->
+              <div class="flex-1 min-w-0">
+
+                @if (question.title) {
+                <p class="text-xs font-semibold text-cm-text-muted mb-1.5 uppercase tracking-wide">{{ question.title }}</p>
+                }
+
+                <div [class.tiptap]="isCodeQuestion(question.question)"
+                     [class.question-body]="!isCodeQuestion(question.question)"
+                     [innerHTML]="question.question"></div>
+
+                <!-- Trivia options -->
+                @if (question.questionType === 'Trivia' && question.options) {
+                <div class="mt-4 space-y-2.5">
+                  @for (choice of question.options; track choice.id; let ci = $index) {
+                  <div class="qv-opt"
+                       [ngClass]="getChoiceClass(choice, question)"
+                       [class.qv-opt--clickable]="mode === 1"
+                       (click)="mode === 1 ? optionSelected('' + choice.id, question) : null">
+                    <span class="qv-opt__letter">{{ ['A','B','C','D','E'][ci] }}</span>
+                    <span class="qv-opt__text">{{ choice.option }}</span>
+                    @if (mode === 0 && choice.correct) {
+                    <svg class="w-4 h-4 shrink-0 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    }
+                  </div>
+                  }
+                </div>
+                }
+
+                <!-- General: model answer -->
+                @if (question.questionType === 'General' && question.answer) {
+                <div class="mt-4 rounded-lg border-l-[3px] border-l-emerald-500 border border-emerald-500/20 bg-emerald-500/5">
+                  <div class="px-3 py-1.5 border-b border-emerald-500/15 flex items-center gap-1.5">
+                    <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Model Answer</span>
+                  </div>
+                  <div class="px-3 py-2 tiptap text-sm" [innerHTML]="question.answer"></div>
+                </div>
+                }
+
+              </div><!-- /left -->
+
+              <!-- ═══ RIGHT 30%: single unified panel ═══ -->
+              <div class="meta-col">
+                <div class="meta-panel rounded-xl border border-cm-border overflow-hidden bg-cm-surface divide-y divide-cm-border">
+
+                  <!-- Approval row -->
+                  <div class="flex items-center justify-between px-4 py-3"
+                       [ngClass]="whitelistStates[question.id] ? 'bg-emerald-500/5' : 'bg-amber-500/5'">
+                    <div class="flex items-center gap-2">
+                      @if (whitelistStates[question.id]) {
+                      <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                      </svg>
+                      <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Whitelisted</span>
+                      } @else {
+                      <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <span class="text-xs font-bold text-amber-600 dark:text-amber-400">Pending Approval</span>
+                      }
+                    </div>
+                    @if (isAdmin && !whitelistStates[question.id]) {
+                    <button (click)="whitelistQuestion(question)"
+                      class="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold
+                             bg-emerald-500 text-white hover:bg-emerald-600 active:scale-95
+                             shadow-sm hover:shadow-emerald-500/30 hover:shadow-md transition-all duration-150">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                      </svg>
+                      Approve
+                    </button>
+                    }
+                  </div>
+
+                  <!-- Meta rows -->
+                  @if (question.subject?.title) {
+                  <div class="flex items-center justify-between px-4 py-2">
+                    <span class="text-xs text-cm-text-muted">Subject</span>
+                    <span class="text-xs font-semibold text-cm-text-primary truncate max-w-[60%] text-right">{{ question.subject.title }}</span>
+                  </div>
+                  }
+                  @if (question.questionType) {
+                  <div class="flex items-center justify-between px-4 py-2">
+                    <span class="text-xs text-cm-text-muted">Type</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold"
+                          [ngClass]="question.questionType === 'Trivia'
+                            ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                            : 'bg-violet-500/10 text-violet-600 dark:text-violet-400'">
+                      {{ question.questionType }}
+                    </span>
+                  </div>
+                  }
+                  @if (question.level) {
+                  <div class="flex items-center justify-between px-4 py-2">
+                    <span class="text-xs text-cm-text-muted">Level</span>
+                    <span class="text-xs font-semibold text-cm-text-primary">{{ getLevelDisplay(question.level) }}</span>
+                  </div>
+                  }
+                  @if (question.marks) {
+                  <div class="flex items-center justify-between px-4 py-2">
+                    <span class="text-xs text-cm-text-muted">Marks</span>
+                    <span class="text-xs font-semibold text-cm-text-primary">{{ question.marks }}</span>
+                  </div>
+                  }
+                  @if (question.timeAllowed) {
+                  <div class="flex items-center justify-between px-4 py-2">
+                    <span class="text-xs text-cm-text-muted">Time</span>
+                    <span class="text-xs font-semibold text-cm-text-primary">{{ question.timeAllowed }}s</span>
+                  </div>
+                  }
+                  @if (question.userCreatedBy) {
+                  <div class="flex items-center justify-between px-4 py-2">
+                    <span class="text-xs text-cm-text-muted">By</span>
+                    <span class="text-xs font-semibold text-cm-text-primary truncate max-w-[60%] text-right">
+                      {{ question.userCreatedBy.firstName?.trim() || question.userCreatedBy.username || '—' }}
+                    </span>
+                  </div>
+                  }
+                  @if (question.createdAt) {
+                  <div class="flex items-center justify-between px-4 py-2">
+                    <span class="text-xs text-cm-text-muted">Added</span>
+                    <span class="text-xs font-semibold text-cm-text-primary">{{ question.createdAt | date:'mediumDate' }}</span>
+                  </div>
+                  }
+
+                  <!-- Topics -->
+                  @if (question.topics?.length > 0) {
+                  <div class="px-4 py-2.5 flex flex-wrap gap-1.5">
+                    @for (topic of question.topics; track topic.id) {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium
+                                 bg-indigo-500/10 border border-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+                      {{ topic.title }}
+                    </span>
+                    }
+                  </div>
+                  }
+
+                  <!-- Hint -->
+                  @if (question.hint) {
+                  <div class="px-4 py-2.5 bg-amber-500/5">
+                    <p class="text-[11px] font-bold text-amber-500 uppercase tracking-widest mb-1">Hint</p>
+                    <p class="text-xs text-cm-text-secondary leading-relaxed">{{ question.hint }}</p>
+                  </div>
+                  }
+
+                  <!-- Trivia explanation -->
+                  @if (question.questionType === 'Trivia' && question.answer) {
+                  <div class="px-4 py-2.5">
+                    <p class="text-[11px] font-bold text-cm-text-muted uppercase tracking-widest mb-1">Explanation</p>
+                    <div class="tiptap text-xs max-h-32 overflow-y-auto" [innerHTML]="question.answer"></div>
+                  </div>
+                  }
+
+                </div>
+              </div><!-- /right -->
+
+            </div><!-- /two-column -->
+          </div>
+        </div>
+      </swiper-slide>
+      }
+
+    </swiper-container>
+  </div>
+  }
+
+  <!-- empty state -->
+  @if (!loading && !(questions?.length > 0)) {
+  <div class="flex-1 flex flex-col items-center justify-center text-center px-6">
+    <div class="w-12 h-12 rounded-xl bg-cm-surface-raised border border-cm-border flex items-center justify-center mb-4">
+      <svg class="w-6 h-6 text-cm-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <p class="text-sm font-bold text-cm-text-primary mb-1">No questions to review</p>
+    <p class="text-xs text-cm-text-muted">There are no pending questions at this time.</p>
+  </div>
+  }
+
+  <!-- ── Footer ── -->
+  <div class="shrink-0 border-t border-cm-border bg-cm-surface px-4 py-3">
+    <div class="flex items-center gap-2 max-w-2xl mx-auto">
+
+      <!-- Prev -->
+      <button (click)="onSlidePrev()" [disabled]="currentQuestionId === 0 || loading"
+        class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-cm-border
+               text-cm-text-secondary text-sm font-medium shrink-0
+               hover:border-cm-brand/40 hover:text-cm-brand hover:bg-cm-brand/5
+               active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        <span class="hidden sm:inline">Prev</span>
+      </button>
+
+      <!-- Centre: Edit question -->
+      <div class="flex-1 flex items-center justify-center gap-2">
+        @if (currentQuestion) {
+        <button (click)="editQuestion(currentQuestion)" [disabled]="!canEditQuestion(currentQuestion)"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-cm-border
+                 text-cm-text-secondary text-sm font-medium
+                 hover:border-indigo-400/50 hover:text-indigo-500 hover:bg-indigo-500/5
+                 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5
+                 m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          Edit Question
+        </button>
+        }
+      </div>
+
+      <!-- Next / Finish -->
+      <button (click)="onSlideNext()" [disabled]="loading"
+        class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold shrink-0
+               hover:bg-indigo-600 active:scale-95 disabled:opacity-50 transition-all duration-150"
+        style="box-shadow: 0 4px 14px rgba(99,102,241,0.35)">
+        <span class="hidden sm:inline">{{ currentQuestionId === (questions?.length ?? 1) - 1 ? 'Finish' : 'Next' }}</span>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+
+</div>
+}
+
+  </div>
+</section>

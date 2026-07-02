@@ -3,7 +3,7 @@
 <!-- Empty / no results -->
 @if (list !== null && list?.length === 0) {
   <div class="subj-empty">
-    <mat-icon class="subj-empty__icon">search_off</mat-icon>
+    <svg class="subj-empty__icon w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
     <p class="subj-empty__text">No subjects match your search.</p>
   </div>
 }
@@ -27,7 +27,7 @@
         <!-- Enrolled indicator dot -->
         @if (subject?.isSubscribed) {
           <span class="subj-card__enrolled-dot" title="Enrolled">
-            <mat-icon>check</mat-icon>
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
           </span>
         }
       </div>
@@ -61,7 +61,7 @@
 
       <!-- Hover arrow -->
       <div class="subj-card__arrow" [style.color]="getSubjectColor(subject)">
-        <mat-icon>arrow_forward</mat-icon>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
       </div>
 
     </div>

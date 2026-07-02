@@ -1,35 +1,45 @@
-<div class="card hoverCard card-congratulation-medal">
-  <div class="card-body text-center">
-    <img src="assets/images/icons/badge.svg" class="congratulation-medal text-center" alt="UpSkillr Medal" />
-    <h5 class="text-center cmSubHeading m-t-10 m-b-5">{{title}}</h5>
-    <!-- <h5 class="m-t-20 font-11 text-center">{{message()}}</h5> -->
-    <!-- <h5 class="card-text m-t-20 font-14 text-center">Rate your confidence across the technologies you have learnt ⭐</h5> -->
-    <div class="star-rating auto-animate">
-      <span class="star rating"> ★ </span>
-      <span class="star rating"> ★ </span>
-      <span class="star rating"> ★ </span>
-      <span class="star rating"> ★ </span>
-      <span class="star rating"> ★ </span>
-    </div>
-
-    <h5 class="card-text m-t-0 font-14 text-center">
-      Discover your strengths, uncover gaps, and unlock a guided roadmap to certification and career readiness.</h5>
-    <hr class="dim-divider">
-    @if (action === 'takeQuiz') {
-    <button mat-flat-button color="warn" (click)="handleAction()"><mat-icon>keyboard_arrow_left</mat-icon>
-      Assess My Skill</button>
-    }
-    @if (action === 'login') {
-    <button mat-flat-button color="warn" (click)="handleAction()">
-      Sign Up / Login <mat-icon>keyboard_arrow_right</mat-icon></button>
-    }
-    @if (action === 'selfRating') {
-    <button mat-flat-button color="warn" (click)="handleAction()" rippleEffect>
-      <mat-icon>assignment</mat-icon>Start with Self Evaluation</button>
-    }
-    <!-- <hr class="dim-divider">
-    <button  mat-flat-button color="warn" (click)="action='subjectRating';handleAction()" rippleEffect>
-      <mat-icon>keyboard_arrow_right</mat-icon> Subject Completetion Agreement</button>
-  </div> -->
+<div class="rounded-2xl border border-cm-border bg-cm-surface p-6 text-center">
+  <img src="assets/images/icons/badge.svg" class="w-16 h-16 mx-auto mb-3" alt="UpSkillr Medal" />
+  <h5 class="text-sm font-bold text-cm-text-primary mb-4">{{title}}</h5>
+  <div class="flex justify-center gap-1 mb-4 auto-animate">
+    <span class="text-yellow-400 text-2xl">★</span>
+    <span class="text-yellow-400 text-2xl">★</span>
+    <span class="text-yellow-400 text-2xl">★</span>
+    <span class="text-yellow-400 text-2xl">★</span>
+    <span class="text-yellow-400 text-2xl">★</span>
   </div>
+  <p class="text-xs text-cm-text-secondary leading-relaxed mb-5">
+    Discover your strengths, uncover gaps, and unlock a guided roadmap to certification and career readiness.
+  </p>
+  <hr class="border-cm-border mb-4">
+  @if (action === 'takeQuiz') {
+  <button (click)="handleAction()"
+    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cm-brand text-white text-sm font-semibold
+           hover:opacity-90 active:scale-95 transition-all">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Assess My Skill
+  </button>
+  }
+  @if (action === 'login') {
+  <button (click)="handleAction()"
+    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cm-brand text-white text-sm font-semibold
+           hover:opacity-90 active:scale-95 transition-all">
+    Sign Up / Login
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+    </svg>
+  </button>
+  }
+  @if (action === 'selfRating') {
+  <button (click)="handleAction()"
+    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cm-brand text-white text-sm font-semibold
+           hover:opacity-90 active:scale-95 transition-all">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+    </svg>
+    Start Self Evaluation
+  </button>
+  }
 </div>

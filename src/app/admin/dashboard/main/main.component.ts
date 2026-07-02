@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
+import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService } from '@core';
@@ -16,25 +11,14 @@ import {
   TimeseriesChartComponent,
 } from '@shared/components/timeseries-chart/timeseries-chart.component';
 import { AdminDashboardData } from '../../dtos/admin-dashboard.model';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
   imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatTableModule,
-    MatSelectModule,
-    MatMenuModule,
-    MatIconModule,
+    DecimalPipe,
     TimeseriesChartComponent,
-    FormsModule,
   ],
 })
 export class MainComponent implements OnInit {

@@ -1,8 +1,5 @@
 import { CommonModule, NgClass } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService, User, Role } from '@core';
 
 @Component({
@@ -10,9 +7,6 @@ import { AuthService, User, Role } from '@core';
   imports: [
     CommonModule,
     NgClass,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
   ],
   templateUrl: './topics-list.component.html',
   styleUrl: './topics-list.component.scss'

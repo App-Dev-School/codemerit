@@ -1,21 +1,20 @@
 @if (timeframe) {
-  <mat-card>
-          <mat-card-header class="header-menu">
-            <mat-card-title>{{timeframe?.title}} Time Series</mat-card-title>
-            <mat-form-field appearance="outline" class="header-form-field">
-              <mat-select [(value)]="selectedTimePeriod" (selectionChange)="onTimePeriodChange($event)">
-                <mat-option class="header-select-option" value="Daily">Daily</mat-option>
-                <mat-option class="header-select-option" value="Weekly">Weekly</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </mat-card-header>
-          <mat-card-content>
-            <apx-chart [series]="areaChartOptions.series!" [chart]="areaChartOptions.chart!"
-              [xaxis]="areaChartOptions.xaxis!" [yaxis]="areaChartOptions.yaxis!" [colors]="areaChartOptions.colors!"
-              [legend]="areaChartOptions.legend!"
-              [tooltip]="areaChartOptions.tooltip!" [grid]="areaChartOptions.grid!"
-              [dataLabels]="areaChartOptions.dataLabels!"></apx-chart>
-              <!-- [stroke]="areaChartOptions.stroke!" -->
-          </mat-card-content>
-        </mat-card>
+<div class="rounded-2xl border border-cm-border bg-cm-surface overflow-hidden">
+  <div class="flex items-center justify-between px-4 py-3 border-b border-cm-border">
+    <h4 class="text-sm font-bold text-cm-text-primary">{{timeframe?.title}} Time Series</h4>
+    <select [(ngModel)]="selectedTimePeriod" (ngModelChange)="onTimePeriodChange({value: $event})"
+      class="px-2 py-1 rounded-lg border border-cm-border bg-cm-surface-muted text-xs font-medium
+             text-cm-text-secondary focus:outline-none focus:ring-1 focus:ring-cm-brand-ring transition-colors">
+      <option value="Daily">Daily</option>
+      <option value="Weekly">Weekly</option>
+    </select>
+  </div>
+  <div class="p-2">
+    <apx-chart [series]="areaChartOptions.series!" [chart]="areaChartOptions.chart!"
+      [xaxis]="areaChartOptions.xaxis!" [yaxis]="areaChartOptions.yaxis!" [colors]="areaChartOptions.colors!"
+      [legend]="areaChartOptions.legend!"
+      [tooltip]="areaChartOptions.tooltip!" [grid]="areaChartOptions.grid!"
+      [dataLabels]="areaChartOptions.dataLabels!"></apx-chart>
+  </div>
+</div>
 }

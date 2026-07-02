@@ -141,8 +141,14 @@
           💡 Take more quizzes to boost your score and accuracy.
         }
       </p>
-      <button mat-stroked-button class="text-xs h-7 shrink-0" (click)="onExploreSubject(subject)">
-        <mat-icon class="text-[14px]">open_in_new</mat-icon> Details
+      <button type="button" (click)="onExploreSubject(subject)"
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold shrink-0
+               border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+               active:scale-95 transition-all">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+        Details
       </button>
     </div>
 
@@ -189,10 +195,18 @@
         {{subject?.description}}
       </p>
       <div class="mt-4 flex flex-wrap gap-3 justify-center sm:justify-start">
-        <button mat-flat-button color="primary" (click)="onEnrollSubject(subject)" class="rounded-xl">
-          <mat-icon>trending_up</mat-icon> Start Learning
+        <button type="button" (click)="onEnrollSubject(subject)"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+                 bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+          </svg>
+          Start Learning
         </button>
-        <button mat-stroked-button (click)="onExploreSubject(subject)" class="rounded-xl">
+        <button type="button" (click)="onExploreSubject(subject)"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+                 border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+                 active:scale-95 transition-all">
           Explore First
         </button>
       </div>

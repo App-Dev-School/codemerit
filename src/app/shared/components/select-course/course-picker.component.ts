@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MasterService } from '@core/service/master.service';
 
@@ -14,7 +12,7 @@ interface SubjectGroups {
 
 @Component({
   selector: 'app-course-picker',
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule],
   templateUrl: './course-picker.component.html',
   styleUrls: ['./course-picker.component.scss']
 })

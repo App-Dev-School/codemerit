@@ -1,131 +1,39 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import { CommonModule, NgClass } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import {
-  MAT_DATE_LOCALE,
-  MatOptionModule,
-  MatRippleModule,
-} from '@angular/material/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { AuthService, Role } from '@core';
-import { rowsAnimation } from '@shared';
+import { MasterService } from '@core/service/master.service';
+import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import {
   QuizQuestionsFormComponent,
   QuestionFilterValue,
 } from '@shared/components/quiz-questions-form/quiz-questions-form.component';
-import { MasterService } from '@core/service/master.service';
 import { Subject } from 'rxjs';
 import { QuestionDeleteComponent } from './dialogs/delete/delete.component';
-import { QuestionItem } from './question-item.model';
+import { FullQuestion } from './question-item.model';
 import { QuestionAuthor, QuestionService } from './questions.service';
+
 @Component({
   selector: 'app-manage-questions',
   templateUrl: './questions.component.html',
   styleUrls: ['./questions.component.scss'],
-  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }],
-  animations: [rowsAnimation],
   imports: [
     BreadcrumbComponent,
-    FeatherIconsComponent,
     CommonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatOptionModule,
-    MatCheckboxModule,
-    MatTableModule,
-    MatSortModule,
     NgClass,
-    MatRippleModule,
-    MatPaginatorModule,
+    FormsModule,
     QuizQuestionsFormComponent,
   ],
 })
 export class QuestionsComponent implements OnInit, OnDestroy {
-  columnDefinitions = [
-    {
-      def: 'question',
-      label: 'Question',
-      type: 'text',
-      class: 'mat-col-question',
-      visible: true,
-    },
-    {
-      def: 'subject',
-      label: 'Subject',
-      type: 'text',
-      class: 'col-subject',
-      visible: true,
-    },
-    {
-      def: 'topics',
-      label: 'Topic',
-      type: 'text',
-      class: 'col-subject',
-      visible: true,
-    },
-    {
-      def: 'questionType',
-      label: 'Type',
-      type: 'text',
-      class: 'col-type',
-      visible: false,
-    },
-    {
-      def: 'status',
-      label: 'Status',
-      type: 'text',
-      class: 'col-status',
-      visible: true,
-    },
-    {
-      def: 'actions',
-      label: 'Actions',
-      type: 'actionBtn',
-      class: 'col-actions',
-      visible: true,
-    },
-  ];
+
   showFilterPanel = false;
-  dataSource = new MatTableDataSource<QuestionItem>([]);
-  allQuestions: QuestionItem[] = [];
-  selection = new SelectionModel<QuestionItem>(true, []);
+  allQuestions: FullQuestion[] = [];
   isLoading = true;
-  noResultsMessage = 'No questions found for the selected filters.';
-  userRole = Role;
+  noResultsMessage = '';
   subjects: any[] = [];
   topics: any[] = [];
   authors: QuestionAuthor[] = [];
@@ -137,30 +45,78 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     level: '',
     authorId: 0,
   };
+
+  searchQuery = '';
+  currentPage = 0;
+  readonly pageSize = 15;
+
   private destroy$ = new Subject<void>();
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('filter') filter!: ElementRef;
-
   constructor(
-    public httpClient: HttpClient,
-    public dialog: MatDialog,
     public questionService: QuestionService,
     private masterService: MasterService,
-    private snackBar: MatSnackBar,
+    private snackService: SnackbarService,
     private router: Router,
+    public dialog: MatDialog,
     public authService: AuthService,
   ) {}
+
+  // ── Computed ──────────────────────────────────────────────
 
   get isAdmin(): boolean {
     const role = this.authService.currentUserValue?.role;
     return role === Role.Admin || role === Role.All;
   }
 
-  canEditQuestion(row: QuestionItem): boolean {
-    return this.isAdmin || !this.isWhitelisted(row);
+  get filteredQuestions(): FullQuestion[] {
+    const q = this.searchQuery.trim().toLowerCase();
+    if (!q) return this.allQuestions;
+    return this.allQuestions.filter(item =>
+      this.getPlainText(item.question).toLowerCase().includes(q) ||
+      item.subject?.title?.toLowerCase().includes(q) ||
+      item.topics?.some(t => t.title?.toLowerCase().includes(q))
+    );
   }
+
+  get paginatedQuestions(): FullQuestion[] {
+    const start = this.currentPage * this.pageSize;
+    return this.filteredQuestions.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredQuestions.length / this.pageSize);
+  }
+
+  get rangeStart(): number {
+    return this.filteredQuestions.length === 0 ? 0 : this.currentPage * this.pageSize + 1;
+  }
+
+  get rangeEnd(): number {
+    return Math.min((this.currentPage + 1) * this.pageSize, this.filteredQuestions.length);
+  }
+
+  get visiblePages(): number[] {
+    const total = this.totalPages;
+    const cur = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i);
+    const pages = new Set<number>([0, total - 1, cur]);
+    for (let d = -2; d <= 2; d++) {
+      const p = cur + d;
+      if (p >= 0 && p < total) pages.add(p);
+    }
+    return Array.from(pages).sort((a, b) => a - b);
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(
+      this.currentFilters.subjectIds?.length ||
+      this.currentFilters.topicIds?.length ||
+      this.currentFilters.level ||
+      this.currentFilters.authorId
+    );
+  }
+
+  // ── Lifecycle ─────────────────────────────────────────────
 
   ngOnInit() {
     this.subjects = this.masterService.subjects;
@@ -168,192 +124,103 @@ export class QuestionsComponent implements OnInit, OnDestroy {
     this.loadAuthors();
   }
 
-  private loadAuthors() {
-    this.questionService.getQuestionAuthors().subscribe({
-      next: (authors) => {
-        this.authors = authors;
-        this.loadData();
-      },
-      error: (err) => {
-        console.error('Failed to load question authors', err);
-        this.authors = [];
-        this.loadData();
-      },
-    });
-  }
-
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  refresh() {
-    this.loadData();
-  }
+  // ── Data ──────────────────────────────────────────────────
 
-  getDisplayedColumns(): string[] {
-    return this.columnDefinitions
-      .filter((cd) => cd.visible)
-      .map((cd) => cd.def);
+  private loadAuthors() {
+    this.questionService.getQuestionAuthors().subscribe({
+      next: (authors) => { this.authors = authors; this.loadData(); },
+      error: () => { this.authors = []; this.loadData(); },
+    });
   }
 
   loadData() {
     this.isLoading = true;
-    this.questionService
-      .getQuestionsWithFilters(false, this.currentFilters)
-      .subscribe({
-        next: (data) => {
-          console.log('QuestionManager data', data);
-          this.allQuestions = data;
-          this.dataSource.data = data;
-          this.noResultsMessage = data.length
-            ? ''
-            : 'No questions found for the selected filters.';
-          this.isLoading = false;
-          this.refreshTable();
-          this.dataSource.filterPredicate = (
-            data: QuestionItem,
-            filter: string,
-          ) =>
-            Object.values(data).some((value) =>
-              value.toString().toLowerCase().includes(filter),
-            );
-        },
-        error: (err) => {
-          console.error(err);
-          this.dataSource.data = [];
-          this.isLoading = false;
-          this.noResultsMessage =
-            err?.error?.message ??
-            err?.message ??
-            'Unable to load questions. Please try again.';
-        },
-      });
+    this.currentPage = 0;
+    this.questionService.getQuestionsWithFilters(false, this.currentFilters).subscribe({
+      next: (data) => {
+        this.allQuestions = data as FullQuestion[];
+        this.noResultsMessage = data.length ? '' : 'No questions found for the selected filters.';
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.allQuestions = [];
+        this.isLoading = false;
+        this.noResultsMessage = err?.error?.message ?? err?.message ?? 'Unable to load questions. Please try again.';
+      },
+    });
   }
 
-  private refreshTable() {
-    this.paginator.pageIndex = 0;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  applyFilter(event: Event) {
-    this.showFilterPanel = false;
-    const filterValue = (event.target as HTMLInputElement).value
-      .trim()
-      .toLowerCase();
-    this.dataSource.filter = filterValue;
-    console.log('QuestionManager applyFilter', filterValue);
-  }
+  refresh() { this.loadData(); }
 
   onFiltersApplied(filters: QuestionFilterValue) {
-    console.log('QuestionManager onFiltersApplied', filters);
     this.currentFilters = filters;
     this.showFilterPanel = false;
-    // Apply server-side filtering through query params.
     this.loadData();
   }
+
+  onSearchChange() {
+    this.currentPage = 0;
+  }
+
   toggleFilterPanel() {
     this.showFilterPanel = !this.showFilterPanel;
   }
 
-  addNew() {
-    this.router.navigate(['/lms/questions/create']);
-  }
+  // ── Navigation ────────────────────────────────────────────
 
-  editCall(row: QuestionItem) {
+  addNew() { this.router.navigate(['/lms/questions/create']); }
+
+  navigateToViewer() { this.router.navigate(['/lms/questions/viewer']); }
+
+  editCall(row: FullQuestion) {
     if (!this.canEditQuestion(row)) {
-      this.showNotification(
-        'snackbar-dark',
-        'Whitelisted questions can only be edited by admins.',
-        'bottom',
-        'center',
-      );
+      this.snackService.display('snackbar-dark', 'Whitelisted questions can only be edited by admins.', 'bottom', 'center');
       return;
     }
-
     this.router.navigate(['/lms/questions/update', row.slug]);
   }
 
-  private updateRecord(updatedRecord: QuestionItem) {
-    const index = this.dataSource.data.findIndex(
-      (record) => record.id === updatedRecord.id,
-    );
-    if (index !== -1) {
-      this.dataSource.data[index] = updatedRecord;
-      this.dataSource._updateChangeSubscription();
-    }
-  }
-
-  viewCall(row: QuestionItem) {}
-
-  deleteItem(row: QuestionItem) {
-    const dialogRef = this.dialog.open(QuestionDeleteComponent, {
-      data: row,
-    });
+  deleteItem(row: FullQuestion) {
+    const dialogRef = this.dialog.open(QuestionDeleteComponent, { data: row });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.dataSource.data = this.dataSource.data.filter(
-          (record) => record.id !== row.id,
-        );
-        this.refreshTable();
-        this.showNotification(
-          'snackbar-danger',
-          'Question deleted Successfully.',
-          'bottom',
-          'center',
-        );
+        this.allQuestions = this.allQuestions.filter(r => r.id !== row.id);
+        this.snackService.display('snackbar-danger', 'Question deleted successfully.', 'bottom', 'center');
       }
     });
   }
 
-  showNotification(
-    colorName: string,
-    text: string,
-    placementFrom: MatSnackBarVerticalPosition,
-    placementAlign: MatSnackBarHorizontalPosition,
-  ) {
-    this.snackBar.open(text, '', {
-      duration: 2000,
-      verticalPosition: placementFrom,
-      horizontalPosition: placementAlign,
-      panelClass: colorName,
-    });
+  // ── Pagination ────────────────────────────────────────────
+
+  prevPage() { if (this.currentPage > 0) this.currentPage--; }
+
+  nextPage() { if (this.currentPage < this.totalPages - 1) this.currentPage++; }
+
+  goToPage(page: number) { this.currentPage = page; }
+
+  // ── Helpers ───────────────────────────────────────────────
+
+  canEditQuestion(row: FullQuestion): boolean {
+    return this.isAdmin || !this.isWhitelisted(row);
   }
 
-  isWhitelisted(row: QuestionItem): boolean {
-    const whitelistFlag = row?.isWhitelisted;
-    const hasWhitelistFlag =
-      whitelistFlag !== undefined &&
-      whitelistFlag !== null &&
-      whitelistFlag !== '';
-
-    return hasWhitelistFlag ? Number(whitelistFlag) === 1 : false;
+  isWhitelisted(row: FullQuestion): boolean {
+    const flag = row?.isWhitelisted;
+    return (flag !== undefined && flag !== null && flag !== '') ? Number(flag) === 1 : false;
   }
 
-  exportExcel() {}
-
-  isAllSelected() {
-    return this.selection.selected.length === this.dataSource.data.length;
+  getPlainText(html: string): string {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').trim();
   }
 
-  masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach((row) => this.selection.select(row));
-  }
-
-  removeSelectedRows() {
-    const totalSelect = this.selection.selected.length;
-    this.dataSource.data = this.dataSource.data.filter(
-      (item) => !this.selection.selected.includes(item),
-    );
-    this.selection.clear();
-    this.showNotification(
-      'snackbar-danger',
-      `${totalSelect} Question(s) Deleted Successfully.`,
-      'bottom',
-      'center',
-    );
+  getLevelDisplay(level: number | string): string {
+    const map: Record<string, string> = { '1': 'Easy', '2': 'Intermediate', '3': 'Advanced' };
+    return map['' + level] ?? 'Level ' + level;
   }
 }

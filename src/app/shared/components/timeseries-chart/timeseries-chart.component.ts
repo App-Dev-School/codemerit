@@ -1,8 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardHeader, MatCardModule } from '@angular/material/card';
-import { MatFormField, MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import {
   ApexAxisChartSeries,
@@ -48,13 +45,7 @@ export type TimeframeData = {
   styleUrls: ['./timeseries-chart.component.css'],
   imports: [
     FormsModule,
-    ReactiveFormsModule,
     NgApexchartsModule,
-    MatFormField,
-    MatCardModule,
-    MatCardHeader,
-    MatButtonModule,
-    MatSelectModule
   ]
 })
 export class TimeseriesChartComponent implements OnInit, OnChanges {

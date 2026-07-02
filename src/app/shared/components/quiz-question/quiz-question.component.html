@@ -1,14 +1,14 @@
 <div class="trivia-card">
   <div class="question">{{ question.question }}</div>
   <p>{{ question.subject }}</p>
-  <mat-chip-set aria-label="Tags">
+  <div class="flex flex-wrap gap-1.5 mt-1">
     @for (topic of question.topics; track topic) {
-      <mat-chip
-        >{{ topic.title }}
-        <!-- <span class="badge col-purple">{{topic.votes}}</span> -->
-      </mat-chip>
+      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold
+                   bg-cm-brand-dim text-cm-brand-text border border-cm-brand/20">
+        {{ topic.title }}
+      </span>
     }
-  </mat-chip-set>
+  </div>
 
   <ul class="options">
     @for (item of question.options; track $index) {

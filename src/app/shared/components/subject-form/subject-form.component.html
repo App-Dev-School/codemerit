@@ -1,56 +1,71 @@
-<div class="card">
-  <div class="header">
-    <h2>Add New Subject</h2>
-  </div>
-  <div class="body">
-    <div class="example-container">
-      <form class="register-form m-4" [formGroup]="subjectForm" (ngSubmit)="onSubjectFormSubmit()">
-        <div class="row">
-          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Subject Name</mat-label>
-              <input matInput formControlName="title" required placeholder="Name of the subject">
-              @if (subjectForm.get('title')?.hasError('minLength')) {
-              <mat-error>
-                Subject name is too short
-              </mat-error>
-              }
-            </mat-form-field>
-          </div>
-          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Select Label</mat-label>
-              <mat-select formControlName="label">
-                <mat-option value="Beginner">Beginner</mat-option>
-                <mat-option value="Intermediate">Intermediate</mat-option>
-                <mat-option value="Advanced">Advanced</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-            <mat-form-field class="example-full-width" appearance="fill">
-              <mat-label>Description</mat-label>
-              <textarea matInput formControlName="description" required
-                placeholder="Short description of subject"></textarea>
-            </mat-form-field>
-          </div>
-        </div>
+<div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+  <h2 class="text-base font-bold text-cm-text-primary mb-5">Add New Subject</h2>
 
-        <div class="row">
-          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-            <mat-checkbox class="example-margin" formControlName="is_published">Make this subject available
-            </mat-checkbox>
-          </div>
-        </div>
+  <form [formGroup]="subjectForm" (ngSubmit)="onSubjectFormSubmit()">
 
-        <div class="row">
-          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-            <button mat-flat-button class="btn-space" color="primary" [disabled]="!subjectForm.valid">Submit</button>
-            <button mat-raised-button color="warn" (click)="subjectForm.reset()">Cancel</button>
-          </div>
-        </div>
+    <!-- Name + Level row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">
+          Subject Name <span class="text-cm-danger-text">*</span>
+        </label>
+        <input formControlName="title" type="text" placeholder="Name of the subject"
+          class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                 text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                 focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+        @if (subjectForm.get('title')?.touched && subjectForm.get('title')?.hasError('minLength')) {
+        <p class="text-xs text-cm-danger-text mt-1">Subject name is too short</p>
+        }
+      </div>
 
-      </form>
+      <div>
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Level</label>
+        <select formControlName="label"
+          class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                 text-sm text-cm-text-primary outline-none
+                 focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+          <option value="">Select level</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+        </select>
+      </div>
     </div>
-  </div>
+
+    <!-- Description -->
+    <div class="mb-4">
+      <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">
+        Description <span class="text-cm-danger-text">*</span>
+      </label>
+      <textarea formControlName="description" rows="3" placeholder="Short description of subject"
+        class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+               text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none resize-none
+               focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors"></textarea>
+    </div>
+
+    <!-- Published toggle -->
+    <div class="mb-5">
+      <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+        <input type="checkbox" formControlName="is_published"
+          class="w-4 h-4 rounded border-cm-border text-cm-brand accent-cm-brand cursor-pointer">
+        <span class="text-xs text-cm-text-secondary">Make this subject available</span>
+      </label>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+      <button type="submit" [disabled]="!subjectForm.valid"
+        class="inline-flex items-center px-5 py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold
+               hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        Submit
+      </button>
+      <button type="button" (click)="subjectForm.reset()"
+        class="inline-flex items-center px-5 py-2.5 rounded-xl border border-cm-border
+               text-sm font-medium text-cm-text-secondary bg-cm-surface-muted
+               hover:border-cm-danger/40 hover:text-cm-danger-text active:scale-95 transition-all">
+        Cancel
+      </button>
+    </div>
+
+  </form>
 </div>

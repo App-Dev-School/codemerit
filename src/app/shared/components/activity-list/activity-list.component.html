@@ -1,19 +1,21 @@
-<div class="assign-style">
-  <ul class="feedBody">
-    @for (activity of activities; track activity) {
-      <li [ngClass]="activity.isActive ? 'active-feed' : 'diactive-feed'">
-        <div class="feed-user-img">
-          <img [src]="activity.userImage" class="img-radius" alt="User-Profile-Image">
-        </div>
-        <div class="font-14 m-b-10 font-b-500">
-          <span class="feedLblStyle" [ngClass]="activity.labelStyle">{{ activity.label }}</span> {{
-          activity.userName }}
-          <small class="text-muted float-end">{{ activity.time }}</small>
-        </div>
-        <p class="m-b-15 m-t-15">
-          {{ activity.message }}
+<ul class="list-none p-0 space-y-4">
+  @for (activity of activities; track activity) {
+  <li class="flex gap-3 pb-4 border-b border-cm-border last:border-0 last:pb-0"
+      [class.opacity-50]="!activity.isActive">
+    <div class="shrink-0">
+      <img [src]="activity.userImage" class="w-9 h-9 rounded-full object-cover border border-cm-border" alt="">
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-start justify-between gap-2 mb-1">
+        <p class="text-xs font-semibold text-cm-text-primary leading-snug">
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold mr-1"
+                [ngClass]="activity.labelStyle">{{ activity.label }}</span>
+          {{ activity.userName }}
         </p>
-      </li>
-    }
-  </ul>
-</div>
+        <span class="text-xs text-cm-text-muted shrink-0 whitespace-nowrap">{{ activity.time }}</span>
+      </div>
+      <p class="text-xs text-cm-text-secondary leading-relaxed">{{ activity.message }}</p>
+    </div>
+  </li>
+  }
+</ul>

@@ -4,7 +4,6 @@ import { Direction } from '@angular/cdk/bidi';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
 import { Course, Subject } from '@core/models/subject-role';
@@ -24,7 +23,6 @@ import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/co
   styleUrls: ['./course-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
-    MatTabsModule,
     NgTemplateOutlet,
     CongratulationsCardComponent,
     SubjectTrackerCardComponent
@@ -32,6 +30,7 @@ import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/co
 })
 export class CourseDashboardComponent implements OnInit {
   pageTitle = 'MainDashboard';
+  activeTabIndex = 0;
   loading = true;
   loadingText = 'Loading your Dashboard';
   //generatingQuiz = false;

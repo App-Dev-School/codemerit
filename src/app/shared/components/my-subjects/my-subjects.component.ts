@@ -1,12 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-subjects',
-  imports: [AsyncPipe, MatIconModule],
+  imports: [AsyncPipe],
   templateUrl: './my-subjects.component.html',
   styleUrl: './my-subjects.component.scss'
 })

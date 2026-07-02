@@ -48,9 +48,11 @@
           <div>
             <span class="result-status-badge"
                   [ngClass]="isPassed ? 'result-status-badge--pass' : 'result-status-badge--fail'">
-              <mat-icon class="result-status-badge__icon">
-                {{ isPassed ? 'check_circle' : 'cancel' }}
-              </mat-icon>
+              @if (isPassed) {
+                <svg class="result-status-badge__icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5l-4.5-4.5 1.41-1.41L10 13.67l7.09-7.09L18.5 8l-8.5 8.5z"/></svg>
+              } @else {
+                <svg class="result-status-badge__icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+              }
               {{ statusLabel }}
             </span>
             @if (result?.remarks) {
@@ -107,15 +109,30 @@
 
     <!-- CTAs -->
     <div class="result-actions">
-      <button (click)="doOnShareResult()" mat-flat-button color="accent" class="hoverCard">
-        <mat-icon>share</mat-icon> Share Result
+      <button type="button" (click)="doOnShareResult()"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+               bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all hoverCard">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+        </svg>
+        Share Result
       </button>
-      <button (click)="downloadReport()" mat-stroked-button color="primary">
-        <mat-icon>download</mat-icon> Download
+      <button type="button" (click)="downloadReport()"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+               border border-cm-brand text-cm-brand hover:bg-cm-brand/5 active:scale-95 transition-all">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        Download
       </button>
       @if (result?.quiz?.id) {
-        <button (click)="doOnContinue()" mat-flat-button color="primary">
-          <mat-icon>play_arrow</mat-icon> Continue
+        <button type="button" (click)="doOnContinue()"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+                 bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          Continue
         </button>
       }
     </div>
@@ -193,7 +210,9 @@
         }
       } @else {
         <div class="attempt-empty">
-          <mat-icon>quiz</mat-icon>
+          <svg class="w-10 h-10 text-cm-text-muted mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
           <p>No attempt data available for review.</p>
         </div>
       }

@@ -1,11 +1,9 @@
-import { CommonModule, JsonPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import {
   MAT_BOTTOM_SHEET_DATA,
   MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
-import { MatButtonModule } from '@angular/material/button';
-import { MatLineModule } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/service/auth.service';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -13,7 +11,7 @@ import { SnackbarService } from '@core/service/snackbar.service';
 @Component({
   selector: 'app-enroll-course-bottom-sheet',
   templateUrl: 'confirm-course-enroll.html',
-  imports: [CommonModule, MatLineModule, MatButtonModule],
+  imports: [CommonModule],
 })
 export class SetDesignationBottomSheetComponent {
   loading = false;

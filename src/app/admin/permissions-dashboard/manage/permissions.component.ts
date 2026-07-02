@@ -1,43 +1,11 @@
 import { Direction } from '@angular/cdk/bidi';
-import { SelectionModel } from '@angular/cdk/collections';
-import { CommonModule, NgClass } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import {
-  MAT_DATE_LOCALE,
-  MatOptionModule,
-  MatRippleModule,
-} from '@angular/material/core';
+import { CommonModule, DatePipe, NgClass } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { UserPermission } from '@core/models/permission.model';
-import { rowsAnimation } from '@shared';
+import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { Subject } from 'rxjs';
 import { permissionsrevokeComponent } from './dialogs/delete/delete.component';
 import { UserPermissionsFormComponent } from './dialogs/form-dialog/form-dialog.component';
@@ -47,55 +15,74 @@ import { permissionsService } from './permissions.service';
   selector: 'app-manage-permissions',
   templateUrl: './permissions.component.html',
   styleUrls: ['./permissions.component.scss'],
-  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }],
-  animations: [rowsAnimation],
   imports: [
     BreadcrumbComponent,
-    FeatherIconsComponent,
     CommonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatOptionModule,
-    MatCheckboxModule,
-    MatTableModule,
-    MatSortModule,
     NgClass,
-    MatRippleModule,
-    MatProgressSpinnerModule,
-    MatMenuModule,
-    MatPaginatorModule
+    FormsModule,
+    DatePipe,
   ],
 })
 export class permissionsComponent implements OnInit, OnDestroy {
-columnDefinitions = [
-  { def: 'userFullName', label: 'User', type: 'text', class: 'col-default', visible: true },
-  { def: 'permissionName', label: 'Permission', type: 'text', class: 'col-default', visible: true },
-  { def: 'userCreatedAt', label: 'Grant Date', type: 'text', class: 'col-default', visible: true },
-  { def: 'actions', label: 'Actions', type: 'actionBtn', class: 'col-default', visible: true },
-];
 
-  dataSource = new MatTableDataSource<UserPermission>([]);
-  selection = new SelectionModel<UserPermission>(true, []);
+  allPermissions: UserPermission[] = [];
   isLoading = true;
+
+  searchQuery = '';
+  currentPage = 0;
+  readonly pageSize = 15;
+
   private destroy$ = new Subject<void>();
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('filter') filter!: ElementRef;
-
   constructor(
-    public httpClient: HttpClient,
     public dialog: MatDialog,
     public permissionsService: permissionsService,
-    private snackBar: MatSnackBar
+    private snackService: SnackbarService,
   ) {}
+
+  // ── Computed ──────────────────────────────────────────────
+
+  get filteredPermissions(): UserPermission[] {
+    const q = this.searchQuery.trim().toLowerCase();
+    if (!q) return this.allPermissions;
+    return this.allPermissions.filter(p =>
+      (p.user?.firstName + ' ' + p.user?.lastName).toLowerCase().includes(q) ||
+      (p.permissionName || '').toLowerCase().includes(q) ||
+      (p.resourceName || '').toLowerCase().includes(q) ||
+      (p.resourceType || '').toLowerCase().includes(q)
+    );
+  }
+
+  get paginatedPermissions(): UserPermission[] {
+    const start = this.currentPage * this.pageSize;
+    return this.filteredPermissions.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredPermissions.length / this.pageSize);
+  }
+
+  get rangeStart(): number {
+    return this.filteredPermissions.length === 0 ? 0 : this.currentPage * this.pageSize + 1;
+  }
+
+  get rangeEnd(): number {
+    return Math.min((this.currentPage + 1) * this.pageSize, this.filteredPermissions.length);
+  }
+
+  get visiblePages(): number[] {
+    const total = this.totalPages;
+    const cur = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i);
+    const pages = new Set<number>([0, total - 1, cur]);
+    for (let d = -2; d <= 2; d++) {
+      const p = cur + d;
+      if (p >= 0 && p < total) pages.add(p);
+    }
+    return Array.from(pages).sort((a, b) => a - b);
+  }
+
+  // ── Lifecycle ─────────────────────────────────────────────
 
   ngOnInit() {
     this.permissionsService.getAllPermissions().subscribe(data => {
@@ -109,168 +96,73 @@ columnDefinitions = [
     this.destroy$.complete();
   }
 
-  refresh() {
-    this.loadData();
-  }
-
-  getDisplayedColumns(): string[] {
-    return this.columnDefinitions
-      .filter((cd) => cd.visible)
-      .map((cd) => cd.def);
-  }
+  // ── Data ──────────────────────────────────────────────────
 
   loadData() {
+    this.isLoading = true;
     this.permissionsService.getAllUserPermissions().subscribe({
       next: (data) => {
-        this.dataSource.data = data;
+        this.allPermissions = data;
+        this.currentPage = 0;
         this.isLoading = false;
-        this.refreshTable();
-        this.dataSource.filterPredicate = (data: UserPermission, filter: string) =>
-          Object.values(data).some((value) =>
-            value.toString().toLowerCase().includes(filter)
-          );
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+      },
     });
   }
 
-  private refreshTable() {
-    this.paginator.pageIndex = 0;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
+  refresh() { this.loadData(); }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value
-      .trim()
-      .toLowerCase();
-    this.dataSource.filter = filterValue;
-  }
+  onSearchChange() { this.currentPage = 0; }
 
-  addNew() {
-    this.openDialog('add');
-  }
+  // ── Actions ───────────────────────────────────────────────
 
-  editCall(row: UserPermission) {
-    this.openDialog('edit', row);
-    console.log("permissionsManager editCall", row);
-  }
+  addNew() { this.openDialog('add'); }
+
+  editCall(row: UserPermission) { this.openDialog('edit', row); }
 
   openDialog(action: 'add' | 'edit', data?: UserPermission) {
-    let varDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      varDirection = 'rtl';
-    } else {
-      varDirection = 'ltr';
-    }
+    const varDirection: Direction = localStorage.getItem('isRtl') === 'true' ? 'rtl' : 'ltr';
     const dialogRef = this.dialog.open(UserPermissionsFormComponent, {
       width: '500px',
       minWidth: '500px',
       data: { permissionsItem: data, action },
       direction: varDirection,
       autoFocus: false,
-      disableClose: true
+      disableClose: true,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        if (action === 'add') {
-          if(result.data) {
-            if (Array.isArray(result.data)) {
-              this.dataSource.data = [...result.data, ...this.dataSource.data];
-            } else {
-              this.dataSource.data = [result.data, ...this.dataSource.data];
-            }
-            this.dataSource._updateChangeSubscription();
-            // Clear filter to ensure new row is visible
-            this.dataSource.filter = '';
-            // Reset paginator to first page
-            if (this.paginator) {
-              this.paginator.firstPage();
-            }
-          }
+        if (action === 'add' && result.data) {
+          const newItems: UserPermission[] = Array.isArray(result.data) ? result.data : [result.data];
+          this.allPermissions = [...newItems, ...this.allPermissions];
+          this.currentPage = 0;
         }
-        this.refreshTable();
-        if(result.message){
-        this.showNotification(
-          action === 'add' ? 'snackbar-success' : 'black',
-          result.message,
-          'bottom',
-          'center'
-        );
+        if (result.message) {
+          this.snackService.display(action === 'add' ? 'snackbar-success' : 'snackbar-dark', result.message, 'bottom', 'center');
         }
       }
     });
-  }
-
-  private updateRecord(updatedRecord: UserPermission) {
-    const index = this.dataSource.data.findIndex(
-      (record) => record.id === updatedRecord.id
-    );
-    if (index !== -1) {
-      this.dataSource.data[index] = updatedRecord;
-      this.dataSource._updateChangeSubscription();
-    }
   }
 
   revokeItem(row: UserPermission) {
-    const dialogRef = this.dialog.open(permissionsrevokeComponent, {
-      data: row,
-    });
+    const dialogRef = this.dialog.open(permissionsrevokeComponent, { data: row });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.dataSource.data = this.dataSource.data.filter(
-          (record) => record.id !== row.id
-        );
-        this.refreshTable();
-        this.showNotification(
-          'snackbar-danger',
-          row.permissionName+' revoked Successfully.',
-          'bottom',
-          'center'
-        );
+        this.allPermissions = this.allPermissions.filter(r => r.id !== row.id);
+        this.snackService.display('snackbar-danger', (row.permissionName ?? 'Permission') + ' revoked successfully.', 'bottom', 'center');
       }
     });
   }
 
-  showNotification(
-    colorName: string,
-    text: string,
-    placementFrom: MatSnackBarVerticalPosition,
-    placementAlign: MatSnackBarHorizontalPosition
-  ) {
-    this.snackBar.open(text, '', {
-      duration: 2000,
-      verticalPosition: placementFrom,
-      horizontalPosition: placementAlign,
-      panelClass: colorName,
-    });
-  }
+  // ── Pagination ────────────────────────────────────────────
 
-  exportExcel() {
-  }
+  prevPage() { if (this.currentPage > 0) this.currentPage--; }
 
-  isAllSelected() {
-    return this.selection.selected.length === this.dataSource.data.length;
-  }
+  nextPage() { if (this.currentPage < this.totalPages - 1) this.currentPage++; }
 
-  masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach((row) => this.selection.select(row));
-  }
-
-  removeSelectedRows() {
-    const totalSelect = this.selection.selected.length;
-    this.dataSource.data = this.dataSource.data.filter(
-      (item) => !this.selection.selected.includes(item)
-    );
-    this.selection.clear();
-    this.showNotification(
-      'snackbar-danger',
-      `${totalSelect} permissions(s) Revoked Successfully...!!!`,
-      'bottom',
-      'center'
-    );
-  }
+  goToPage(page: number) { this.currentPage = page; }
 }

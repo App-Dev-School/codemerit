@@ -1,91 +1,102 @@
-<div class="addContainer">
-  <div class="modalHeader">
-    <div class="avatarDetails">
-      <div class="modalTitle">
-        {{dialogTitle}}
-      </div>
-    </div>
-    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
-      <mat-icon>close</mat-icon>
+<div class="flex flex-col" style="min-width:460px; max-width:520px">
+
+  <!-- Dialog header -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-cm-border">
+    <h3 class="text-base font-bold text-cm-text-primary">{{ dialogTitle }}</h3>
+    <button mat-dialog-close type="button"
+      class="w-8 h-8 rounded-lg flex items-center justify-center text-cm-text-muted
+             hover:text-cm-text-primary hover:bg-cm-surface-hover active:scale-95 transition-all">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
     </button>
   </div>
-  <div>
-    <form class="register-form m-4" [formGroup]="permissionsForm" (ngSubmit)="submit()">
-      <div class="row">
-        @if (errorMessage) {
-          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
-          <div class="alert alert-danger" role="alert">
-            {{ errorMessage }}
-          </div>
-        </div>
-        }
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
-          <mat-form-field class="example-full-width" appearance="fill">
-            <mat-label>Select Permission</mat-label>
-            <mat-select formControlName="permissionIds" multiple>
-              @for (p of permissionsList; track p.id) {
-              <mat-option [value]="p.id">
-                {{ p.permission }}
-              </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
 
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
-          <mat-form-field class="example-full-width" appearance="fill">
-            <mat-label>Select Users</mat-label>
-            <mat-select formControlName="userId">
-              @for (user of users; track user.id) {
-              <mat-option [value]="user.id">
-               {{ user.firstName }} {{ user.lastName }}
-              </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-          
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
-          <mat-form-field class="example-full-width" appearance="fill">
-            <mat-label>Select Resource Type</mat-label>
-            <mat-select formControlName="resourceType">
-              @for (r of resourceTypes; track r.value) {
-              <mat-option [value]="r.value">
-                {{ r.title }}
-              </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
+  <!-- Form body -->
+  <div class="px-5 py-4">
+    <form [formGroup]="permissionsForm" (ngSubmit)="submit()">
 
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-24">
-          <mat-form-field class="example-full-width" appearance="fill">
-            <mat-label>Select Resource</mat-label>
-            <input
-              type="text"
-              matInput
-              [formControl]="resourceSearchCtrl"
-              [matAutocomplete]="auto"
-              placeholder="Search Resource"
-              autocomplete="off"
-              (focus)="filterResources(resourceSearchCtrl.value)"
-              [disabled]="!resources || resources.length === 0"
-            />
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayResource" (optionSelected)="onResourceSelected($event)">
-              @for (r of filteredResources; track r.id) {
-                <mat-option [value]="r">{{ r.title }}</mat-option>
-              }
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-          <button mat-flat-button class="btn-space" color="primary" [disabled]="!permissionsForm.valid">
-            {{action ==='edit' ? 'Update Permission' : 'Grant Permission'}}
-          </button>
-          <button mat-raised-button color="warn" (click)="permissionsForm.reset()">Cancel</button>
-        </div>
+      @if (errorMessage) {
+      <div class="rounded-xl bg-cm-danger-dim border border-cm-danger/20 px-4 py-3 text-sm text-cm-danger-text mb-4">
+        {{ errorMessage }}
       </div>
+      }
+
+      <!-- Permission multi-select -->
+      <div class="mb-4">
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Select Permission</label>
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-select formControlName="permissionIds" multiple>
+            @for (p of permissionsList; track p.id) {
+            <mat-option [value]="p.id">{{ p.permission }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- User select -->
+      <div class="mb-4">
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Select User</label>
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-select formControlName="userId">
+            @for (user of users; track user.id) {
+            <mat-option [value]="user.id">{{ user.firstName }} {{ user.lastName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Resource type -->
+      <div class="mb-4">
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Resource Type</label>
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-select formControlName="resourceType">
+            @for (r of resourceTypes; track r.value) {
+            <mat-option [value]="r.value">{{ r.title }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Resource autocomplete -->
+      <div class="mb-5">
+        <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Select Resource</label>
+        <input
+          type="text"
+          [formControl]="resourceSearchCtrl"
+          [matAutocomplete]="auto"
+          placeholder="Search Resource"
+          autocomplete="off"
+          (focus)="filterResources(resourceSearchCtrl.value)"
+          [disabled]="!resources || resources.length === 0"
+          class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                 text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                 focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors
+                 disabled:opacity-50 disabled:cursor-not-allowed">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayResource"
+                          (optionSelected)="onResourceSelected($event)">
+          @for (r of filteredResources; track r.id) {
+          <mat-option [value]="r">{{ r.title }}</mat-option>
+          }
+        </mat-autocomplete>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3 pt-1">
+        <button type="submit" [disabled]="!permissionsForm.valid"
+          class="inline-flex items-center px-5 py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold
+                 hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+          {{ action === 'edit' ? 'Update Permission' : 'Grant Permission' }}
+        </button>
+        <button type="button" (click)="permissionsForm.reset()"
+          class="inline-flex items-center px-5 py-2.5 rounded-xl border border-cm-border
+                 text-sm font-medium text-cm-text-secondary bg-cm-surface-muted
+                 hover:border-cm-danger/40 hover:text-cm-danger-text active:scale-95 transition-all">
+          Reset
+        </button>
+      </div>
+
     </form>
   </div>
+
 </div>

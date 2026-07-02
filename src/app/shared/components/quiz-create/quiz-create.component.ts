@@ -1,14 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatOptionModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, User } from '@core';
 import { QuizCreateModel } from '@core/models/dtos/GenerateQuizDto';
@@ -22,13 +15,6 @@ import { QuizConfig, QuizService } from 'src/app/quiz/quiz.service';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatOptionModule,
-    MatAutocompleteModule,
-    MatButtonModule,
-    MatButtonToggleModule,
   ],
   templateUrl: './quiz-create.component.html',
   styleUrls: ['./quiz-create.component.scss']

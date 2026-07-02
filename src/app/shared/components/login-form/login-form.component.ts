@@ -1,14 +1,10 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Inject, Optional, Output } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButton } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { RouterLink } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService, User } from '@core';
 import { Country } from '@core/models/country.data';
@@ -22,16 +18,11 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-login-form',
   imports: [
-    CommonModule,
-    FormsModule,
+    AsyncPipe,
+    RouterLink,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
+    MatAutocompleteModule,
     MatOptionModule,
-    MatSelectModule,
-    MatButton,
-    MatAutocompleteModule
   ],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.css',

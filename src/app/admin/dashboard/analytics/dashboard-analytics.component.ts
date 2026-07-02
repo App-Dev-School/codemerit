@@ -1,8 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MasterService } from '@core/service/master.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
 import { CodeSnippetComponent } from '@shared/components/code-snippet/code-snippet.component';
@@ -19,17 +15,11 @@ import { NgScrollbar } from 'ngx-scrollbar';
   styleUrls: ['./dashboard-analytics.component.scss'],
   imports: [
     BreadcrumbComponent,
-    MatCardModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatIconModule,
     NgScrollbar,
     ReportCardWidgetComponent,
     SubjectCardWidgetComponent,
     RecentCommentsComponent,
     RecentActivityComponent,
-    // ChartSubscribersComponent,
-    // ChartCard3Component,
     MySubjectsComponent,
     CodeSnippetComponent
   ],

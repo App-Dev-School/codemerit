@@ -1,11 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
 import { MasterService } from '@core/service/master.service';
 import { RightSidebarService } from '@core/service/rightsidebar.service';
 import { UnsubscribeOnDestroyAdapter } from '@shared/UnsubscribeOnDestroyAdapter';
@@ -20,11 +15,6 @@ import { NgScrollbar } from 'ngx-scrollbar';
         FormsModule,
         NgClass,
         NgScrollbar,
-        MatButtonToggleModule,
-        MatIcon,
-        MatButtonModule,
-        MatSelectModule,
-        MatFormFieldModule
     ],
 
 })
