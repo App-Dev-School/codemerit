@@ -1,11 +1,7 @@
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { register } from 'swiper/element/bundle';
 import { Swiper } from 'swiper';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { NgScrollbar } from 'ngx-scrollbar';
 import { LessonService } from '../lesson.service';
 
 @Component({
@@ -13,58 +9,55 @@ import { LessonService } from '../lesson.service';
   templateUrl: './lesson.page.html',
   styleUrls: ['./lesson.page.scss', './swiper.scss'],
   standalone: true,
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA],
-  imports: [
-    RouterModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    NgScrollbar,
-    ]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: []
 })
 export class LessonPage implements OnInit, AfterViewInit {
   currentSection = 0;
   loading = false;
   errorMessage = '';
+  completed = false;
 
   sliderOne: any;
   viewType!: string;
   counter = 0;
-  qcode :any;
-  lesson :any;
+  qcode: any;
+  lesson: any;
 
   swiper?: Swiper;
-  @ViewChild("swiperEx") swiperEx ?: ElementRef<{ swiper: Swiper }>
+  @ViewChild('swiperEx') swiperEx?: ElementRef<{ swiper: Swiper }>
 
-  constructor(private lessonService: LessonService, private router: Router, private route: ActivatedRoute) { 
-
-  }
+  constructor(
+    private lessonService: LessonService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     register();
-    console.log("LessonComponent ngOnInit");
     this.takeRouteParams();
   }
 
-  slideNext(object: any) {
-    // slideView.slideNext(500).then(() => {
-    //   this.checkIfNavDisabled(object, slideView,);
-    // });
+  get progressPercent(): number {
+    if (!this.lesson?.sections?.length) {
+      return 0;
+    }
+
+    return ((this.currentSection + 1) / this.lesson.sections.length) * 100;
   }
 
+  reset() {}
 
-  ionViewDidLoad(){
-    // this.slideWithNav.onlyExternal = true;
-  }
-
-  reset() {
+  exitLesson() {
+    this.router.navigate(['/dashboard/learn/angular']);
   }
 
   backToLessons() {
-    //Dynamic Navigation with information
-    //this.navCtrl.navigateRoot(['./dashboard/learn/angular']);
-    //this.navCtrl.navigateBack(['./dashboard/learn/angular']);
-    this.router.navigate(['/dashboard/learn/angular']);
+    this.exitLesson();
+  }
+
+  markAsComplete() {
+    this.completed = true;
   }
 
   setViewType(vt: string) {
@@ -75,72 +68,54 @@ export class LessonPage implements OnInit, AfterViewInit {
     this.router.navigate(['./contests'], { queryParams: { currentSection: 1 } });
   }
 
-  goToDashbpard(){
-    //this.router.navigate(['/dashboard']);
+  goToDashbpard() {
     this.router.navigate(['./dashboard']);
   }
 
-
-  //
   onSlideChange() {
-    console.log("onSlideChange", this.swiper?.activeIndex);
+    console.log('onSlideChange', this.swiper?.activeIndex);
   }
 
   swiperSlideChanged(e: any) {
-    console.log('swiperSlideChanged 1 changed: ', e);
     this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
-    console.log('swiperSlideChanged 2: ', this.swiper?.activeIndex);
   }
 
-  
-  onSlidePrev()
-  {
-      //this.swiper.slidePrev(1000);
-      this.swiperEx?.nativeElement.swiper.slidePrev(1000);
-      this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
-      console.log('onSlidePrev : ', this.swiper?.activeIndex, this.swiperEx?.nativeElement.swiper.activeIndex);
+  onSlidePrev() {
+    this.swiperEx?.nativeElement.swiper.slidePrev(1000);
+    this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
   }
 
-  onSlideNext()
-  {
-    if(this.currentSection >= this.lesson.sections.length -1){
-    this.backToLessons();
-    }else{
+  onSlideNext() {
+    if (this.currentSection >= this.lesson.sections.length - 1) {
+      this.markAsComplete();
+      return;
+    }
+
     this.swiperEx?.nativeElement.swiper.slideNext(1000);
     this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
-    }
-    console.log('onSlideNext : ', this.swiper?.activeIndex, this.swiperEx?.nativeElement.swiper.activeIndex);
   }
 
   swiperReady() {
     this.swiper = this.swiperEx?.nativeElement.swiper;
-    console.log('swiperReady: ', this.swiper);
   }
 
   ngAfterViewInit(): void {
     this.swiperReady();
   }
 
-
-  /* */
-  takeRouteParams(){
-    /********** CHECK ROUTE PARAM REQUESTS ***********/
+  takeRouteParams() {
     this.route.paramMap.subscribe(params => {
-      if(params.get("qcode")){
-      this.qcode = params.get("qcode");
-      console.log("LessonComponent this.qcode => "+this.qcode);
-      // if(this.user_name != this.authData.user_name){
-      //   this.selfView = false;
-      //  }
-      this.fetchLesson();
-     }
+      if (params.get('qcode')) {
+        this.qcode = params.get('qcode');
+        this.fetchLesson();
+      }
     });
-    /********* CHECK ROUTE PARAM REQUESTS ***********/
   }
 
-  fetchLesson(){
+  fetchLesson() {
     this.loading = true;
     this.errorMessage = '';
+    this.completed = false;
 
     this.lessonService.getLessonBySlug(this.qcode).subscribe({
       next: (response: any) => {
@@ -153,14 +128,11 @@ export class LessonPage implements OnInit, AfterViewInit {
         }
 
         setTimeout(() => this.swiperReady());
-        console.log("LessonComponent fetchLesson => ", this.lesson);
       },
       error: (error) => {
         this.loading = false;
         this.errorMessage = error?.error?.message || 'Unable to load lesson.';
-        console.log("LessonComponent fetchLesson error => ", error);
-      },
+      }
     });
   }
-  
 }

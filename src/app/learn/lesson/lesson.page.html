@@ -1,82 +1,174 @@
-<div class="auth-container">
-  <div class="auth-main">
-    <div class="lesson-container d-flex flex-column vh-100">
-      @if (loading) {
-      <div class="lesson-state">
-        <h5>Loading lesson...</h5>
-      </div>
-      }
+<div class="fixed inset-0 flex flex-col overflow-hidden bg-slate-950 text-slate-50">
 
-      @if (!loading && errorMessage) {
-      <div class="lesson-state">
-        <h5>{{ errorMessage }}</h5>
-        <button mat-flat-button color="primary" (click)="backToLessons()">
-          <mat-icon>keyboard_arrow_left</mat-icon>
-          Back
+    @if (loading) {
+    <div class="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
+      <div class="relative">
+        <div class="h-16 w-16 animate-spin rounded-full border-4 border-slate-700 border-t-indigo-400"></div>
+        <div class="absolute inset-0 h-16 w-16 animate-ping rounded-full border border-indigo-500/20"></div>
+      </div>
+      <div class="space-y-1.5">
+        <h2 class="text-xl font-bold text-white">Loading lesson...</h2>
+        <p class="text-sm text-slate-300">Preparing your lesson slides.</p>
+      </div>
+    </div>
+    }
+
+    @if (!loading && errorMessage) {
+    <div class="fixed inset-0 flex flex-col items-center justify-center bg-slate-950 px-6 text-center">
+      <div class="w-full max-w-md space-y-6">
+        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-rose-500/30 bg-rose-500/10">
+          <svg class="h-10 w-10 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div class="rounded-2xl border border-rose-500/25 bg-rose-500/10 p-8 shadow-xl shadow-rose-900/20">
+          <h2 class="text-xl font-bold text-white">{{ errorMessage }}</h2>
+          <p class="mt-3 text-sm leading-relaxed text-slate-300">Please try again or return to the lessons list.</p>
+        </div>
+        <button
+          class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-white/30 hover:bg-white/20"
+          (click)="exitLesson()"
+        >
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          Back to lessons
         </button>
       </div>
-      }
+    </div>
+    }
 
-      @if (!loading && !errorMessage && lesson && lesson.title) {
-      <mat-toolbar color="primary" class="toolbar justify-content-between">
-        <div class="d-flex align-items-center min-w-0">
-          <button mat-icon-button (click)="backToLessons()" style="color: #fff; opacity: 0.8;">
-            <mat-icon>keyboard_arrow_left</mat-icon>
+    @if (!loading && !errorMessage && lesson?.title) {
+    <header class="sticky top-0 z-30 border-b border-white/[0.08] bg-slate-950/90 backdrop-blur-md">
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
+        <div class="flex min-w-0 items-center gap-3">
+          <button
+            class="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white transition hover:border-white/25 hover:bg-white/15"
+            (click)="exitLesson()"
+            aria-label="Exit lesson"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
           </button>
 
           @if (lesson.subject?.image) {
-          <img [src]="lesson.subject.image" alt="icon" class="subject-icon me-2">
+          <img [src]="lesson.subject.image" alt="lesson icon" class="h-9 w-9 flex-shrink-0 rounded-full object-cover ring-1 ring-white/20" />
           }
 
-          <span class="lesson-title">{{ lesson.title }}</span>
+          <div class="min-w-0">
+            <p class="truncate text-sm font-bold text-white">{{ lesson.title }}</p>
+            <p class="text-xs font-medium text-slate-400">
+              Slide {{ currentSection + 1 }} of {{ lesson.sections?.length || 1 }}
+            </p>
+          </div>
         </div>
 
-        @if (lesson.sections?.length) {
-        <div class="section-count">{{ currentSection + 1 }} of {{ lesson.sections.length }}</div>
-        }
-      </mat-toolbar>
-
-      <div class="flex-grow-1 overflow-hidden">
-        @if (lesson.sections?.length > 0) {
-        <swiper-container #swiperEx slides-per-view="1" space-between="10" allow-touch-move="false" class="h-100"
-          (slidechange)="swiperSlideChanged($event)">
-          @for (section of lesson.sections; track section.id) {
-          <swiper-slide>
-            <p class="col-grey text-center m-t-20 m-b-10">{{$index + 1}} of {{ lesson.sections.length }}</p>
-
-            <div class="lesson-card">
-              <ng-scrollbar class="lesson-scroller" visibility="hover">
-                <div class="card-content">
-                  <div class="lesson-content" [innerHTML]="section.description || section.body"></div>
-                </div>
-              </ng-scrollbar>
-            </div>
-          </swiper-slide>
+        <div class="flex flex-shrink-0 items-center gap-2">
+          <span class="rounded-full border border-indigo-400/30 bg-indigo-500/15 px-3 py-1 text-xs font-bold text-indigo-200">
+            {{ currentSection + 1 }}/{{ lesson.sections?.length || 1 }}
+          </span>
+          @if (completed) {
+          <span class="rounded-full border border-emerald-400/30 bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-300">
+            ✓ Completed
+          </span>
           }
-        </swiper-container>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex flex-1 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
+      <div class="mx-auto flex h-full w-full max-w-6xl flex-col overflow-hidden">
+        @if (lesson.sections?.length > 0) {
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Progress</span>
+            <div class="h-1.5 w-32 overflow-hidden rounded-full bg-slate-800">
+              <div class="h-full rounded-full bg-indigo-500 transition-all duration-500" [style.width.%]="progressPercent"></div>
+            </div>
+            <span class="text-xs font-bold text-indigo-300">{{ currentSection + 1 }}/{{ lesson.sections.length }}</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              class="rounded-full border border-white/15 bg-white/[0.07] px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/25 hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-30"
+              [disabled]="currentSection === 0"
+              (click)="onSlidePrev()"
+            >
+              ← Previous
+            </button>
+            <button
+              class="rounded-full border border-indigo-500/40 bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-md shadow-indigo-900/40 transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
+              [disabled]="currentSection >= lesson.sections.length - 1"
+              (click)="onSlideNext()"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-hidden rounded-[2rem] border border-white/[0.08] bg-gradient-to-br from-[#0d1117] via-slate-900 to-[#0d1117] shadow-2xl shadow-black/60">
+          <swiper-container
+            #swiperEx
+            slides-per-view="1"
+            space-between="10"
+            allow-touch-move="true"
+            class="h-full min-h-0"
+            (slidechange)="swiperSlideChanged($event)"
+          >
+            @for (section of lesson.sections; track section.id ?? $index) {
+            <swiper-slide class="h-full">
+              <div class="flex h-full flex-col p-5 sm:p-7 lg:p-9">
+                <div class="mb-5 flex items-start justify-between gap-4">
+                  <div class="min-w-0 flex-1">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-indigo-400">Lesson Section</p>
+                    <h3 class="mt-1.5 text-2xl font-bold leading-tight text-white">
+                      {{ section.title || 'Section ' + ($index + 1) }}
+                    </h3>
+                  </div>
+                  <div class="flex-shrink-0 rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-xs font-bold tabular-nums text-slate-200">
+                    {{ $index + 1 }} / {{ lesson.sections.length }}
+                  </div>
+                </div>
+
+                <div class="lesson-prose flex-1 overflow-y-auto rounded-xl border border-white/[0.06] bg-slate-950/70 p-5 shadow-inner sm:p-7">
+                  <div class="prose prose-invert max-w-none" [innerHTML]="section.description || section.body"></div>
+                </div>
+              </div>
+            </swiper-slide>
+            }
+          </swiper-container>
+        </div>
+        }
+
+        @if (!lesson.sections?.length) {
+        <div class="flex flex-1 items-center justify-center rounded-[2rem] border border-dashed border-white/10 bg-slate-900/40 p-8 text-center">
+          <div>
+            <h3 class="text-xl font-bold text-white">No lesson sections available</h3>
+            <p class="mt-2 text-sm text-slate-300">This lesson is empty right now. Please come back later.</p>
+          </div>
+        </div>
         }
       </div>
+    </main>
 
-      @if (lesson.sections?.length > 0) {
-      <mat-toolbar color="accent" class="footer-toolbar">
-        <div class="footer-actions">
-          @if (currentSection > 0) {
-          <button mat-flat-button color="warn" (click)="onSlidePrev()">
-            <mat-icon>keyboard_arrow_left</mat-icon>
-            Prev
-          </button>
-          }
+    <footer class="border-t border-white/[0.08] bg-slate-950/95 px-4 py-4 sm:px-6 lg:px-8">
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
+        <button
+          class="rounded-full border border-white/15 bg-white/[0.07] px-5 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-white/25 hover:bg-white/15"
+          (click)="exitLesson()"
+        >
+          Exit lesson
+        </button>
+        <button
+          class="rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-900/40 transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+          (click)="markAsComplete()"
+          [disabled]="completed"
+        >
+          {{ completed ? '✓ Completed' : 'Mark as complete' }}
+        </button>
+      </div>
+    </footer>
+    }
 
-          <span class="mat-spacer"></span>
-
-          <button mat-flat-button color="primary" (click)="onSlideNext()">
-            <mat-icon>keyboard_arrow_right</mat-icon>
-            {{ currentSection === lesson.sections.length - 1 ? 'Complete' : 'Next' }}
-          </button>
-        </div>
-      </mat-toolbar>
-      }
-      }
-    </div>
-  </div>
 </div>

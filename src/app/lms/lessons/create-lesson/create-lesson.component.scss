@@ -70,6 +70,23 @@
   pointer-events: none;
 }
 
+/* ── Sticky bottom action bar ────────────────────────────────── */
+.action-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--cm-border);
+  background: var(--cm-surface);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+}
+
 /* ── Tiptap rich-text editor shell ───────────────────────────── */
 .tiptap-shell {
   position: relative;

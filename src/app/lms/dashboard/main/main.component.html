@@ -102,12 +102,12 @@
                   hover:shadow-2xl hover:border-indigo-500/30">
 
         <!-- ── GRADIENT HEADER ── -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 px-6 pt-5 pb-7">
+        <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 px-6 pt-5 pb-7">
 
           <!-- ambient blobs -->
-          <div class="absolute -left-10 -top-10 w-52 h-52 rounded-full bg-indigo-400/20 blur-3xl pointer-events-none"></div>
-          <div class="absolute right-10 -bottom-10 w-44 h-44 rounded-full bg-purple-400/20 blur-3xl pointer-events-none"></div>
-          <div class="absolute right-0 top-0 w-32 h-32 rounded-full bg-violet-300/10 blur-2xl pointer-events-none"></div>
+          <div class="absolute -left-10 -top-10 w-52 h-52 rounded-full bg-blue-400/25 blur-3xl pointer-events-none"></div>
+          <div class="absolute right-10 -bottom-10 w-44 h-44 rounded-full bg-violet-500/25 blur-3xl pointer-events-none"></div>
+          <div class="absolute right-0 top-0 w-32 h-32 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
 
           <div class="relative">
 
@@ -118,7 +118,7 @@
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-300"></span>
                 </span>
-                <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-200/80">Question Bank</span>
+                <span class="text-xs font-bold uppercase tracking-widest text-blue-100/80">Question Bank</span>
               </div>
               <div class="flex items-center gap-2">
                 @if ((dashboard.questions?.totalPending ?? 0) > 0) {
@@ -145,16 +145,13 @@
 
               <!-- LEFT: approved count + progress bar -->
               <div class="flex-1 min-w-0">
-                <div class="flex items-end gap-3 mb-2 leading-none">
-                  <span class="text-[4.5rem] font-black text-white leading-none tracking-tight">
-                    {{ dashboard.questions?.totalApproved ?? 0 }}
-                  </span>
-                  <span class="text-lg font-semibold text-indigo-300 mb-2 shrink-0">
-                    / {{ dashboard.questions?.totalQuestions ?? 0 }}
-                  </span>
-                </div>
-                <p class="text-sm font-semibold text-indigo-200 mb-5">
-                  questions approved &amp; live
+                <span class="text-7xl font-black text-white leading-none tracking-tight block mb-2">
+                  {{ dashboard.questions?.totalApproved ?? 0 }}
+                </span>
+                <p class="text-sm font-semibold text-blue-100 mb-5">
+                  approved &amp; live
+                  <span class="text-white/40 mx-1">·</span>
+                  <span class="font-normal text-blue-200">of {{ dashboard.questions?.totalQuestions ?? 0 }} submitted</span>
                 </p>
                 <!-- fill bar -->
                 <div class="space-y-1.5">
@@ -162,32 +159,30 @@
                     <div class="h-full rounded-full bg-emerald-400 transition-all duration-1000 ease-out"
                          [style.width.%]="approvalRate"></div>
                   </div>
-                  <div class="flex justify-between text-[11px]">
+                  <div class="flex justify-between text-xs">
                     <span class="text-emerald-300 font-semibold">{{ approvalRate }}% approved</span>
-                    <span class="text-indigo-300/60">{{ (dashboard.questions?.totalQuestions ?? 0) - (dashboard.questions?.totalApproved ?? 0) }} not yet live</span>
+                    <span class="text-blue-200/60">{{ (dashboard.questions?.totalQuestions ?? 0) - (dashboard.questions?.totalApproved ?? 0) }} not yet live</span>
                   </div>
                 </div>
               </div>
 
               <!-- RIGHT: SVG donut ring -->
-              <div class="shrink-0 flex flex-col items-center gap-2">
-                <div class="relative w-28 h-28">
-                  <!-- ring SVG — circumference of r=15.9155 ≈ 100, so dasharray values = % directly -->
+              <div class="shrink-0 flex flex-col items-center gap-1.5">
+                <div class="relative w-20 h-20">
                   <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
                     <circle cx="18" cy="18" r="15.9155"
-                      fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3.2"/>
+                      fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3.5"/>
                     <circle cx="18" cy="18" r="15.9155"
-                      fill="none" stroke="#34d399" stroke-width="3.2"
+                      fill="none" stroke="#34d399" stroke-width="3.5"
                       stroke-linecap="round"
                       [attr.stroke-dasharray]="approvalRate + ' ' + (100 - approvalRate)"/>
                   </svg>
-                  <!-- centered label -->
                   <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <span class="text-3xl font-black text-white leading-none">{{ approvalRate }}</span>
-                    <span class="text-sm font-bold text-emerald-300 leading-none mt-0.5">%</span>
+                    <span class="text-2xl font-black text-white leading-none">{{ approvalRate }}</span>
+                    <span class="text-xs font-bold text-emerald-300 leading-none mt-0.5">%</span>
                   </div>
                 </div>
-                <p class="text-[11px] font-semibold text-indigo-200/80 text-center">approval rate</p>
+                <p class="text-[11px] font-semibold text-blue-100/80 text-center">approval rate</p>
               </div>
 
             </div>
@@ -199,8 +194,7 @@
         <div class="grid grid-cols-3 divide-x divide-cm-border border-b border-cm-border">
 
           <!-- Pending -->
-          <button (click)="goToQuestionViewer()"
-            class="flex items-center gap-3 px-5 py-4 hover:bg-cm-surface-hover transition-colors duration-150 text-left w-full">
+          <div class="flex items-center gap-3 px-5 py-4 cursor-default">
             <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20
                         flex items-center justify-center shrink-0">
               <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -208,12 +202,12 @@
               </svg>
             </div>
             <div class="min-w-0">
-              <p class="text-xl font-black text-amber-600 dark:text-amber-400 leading-none">
+              <p class="text-3xl font-black text-amber-600 dark:text-amber-400 leading-none">
                 {{ dashboard.questions.totalPending ?? 0 }}
               </p>
-              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate">Awaiting review</p>
+              <p class="text-xs text-cm-text-muted mt-0.5 truncate">Awaiting review</p>
             </div>
-          </button>
+          </div>
 
           <!-- Trivia -->
           <div class="flex items-center gap-3 px-5 py-4 hover:bg-cm-surface-hover transition-colors duration-150 cursor-default">
@@ -225,10 +219,10 @@
               </svg>
             </div>
             <div class="min-w-0">
-              <p class="text-xl font-black text-indigo-600 dark:text-indigo-400 leading-none">
+              <p class="text-3xl font-black text-indigo-600 dark:text-indigo-400 leading-none">
                 {{ dashboard.questions.totalTrivia ?? 0 }}
               </p>
-              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate">Trivia MCQ</p>
+              <p class="text-xs text-cm-text-muted mt-0.5 truncate">Trivia MCQ</p>
             </div>
           </div>
 
@@ -242,10 +236,10 @@
               </svg>
             </div>
             <div class="min-w-0">
-              <p class="text-xl font-black text-violet-600 dark:text-violet-400 leading-none">
+              <p class="text-3xl font-black text-violet-600 dark:text-violet-400 leading-none">
                 {{ dashboard.questions.totalGeneral ?? 0 }}
               </p>
-              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate">Interview open-ended</p>
+              <p class="text-xs text-cm-text-muted mt-0.5 truncate">Interview open-ended</p>
             </div>
           </div>
 
@@ -288,9 +282,9 @@
         }
 
         <!-- ── CTAs ── -->
-        <div class="mt-auto px-5 py-4 flex flex-wrap gap-2">
+        <div class="mt-auto px-5 py-4 flex gap-2">
           <button (click)="goToCreateQuestion()"
-            class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
+            class="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
                    bg-indigo-500 text-white text-sm font-bold
                    hover:bg-indigo-600 active:scale-[0.98] transition-all duration-150">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -298,24 +292,8 @@
             </svg>
             {{ dashboard.questions ? 'Add Question' : 'Add Your First Question' }}
           </button>
-          <button (click)="goToQuestionViewer()"
-            class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
-                   border border-amber-400/50 text-amber-600 dark:text-amber-400 text-sm font-bold
-                   hover:bg-amber-400/10 active:scale-[0.98] transition-all duration-150">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            Review Pending
-            @if ((dashboard.questions?.totalPending ?? 0) > 0) {
-            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full
-                         bg-amber-400 text-white text-[9px] font-black leading-none">
-              {{ dashboard.questions?.totalPending }}
-            </span>
-            }
-          </button>
           <button (click)="goToQuestions()"
-            class="flex-1 min-w-[100px] inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
+            class="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl
                    border border-cm-border text-cm-text-secondary text-sm font-semibold
                    hover:bg-cm-surface-hover hover:text-cm-text-primary active:scale-[0.98] transition-all duration-150">
             View All
@@ -335,12 +313,13 @@
           <div class="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10 pointer-events-none"></div>
           <div class="relative flex items-start justify-between gap-3">
             <div>
-              <p class="text-amber-100 text-[10px] font-bold uppercase tracking-widest mb-1">Lessons</p>
-              <div class="flex items-baseline gap-2">
-                <p class="text-4xl font-black text-white leading-none">{{ dashboard.lessons?.totalCompleted ?? 0 }}</p>
-                <span class="text-amber-200 text-lg font-semibold">/ {{ dashboard.lessons?.totalLessonsCreated ?? 0 }}</span>
-              </div>
-              <p class="text-amber-200 text-xs font-medium mt-1">completed of created</p>
+              <p class="text-amber-100 text-xs font-bold uppercase tracking-widest mb-1">Lessons</p>
+              <p class="text-6xl font-black text-white leading-none">{{ dashboard.lessons?.totalCompleted ?? 0 }}</p>
+              <p class="text-amber-200 text-xs font-medium mt-1">
+                completed
+                <span class="opacity-50 mx-1">·</span>
+                of {{ dashboard.lessons?.totalLessonsCreated ?? 0 }} created
+              </p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
               <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center
@@ -364,8 +343,8 @@
         @if (dashboard.lessons) {
         <div class="px-5 py-4 flex-1">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="text-[11px] text-cm-text-secondary font-semibold">Completion rate</span>
-            <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">{{ lessonsCompleteRate }}%</span>
+            <span class="text-xs text-cm-text-secondary font-semibold">Completion rate</span>
+            <span class="text-sm font-bold text-amber-600 dark:text-amber-400">{{ lessonsCompleteRate }}%</span>
           </div>
           <div class="h-2 rounded-full bg-cm-surface-raised overflow-hidden mb-4">
             <div class="h-full rounded-full bg-amber-500 transition-all duration-700"
@@ -373,16 +352,16 @@
           </div>
           <div class="grid grid-cols-3 gap-2">
             <div class="text-center p-2 rounded-xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20">
-              <p class="text-sm font-black text-sky-600 dark:text-sky-400">{{ dashboard.lessons.totalViews ?? 0 }}</p>
-              <p class="text-[10px] text-cm-text-muted mt-0.5">Views</p>
+              <p class="text-2xl font-black text-sky-600 dark:text-sky-400">{{ dashboard.lessons.totalViews ?? 0 }}</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Views</p>
             </div>
             <div class="text-center p-2 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
-              <p class="text-sm font-black text-amber-600 dark:text-amber-400">{{ dashboard.lessons.totalPending ?? 0 }}</p>
-              <p class="text-[10px] text-cm-text-muted mt-0.5">Pending</p>
+              <p class="text-2xl font-black text-amber-600 dark:text-amber-400">{{ dashboard.lessons.totalPending ?? 0 }}</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Pending</p>
             </div>
             <div class="text-center p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-              <p class="text-sm font-black text-emerald-600 dark:text-emerald-400">{{ dashboard.lessons.totalCompleted ?? 0 }}</p>
-              <p class="text-[10px] text-cm-text-muted mt-0.5">Done</p>
+              <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">{{ dashboard.lessons.totalCompleted ?? 0 }}</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Done</p>
             </div>
           </div>
         </div>
@@ -444,10 +423,10 @@
           <div class="relative flex items-start justify-between gap-3">
             <div>
               <div class="flex items-center gap-2 mb-2">
-                <p class="text-violet-200 text-[10px] font-bold uppercase tracking-widest">Quizzes</p>
+                <p class="text-violet-200 text-xs font-bold uppercase tracking-widest">Quizzes</p>
                 @if ((dashboard.quizzes?.totalQuizCreated ?? 0) > 0) {
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
-                             bg-emerald-400/20 border border-emerald-400/30 text-emerald-300 text-[9px] font-bold">
+                             bg-emerald-400/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                   LIVE
                 </span>
@@ -528,12 +507,13 @@
           <div class="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10 pointer-events-none"></div>
           <div class="relative flex items-start justify-between gap-3">
             <div>
-              <p class="text-emerald-100 text-[10px] font-bold uppercase tracking-widest mb-1">Topic Manager</p>
-              <div class="flex items-baseline gap-2">
-                <p class="text-4xl font-black text-white leading-none">{{ dashboard.topics?.totalActive ?? 0 }}</p>
-                <span class="text-emerald-200 text-lg font-semibold">/ {{ dashboard.topics?.total ?? 0 }}</span>
-              </div>
-              <p class="text-emerald-200 text-xs font-medium mt-1">active of total</p>
+              <p class="text-emerald-100 text-xs font-bold uppercase tracking-widest mb-1">Topic Manager</p>
+              <p class="text-6xl font-black text-white leading-none">{{ dashboard.topics?.totalActive ?? 0 }}</p>
+              <p class="text-emerald-200 text-xs font-medium mt-1">
+                active
+                <span class="opacity-50 mx-1">·</span>
+                of {{ dashboard.topics?.total ?? 0 }} total
+              </p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
               <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center
@@ -556,8 +536,8 @@
 
         <div class="px-5 py-4 flex-1">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="text-[11px] text-cm-text-secondary font-semibold">Active coverage</span>
-            <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">{{ topicsActiveRate }}%</span>
+            <span class="text-xs text-cm-text-secondary font-semibold">Active coverage</span>
+            <span class="text-sm font-bold text-emerald-600 dark:text-emerald-400">{{ topicsActiveRate }}%</span>
           </div>
           <div class="h-2 rounded-full bg-cm-surface-raised overflow-hidden mb-4">
             <div class="h-full rounded-full bg-emerald-500 transition-all duration-700"
@@ -565,31 +545,31 @@
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div class="text-center p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-              <p class="text-lg font-black text-emerald-600 dark:text-emerald-400">{{ dashboard.topics.totalActive ?? '0' }}</p>
-              <p class="text-[10px] text-cm-text-muted mt-0.5">Active</p>
+              <p class="text-2xl font-black text-emerald-700 dark:text-emerald-300">{{ dashboard.topics?.totalActive ?? 0 }}</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Active</p>
             </div>
             <div class="text-center p-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
-              <p class="text-lg font-black text-amber-600 dark:text-amber-400">{{ dashboard.topics.totalPending ?? '0' }}</p>
-              <p class="text-[10px] text-cm-text-muted mt-0.5">Pending</p>
+              <p class="text-2xl font-black text-amber-700 dark:text-amber-300">{{ dashboard.topics?.totalPending ?? 0 }}</p>
+              <p class="text-xs text-cm-text-muted mt-0.5">Pending</p>
             </div>
           </div>
         </div>
 
-        <div class="mt-auto px-5 pb-4 border-t border-cm-border pt-4 flex flex-col gap-2">
+        <div class="mt-auto px-5 pb-4 border-t border-cm-border pt-4 flex gap-2">
           <button (click)="goToCreateTopic()"
-            class="w-full py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold
+            class="flex-1 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold
                    hover:bg-emerald-600 active:scale-[0.98]
                    transition-all duration-150 flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
             </svg>
             Add Topic
           </button>
           <button (click)="goToTopicManager()"
-            class="w-full py-2 rounded-xl border border-cm-border text-cm-text-secondary text-sm font-semibold
+            class="flex-1 py-2.5 rounded-xl border border-cm-border text-cm-text-secondary text-sm font-semibold
                    hover:bg-cm-surface-hover hover:text-cm-text-primary active:scale-[0.98]
                    transition-all duration-150 flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
             </svg>
             Manage All Topics
@@ -605,52 +585,41 @@
     ═══════════════════════════════════════════════════ -->
     @if (currentModule && timeframeData) {
     <div class="bg-cm-surface rounded-2xl border border-cm-border mb-8 overflow-hidden">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-cm-border
+      <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-cm-border
                   bg-gradient-to-r from-cm-brand-dim to-transparent">
-        <!-- title row — always visible, ⓘ stays here on mobile -->
-        <div class="flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-cm-brand-dim border border-cm-brand/20 flex items-center justify-center shrink-0">
-              <svg class="w-4 h-4 text-cm-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-sm font-bold text-cm-text-primary">Activity Trend</h3>
-              <p class="text-xs text-cm-text-muted mt-0.5">Daily &amp; weekly contribution timeline</p>
-            </div>
-          </div>
-          <!-- ⓘ always top-right; on sm+ it moves to after the toggles via the sibling div -->
-          <button (click)="openTooltip('activity')"
-            class="sm:hidden w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center
-                   text-cm-text-muted hover:text-cm-brand hover:border-cm-brand/30 transition-all duration-150 shrink-0">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <!-- title (always shrinks to content; never wraps itself) -->
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="w-9 h-9 rounded-xl bg-cm-brand-dim border border-cm-brand/20 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-cm-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
             </svg>
-          </button>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-cm-text-primary">Activity Trend</h3>
+            <p class="text-xs text-cm-text-muted mt-0.5">Daily &amp; weekly contribution timeline</p>
+          </div>
         </div>
-        <!-- toggle + ⓘ row — full width on mobile, inline on sm+ -->
-        <div class="flex items-center gap-3">
-          <div class="flex flex-1 sm:flex-none rounded-xl border border-cm-border overflow-hidden">
+        <!-- controls: wraps below title on narrow screens, sits right on wide screens -->
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="flex rounded-xl border border-cm-border overflow-hidden">
             <button (click)="onModuleChange({ value: 'Questions' })"
               [ngClass]="currentModule === 'Questions'
                 ? 'bg-cm-brand text-white font-bold'
                 : 'bg-cm-surface text-cm-text-secondary hover:bg-cm-surface-hover'"
-              class="flex-1 sm:flex-none px-5 py-2 text-sm font-semibold transition-colors duration-150">
+              class="px-5 py-2 text-sm font-semibold transition-colors duration-150">
               Questions
             </button>
             <button (click)="onModuleChange({ value: 'Quizzes' })"
               [ngClass]="currentModule === 'Quizzes'
                 ? 'bg-cm-brand text-white font-bold'
                 : 'bg-cm-surface text-cm-text-secondary hover:bg-cm-surface-hover'"
-              class="flex-1 sm:flex-none px-5 py-2 text-sm font-semibold transition-colors duration-150 border-l border-cm-border">
+              class="px-5 py-2 text-sm font-semibold transition-colors duration-150 border-l border-cm-border">
               Quizzes
             </button>
           </div>
-          <!-- ⓘ only visible on sm+ here; hidden duplicate above handles mobile -->
           <button (click)="openTooltip('activity')"
-            class="hidden sm:flex w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border items-center justify-center
+            class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center
                    text-cm-text-muted hover:text-cm-brand hover:border-cm-brand/30 transition-all duration-150 shrink-0">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -681,7 +650,7 @@
        (click)="closeTooltip()"></div>
 
   <!-- panel -->
-  <div class="fixed inset-y-0 right-0 w-full sm:w-80 bg-cm-surface border-l border-cm-border z-[1001]
+  <div class="fixed inset-y-0 right-0 w-full max-w-sm bg-cm-surface border-l border-cm-border z-[1001]
               flex flex-col shadow-2xl transition-transform duration-300 ease-out"
        [class.translate-x-full]="!activeTooltip">
 
