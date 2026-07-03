@@ -50,11 +50,13 @@ export class HeaderComponent
     this.config = this.configService.configData;
     const userRole = this.authService.currentUserValue.role;
     const user = this.authService.currentUserValue;
-    this.userName = user.firstName ?? 'Dev';
+    const firstName = user.firstName ?? '';
+    const lastName  = user.lastName  ?? '';
+    this.userName = [firstName, lastName].filter(Boolean).join(' ') || 'User';
     this.userImg = user.userImage || null;
-    const first = (user.firstName ?? '').charAt(0).toUpperCase();
-    const last  = (user.lastName  ?? '').charAt(0).toUpperCase();
-    this.userInitials = first + last || 'ME';
+    const first = firstName.charAt(0).toUpperCase();
+    const last  = lastName.charAt(0).toUpperCase();
+    this.userInitials = (first + last) || 'ME';
 
     this.isSidebarCollapsed = localStorage.getItem('collapsed_menu') === 'true';
 

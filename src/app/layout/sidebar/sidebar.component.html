@@ -1,93 +1,190 @@
 <div>
   <!-- Left Sidebar -->
   <aside id="leftsidebar" class="sidebar" (mouseenter)="mouseHover()" (mouseleave)="mouseOut()">
-    <!-- Menu -->
-    <div class="menu">
-      <ng-scrollbar [style.height]="listMaxHeight + 'px'" visibility="hover">
-        <ul class="list">
-          <li class="sidebar-user-panel">
-            <div class="user-panel">
-              <div class=" image">
-                <img src={{userImg}} class="img-circle user-img-circle" alt="User Image" />
+
+    <ng-scrollbar [style.height]="listMaxHeight + 'px'" visibility="hover">
+      <ul class="list px-3 pt-4 pb-6 space-y-1">
+
+        <!-- ── User profile panel ──────────────────────────────────── -->
+        <li class="sidebar-user-panel mb-2">
+          <div class="flex items-center gap-3 px-2 py-2">
+
+            <!-- Avatar with online dot -->
+            <div class="relative shrink-0">
+              <img [src]="userImg" alt="User"
+                   class="w-10 h-10 rounded-xl object-cover user-avatar">
+              <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full
+                           bg-green-500 border-2 border-[var(--cm-surface)]"></span>
+            </div>
+
+            <!-- Name + role -->
+            <div class="hide-menu min-w-0 flex-1">
+              <p class="text-[13px] font-bold text-cm-text-primary truncate leading-tight">
+                {{ userFullName ?? 'Guest User' }}
+              </p>
+              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate leading-tight">
+                {{ userDesignation ?? 'New Joiner' }}
+              </p>
+            </div>
+
+          </div>
+          <!-- Divider -->
+          <div class="h-px bg-cm-border mx-2 mt-2"></div>
+        </li>
+
+        <!-- ── Navigation items ────────────────────────────────────── -->
+        @for (sidebarItem of sidebarItems; track sidebarItem) {
+          <li [routerLinkActive]="sidebarItem.submenu.length !== 0 ? 'active' : 'active-top'">
+
+            <!-- Group header -->
+            @if (sidebarItem.groupTitle === true) {
+              <div class="hide-menu px-2 pt-5 pb-1.5 text-[10px] font-bold
+                          tracking-[0.15em] uppercase text-cm-text-muted select-none">
+                {{ sidebarItem.title }}
               </div>
-            </div>
-            <div class="profile-usertitle">
-              <div class="sidebar-userpic-name">{{userFullName}} </div>
-              <div class="profile-usertitle-job ">{{userDesignation?? 'New Joiner'}} </div>
-            </div>
-          </li>
-          <!-- Top Most level menu -->
-          @for (sidebarItem of sidebarItems; track sidebarItem) {
-            <li [routerLinkActive]="sidebarItem.submenu.length !== 0 ? 'active' : 'active-top'">
-              @if (sidebarItem.groupTitle === true) {
-              <div class="header">{{sidebarItem.title}}</div>
-              }
-              @if (!sidebarItem.groupTitle;) {
-              <a [routerLink]="sidebarItem.class === '' ? [sidebarItem.path] : null" [ngClass]="[sidebarItem.class]"
-                (click)="callToggleMenu($event, sidebarItem.submenu.length)" class="menu-top">
-                <i [ngClass]="[sidebarItem.iconType]">{{sidebarItem.icon}}</i>
-                <span class="hide-menu">{{sidebarItem.title}}
+            }
+
+            <!-- Top-level nav link -->
+            @if (!sidebarItem.groupTitle) {
+              <a [routerLink]="sidebarItem.class === '' ? [sidebarItem.path] : null"
+                 [ngClass]="[sidebarItem.class]"
+                 (click)="callToggleMenu($event, sidebarItem.submenu.length)"
+                 class="menu-top group flex items-center gap-3 px-3 py-2.5
+                        rounded-xl text-[13px] font-medium
+                        cursor-pointer transition-all duration-200 select-none">
+
+                <!-- Icon box -->
+                <span class="sidebar-icon-box flex-none flex items-center justify-center
+                             w-8 h-8 rounded-lg transition-all duration-200">
+                  <i [ngClass]="[sidebarItem.iconType]"
+                     class="sidebar-icon text-[18px] leading-none transition-colors duration-200">
+                    {{ sidebarItem.icon }}
+                  </i>
                 </span>
-                @if (sidebarItem.badge !== '' ) {
-                <span [ngClass]="[sidebarItem.badgeClass]">{{sidebarItem.badge}}</span>
+
+                <!-- Label -->
+                <span class="hide-menu flex-1 min-w-0 truncate transition-colors duration-200">
+                  {{ sidebarItem.title }}
+                </span>
+
+                <!-- Badge -->
+                @if (sidebarItem.badge !== '') {
+                  <span [ngClass]="[sidebarItem.badgeClass]"
+                        class="sidebar-badge hide-menu shrink-0">
+                    {{ sidebarItem.badge }}
+                  </span>
+                }
+
+                <!-- Expand chevron -->
+                @if (sidebarItem.submenu.length > 0) {
+                  <svg class="sidebar-chevron hide-menu flex-none w-3.5 h-3.5 ml-auto
+                               transition-transform duration-200"
+                       fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
                 }
               </a>
-              }
-              <!-- First level menu -->
-              @if (sidebarItem.submenu.length > 0) {
+            }
+
+            <!-- ── Level 1 submenu ──────────────────────────────────── -->
+            @if (sidebarItem.submenu.length > 0) {
               <ul class="ml-menu">
                 @for (sidebarSubItem1 of sidebarItem.submenu; track sidebarSubItem1) {
-                <li [routerLinkActive]="sidebarSubItem1.submenu.length > 0 ? '' : 'active'">
-                  <a [routerLink]="sidebarSubItem1.submenu.length > 0 ? null : [sidebarSubItem1.path]"
-                    (click)="callToggleMenu($event,sidebarSubItem1.submenu.length)" [ngClass]="[sidebarSubItem1.class]">
-                    <i [ngClass]="[sidebarItem.iconType]">{{sidebarSubItem1.icon}}</i>
-                    {{sidebarSubItem1.title}}
-                  </a>
-                  <!-- Second level menu -->
-                  @if (sidebarSubItem1.submenu.length > 0) {
-                  <ul class="ml-menu-2">
-                    @for (sidebarSubItem2 of sidebarSubItem1.submenu; track sidebarSubItem2) {
-                    <li [routerLinkActive]="sidebarSubItem2.submenu.length > 0 ? '' : 'active'">
-                      <a [routerLink]="sidebarSubItem2.submenu.length > 0 ? null : [sidebarSubItem2.path]"
-                        (click)="callToggleMenu($event,sidebarSubItem2.submenu.length)"
-                        [ngClass]="[sidebarSubItem2.class]">
-                        {{sidebarSubItem2.title}}
-                      </a>
-                      <!-- Third level menu -->
-                      @if (sidebarSubItem2.submenu.length > 0) {
-                      <ul class="ml-menu-3">
-                        @for (sidebarSubItem3 of sidebarSubItem2.submenu; track sidebarSubItem3) {
-                        <li [routerLinkActive]="sidebarSubItem3.submenu.length > 0 ? '' : 'active'">
-                          <a [routerLink]="sidebarSubItem3.submenu.length > 0 ? null : [sidebarSubItem3.path]"
-                            (click)="callToggleMenu($event,sidebarSubItem3.submenu.length)"
-                            [ngClass]="[sidebarSubItem3.class]">
-                            {{sidebarSubItem3.title}}
-                          </a>
-                        </li>
+                  <li [routerLinkActive]="sidebarSubItem1.submenu.length > 0 ? '' : 'active'">
+
+                    <a [routerLink]="sidebarSubItem1.submenu.length > 0 ? null : [sidebarSubItem1.path]"
+                       (click)="callToggleMenu($event, sidebarSubItem1.submenu.length)"
+                       [ngClass]="[sidebarSubItem1.class]"
+                       class="sidebar-sub-item group flex items-center gap-2.5
+                              pl-[44px] pr-3 py-[7px] rounded-lg
+                              text-[12.5px] text-cm-text-secondary cursor-pointer
+                              transition-all duration-200
+                              hover:bg-cm-surface-raised hover:text-cm-text-primary">
+                      <span class="sub-dot w-1.5 h-1.5 rounded-full shrink-0
+                                   transition-all duration-200"></span>
+                      <span class="hide-menu flex-1 min-w-0 truncate">{{ sidebarSubItem1.title }}</span>
+                      @if (sidebarSubItem1.submenu.length > 0) {
+                        <svg class="sidebar-chevron hide-menu flex-none w-3 h-3 ml-auto
+                                   transition-transform duration-200"
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      }
+                    </a>
+
+                    <!-- ── Level 2 submenu ────────────────────────────── -->
+                    @if (sidebarSubItem1.submenu.length > 0) {
+                      <ul class="ml-menu-2">
+                        @for (sidebarSubItem2 of sidebarSubItem1.submenu; track sidebarSubItem2) {
+                          <li [routerLinkActive]="sidebarSubItem2.submenu.length > 0 ? '' : 'active'">
+
+                            <a [routerLink]="sidebarSubItem2.submenu.length > 0 ? null : [sidebarSubItem2.path]"
+                               (click)="callToggleMenu($event, sidebarSubItem2.submenu.length)"
+                               [ngClass]="[sidebarSubItem2.class]"
+                               class="sidebar-sub-item flex items-center gap-2
+                                      pl-[60px] pr-3 py-[7px] rounded-lg
+                                      text-[12px] text-cm-text-secondary cursor-pointer
+                                      transition-all duration-200
+                                      hover:bg-cm-surface-raised hover:text-cm-text-primary">
+                              <span class="sub-dot w-1 h-1 rounded-full shrink-0
+                                           transition-all duration-200"></span>
+                              <span class="hide-menu flex-1 min-w-0 truncate">{{ sidebarSubItem2.title }}</span>
+                            </a>
+
+                            <!-- ── Level 3 submenu ──────────────────────── -->
+                            @if (sidebarSubItem2.submenu.length > 0) {
+                              <ul class="ml-menu-3">
+                                @for (sidebarSubItem3 of sidebarSubItem2.submenu; track sidebarSubItem3) {
+                                  <li [routerLinkActive]="sidebarSubItem3.submenu.length > 0 ? '' : 'active'">
+                                    <a [routerLink]="sidebarSubItem3.submenu.length > 0 ? null : [sidebarSubItem3.path]"
+                                       (click)="callToggleMenu($event, sidebarSubItem3.submenu.length)"
+                                       [ngClass]="[sidebarSubItem3.class]"
+                                       class="flex items-center gap-2
+                                              pl-[76px] pr-3 py-[7px] rounded-lg
+                                              text-[12px] text-cm-text-secondary cursor-pointer
+                                              transition-all duration-200
+                                              hover:bg-cm-surface-raised hover:text-cm-text-primary">
+                                      <span class="w-1 h-1 rounded-full bg-cm-border shrink-0"></span>
+                                      <span class="hide-menu flex-1 min-w-0 truncate">{{ sidebarSubItem3.title }}</span>
+                                    </a>
+                                  </li>
+                                }
+                              </ul>
+                            }
+                          </li>
                         }
                       </ul>
-                      }
-                    </li>
                     }
-                  </ul>
-                  }
-                </li>
+
+                  </li>
                 }
               </ul>
-              }
-            </li>
-          }
-          <li class="logout-menu-item">
-            <a class="" (click)="logout()" class="menu-top">
-              <i class="material-icons-outlined">power_settings_new</i>
-              <span class="hide-menu">Logout
-              </span>
-            </a>
+            }
+
           </li>
-        </ul>
-      </ng-scrollbar>
-    </div>
-    <!-- #Menu -->
+        }
+
+        <!-- ── Logout ──────────────────────────────────────────────── -->
+        <li class="sidebar-logout mt-2 pt-2 border-t border-cm-border">
+          <a (click)="logout()"
+             class="menu-top group flex items-center gap-3 px-3 py-3.5
+                    rounded-xl text-[13px] font-medium cursor-pointer
+                    transition-all duration-200 select-none">
+            <span class="sidebar-icon-box sidebar-logout-icon flex-none flex items-center justify-center
+                         w-8 h-8 rounded-lg transition-all duration-200">
+              <svg class="sidebar-icon w-[18px] h-[18px] transition-colors duration-200"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
+              </svg>
+            </span>
+            <span class="hide-menu font-medium">Sign Out</span>
+          </a>
+        </li>
+
+      </ul>
+    </ng-scrollbar>
+
   </aside>
   <!-- #END# Left Sidebar -->
 </div>
