@@ -1,3 +1,29 @@
+/* ── Host: fill and centre inside dialog ────────────────────────── */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Fullscreen dialog: padding + floating card for each state ───── */
+:host-context(.full-screen-dialog) {
+  padding: 16px;
+
+  .quiz-state-card {
+    background: var(--cm-surface);
+    border: 1px solid var(--cm-border);
+    border-radius: 20px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
 /* ── Sweep progress bar (mirrors browse-quizzes pattern) ────── */
 .loading-bar-track {
   position: relative;

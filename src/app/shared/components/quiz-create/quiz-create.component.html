@@ -2,7 +2,7 @@
      STATE 1 — SUCCESS
 ══════════════════════════════════════════════════════════════ -->
 @if(requestConfirmed && generatedQuizCode){
-<div class="flex flex-col items-center text-center gap-5 p-8 min-w-[300px]">
+<div class="quiz-state-card flex flex-col items-center text-center gap-5 p-8 w-full max-w-[380px]">
 
   <div class="relative">
     <div class="w-20 h-20 rounded-2xl bg-green-500/10 border border-green-500/20
@@ -32,7 +32,10 @@
       Start Quiz Now
     </button>
     <button type="button" (click)="close()"
-      class="w-full text-sm font-medium text-cm-text-muted hover:text-cm-text-secondary transition-colors py-2">
+      class="w-full h-11 rounded-xl font-bold text-sm border border-cm-border
+             text-cm-text-secondary bg-cm-surface-raised
+             hover:bg-cm-surface-hover hover:border-cm-border-strong
+             active:scale-95 transition-all inline-flex items-center justify-center gap-2">
       Will Take Later
     </button>
   </div>
@@ -44,7 +47,7 @@
      STATE 2 — LOADING / GENERATING
 ══════════════════════════════════════════════════════════════ -->
 @if(requestConfirmed && loading){
-<div class="flex flex-col min-w-[300px]">
+<div class="quiz-state-card flex flex-col w-full max-w-[380px]">
 
   <!-- Sweep progress bar -->
   <div class="loading-bar-track">
@@ -85,7 +88,7 @@
      STATE 3 — CONFIG FORM
 ══════════════════════════════════════════════════════════════ -->
 @if(!requestConfirmed){
-<div class="relative flex flex-col min-w-[340px] max-w-[460px]">
+<div class="quiz-state-card relative flex flex-col min-w-[340px] max-w-[460px] w-full">
 
   <!-- Dismiss button -->
   @if(!(data && data?.editMode)){

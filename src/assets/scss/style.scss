@@ -4,98 +4,23 @@
  *  Author     : AppDev Theme
  *  Description: This is main style scss file. Bootstrap to Tailwind css migration
 */
-//delete
-//@import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @include meta.load-css("common/_variables");
 @include meta.load-css("common/_mixins");
 @include meta.load-css("common/_customanimate.scss");
 @include meta.load-css("common/_general.scss");
-@include meta.load-css("common/_demo.scss");
 @include meta.load-css("common/_helpers.scss");
 @include meta.load-css("common/_media.scss");
 @include meta.load-css("common/_animation.scss");
-@include meta.load-css("common/_rtl.scss");
 
 @include meta.load-css("components/_breadcrumbs.scss");
 @include meta.load-css("components/_checkboxradio.scss");
-@include meta.load-css("components/_dropdownmenu.scss");
-@include meta.load-css("components/_formcomponents.scss");
 @include meta.load-css("components/_infobox.scss");
-@include meta.load-css("components/_inputformgroup.scss");
-@include meta.load-css("components/_labels.scss");
 @include meta.load-css("components/_leftsidebaroverlay.scss");
-@include meta.load-css("components/_navbar");
-@include meta.load-css("components/_navtabs.scss");
-@include meta.load-css("components/_noticeboard.scss");
-@include meta.load-css("components/_rightsidebar.scss");
-@include meta.load-css("components/_searchbar.scss");
-@include meta.load-css("components/_switch.scss");
-@include meta.load-css("components/_thumbnails.scss");
-@include meta.load-css("components/_settingSidebar.scss");
 
-/*                 [4. Apps]                   				*/
-// @include meta.load-css("apps/_calendar.scss");
-// @include meta.load-css("apps/_chat.scss");
-// @include meta.load-css("apps/_contactlist.scss");
-// @include meta.load-css("apps/_contactgrid.scss");
-// @include meta.load-css("apps/_dragdrop.scss");
-// @include meta.load-css("apps/_task.scss");
-
-/*                 [5. Pages ]                   				*/
-@include meta.load-css("pages/_dashboard.scss");
-@include meta.load-css("pages/_inbox.scss");
-@include meta.load-css("pages/_pricing.scss");
-@include meta.load-css("pages/_profile.scss");
-// @import "pages/_extra_pages.scss";
 @include meta.load-css("pages/_auth.scss");
-@include meta.load-css("pages/_payslip.scss");
 
-/*                 [6. Pugins ]                   				*/
-@include meta.load-css("plugins/_formwizard.scss");
-@include meta.load-css("plugins/_tables.scss");
-
-/*                 [7. UI ]                   */
-@include meta.load-css("ui/_alerts.scss");
-@include meta.load-css("ui/_badgelistgroupitem.scss");
-@include meta.load-css("ui/_buttons.scss");
 @include meta.load-css("ui/_card.scss");
-@include meta.load-css("ui/_collapse.scss");
-@include meta.load-css("ui/_dialogs.scss");
-@include meta.load-css("ui/_expansion.scss");
-@include meta.load-css("ui/_mediaobject.scss");
-@include meta.load-css("ui/_modals.scss");
-@include meta.load-css("ui/_pageloader.scss");
-@include meta.load-css("ui/_pagination.scss");
-@include meta.load-css("ui/_panels.scss");
-@include meta.load-css("ui/_preloaders.scss");
-@include meta.load-css("ui/_progressbars.scss");
-@include meta.load-css("ui/_slider.scss");
 @include meta.load-css("ui/_snackbar.scss");
-@include meta.load-css("ui/_tabs.scss");
-@include meta.load-css("ui/_tooltippopovers.scss");
-@include meta.load-css("ui/_ckeditor.scss");
-
-/*                 [8. Browser ]                   			*/
-@include meta.load-css("browser/_ie10.scss");
-@include meta.load-css("browser/_ie11.scss");
-
-:root {
-    --primary: #3f51b5;
-    --secondary: #88e68b;
-    --bg-color: #833cf6;
-    --bg-color-secondary: #461597;
-    --profile-bg: #ffd471;
-    --bg-white: #fff;
-    --transparent: rgba(0, 0, 0, 0);
-    --text-dark: #3c3c3d;
-    --text-color: #1a1b1f;
-    --text-light2: #acafaf;
-    --text-white: #fff;
-    --text-black: #000;
-    --border-line-color: #eaeaf1;
-    --input-bg: #fcfcfc;
-    --item-bg: #eff7fb;
-}
 
 .dim-divider {
   border: none;
@@ -127,7 +52,6 @@ no-data-container.no-data-container {
 
 .no-data-container img {
   max-height: 120px;
-  /* optional, to control image size */
   margin-bottom: 10px;
 }
 
@@ -220,7 +144,6 @@ no-data-container.no-data-container {
   margin: 0px;
   li {
     img {
-      //border: 2px solid #ffffff;
       box-shadow: 0 2px 10px 0 rgba(107, 111, 130, 0.3);
     }
 
@@ -253,7 +176,6 @@ no-data-container.no-data-container {
 
   50% {
     transform: scale(1.1);
-    /* Slightly larger */
   }
 
   100% {
@@ -268,28 +190,22 @@ no-data-container.no-data-container {
 
 pre {
   white-space: pre-wrap;
-  /* Wrap text when needed */
   word-wrap: break-word;
-  /* Break long words if necessary */
   overflow-x: auto;
-  /* Horizontal scrollbar only if really needed */
 }
 
 .subject-image-group img {
   display: inline-block;
   width: 40px;
   margin: 4px;
-  //animation: fadeScale 1.5s infinite;
-  //animation: bounce 2.1s infinite;
-  //animation: fadeBounce 2s ease-in-out forwards;
 }
 
 .userProfile {
   padding: 2px;
-    border-radius: 50% 50% 50% 50%;
-    max-width: 64px;
-    box-shadow: 0px 10px 25px 0px rgba(0, 0, 0, 0.3);
-    margin: 10px;
+  border-radius: 50% 50% 50% 50%;
+  max-width: 64px;
+  box-shadow: 0px 10px 25px 0px rgba(0, 0, 0, 0.3);
+  margin: 10px;
 }
 
 .cmSubHeading{
@@ -377,7 +293,6 @@ code {
   margin: 1rem 0;
 }
 
-/* Prevent double styling inside pre */
 .tiptap pre code {
   background: none;
   padding: 0;
@@ -385,15 +300,10 @@ code {
   font-size: inherit;
 }
 
-/* Ensure proper formatting for language blocks */
 .tiptap code[class*="language-"] {
   display: block;
   white-space: pre;
 }
-
-/* =========================
-   Scrollbar Styling (Optional but nice)
-========================= */
 
 .tiptap pre::-webkit-scrollbar {
   height: 6px;
@@ -403,10 +313,6 @@ code {
   background: #374151;
   border-radius: 4px;
 }
-
-/* =========================
-   Optional Line Numbers (requires JS line wrapping)
-========================= */
 
 .tiptap.pre-with-lines {
   counter-reset: line;
@@ -425,11 +331,6 @@ code {
   color: #6b7280;
   text-align: right;
 }
-
-/* =========================
-   Syntax Highlighting Support
-   (for Highlight.js / Prism.js)
-========================= */
 
 /* Keywords */
 .tiptap .hljs-keyword,
