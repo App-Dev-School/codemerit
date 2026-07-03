@@ -267,6 +267,7 @@ export class ViewCourseComponent implements OnInit {
       maxWidth: '100vw',
       maxHeight: '100vh',
       panelClass: 'full-screen-dialog',
+      backdropClass: 'quiz-blur-backdrop',
       data: {
         title: data?.title + ' Quiz',
         subject: data?.id,

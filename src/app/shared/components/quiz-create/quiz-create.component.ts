@@ -50,6 +50,19 @@ export class QuizCreateComponent implements OnInit {
   currentMessage = this.messages[0];
   messageIndex = 0;
   finished = false;
+
+  get stepTagline(): string {
+    if (this.finished) return 'Adding the finishing touches…';
+    return this.messageIndex === 0
+      ? 'Scanning your subject knowledge base'
+      : 'Personalising your assessment';
+  }
+  get step1Done():   boolean { return this.messageIndex >= 1 || this.finished; }
+  get step1Active(): boolean { return this.messageIndex === 0 && !this.finished; }
+  get step2Done():   boolean { return this.finished; }
+  get step2Active(): boolean { return this.messageIndex === 1 && !this.finished; }
+  get step3Active(): boolean { return this.finished; }
+
   quizConfigForm!: UntypedFormGroup;
   authData: User;
 

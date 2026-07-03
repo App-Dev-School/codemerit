@@ -161,7 +161,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       if (this.questionTimeLeft === 10 && this.quizConfig.mode === 'Default' && !this.warningActive) {
         this.showWarningToast = true;
         this.warningActive = true;
-        setTimeout(() => { this.showWarningToast = false; }, 1000);
+        setTimeout(() => { this.showWarningToast = false; }, 2000);
       }
 
       if (this.questionTimeLeft <= 0) {
@@ -464,6 +464,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       minWidth: '345px',
       data: { editMode: true, title: 'Select your preference', message: '' },
       hasBackdrop: true,
+      backdropClass: 'quiz-blur-backdrop',
       autoFocus: true,
       disableClose: true,
     });

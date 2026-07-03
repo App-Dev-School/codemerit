@@ -324,6 +324,7 @@ export class DashboardComponent implements OnInit {
         topic: topic,
         source: 'Subject'
        },
+      backdropClass: 'quiz-blur-backdrop',
       direction: varDirection,
       autoFocus: false,
       disableClose: true
