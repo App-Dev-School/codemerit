@@ -21,6 +21,8 @@ export class HeaderComponent
   config!: InConfiguration;
   userName?: string;
   userImg?: string;
+  userInitials = 'ME';
+  imgError = false;
   homePage?: string;
   isFullScreen = false;
   isMobileMenuOpen = false;
@@ -47,9 +49,12 @@ export class HeaderComponent
   ngOnInit() {
     this.config = this.configService.configData;
     const userRole = this.authService.currentUserValue.role;
-    this.userName = this.authService.currentUserValue.firstName ?? 'Dev';
-    this.userImg = this.authService.currentUserValue.userImage
-      || 'assets/images/users/user.jpg';
+    const user = this.authService.currentUserValue;
+    this.userName = user.firstName ?? 'Dev';
+    this.userImg = user.userImage || null;
+    const first = (user.firstName ?? '').charAt(0).toUpperCase();
+    const last  = (user.lastName  ?? '').charAt(0).toUpperCase();
+    this.userInitials = first + last || 'ME';
 
     this.isSidebarCollapsed = localStorage.getItem('collapsed_menu') === 'true';
 

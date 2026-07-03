@@ -1,1 +1,12 @@
-// All styling is via Tailwind utility classes in the template.
+// On mobile the LEFT zone is always 60px, so always show the icon and hide the wordmark.
+@media (max-width: 767px) {
+  .header-brand-icon {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .header-brand-wordmark {
+    display: none !important;
+  }
+}

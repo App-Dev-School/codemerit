@@ -23,24 +23,21 @@
           </div>
 
           <!-- Skeleton quiz cards -->
-          <div style="display:flex; flex-wrap:wrap; gap:16px;">
+          <div class="flex flex-wrap gap-4">
             @for (i of [1,2,3,4,5,6]; track i) {
-              <div style="min-width:268px; flex:1 1 268px; border-radius:16px;
-                          border:1px solid var(--cm-border); background:var(--cm-surface);
-                          overflow:hidden;">
-                <div class="shimmer" style="height:130px;"></div>
-                <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
-                  <div class="shimmer" style="height:12px; border-radius:6px;"></div>
-                  <div class="shimmer" style="height:12px; border-radius:6px; width:70%;"></div>
-                  <div style="display:flex; gap:8px;">
-                    <div class="shimmer" style="height:22px; width:56px; border-radius:6px;"></div>
-                    <div class="shimmer" style="height:22px; width:56px; border-radius:6px;"></div>
-                    <div class="shimmer" style="height:22px; width:48px; border-radius:6px;"></div>
+              <div class="min-w-[268px] flex-[1_1_268px] rounded-2xl border border-cm-border bg-cm-surface overflow-hidden">
+                <div class="shimmer h-[130px]"></div>
+                <div class="px-4 py-3.5 flex flex-col gap-2.5">
+                  <div class="shimmer h-3 rounded"></div>
+                  <div class="shimmer h-3 rounded w-[70%]"></div>
+                  <div class="flex gap-2">
+                    <div class="shimmer h-[22px] w-14 rounded"></div>
+                    <div class="shimmer h-[22px] w-14 rounded"></div>
+                    <div class="shimmer h-[22px] w-12 rounded"></div>
                   </div>
-                  <div style="display:flex; align-items:center; justify-content:space-between;
-                              padding-top:10px; border-top:1px solid var(--cm-border);">
-                    <div class="shimmer" style="height:12px; width:80px; border-radius:6px;"></div>
-                    <div class="shimmer" style="height:30px; width:90px; border-radius:8px;"></div>
+                  <div class="flex items-center justify-between pt-2.5 border-t border-cm-border">
+                    <div class="shimmer h-3 w-20 rounded"></div>
+                    <div class="shimmer h-[30px] w-[90px] rounded-lg"></div>
                   </div>
                 </div>
               </div>
@@ -69,14 +66,14 @@
             </div>
 
             <!-- Actions -->
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div class="flex items-center gap-2.5">
 
               <!-- Quiz count badge -->
               @if (quizzes.length > 0) {
                 <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl
                              bg-cm-surface border border-cm-border shadow-sm
                              text-xs font-bold text-cm-text-primary">
-                  <i class="fa-solid fa-layer-group text-[10px]" style="color:#6366f1;"></i>
+                  <i class="fa-solid fa-layer-group text-[10px] text-indigo-500"></i>
                   {{ quizzes.length }} quizzes
                 </span>
               }
@@ -85,8 +82,8 @@
               <button (click)="toggleRightSidebar()"
                       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
                              text-xs font-bold text-white transition-all
-                             shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40"
-                      style="background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; cursor:pointer;">
+                             bg-gradient-to-br from-indigo-500 to-violet-500
+                             shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40">
                 <i class="fa-solid fa-sliders" style="font-size:12px;"></i>
                 Filters
               </button>
@@ -96,9 +93,9 @@
 
           <!-- Quiz grid ───────────────────────────────────────────────────── -->
           @if (quizzes.length > 0) {
-            <div style="display:flex; flex-wrap:wrap; gap:16px;">
+            <div class="flex flex-wrap gap-4">
               @for (quiz of quizzes; track quiz.id) {
-                <div style="min-width:268px; flex:1 1 268px; max-width:420px;">
+                <div class="min-w-[268px] flex-[1_1_268px] max-w-[420px]">
                   <app-quiz-thumbnail
                     [quiz]="quiz"
                     (quizSelected)="takeQuiz($event)"
@@ -125,8 +122,9 @@
               </div>
               <button (click)="resetFilters()"
                       class="flex items-center gap-2 px-4 py-2 rounded-lg
-                             text-xs font-bold text-white shadow-md shadow-indigo-500/20"
-                      style="background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; cursor:pointer;">
+                             text-xs font-bold text-white
+                             bg-gradient-to-br from-indigo-500 to-violet-500
+                             shadow-md shadow-indigo-500/20">
                 <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset Filters
               </button>
             </div>
@@ -136,9 +134,9 @@
           @if (quizzes.length === 0 && (selectedSubjectId === null || selectedSubjectId === undefined || selectedSubjectId === 0)) {
             <div class="flex flex-col items-center justify-center py-20 gap-4 text-center
                         rounded-2xl border border-cm-border bg-cm-surface-muted">
-              <div class="w-16 h-16 rounded-2xl flex items-center justify-center"
-                   style="background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.2);">
-                <i class="fa-solid fa-filter text-2xl" style="color:#6366f1;"></i>
+              <div class="w-16 h-16 rounded-2xl flex items-center justify-center
+                          bg-indigo-500/10 border border-indigo-500/20">
+                <i class="fa-solid fa-filter text-2xl text-indigo-500"></i>
               </div>
               <div class="space-y-1.5">
                 <p class="text-sm font-bold text-cm-text-primary">Ready to explore?</p>
@@ -148,8 +146,9 @@
               </div>
               <button (click)="toggleRightSidebar()"
                       class="flex items-center gap-2 px-4 py-2 rounded-lg
-                             text-xs font-bold text-white shadow-md shadow-indigo-500/20"
-                      style="background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; cursor:pointer;">
+                             text-xs font-bold text-white
+                             bg-gradient-to-br from-indigo-500 to-violet-500
+                             shadow-md shadow-indigo-500/20">
                 <i class="fa-solid fa-sliders text-[10px]"></i> Open Filters
               </button>
             </div>

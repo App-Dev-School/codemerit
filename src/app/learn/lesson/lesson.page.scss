@@ -3,6 +3,33 @@
 :host {
   display: block;
   min-height: 100vh;
+  color-scheme: dark;
+}
+
+/* ── Page entrance animation ───────────────────────────── */
+@keyframes lessonFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+header, main, footer {
+  animation: lessonFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+main { animation-delay: 0.05s; }
+footer { animation-delay: 0.08s; }
+
+/* ── Page exit animation ───────────────────────────────── */
+@keyframes lessonFadeOut {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to   { opacity: 0; transform: scale(0.97) translateY(-8px); }
+}
+
+:host.is-exiting header,
+:host.is-exiting main,
+:host.is-exiting footer {
+  animation: lessonFadeOut 0.4s cubic-bezier(0.4, 0, 1, 1) both;
+  animation-delay: 0s !important;
 }
 
 /* Serif fonts for section titles and body content */
@@ -15,6 +42,25 @@
   font-family: 'Lora', Georgia, serif;
 }
 
+/* ── Blackboard content card ────────────────────────────── */
+.lesson-card {
+  /* slate-900 is #0f172a — clearly distinct from the slate-950 (#020617) page bg */
+  background: #0f1f17; /* very dark muted green — classic blackboard hue */
+  border-radius: 1.25rem;
+  border: 1px solid rgba(100, 116, 100, 0.35); /* muted sage border */
+  padding: 1.75rem;
+  /* inset chalk-dust highlight on top edge + deep outer shadow */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 56px rgba(0, 0, 0, 0.65);
+}
+
+@media (min-width: 640px) {
+  .lesson-card {
+    padding: 2.75rem;
+  }
+}
+
 /* Reset swiper-slide alignment so content flows left-aligned */
 swiper-slide {
   align-items: flex-start !important;
@@ -25,16 +71,16 @@ swiper-slide {
 /* ── Prose styles ────────────────────────────────────── */
 
 .lesson-prose :deep(p) {
-  margin-bottom: 1rem;
-  line-height: 1.85;
+  margin-bottom: 1.1rem;
+  line-height: 1.9;
   color: #cbd5e1; /* slate-300 */
-  font-size: 1rem;
+  font-size: 1.0625rem;
 }
 
 @media (max-width: 640px) {
   .lesson-prose :deep(p) {
-    font-size: 1.0625rem; /* slightly larger on mobile for readability */
-    line-height: 1.9;
+    font-size: 1.125rem;
+    line-height: 1.95;
   }
 }
 
@@ -50,9 +96,9 @@ swiper-slide {
   letter-spacing: -0.015em;
 }
 
-.lesson-prose :deep(h2) { font-size: 1.5rem; }
-.lesson-prose :deep(h3) { font-size: 1.25rem; }
-.lesson-prose :deep(h4) { font-size: 1.1rem; }
+.lesson-prose :deep(h2) { font-size: 1.625rem; }
+.lesson-prose :deep(h3) { font-size: 1.35rem; }
+.lesson-prose :deep(h4) { font-size: 1.15rem; }
 
 .lesson-prose :deep(ul),
 .lesson-prose :deep(ol) {
@@ -62,8 +108,9 @@ swiper-slide {
 }
 
 .lesson-prose :deep(li) {
-  margin-bottom: 0.55rem;
-  line-height: 1.8;
+  margin-bottom: 0.65rem;
+  line-height: 1.85;
+  font-size: 1.0625rem;
 }
 
 .lesson-prose :deep(strong) {
@@ -86,11 +133,11 @@ swiper-slide {
 }
 
 .lesson-prose :deep(code) {
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 4px;
-  padding: 2px 7px;
-  font-size: 0.85em;
+  background: rgba(99, 102, 241, 0.14);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-size: 0.875em;
   color: #a5b4fc;
   font-family: ui-monospace, 'Fira Code', monospace;
 }
@@ -151,4 +198,88 @@ swiper-slide {
   border-radius: 10px;
   max-width: 100%;
   margin: 1rem 0;
+}
+
+/* ── TipTap code formatting (dark-themed) ────────────────
+   Mirrors take-quiz tiptap styles, adapted for dark bg.
+   Targets hljs and prism token classes embedded in saved
+   TipTap HTML output.
+──────────────────────────────────────────────────────── */
+
+.lesson-prose :deep(pre) {
+  position: relative;
+}
+
+.lesson-prose :deep(pre::-webkit-scrollbar) {
+  height: 5px;
+}
+
+.lesson-prose :deep(pre::-webkit-scrollbar-thumb) {
+  background: #334155;
+  border-radius: 4px;
+}
+
+/* Inline code — language class = block, so keep display: block */
+.lesson-prose :deep(code[class*='language-']) {
+  display: block;
+  white-space: pre;
+}
+
+/* ── Syntax token colors ─────────────────────────────── */
+
+.lesson-prose :deep(.hljs-keyword),
+.lesson-prose :deep(.token.keyword) {
+  color: #c792ea;
+}
+
+.lesson-prose :deep(.hljs-string),
+.lesson-prose :deep(.token.string) {
+  color: #ecc48d;
+}
+
+.lesson-prose :deep(.hljs-title),
+.lesson-prose :deep(.token.function) {
+  color: #82aaff;
+}
+
+.lesson-prose :deep(.hljs-comment),
+.lesson-prose :deep(.token.comment) {
+  color: #637777;
+  font-style: italic;
+}
+
+.lesson-prose :deep(.hljs-number),
+.lesson-prose :deep(.token.number) {
+  color: #f78c6c;
+}
+
+.lesson-prose :deep(.hljs-type),
+.lesson-prose :deep(.token.class-name) {
+  color: #ffcb6b;
+}
+
+.lesson-prose :deep(.hljs-built_in),
+.lesson-prose :deep(.token.builtin) {
+  color: #addb67;
+}
+
+.lesson-prose :deep(.hljs-attr),
+.lesson-prose :deep(.token.attr-name) {
+  color: #7fdbca;
+}
+
+.lesson-prose :deep(.hljs-tag),
+.lesson-prose :deep(.token.tag) {
+  color: #f07178;
+}
+
+.lesson-prose :deep(.hljs-operator),
+.lesson-prose :deep(.token.operator),
+.lesson-prose :deep(.token.punctuation) {
+  color: #89ddff;
+}
+
+.lesson-prose :deep(.hljs-variable),
+.lesson-prose :deep(.token.variable) {
+  color: #eeffff;
 }

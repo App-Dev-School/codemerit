@@ -48,6 +48,12 @@
 .result-card__logo {
   height: 24px;
   width: auto;
+
+  &--dark {
+    display: none;
+    :host-context(.dark) & { display: block; }
+  }
+  :host-context(.dark) &--light { display: none; }
 }
 
 /* Two-column body */

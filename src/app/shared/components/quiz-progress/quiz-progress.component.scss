@@ -47,6 +47,10 @@
   }
 }
 
+:host-context(html.dark) ::ng-deep .apexcharts-datalabel-value {
+  fill: #ffffff !important;
+}
+
 .subjectHeader {
   display: flex;
   align-items: center;

@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostBinding, OnInit, ViewChild } from '@angular/core';
+import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { register } from 'swiper/element/bundle';
 import { Swiper } from 'swiper';
@@ -13,6 +14,9 @@ import { LessonService } from '../lesson.service';
   imports: []
 })
 export class LessonPage implements OnInit, AfterViewInit {
+  @HostBinding('class.dark') readonly alwaysDark = true;
+  @HostBinding('class.is-exiting') exiting = false;
+
   currentSection = 0;
   loading = false;
   errorMessage = '';
@@ -30,7 +34,8 @@ export class LessonPage implements OnInit, AfterViewInit {
   constructor(
     private lessonService: LessonService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location
   ) {}
 
   ngOnInit() {
@@ -49,7 +54,7 @@ export class LessonPage implements OnInit, AfterViewInit {
   reset() {}
 
   exitLesson() {
-    this.router.navigate(['/dashboard/learn/angular']);
+    this.location.back();
   }
 
   backToLessons() {
@@ -58,6 +63,10 @@ export class LessonPage implements OnInit, AfterViewInit {
 
   markAsComplete() {
     this.completed = true;
+    setTimeout(() => {
+      this.exiting = true;
+      setTimeout(() => this.exitLesson(), 450);
+    }, 700);
   }
 
   setViewType(vt: string) {
@@ -81,7 +90,7 @@ export class LessonPage implements OnInit, AfterViewInit {
   }
 
   onSlidePrev() {
-    this.swiperEx?.nativeElement.swiper.slidePrev(1000);
+    this.swiperEx?.nativeElement.swiper.slidePrev(500);
     this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
   }
 
@@ -91,17 +100,28 @@ export class LessonPage implements OnInit, AfterViewInit {
       return;
     }
 
-    this.swiperEx?.nativeElement.swiper.slideNext(1000);
+    this.swiperEx?.nativeElement.swiper.slideNext(500);
     this.currentSection = this.swiperEx?.nativeElement.swiper.activeIndex ?? 0;
   }
 
-  swiperReady() {
-    this.swiper = this.swiperEx?.nativeElement.swiper;
+  initSwiper() {
+    const swiperEl = this.swiperEx?.nativeElement as any;
+    if (!swiperEl) return;
+
+    Object.assign(swiperEl, {
+      slidesPerView: 1,
+      spaceBetween: 0,
+      allowTouchMove: true,
+      effect: 'fade',
+      fadeEffect: { crossFade: true },
+      speed: 500,
+    });
+
+    swiperEl.initialize();
+    this.swiper = swiperEl.swiper;
   }
 
-  ngAfterViewInit(): void {
-    this.swiperReady();
-  }
+  ngAfterViewInit(): void {}
 
   takeRouteParams() {
     this.route.paramMap.subscribe(params => {
@@ -127,7 +147,7 @@ export class LessonPage implements OnInit, AfterViewInit {
           this.errorMessage = 'Lesson data not found.';
         }
 
-        setTimeout(() => this.swiperReady());
+        setTimeout(() => this.initSwiper());
       },
       error: (error) => {
         this.loading = false;

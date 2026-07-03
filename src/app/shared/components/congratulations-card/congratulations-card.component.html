@@ -11,6 +11,28 @@
     <h5 class="text-base font-bold text-cm-text-primary mb-2">Welcome {{user?.firstName ?? 'Guest'}}</h5>
     <p class="text-xs text-cm-text-secondary leading-relaxed mb-4 max-w-xs mx-auto">{{message}}</p>
     <hr class="border-cm-border mb-4">
+
+    <!--New Thing -->
+     <div class="px-5 pt-6 pb-5 text-center
+                      bg-gradient-to-br from-violet-50/70 to-cm-surface
+                      dark:from-violet-500/5 dark:to-transparent border-b border-cm-border">
+            <img src="assets/images/users/user.jpg"
+                 class="w-16 h-16 rounded-full object-cover mx-auto mb-3
+                        border-2 border-cm-brand shadow-sm"
+                 [alt]="user?.firstName">
+            <h4 class="text-sm font-bold text-cm-text-primary leading-snug">
+              {{ user?.firstName }} {{ user?.lastName }}
+            </h4>
+            @if (user?.userJobRoles?.length > 0) {
+            <p class="text-xs text-cm-brand-text font-medium mt-0.5">
+              {{ user?.userJobRoles[0]?.jobRoleTitle }}
+            </p>
+            } @else {
+            <p class="text-xs text-cm-text-muted mt-0.5">New Joiner</p>
+            <span class="text-[11px] text-cm-text-muted">Let us know your Tech Career Preference</span>
+            }
+          </div>
+     <!--New Thing -->     
     <button (click)="handleAction()"
       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-cm-brand text-cm-brand
              text-sm font-semibold hover:bg-cm-brand hover:text-white active:scale-95 transition-all floating">

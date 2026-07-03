@@ -2,7 +2,7 @@
                bg-slate-900 border-b border-slate-800/80 shadow-md">
 
   <!-- ─── LEFT ZONE: Brand logo — width transitions on sidebar collapse ─── -->
-  <div [class]="isSidebarCollapsed ? 'w-[60px]' : 'w-[260px]'"
+  <div [class]="isSidebarCollapsed ? 'w-[60px]' : 'w-[60px] md:w-[260px]'"
        class="flex items-center flex-shrink-0 overflow-hidden
               transition-[width] duration-500 ease-in-out
               bg-slate-950 border-r border-slate-800">
@@ -14,7 +14,7 @@
       <div [class]="isSidebarCollapsed
                       ? 'opacity-100 translate-x-0 pointer-events-auto'
                       : 'opacity-0 -translate-x-2 pointer-events-none'"
-           class="absolute inset-0 flex items-center justify-center
+           class="header-brand-icon absolute inset-0 flex items-center justify-center
                   transition-all duration-300 ease-in-out">
         <img [src]="logoIcon" alt="CM"
              class="w-8 h-8 object-contain rounded-lg">
@@ -24,7 +24,7 @@
       <div [class]="isSidebarCollapsed
                       ? 'opacity-0 translate-x-2 pointer-events-none'
                       : 'opacity-100 translate-x-0 pointer-events-auto'"
-           class="absolute inset-0 flex items-center px-4
+           class="header-brand-wordmark absolute inset-0 flex items-center px-4
                   transition-all duration-300 ease-in-out">
         <img [src]="logoFull" alt="CodeMerit"
              class="h-8 w-auto object-contain max-w-full">
@@ -67,7 +67,7 @@
   <!-- ─── RIGHT ZONE: Actions — flex, never floated, always visible ─── -->
   <div class="flex items-center gap-2 px-4 shrink-0">
 
-    <!-- Fullscreen toggle -->
+    <!-- Fullscreen toggle 
     <button (click)="callFullscreen()"
             class="flex items-center justify-center w-9 h-9 rounded-lg
                    bg-slate-800 hover:bg-slate-700 border border-slate-700/50
@@ -76,7 +76,7 @@
       <i class="material-icons-outlined select-none" style="font-size:20px">
         {{ isFullScreen ? 'fullscreen_exit' : 'fullscreen' }}
       </i>
-    </button>
+    </button>-->
 
     <!-- Dark / light mode toggle -->
     <button (click)="toggleTheme()"
@@ -94,22 +94,28 @@
 
     <!-- User profile chip -->
     <button [routerLink]="'users/profile'"
-            class="flex items-center gap-2.5 pl-2 pr-3 h-9 rounded-full
+            class="flex items-center gap-2.5 pl-1.5 pr-3 h-9 rounded-xl
                    bg-slate-800 hover:bg-indigo-500/10
                    border border-slate-700 hover:border-indigo-500/40
                    transition-colors duration-150 shrink-0 group"
             title="My profile">
-      <img [src]="userImg" [alt]="userName"
-           class="w-7 h-7 rounded-full object-cover border-2 border-slate-600
-                  group-hover:border-indigo-500/50 flex-shrink-0 transition-colors">
+      <!-- Avatar: image with initials fallback -->
+      @if (userImg && !imgError) {
+        <img [src]="userImg" [alt]="userName" (error)="imgError = true"
+             class="w-7 h-7 rounded-lg object-cover border-2 border-slate-600
+                    group-hover:border-indigo-500/50 flex-shrink-0 transition-colors">
+      } @else {
+        <span class="w-7 h-7 rounded-lg border-2 border-slate-600
+                     group-hover:border-indigo-500/50 flex-shrink-0 transition-colors
+                     bg-indigo-600 flex items-center justify-center
+                     text-white text-[10px] font-bold tracking-wide select-none">
+          {{ userInitials }}
+        </span>
+      }
       <span class="text-sm font-medium text-slate-300 group-hover:text-white
                    hidden sm:block whitespace-nowrap leading-none transition-colors">
         {{ userName }}
       </span>
-      <i class="material-icons-outlined text-slate-500 group-hover:text-indigo-400
-                hidden sm:block select-none transition-colors" style="font-size:16px">
-        expand_more
-      </i>
     </button>
 
   </div>
