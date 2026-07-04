@@ -30,4 +30,9 @@ export const LMS_ROUTE: Route[] = [
     loadChildren: () =>
       import('./lessons/lessons.routes').then((m) => m.LESSONS_ROUTE),
   },
+  {
+    path: 'subject-tracks',
+    loadChildren: () =>
+      import('./subject-tracks/subject-tracks.routes').then((m) => m.SUBJECT_TRACKS_ROUTE),
+  },
 ];

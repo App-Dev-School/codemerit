@@ -1,0 +1,127 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cm-text-secondary);
+  margin-bottom: 5px;
+}
+
+.field-hint {
+  margin-top: 3px;
+  font-size: 0.72rem;
+  color: var(--cm-text-muted);
+}
+
+.field-input,
+.field-select,
+.field-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  border: 1px solid var(--cm-border);
+  background: var(--cm-surface);
+  color: var(--cm-text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+
+  &::placeholder { color: var(--cm-text-muted); }
+  &:focus { border-color: var(--cm-brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--cm-brand) 20%, transparent); }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+.field-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+
+  option {
+    background: var(--cm-surface);
+    color: var(--cm-text-primary);
+  }
+}
+
+.field-textarea {
+  resize: none;
+}
+
+.field-error {
+  margin-top: 3px;
+  font-size: 0.72rem;
+  color: #f87171;
+}
+
+.select-wrap {
+  position: relative;
+}
+
+.select-caret {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--cm-text-muted);
+  pointer-events: none;
+}
+
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .toggle-track {
+      background: var(--cm-brand);
+      border-color: var(--cm-brand);
+
+      .toggle-knob {
+        transform: translateX(16px);
+      }
+    }
+  }
+}
+
+.toggle-track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--cm-border);
+  background: var(--cm-surface-raised);
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
