@@ -499,6 +499,37 @@
           </div>
         </div>
 
+        <!-- Subject Tracks entry point -->
+        <div class="px-5 py-3 border-t border-cm-border">
+          <button
+            (click)="goToSubjectTracks()"
+            class="w-full group flex items-center justify-between p-3 rounded-xl
+                   bg-cm-surface-raised border border-cm-border
+                   hover:border-emerald-500/40 hover:bg-emerald-500/5
+                   active:scale-[0.99] transition-all duration-150"
+          >
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20
+                          flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10
+                       a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7"/>
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="text-xs font-bold text-cm-text-primary leading-tight">Subject Tracks</p>
+                <p class="text-[11px] text-cm-text-muted mt-0.5">Organise topics into curriculum tracks</p>
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-cm-text-muted group-hover:text-emerald-500 transition-colors shrink-0"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
         <div class="mt-auto px-5 pb-4 border-t border-cm-border pt-4 flex gap-2">
           <button (click)="goToCreateTopic()"
             class="flex-1 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold

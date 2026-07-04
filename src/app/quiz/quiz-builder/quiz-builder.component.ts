@@ -181,6 +181,11 @@ export class QuizBuilderComponent implements OnInit {
     });
   }
 
+  //unused
+  exitBuilder(): void {
+    this.router.navigate(['lms/quizzes/list']);
+  }
+
   prevStep(): void {
     if (this.currentStep > 0) {
       this.currentStep--;

@@ -1,3 +1,64 @@
+// ── Tab toggle bar (quiz-builder mode) ────────────────────────────────────
+.qf-tab-bar {
+  display: flex;
+  gap: 0.375rem;
+  margin-bottom: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 0.25rem;
+}
+
+.qf-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--cm-text-muted);
+  font-size: 0.775rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  i { font-size: 10px; }
+
+  &:hover:not(.qf-tab--active) {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--cm-text-secondary);
+  }
+
+  &--active {
+    background: rgba(99, 102, 241, 0.18);
+    color: #a5b4fc;
+  }
+}
+
+.qf-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cm-text-muted);
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &--filled {
+    background: rgba(99, 102, 241, 0.25);
+    color: #a5b4fc;
+  }
+}
+
 // ── CDK drag ──────────────────────────────────────────────────────────────
 .cdk-drag-placeholder { opacity: 0.3; }
 .cdk-drag-animating { transition: transform 250ms cubic-bezier(0, 0, 0.2, 1); }
@@ -19,7 +80,7 @@
 .qf-card {
   display: flex;
   flex-direction: column;
-  height: 480px;
+  height: 420px;
 }
 
 // ── Card header ────────────────────────────────────────────────────────────

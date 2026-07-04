@@ -8,10 +8,29 @@
     </div>
   </div>
 } @else {
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <ng-container *ngTemplateOutlet="selectQuestionCard"></ng-container>
-    <ng-container *ngTemplateOutlet="selectedQuestionCard"></ng-container>
+  <!-- Tab bar -->
+  <div class="qf-tab-bar">
+    <button class="qf-tab" [class.qf-tab--active]="activePanel === 'find'"
+            (click)="activePanel = 'find'">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      Find Questions
+    </button>
+    <button class="qf-tab" [class.qf-tab--active]="activePanel === 'selected'"
+            (click)="activePanel = 'selected'">
+      <i class="fa-solid fa-list-check"></i>
+      Selected
+      <span class="qf-tab-count" [class.qf-tab-count--filled]="quizQuestions.length > 0">
+        {{ quizQuestions.length }}
+      </span>
+    </button>
   </div>
+
+  <!-- Single active panel -->
+  @if (activePanel === 'find') {
+    <ng-container *ngTemplateOutlet="selectQuestionCard"></ng-container>
+  } @else {
+    <ng-container *ngTemplateOutlet="selectedQuestionCard"></ng-container>
+  }
 }
 
 

@@ -208,6 +208,10 @@ export class LmsDashboardMainComponent implements OnInit {
     this.router.navigate(['/lms/topics/create']);
   }
 
+  goToSubjectTracks(): void {
+    this.router.navigate(['/lms/subject-tracks/list']);
+  }
+
   openTooltip(name: string): void {
     this.activeTooltip = name;
   }

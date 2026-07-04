@@ -1,30 +1,57 @@
-// Override global section.content so the builder fills the full content area
-// without extra right margin, and starts flush below the 60px fixed header.
-section.content {
-  margin-top: 60px !important;    // flush below fixed 60px header
-  margin-right: 0 !important;     // fill to viewport right edge
-  // margin-left: 260px is inherited from global CSS (sidebar clearance)
-}
-
-// ── Outer shell ────────────────────────────────────────────────────────────
-.quiz-builder {
-  position: relative;           // stacking context so z-index works vs particles
-  z-index: 1;                   // above particle canvas (z-index: 0)
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 60px); // 60px = fixed header height
-  // Semi-transparent so particles show through the dark background areas;
-  // step panels remain fully opaque because they have their own background.
-  background: rgba(15, 23, 42, 0.88);
+// ── Host element — fixed, full-viewport, clips all overflow ───────────────
+// Same pattern as the auth pages (register, signin). position:fixed + inset:0
+// means nothing outside this component can scroll — only .builder-body scrolls.
+:host {
+  display: block;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #0f172a;
   font-family: 'Poppins', sans-serif;
   color: white;
-  padding-bottom: 88px; // room for sticky nav
+}
+
+// ── Inner shell — flex column fills the fixed host ─────────────────────────
+.quiz-builder {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.88);
 }
 
 // ── Header ─────────────────────────────────────────────────────────────────
 .builder-header {
+  position: relative;
   text-align: center;
-  padding: 2.5rem 1.5rem 0.5rem;
+  padding: 1.75rem 1.5rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-exit {
+  position: absolute;
+  top: 1.75rem;
+  left: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: #9ca3af;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+  }
 }
 
 .builder-title {
@@ -51,22 +78,21 @@ section.content {
 // ── Stepper ────────────────────────────────────────────────────────────────
 .stepper-wrapper {
   position: relative;
+  flex-shrink: 0;
   width: 100%;
   max-width: 440px;
-  margin: 2rem auto 1.5rem;
+  margin: 2rem auto 3rem; // extra bottom room for absolutely-positioned labels
 }
 
 .stepper-track {
   position: absolute;
   top: 1.25rem;
   transform: translateY(-50%);
-  // Span only between circle centres (circles are 2.5rem wide)
-  left: 1.25rem;
-  right: 1.25rem;
-  width: auto;
+  left: 0;
+  width: 100%;
   height: 4px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.15);
   z-index: 0;
 }
 
@@ -74,8 +100,7 @@ section.content {
   position: absolute;
   top: 1.25rem;
   transform: translateY(-50%);
-  // Fill starts at centre of first circle and grows toward centre of last circle
-  left: 1.25rem;
+  left: 0;
   height: 4px;
   border-radius: 9999px;
   background: linear-gradient(to right, #3b82f6, #8b5cf6);
@@ -91,14 +116,16 @@ section.content {
 }
 
 .step-item {
+  position: relative;   // anchor for absolutely-positioned label
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
 }
 
 // ── Step circles ───────────────────────────────────────────────────────────
 .step-btn {
+  position: relative;   // participates in z-index so it always sits above the track line
+  z-index: 1;
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
@@ -122,16 +149,20 @@ section.content {
   }
 
   &--pending {
-    background: rgba(255, 255, 255, 0.06);
-    border: 2px solid rgba(255, 255, 255, 0.14);
-    color: #6b7280;
+    background: #0f172a;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: #9ca3af;
   }
 }
 
-// ── Step labels ────────────────────────────────────────────────────────────
+// ── Step labels — absolutely positioned so they don't affect circle spacing ─
 .step-label {
-  font-size: 0.72rem;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
   white-space: nowrap;
+  font-size: 0.8rem;
   text-align: center;
 
   &--active  { font-weight: 600; color: #ffffff; }
@@ -141,6 +172,7 @@ section.content {
 
 // ── Alert banner ───────────────────────────────────────────────────────────
 .alert-info {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -153,13 +185,20 @@ section.content {
   font-size: 0.85rem;
 }
 
-// ── Content area ───────────────────────────────────────────────────────────
+// ── Content area — the ONLY scrolling region ───────────────────────────────
 .builder-body {
+  flex: 1;
+  min-height: 0;        // lets a flex child shrink below its content size
+  overflow-y: auto;
   padding: 0.5rem 1.5rem 1.5rem;
 }
 
 // ── Step panels ────────────────────────────────────────────────────────────
 .step-panel {
+  width: max-content;
+  //min-width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
   background: #1a2540;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.25rem;
@@ -176,11 +215,13 @@ section.content {
 .step-heading {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.6rem;
   font-size: 1.1rem;
   font-weight: 600;
   color: white;
-  margin: 0 0 1.5rem;
+  width: 100%;
+  margin: 0 auto 1.5rem;
 }
 
 .step-icon {
@@ -189,19 +230,19 @@ section.content {
   flex-shrink: 0;
 }
 
-// ── Narrow content wrappers (Quiz Info & Settings) ─────────────────────────
+// ── Content wrappers ───────────────────────────────────────────────────────
 .step-inner {
-  max-width: 600px;
+  max-width: 520px;
   margin: 0 auto;
   width: 100%;
 
-  &--sm { max-width: 500px; }
+  &--sm          { max-width: 430px; }
+  &--questions   { max-width: 620px; }
 }
 
-// ── Sticky navigation bar ──────────────────────────────────────────────────
+// ── Footer navigation bar — always visible, never scrolls away ────────────
 .builder-nav {
-  position: sticky;
-  bottom: 0;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -211,7 +252,6 @@ section.content {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  z-index: 50;
 }
 
 // ── Back button ────────────────────────────────────────────────────────────
@@ -275,6 +315,7 @@ section.content {
 // ── Responsive ────────────────────────────────────────────────────────────
 @media (max-width: 640px) {
   .builder-header  { padding: 1.5rem 1rem 0.5rem; }
+  .btn-exit        { top: 1.5rem; left: 1rem; font-size: 0.75rem; padding: 0.3rem 0.65rem; }
   .stepper-wrapper { max-width: 320px; }
   .builder-body    { padding: 0.5rem 1rem 1rem; }
   .step-panel      { padding: 1.25rem; }

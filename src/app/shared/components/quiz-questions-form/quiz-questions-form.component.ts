@@ -77,6 +77,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
   @Input() initialFilters: QuestionFilterValue | null = null;
   @Input() selectedQuestions: Question[] = [];
   showFilter = true;
+  activePanel: 'find' | 'selected' = 'find';
   filterForm: FormGroup;
   @Input() subjects: any[] = [];
   @Input() topics: any[] = [];
@@ -261,6 +262,7 @@ export class QuizQuestionsFormComponent implements OnInit, OnChanges {
     ];
     this.selectedQuestionsControl.setValue([]);
     this.questionsAdded.emit(this.quizQuestions);
+    this.activePanel = 'selected';
   }
 
   isQuestionSelected(question: Question): boolean {
