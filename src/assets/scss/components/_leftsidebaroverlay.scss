@@ -16,15 +16,27 @@
   overflow: hidden;
   background: var(--cm-surface);
   border-right: 1px solid var(--cm-border);
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   USER PANEL AVATAR
-═══════════════════════════════════════════════════════════════════ */
+   USER PANEL AVATAR + SECTION DIVIDER
+═══════════════════════════════════════════════════════════ */
 .user-avatar {
   border: 2px solid rgba(99, 102, 241, 0.25);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-section-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--cm-border) 25%,
+    var(--cm-border) 75%,
+    transparent 100%
+  );
+  opacity: 0.6;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -172,24 +184,59 @@ li.active > a.sidebar-sub-item .sidebar-chevron {
 
 /* ═══════════════════════════════════════════════════════════════════
    MOBILE — HIDE SIDEBAR OFF-SCREEN
-═══════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════ */
 .ls-closed .sidebar {
   margin-left: -260px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
    MOBILE — SHOW WHEN OVERLAY IS OPEN
-═══════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .overlay-open .sidebar {
   margin-left: 0;
   z-index: 99999;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    DESKTOP COLLAPSED — ICON-ONLY MODE
-═══════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════ */
+.side-closed .sidebar {
+  width: 72px;
+}
+
+.side-closed-hover .sidebar {
+  width: 260px;
+}
+
+/* Reduce list padding so icon has enough breathing room at 72px */
+.side-closed .sidebar ul.list {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.side-closed .sidebar .menu-top,
+.side-closed .sidebar .sidebar-sub-item,
+.side-closed .sidebar .sidebar-logout a {
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.side-closed .sidebar .menu-top {
+  gap: 0;
+}
+
+.side-closed .sidebar .sidebar-icon-box {
+  margin-right: 0;
+}
+
 .side-closed .sidebar .hide-menu,
 .submenu-closed .sidebar .hide-menu {
+  display: none;
+}
+
+.side-closed .sidebar .sidebar-user-panel,
+.submenu-closed .sidebar .sidebar-user-panel {
   display: none;
 }
 
@@ -216,6 +263,69 @@ li.active > a.sidebar-sub-item .sidebar-chevron {
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 10;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HEADER BRAND ZONE — width + logo swap in sync with sidebar state
+   Driven by body class mutations (side-closed, ls-closed) so it is
+   always in sync with the sidebar without any Angular state tracking.
+═══════════════════════════════════════════════════════════════════ */
+.header-brand-zone {
+  width: 260px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Desktop collapsed → icon-only width, matches collapsed sidebar */
+.side-closed .header-brand-zone {
+  width: 72px;
+}
+
+/* Mobile → sidebar is off-screen, brand zone stays compact */
+@media (max-width: 1023px) {
+  .header-brand-zone {
+    width: 72px;
+  }
+}
+
+/* Logo visibility — default (desktop expanded): show wordmark, hide icon */
+.header-brand-icon {
+  opacity: 0;
+  transform: translateX(-8px);
+  pointer-events: none;
+}
+
+.header-brand-wordmark {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Desktop collapsed: show icon, hide wordmark */
+.side-closed .header-brand-icon {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.side-closed .header-brand-wordmark {
+  opacity: 0;
+  transform: translateX(8px);
+  pointer-events: none;
+}
+
+/* Mobile: always show icon, always hide wordmark */
+@media (max-width: 1023px) {
+  .header-brand-icon {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .header-brand-wordmark {
+    opacity: 0 !important;
+    transform: translateX(8px) !important;
+    pointer-events: none !important;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════

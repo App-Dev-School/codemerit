@@ -1,35 +1,35 @@
 <div>
   <!-- Left Sidebar -->
   <aside id="leftsidebar" class="sidebar" (mouseenter)="mouseHover()" (mouseleave)="mouseOut()">
-
+    <div class="menu">
     <ng-scrollbar [style.height]="listMaxHeight + 'px'" visibility="hover">
-      <ul class="list px-3 pt-4 pb-6 space-y-1">
+      <ul class="list px-3 pt-2 pb-6 space-y-1">
 
         <!-- ── User profile panel ──────────────────────────────────── -->
-        <li class="sidebar-user-panel mb-2">
-          <div class="flex items-center gap-3 px-2 py-2">
+        <li class="sidebar-user-panel mb-0 mt-0">
+          <div class="flex items-center gap-2.5 px-2 py-1">
 
             <!-- Avatar with online dot -->
             <div class="relative shrink-0">
               <img [src]="userImg" alt="User"
                    class="w-10 h-10 rounded-xl object-cover user-avatar">
-              <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full
+              <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full
                            bg-green-500 border-2 border-[var(--cm-surface)]"></span>
             </div>
 
             <!-- Name + role -->
             <div class="hide-menu min-w-0 flex-1">
-              <p class="text-[13px] font-bold text-cm-text-primary truncate leading-tight">
-                {{ userFullName ?? 'Guest User' }}
+              <p class="text-[12.5px] font-semibold text-cm-text-primary truncate leading-none">
+                {{ userFullName }}
               </p>
-              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate leading-tight">
-                {{ userDesignation ?? 'New Joiner' }}
+              <p class="text-[10.5px] text-cm-text-muted mt-px truncate leading-none">
+                {{ userDesignation }}
               </p>
             </div>
 
           </div>
-          <!-- Divider -->
-          <div class="h-px bg-cm-border mx-2 mt-2"></div>
+          <!-- Gradient divider -->
+          <div class="sidebar-section-divider mx-3 mt-1"></div>
         </li>
 
         <!-- ── Navigation items ────────────────────────────────────── -->
@@ -184,7 +184,7 @@
 
       </ul>
     </ng-scrollbar>
-
+    </div>
   </aside>
   <!-- #END# Left Sidebar -->
 </div>

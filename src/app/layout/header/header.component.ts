@@ -58,7 +58,11 @@ export class HeaderComponent
     const last  = lastName.charAt(0).toUpperCase();
     this.userInitials = (first + last) || 'ME';
 
-    this.isSidebarCollapsed = localStorage.getItem('collapsed_menu') === 'true';
+    if (localStorage.getItem('collapsed_menu') === 'true') {
+      this.renderer.addClass(this.document.body, 'side-closed');
+      this.renderer.addClass(this.document.body, 'submenu-closed');
+      this.isSidebarCollapsed = true;
+    }
 
     if (userRole === Role.Admin) {
       this.homePage = 'admin/dashboard/main';
@@ -78,13 +82,32 @@ export class HeaderComponent
     this.isFullScreen = !this.isFullScreen;
   }
 
-  mobileMenuSidebarOpen(event: Event, className: string) {
-    const hasClass = (event.target as HTMLElement).classList.contains(className);
+  handleMenuToggle() {
+    if (window.innerWidth < 1025) {
+      this.toggleOverlay();
+    } else {
+      this.callSidemenuCollapse();
+    }
+  }
+
+  private toggleOverlay() {
+    const hasClass = this.document.body.classList.contains('overlay-open');
     if (hasClass) {
+      this.isMobileMenuOpen = false;
+      this.renderer.removeClass(this.document.body, 'overlay-open');
+    } else {
       this.isMobileMenuOpen = true;
+      this.renderer.addClass(this.document.body, 'overlay-open');
+    }
+  }
+
+  mobileMenuSidebarOpen(_event: Event, className: string) {
+    const hasClass = this.document.body.classList.contains(className);
+    if (hasClass) {
+      this.isMobileMenuOpen = false;
       this.renderer.removeClass(this.document.body, className);
     } else {
-      this.isMobileMenuOpen = false;
+      this.isMobileMenuOpen = true;
       this.renderer.addClass(this.document.body, className);
     }
   }

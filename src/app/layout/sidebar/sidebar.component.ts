@@ -49,6 +49,19 @@ export class SidebarComponent
   ) {
     super();
     this.elementRef.nativeElement.closest('body');
+    this.authService.currentUser.subscribe((user) => {
+        if (user) {
+          const firstName = user.firstName ?? '';
+          const lastName  = user.lastName  ?? '';
+          this.userFullName = [firstName, lastName].filter(Boolean).join(' ') || 'Guest User';
+          this.userImg = user.userImage || 'assets/images/users/user.jpg';
+          this.userDesignation = user.designation || 'New Joiner';
+        } else {
+          this.userFullName = 'Guest User';
+          this.userImg = 'assets/images/users/user.jpg';
+          this.userDesignation = 'New Joiner';
+        }
+    });
     this.subs.sink = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.renderer.removeClass(this.document.body, 'overlay-open');
