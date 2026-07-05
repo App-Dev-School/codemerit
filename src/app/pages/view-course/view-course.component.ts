@@ -43,6 +43,8 @@ export class ViewCourseComponent implements OnInit {
   courseData: any[];
   showSubjectAction = false;
   certificateModels: CertificateModel[] = [];
+  selectedSubjectIdx = 0;
+  selectedCertIdx = 0;
   meritList: any[] = [
     {
       "id": 1,
@@ -208,20 +210,59 @@ export class ViewCourseComponent implements OnInit {
     }
   }
 
+  get totalTracks(): number {
+    if (!this.courseData?.length) return 0;
+    return this.courseData.reduce((sum: number, s: any) => sum + (s.subjectTracks?.length ?? 0), 0);
+  }
+
+  getCertRequirements(certIndex: number): any[] {
+    if (!this.courseData?.length) return [];
+    let subjects: any[];
+    if (certIndex === 0) {
+      const mandatory = this.courseData.filter((s: any) => s.tag === 'MANDATORY');
+      subjects = mandatory.length > 0 ? mandatory : this.courseData;
+    } else {
+      subjects = this.courseData;
+    }
+    return subjects.map((s: any) => {
+      const tracks = s.subjectTracks ?? [];
+      const completed = tracks.length > 0
+        ? tracks.every((t: any) => t.isCompleted)
+        : (s.coverage ?? 0) >= 80;
+      const progress = tracks.length > 0
+        ? Math.round(tracks.reduce((acc: number, t: any) => acc + (t.progressPercent ?? 0), 0) / tracks.length)
+        : (s.coverage ?? 0);
+      return { id: s.id, title: s.title, completed, progress };
+    });
+  }
+
+  getCertProgress(certIndex: number): number {
+    const reqs = this.getCertRequirements(certIndex);
+    if (!reqs.length) return 0;
+    const completed = reqs.filter((r: any) => r.completed).length;
+    return Math.round((completed / reqs.length) * 100);
+  }
+
   fetchCourseData() {
     this.master.fetchCourseDetail(this.course).subscribe((data: any) => {
       if (data) {
-        console.log("getAttemptedSubjects 0", data);
-        this.courseData = data;
-        if (this.courseData && this.courseData.length > 0) {
-          this.attemptedSubjects = this.courseData.filter(item => item.attempted && item.attempted > 0);
-          this.otherSubjects = this.courseData.filter(item => !(item.attempted && item.attempted > 0));
+        // Handle new API shape { jobRole, subjects } as well as legacy flat array
+        const subjects: any[] = Array.isArray(data) ? data : (data?.subjects ?? []);
+        this.courseData = subjects;
+        this.selectedSubjectIdx = 0;
+        this.selectedCertIdx = 0;
+
+        if (!Array.isArray(data) && data?.jobRole) {
+          this.courseItem = { ...this.courseItem, ...data.jobRole };
         }
-        setTimeout(() => {
-          this.loading = false;
-        }, 2000);
+
+        if (this.courseData?.length > 0) {
+          this.attemptedSubjects = this.courseData.filter(s => (s.attempted ?? 0) > 0);
+          this.otherSubjects    = this.courseData.filter(s => !((s.attempted ?? 0) > 0));
+        }
+        setTimeout(() => { this.loading = false; }, 1500);
       }
-    }, (err: any) => {
+    }, (_err: any) => {
       this.loading = false;
       this.snackService.display('snackbar-dark', 'Error loading program details.', 'bottom', 'center');
     });

@@ -161,7 +161,7 @@ export class MasterService {
     console.log('Calling fetchCourseDashboard API');
     return this.httpService
       .get(
-        'apis/master/myJobDashboard',
+        'apis/master/myCareerDashboard',
         this.authService.currentUserValue?.token,
       )
       .pipe(
