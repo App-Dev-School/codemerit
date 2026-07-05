@@ -420,7 +420,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   navigateToResult(resultCode: string): void {
-    this.router.navigate(['quiz/result', resultCode]);
+    this.router.navigate(['quiz/result', resultCode], { replaceUrl: true });
   }
 
   triggerCelebration(event: MouseEvent): void {

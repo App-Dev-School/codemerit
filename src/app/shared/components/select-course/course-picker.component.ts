@@ -19,6 +19,7 @@ interface SubjectGroups {
 export class CoursePickerComponent implements OnInit {
   @Input() minimal = true;
   @Input() currentCourses: number[] = [];
+  @Input() searchQuery = '';
   @Input() actionMode: 'view' | 'enroll' | 'skill-rating' = 'view';
   @Output() subjectSelected = new EventEmitter<string>();
 
@@ -51,6 +52,16 @@ export class CoursePickerComponent implements OnInit {
       this.courses = allJobRoles.filter(j => j.isPublished);
     }
     this.isLoading = false;
+  }
+
+  get filteredCourses(): any[] {
+    if (!this.searchQuery) return this.courses;
+    const q = this.searchQuery.toLowerCase().trim();
+    return this.courses.filter(job => {
+      const title = (job.title || '').toString().toLowerCase();
+      const desc = (job.description || '').toString().toLowerCase();
+      return title.includes(q) || desc.includes(q);
+    });
   }
 
   isEnrolled(job: any): boolean {

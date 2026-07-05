@@ -14,6 +14,7 @@ export interface MasterData {
   subjects: any[];
   topics: any[];
   jobRoles: any[];
+  certificationTracks?: any[];
 }
 export interface JobSubject {
   id: number;
@@ -27,6 +28,7 @@ export interface JobSubject {
 })
 export class MasterService {
   private data: MasterData = { subjects: [], topics: [], jobRoles: [] };
+  private jobRoleSubjectTracks: { [jobRoleId: number]: any[] } = {};
   private dataLoaded = new BehaviorSubject<boolean>(false);
   readonly dataLoaded$ = this.dataLoaded.asObservable();
   private storageKey = 'masterData';
@@ -63,6 +65,8 @@ export class MasterService {
           if (!res.error) {
             console.log('MasterDataFlow Topics', res.data.topics);
             this.data = res.data;
+            // Index subjectTracks per job role so callers can fetch them later
+            this.indexJobRoleSubjectTracks();
             // Save only res.data so the constructor can read it back as MasterData directly.
             localStorage.setItem(this.storageKey, JSON.stringify(res.data));
             this.dataLoaded.next(true);
@@ -104,6 +108,29 @@ export class MasterService {
   }
   get jobRoles() {
     return this.data.jobRoles;
+  }
+
+  /**
+   * Return subjectTracks array for a given jobRole id (may be empty array)
+   */
+  getJobRoleSubjectTracks(jobRoleId: number): any[] {
+    return this.jobRoleSubjectTracks[jobRoleId] ?? [];
+  }
+
+  private indexJobRoleSubjectTracks(): void {
+    this.jobRoleSubjectTracks = {};
+    if (!this.data?.jobRoles?.length) return;
+    this.data.jobRoles.forEach((jr: any) => {
+      const tracks = Array.isArray(jr.subjectTracks) ? jr.subjectTracks : [];
+      this.jobRoleSubjectTracks[jr.id] = tracks;
+      // ensure count fields exist for convenience
+      try {
+        jr.subjectTracksCount = tracks.length;
+        jr.certificationTrackCount = jr.certificationTrackCount ?? (Array.isArray(jr.certificationTracks) ? jr.certificationTracks.length : 0);
+      } catch (_) {
+        // silent
+      }
+    });
   }
 
   clear() {

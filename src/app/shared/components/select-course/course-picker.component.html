@@ -10,7 +10,7 @@
 @if (!isLoading) {
   <div [class]="mode === 'dialog' ? 'cp-dialog-wrap' : ''" >
     <div class="cp-grid">
-      @for (job of courses; track job.id) {
+      @for (job of filteredCourses; track job.id) {
 
         <div class="cp-card" [class.cp-card--enrolled]="isEnrolled(job)">
 

@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import {
   ActivatedRoute,
@@ -21,23 +22,24 @@ import { Subscription } from 'rxjs';
     trigger('overlayFade', [
       transition(':enter', [
         style({ opacity: 0 }),
-        animate('200ms ease', style({ opacity: 1 })),
+        animate('420ms ease', style({ opacity: 1 })),
       ]),
       transition(':leave', [
-        animate('180ms ease', style({ opacity: 0 })),
+        animate('360ms ease', style({ opacity: 0 })),
       ]),
     ]),
     trigger('panelSlide', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(28px)' }),
-        animate('320ms cubic-bezier(0.22,1,0.36,1)', style({ opacity: 1, transform: 'translateY(0)' })),
+        style({ opacity: 0, transform: 'translateY(48px)' }),
+        animate('680ms cubic-bezier(0.2,0.8,0.2,1)', style({ opacity: 1, transform: 'translateY(0)' })),
       ]),
       transition(':leave', [
-        animate('180ms ease-in', style({ opacity: 0, transform: 'translateY(20px)' })),
+        animate('480ms cubic-bezier(0.2,0,0.2,1)', style({ opacity: 0, transform: 'translateY(48px)' })),
       ]),
     ]),
   ],
   imports: [
+    FormsModule,
     CoursePickerComponent,
   ],
 })
@@ -45,6 +47,7 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
   @Input() actionMode: 'view' | 'enroll' | 'skill-rating' = 'view';
   showContent = true;
   subject = '';
+  searchQuery = '';
   isLoading = false;
   userJobRoles: number[] = [];
   private subscriptions = new Subscription();
