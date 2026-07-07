@@ -90,6 +90,109 @@
     }
 
     @if (dashboard) {
+      <!-- SECTION 1: QUESTIONS PANELS (Modern Grid Bento Framework) -->
+                <section class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.015)] overflow-hidden glow-hover transition-all duration-300">
+                    
+                    <!-- Dynamic Grid Action Row Header -->
+                    <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-linear-to-b from-slate-50/50 to-white">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 bg-gradient-to-tr from-violet-50 to-indigo-50 border border-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 shadow-2xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div class="flex flex-col">
+                                <h2 class="text-base font-extrabold text-slate-900 tracking-tight">Questions Repository</h2>
+                                <p class="text-slate-400 text-xs font-medium">Author interactive test parameters and pool criteria</p>
+                            </div>
+                        </div>
+                        
+                        <!-- CTA Flex Ribbon Layout -->
+                        <div class="flex items-center gap-2 flex-wrap shrink-0">
+                            <button class="bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-95 active:scale-[0.98] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md shadow-indigo-600/10">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
+                                Add Question
+                            </button>
+                            <button class="bg-white hover:bg-slate-50 active:scale-[0.98] text-slate-700 border border-slate-200 font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-xs">
+                                Review Questions
+                            </button>
+                            <button class="bg-slate-50 hover:bg-slate-100/80 text-slate-600 font-bold text-xs px-4 py-2.5 rounded-xl transition-all">
+                                View All
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Layout Separation Panel Splitter: Metrics vs Speedometer Gauges -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-8">
+                        
+                        <!-- Data Block Elements -->
+                        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="p-5 rounded-2xl border border-slate-100 bg-linear-to-b from-slate-50/50 to-white flex flex-col justify-between shadow-2xs">
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Added</span>
+                                    <span class="text-3xl font-black text-slate-900 font-mono tracking-tight">1,248</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md mt-4 w-max flex items-center gap-1">+12% MoM</span>
+                            </div>
+                            <div class="p-5 rounded-2xl border border-slate-100 bg-linear-to-b from-slate-50/50 to-white flex flex-col justify-between shadow-2xs">
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Pending Approval</span>
+                                    <span class="text-3xl font-black text-amber-500 font-mono tracking-tight">42</span>
+                                </div>
+                                <span class="text-[10px] font-medium text-slate-400 mt-4 block">Requires mod review</span>
+                            </div>
+                            <div class="p-5 rounded-2xl border border-slate-100 bg-linear-to-b from-slate-50/50 to-white flex flex-col justify-between shadow-2xs">
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Approved Pool</span>
+                                    <span class="text-3xl font-black text-indigo-600 font-mono tracking-tight">1,186</span>
+                                </div>
+                                <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md mt-4 w-max">Active Live</span>
+                            </div>
+                        </div>
+
+                        <!-- Highly Creative Rounded Top Speedometer Mechanical Dial Arc -->
+                        <div class="lg:col-span-5 border border-slate-100 bg-gradient-to-b from-slate-50/30 to-slate-50/80 rounded-2xl p-6 flex flex-col items-center justify-center relative min-h-[170px] shadow-xs">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-4">Approval Rate Metric</span>
+                            
+                            <!-- Speedometer Geometry Wrapper -->
+                            <div class="relative w-52 h-26 flex items-center justify-center overflow-hidden">
+                                <svg class="w-full h-full transform" viewBox="0 0 100 50">
+                                    <defs>
+                                        <!-- Gradient Stroke Styling -->
+                                        <linearGradient id="speedoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#8b5cf6" />
+                                            <stop offset="50%" stop-color="#6366f1" />
+                                            <stop offset="100%" stop-color="#10b981" />
+                                        </linearGradient>
+                                        <filter id="glow shadow-sm">
+                                            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.1"/>
+                                        </filter>
+                                    </defs>
+                                    <!-- 1. Background Arc (Rounded Caps at Top base lines) -->
+                                    <path d="M 12,46 A 38,38 0 0,1 88,46" fill="none" stroke="#e2e8f0" stroke-width="7" stroke-linecap="round"/>
+                                    
+                                    <!-- 2. Interactive Value Indicator Arc (95% Completion calculation) -->
+                                    <path d="M 12,46 A 38,38 0 0,1 88,46" fill="none" stroke="url(#speedoGrad)" stroke-width="7" stroke-linecap="round"
+                                          stroke-dasharray="119.3" stroke-dashoffset="6"/>
+                                          
+                                    <!-- 3. Speedometer Center Needle Indicator System -->
+                                    <!-- Standard pointer line rotated perfectly around the axis base line origin center point (50, 46) -->
+                                    <g transform="translate(50, 46)">
+                                        <!-- Needle Pointer Line (Points to 95.1% dynamically via CSS transform rotation angle adjustment) -->
+                                        <line x1="0" y1="0" x2="33" y2="0" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" transform="rotate(-171)"/>
+                                        <!-- Needle Hub Cap Pin -->
+                                        <circle cx="0" cy="0" r="4.5" fill="#0f172a" />
+                                        <circle cx="0" cy="0" r="2" fill="#ffffff" />
+                                    </g>
+                                </svg>
+                                
+                                <!-- Core Floating Speedometer Numeric Text Interface -->
+                                <div class="absolute bottom-0 text-center flex flex-col items-center justify-end h-12">
+                                    <span class="text-2xl font-black tracking-tight text-slate-950 font-mono leading-none">95.1%</span>
+                                    <span class="text-[9px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md uppercase tracking-wider mt-1 border border-emerald-100">Optimal Accuracy</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
     <!-- ═══════════════════════════════════════════════════
          ROW 1 — QUESTIONS (2/3)  +  LESSONS (1/3)

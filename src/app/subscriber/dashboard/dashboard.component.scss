@@ -77,6 +77,16 @@
   color: var(--cm-text-muted);
 }
 
+/* Chrome, Safari */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
 /* ── Loading overlay ─────────────────────────────────────────────── */
 .subjectLoader {
   min-width: min(90%, 360px);
