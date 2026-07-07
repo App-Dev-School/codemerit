@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -18,10 +18,12 @@ import { LmsDashboardData } from '../../dtos/lms-dashboard.model';
     TimeseriesChartComponent,
   ],
 })
-export class LmsDashboardMainComponent implements OnInit {
+export class LmsDashboardMainComponent implements OnInit, OnDestroy {
   currentModule = 'Questions';
   selectedTimePeriod = 'Monthly';
   dashboard: LmsDashboardData;
+  animatedApprovalRate = 0;
+  private approvalRafId: number | null = null;
   timeframeData: TimeframeData = { title: 'Questions', daily: [], weekly: [] };
   questionsTimeframe: TimeframeData = {
     title: 'Questions',
@@ -45,6 +47,33 @@ export class LmsDashboardMainComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboard();
+  }
+
+  ngOnDestroy(): void {
+    if (this.approvalRafId !== null) {
+      cancelAnimationFrame(this.approvalRafId);
+    }
+  }
+
+  private animateApprovalRate(target: number): void {
+    if (this.approvalRafId !== null) {
+      cancelAnimationFrame(this.approvalRafId);
+    }
+    const duration = 900;
+    const from = this.animatedApprovalRate;
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      this.animatedApprovalRate = Math.round(from + (target - from) * eased);
+      if (t < 1) {
+        this.approvalRafId = requestAnimationFrame(step);
+      } else {
+        this.animatedApprovalRate = target;
+        this.approvalRafId = null;
+      }
+    };
+    this.approvalRafId = requestAnimationFrame(step);
   }
 
   private transformTimeSeriesData(
@@ -111,6 +140,7 @@ export class LmsDashboardMainComponent implements OnInit {
     );
 
     this.onModuleChange({ value: this.currentModule });
+    this.animateApprovalRate(this.approvalRate);
   }
 
   onModuleChange(event: any): void {

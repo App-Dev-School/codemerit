@@ -6,7 +6,7 @@ module.exports = {
   // 'class' strategy: dark: variants activate when <html> has class="dark"
   darkMode: 'class',
   corePlugins: {
-    preflight: false,
+    preflight: true,
   },
   theme: {
     extend: {

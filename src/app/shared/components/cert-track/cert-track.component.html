@@ -1,0 +1,226 @@
+<div class="min-w-0">
+
+  <!-- ── Section header — plain, welcome-page style ─────────────────────── -->
+  <div class="flex items-center justify-between gap-3 mb-4 sm:mb-5 flex-wrap">
+    <div>
+      <h3 class="text-sm font-bold text-cm-text-primary">Certification Tracks</h3>
+      @if(certificateModels.length){
+      <p class="text-xs text-cm-text-muted mt-0.5">
+        {{certificateModels.length}} {{certificateModels.length === 1 ? 'certificate' : 'certificates'}} available
+      </p>
+      }
+    </div>
+
+    @if(certificateModels.length > 1){
+    <div class="flex flex-wrap gap-2">
+      @for(c of certificateModels; track c.certificateNumber; let ci = $index){
+      <button type="button" (click)="selectedCertIdx = ci"
+        class="px-3.5 py-1.5 rounded-xl border text-[11px] font-bold transition-all duration-150
+               hover:border-cm-border-strong"
+        [class.border-cm-brand]="selectedCertIdx === ci"
+        [class.bg-cm-brand-dim]="selectedCertIdx === ci"
+        [class.text-cm-brand]="selectedCertIdx === ci"
+        [class.border-cm-border]="selectedCertIdx !== ci"
+        [class.bg-cm-surface]="selectedCertIdx !== ci"
+        [class.text-cm-text-muted]="selectedCertIdx !== ci">
+        {{c.tierDisplayName || ('Tier ' + (ci + 1))}}
+      </button>
+      }
+    </div>
+    }
+  </div>
+
+  <!-- ── Certificate Tracks card — details left, preview right ─────────── -->
+  @let cert = certificateModels[selectedCertIdx];
+  @if(cert){
+  <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
+              dark:shadow-none">
+  <div class="grid grid-cols-1 md:grid-cols-[3fr_2fr]">
+
+    <!-- ═══ LEFT — cert info + requirements ════════════════════════════ -->
+    <div class="flex flex-col border-b md:border-b-0 md:border-r border-cm-border">
+
+      <!-- Identity block -->
+      <div class="px-6 pt-6 pb-5
+                  bg-gradient-to-br from-violet-50/70 to-cm-surface dark:from-violet-500/5 dark:to-transparent">
+        <div class="flex flex-wrap items-center gap-1.5 mb-3">
+          @if(cert.tierDisplayName){
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black
+                       uppercase tracking-widest bg-cm-brand-dim text-cm-brand border border-cm-brand/20">
+            {{cert.tierDisplayName}}
+          </span>
+          }
+          <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black
+                       uppercase tracking-widest bg-green-500/10 text-green-500 border border-green-500/20">
+            <mat-icon style="font-size:9px;width:9px;height:9px;line-height:9px">verified</mat-icon>
+            Industry Recognized
+          </span>
+        </div>
+        <h3 class="text-[20px] font-black text-cm-text-primary leading-tight">{{cert.platformName}}</h3>
+        <p class="text-[11px] text-cm-text-muted mt-1">
+          Issued by&nbsp;<span class="font-semibold text-cm-text-secondary">{{cert.issuerName || 'CodeMerit'}}</span>
+          @if(cert.skillName){&nbsp;·&nbsp;{{cert.skillName}}}
+        </p>
+      </div>
+
+      <!-- Requirements — step list with connector line ──────────────── -->
+      <div class="px-6 py-5 flex-1 border-t border-cm-border">
+        <p class="text-[9px] font-black uppercase tracking-[0.16em] text-cm-text-muted mb-4">How to Earn</p>
+        <div>
+          @for(req of getCertRequirements(selectedCertIdx); track req.id; let ri = $index; let last = $last){
+          <div class="flex items-start gap-3" [class.pb-5]="!last">
+
+            <!-- Dot + vertical connector -->
+            <div class="flex flex-col items-center shrink-0">
+              <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center
+                          text-[10px] font-black transition-all duration-300"
+                   [class.bg-green-500]="req.completed"   [class.border-green-500]="req.completed"
+                   [class.text-white]="req.completed"
+                   [class.bg-cm-surface]="!req.completed" [class.border-cm-border]="!req.completed"
+                   [class.text-cm-text-muted]="!req.completed">
+                @if(req.completed){
+                <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">check</mat-icon>
+                }@else{ {{ri + 1}} }
+              </div>
+              @if(!last){
+              <div class="w-px flex-1 bg-cm-border mt-1" style="min-height:20px"></div>
+              }
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 min-w-0 pt-0.5">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <p class="text-[12.5px] truncate"
+                   [class.font-bold]="req.completed"     [class.text-cm-text-primary]="req.completed"
+                   [class.text-cm-text-secondary]="!req.completed">{{req.title}}</p>
+                @if(req.completed){
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full
+                             bg-green-500 text-white shrink-0">Done</span>
+                }@else if(req.progress === 0){
+                <span class="text-[9px] text-cm-text-muted shrink-0">Not started</span>
+                }
+              </div>
+              @if(!req.completed && req.progress > 0){
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-1 rounded-full bg-cm-surface-hover overflow-hidden">
+                  <div class="h-full rounded-full bg-cm-brand" [style.width]="req.progress + '%'"></div>
+                </div>
+                <span class="text-[10px] text-cm-brand font-bold tabular-nums shrink-0 w-7 text-right">
+                  {{req.progress}}%
+                </span>
+              </div>
+              }
+            </div>
+
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Progress + CTA ───────────────────────────────────────────── -->
+      <div class="px-6 py-5 border-t border-cm-border bg-cm-surface-muted">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-semibold text-cm-text-secondary">Overall Progress</span>
+          <span class="text-[13px] font-black tabular-nums"
+                [class.text-green-500]="getCertProgress(selectedCertIdx) === 100"
+                [class.text-cm-brand]="getCertProgress(selectedCertIdx) > 0 && getCertProgress(selectedCertIdx) < 100"
+                [class.text-cm-text-muted]="getCertProgress(selectedCertIdx) === 0">
+            {{getCertProgress(selectedCertIdx)}}%
+          </span>
+        </div>
+        <div class="h-2.5 rounded-full bg-cm-surface-hover overflow-hidden mb-4">
+          <div class="h-full rounded-full transition-all duration-700"
+               [class.bg-green-500]="getCertProgress(selectedCertIdx) === 100"
+               [class.bg-cm-brand]="getCertProgress(selectedCertIdx) < 100"
+               [style.width]="getCertProgress(selectedCertIdx) + '%'">
+          </div>
+        </div>
+
+        @if(getCertProgress(selectedCertIdx) === 100){
+        <button type="button" (click)="onViewCertificate(cert)"
+          class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-[13px]
+                 bg-green-600 hover:bg-green-700 text-white transition-all active:scale-[0.98] shadow-md">
+          <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">workspace_premium</mat-icon>
+          View Certificate
+        </button>
+        }@else{
+        <button type="button" (click)="onStartLearning()"
+          class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-[13px]
+                 bg-cm-brand hover:bg-indigo-700 text-white transition-all active:scale-[0.98] shadow-md">
+          <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">rocket_launch</mat-icon>
+          Start Learning
+        </button>
+        <p class="text-[10px] text-cm-text-muted text-center mt-2">Complete all subjects to unlock</p>
+        }
+      </div>
+
+    </div>
+
+    <!-- ═══ RIGHT — certificate preview ════════════════════════════════ -->
+    <div class="relative flex flex-col items-center justify-between gap-4 p-6 overflow-hidden"
+         style="min-height:320px;
+                background-image: radial-gradient(ellipse 110% 70% at 50% 30%, rgba(99,102,241,0.09) 0%, transparent 65%)">
+
+      <!-- Dot-grid texture -->
+      <div class="absolute inset-0 pointer-events-none"
+           style="background-image: radial-gradient(circle, rgba(120,120,150,0.22) 1px, transparent 1px);
+                  background-size: 22px 22px; opacity: 0.55;">
+      </div>
+
+      <p class="text-[9px] font-black uppercase tracking-[0.16em] text-cm-text-muted z-10">Your Certificate</p>
+
+      <!-- Cert card -->
+      <div class="relative z-10" style="width:148px; aspect-ratio:3/4;">
+
+        @if(getCertProgress(selectedCertIdx) === 100){
+        <div class="absolute -inset-6 rounded-full blur-3xl -z-10"
+             style="background: rgba(34,197,94,0.25);"></div>
+        }
+
+        <div class="absolute inset-0 overflow-hidden rounded-xl shadow-2xl -rotate-2
+                    hover:rotate-0 hover:scale-[1.05] transition-all duration-300 cursor-pointer"
+             style="border: 1px solid rgba(255,255,255,0.15);">
+          <div style="position:absolute;top:0;left:0;width:250%;
+                      transform:scale(0.4);transform-origin:top left;pointer-events:none;">
+            <app-certificate [model]="cert" [preview]="false"></app-certificate>
+          </div>
+
+          @if(getCertProgress(selectedCertIdx) < 100){
+          <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-xl"
+               style="backdrop-filter:blur(8px); background:rgba(0,0,0,0.42);">
+            <div class="w-10 h-10 rounded-xl bg-cm-surface border border-cm-border shadow-xl
+                        flex items-center justify-center">
+              <mat-icon class="text-cm-text-muted" style="font-size:20px">lock</mat-icon>
+            </div>
+            <p class="text-[11px] font-bold" style="color:rgba(255,255,255,0.85)">Locked</p>
+            <p class="text-[10px]" style="color:rgba(255,255,255,0.5)">
+              {{100 - getCertProgress(selectedCertIdx)}}% remaining
+            </p>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Perks — vertical list -->
+      <div class="w-full space-y-1.5 z-10">
+        @for(perk of [
+          {icon:'verified_user', label:'Expert Verified'},
+          {icon:'share',         label:'Shareable Online'},
+          {icon:'work_outline',  label:'Career Ready'}
+        ]; track perk.label){
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-cm-border bg-cm-surface/70">
+          <mat-icon class="text-green-500 shrink-0"
+                    style="font-size:13px;width:13px;height:13px;line-height:13px">{{perk.icon}}</mat-icon>
+          <span class="text-[11px] font-semibold text-cm-text-secondary">{{perk.label}}</span>
+        </div>
+        }
+      </div>
+
+    </div>
+
+  </div>
+  </div>
+  }
+
+</div>

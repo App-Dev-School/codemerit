@@ -1,0 +1,280 @@
+<div class="flex flex-col gap-4">
+
+  <!-- ── Header — plain, left title / right status CTA ─────────────────── -->
+  <div class="flex items-center justify-between gap-4 flex-wrap">
+    <div class="flex items-center gap-3 flex-wrap">
+      <span class="w-1 h-5 rounded-full bg-cm-brand shrink-0"></span>
+      <span class="text-[13px] font-black text-cm-text-primary uppercase tracking-[0.12em]">
+        Curriculum Roadmap
+      </span>
+      @if(subjects?.length){
+      <span class="text-[11px] text-cm-text-muted">
+        {{subjects.length}} subjects · {{getAllTracksCount()}} tracks
+      </span>
+      }
+    </div>
+    @if(subjects?.length){
+    <span class="shrink-0 text-[10px] font-bold px-3 py-1.5 rounded-full border"
+          [class]="getOverallProgress() > 0 ? 'bg-green-500/10 border-green-500/20' : ''"
+          [class.text-green-500]="getOverallProgress() > 0"
+          [class.bg-cm-surface-raised]="getOverallProgress() === 0"
+          [class.border-cm-border]="getOverallProgress() === 0"
+          [class.text-cm-text-muted]="getOverallProgress() === 0">
+      {{getOverallProgress()}}% Complete
+    </span>
+    }
+  </div>
+
+  @if(subjects?.length > 0){
+
+  <!-- ── Roadmap (left) + dynamic detail panel (right) ─────────────────── -->
+  <div class="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-5 items-start">
+
+    <!-- ═══ LEFT — vertical flow diagram of stages ═══════════════════════ -->
+    <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+                shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
+                dark:shadow-none p-4">
+      @for(subject of subjects; track subject.id; let si = $index; let last = $last){
+      <button type="button" (click)="selectSubject(si)"
+        class="w-full flex items-stretch gap-3 text-left group
+               appearance-none bg-transparent border-0 p-0 m-0 outline-none
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cm-brand/40 rounded-xl">
+
+        <!-- Node + connector — fill communicates completion only, ring communicates selection -->
+        <div class="flex flex-col items-center shrink-0">
+          <div class="relative w-9 h-9 rounded-full border-2 flex items-center justify-center
+                      text-[11px] font-black shrink-0 transition-all duration-300 z-10"
+               [class]="selectedIdx === si ? 'ring-4 ring-cm-brand/20 scale-110' : ''"
+               [class.bg-green-500]="isSubjectComplete(subject)"
+               [class.border-green-500]="isSubjectComplete(subject)"
+               [class.bg-cm-brand]="!isSubjectComplete(subject) && selectedIdx === si"
+               [class.border-cm-brand]="!isSubjectComplete(subject) && selectedIdx === si"
+               [class.bg-cm-surface]="!isSubjectComplete(subject) && selectedIdx !== si"
+               [class.border-cm-border-strong]="!isSubjectComplete(subject) && selectedIdx !== si"
+               [class.text-white]="isSubjectComplete(subject) || selectedIdx === si"
+               [class.text-cm-text-muted]="!isSubjectComplete(subject) && selectedIdx !== si">
+            @if(isSubjectComplete(subject)){
+            <mat-icon class="text-white" style="font-size:15px;width:15px;height:15px;line-height:15px">check</mat-icon>
+            }@else{ {{si + 1}} }
+          </div>
+          @if(!last){
+          <div class="w-0.5 flex-1 my-1 rounded-full transition-colors duration-300 min-h-[28px]"
+               [class.bg-green-500]="isSubjectComplete(subject)"
+               [class.bg-cm-brand]="!isSubjectComplete(subject) && isConnectorActive(si)"
+               [class.bg-cm-border]="!isSubjectComplete(subject) && !isConnectorActive(si)">
+          </div>
+          }
+        </div>
+
+        <!-- Stage card -->
+        <div class="flex-1 min-w-0" [class.pb-3]="!last">
+          <div class="rounded-xl border px-3.5 py-3 transition-all duration-200
+                      hover:border-cm-border-strong"
+               [class.border-cm-brand]="selectedIdx === si"
+               [class.bg-cm-brand-dim]="selectedIdx === si"
+               [class.shadow-sm]="selectedIdx === si"
+               [class.border-cm-border]="selectedIdx !== si"
+               [class.bg-cm-surface]="selectedIdx !== si">
+
+            <div class="flex items-center gap-1.5 mb-1.5">
+              <p class="flex-1 min-w-0 text-[12.5px] font-bold leading-snug truncate"
+                 [class.text-cm-brand]="selectedIdx === si"
+                 [class.text-cm-text-primary]="selectedIdx !== si">
+                {{subject.title}}
+              </p>
+              @if(subject.tag === 'MANDATORY'){
+              <span class="text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full
+                           border border-cm-border-strong text-cm-text-muted shrink-0">Req</span>
+              }
+            </div>
+
+            <div class="flex items-center justify-between gap-2 text-[10px] text-cm-text-muted mb-1">
+              <span>{{getTotalTracks(subject)}} tracks</span>
+              <span class="font-bold"
+                    [class.text-green-500]="isSubjectComplete(subject)"
+                    [class.text-cm-text-secondary]="!isSubjectComplete(subject)">
+                {{getSubjectProgress(subject)}}%
+              </span>
+            </div>
+            <div class="h-1 rounded-full bg-cm-surface-hover overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-500"
+                   [class.bg-green-500]="isSubjectComplete(subject)"
+                   [class.bg-cm-brand]="!isSubjectComplete(subject)"
+                   [style.width]="getSubjectProgress(subject) + '%'"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </button>
+      }
+    </div>
+
+    <!-- ═══ RIGHT — dynamic detail panel for the selected stage ═════════ -->
+    <div class="min-w-0">
+      @let sub = subjects[selectedIdx];
+      @if(sub){
+      @for(s of [sub]; track selectedIdx){
+      <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+                  shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
+                  dark:shadow-none panel-enter">
+
+        <!-- Subject header -->
+        <div class="flex items-center gap-4 px-5 py-4 border-b border-cm-border
+                    bg-gradient-to-br from-violet-50/70 to-cm-surface dark:from-violet-500/5 dark:to-transparent">
+          <div class="w-11 h-11 rounded-xl shrink-0 overflow-hidden border border-cm-border">
+            @if(sub.image){
+            <img [src]="sub.image" [alt]="sub.title" class="w-full h-full object-cover">
+            }@else{
+            <div class="w-full h-full bg-cm-brand-dim flex items-center justify-center">
+              <mat-icon class="text-cm-brand" style="font-size:20px">menu_book</mat-icon>
+            </div>
+            }
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <h3 class="text-[14.5px] font-black text-cm-text-primary truncate">{{sub.title}}</h3>
+            <p class="text-[11px] text-cm-text-muted mt-0.5">
+              Stage {{selectedIdx + 1}} of {{subjects.length}}&nbsp;·&nbsp;
+              {{getCompletedTracks(sub)}}/{{getTotalTracks(sub)}} tracks done
+            </p>
+          </div>
+
+          <div class="shrink-0 text-right">
+            <p class="text-[22px] font-black tabular-nums leading-none"
+               [class.text-green-500]="getSubjectProgress(sub) === 100"
+               [class.text-cm-brand]="getSubjectProgress(sub) > 0 && getSubjectProgress(sub) < 100"
+               [class.text-cm-text-muted]="getSubjectProgress(sub) === 0">
+              {{getSubjectProgress(sub)}}%
+            </p>
+            <p class="text-[9px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">
+              @if(getSubjectProgress(sub) === 100){ Complete }
+              @else if(getSubjectProgress(sub) > 0){ In Progress }
+              @else{ Not Started }
+            </p>
+          </div>
+        </div>
+
+        <!-- Topics within this track ────────────────────────────────── -->
+        @if(sub.subjectTracks?.length > 0){
+        <div class="divide-y divide-cm-border">
+          @for(track of sub.subjectTracks; track track.id || track.name; let ti = $index){
+          <div class="relative flex items-center gap-3.5 px-5 py-3.5 cursor-pointer group
+                      hover:bg-cm-surface-hover transition-colors duration-150"
+               (click)="onExploreSubject(sub)">
+
+            <!-- Left hover accent -->
+            <div class="absolute left-0 inset-y-3 w-[3px] rounded-r-full bg-cm-brand
+                        scale-y-0 group-hover:scale-y-100 transition-transform duration-200 origin-center"></div>
+
+            <!-- Status node -->
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0
+                        border transition-all"
+                 [class.bg-green-500]="track.isCompleted"     [class.border-green-500]="track.isCompleted"
+                 [class.text-white]="track.isCompleted"
+                 [class.bg-cm-brand-dim]="!track.isCompleted && (track.progressPercent || 0) > 0"
+                 [class.border-cm-brand]="!track.isCompleted && (track.progressPercent || 0) > 0"
+                 [class.text-cm-brand]="!track.isCompleted && (track.progressPercent || 0) > 0"
+                 [class.bg-cm-surface-raised]="!track.isCompleted && !(track.progressPercent > 0)"
+                 [class.border-cm-border]="!track.isCompleted && !(track.progressPercent > 0)"
+                 [class.text-cm-text-muted]="!track.isCompleted && !(track.progressPercent > 0)">
+              @if(track.isCompleted){
+              <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">check</mat-icon>
+              }@else{ {{ti + 1}} }
+            </div>
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-3 mb-1">
+                <p class="text-[12.5px] font-bold truncate"
+                   [class.text-cm-text-secondary]="track.isCompleted"
+                   [class.text-cm-text-primary]="!track.isCompleted">
+                  {{track.title || track.name || ('Topic ' + (ti + 1))}}
+                </p>
+                <span class="text-[9px] font-black uppercase tracking-wide shrink-0"
+                      [class.text-green-500]="track.isCompleted"
+                      [class.text-cm-brand]="!track.isCompleted && (track.progressPercent || 0) > 0"
+                      [class.text-cm-text-muted]="!track.isCompleted && !(track.progressPercent > 0)">
+                  @if(track.isCompleted){ Done }
+                  @else if((track.progressPercent || 0) > 0){ {{track.progressPercent}}% }
+                  @else{ Pending }
+                </span>
+              </div>
+
+              @if(track.totalTopics){
+              <p class="text-[10px] text-cm-text-muted mb-1">
+                {{track.completedTopics || 0}}/{{track.totalTopics}} topics
+                @if(track.numTrivia){ · {{track.numTrivia}} Q }
+              </p>
+              }
+              @if(!track.isCompleted && (track.progressPercent || 0) > 0){
+              <div class="h-1 rounded-full bg-cm-surface-raised overflow-hidden">
+                <div class="h-full rounded-full bg-cm-brand transition-all"
+                     [style.width]="(track.progressPercent || 0) + '%'"></div>
+              </div>
+              }
+            </div>
+
+            <mat-icon class="text-cm-text-muted group-hover:text-cm-brand transition-colors shrink-0"
+                      style="font-size:16px;width:16px;height:16px;line-height:16px">chevron_right</mat-icon>
+
+          </div>
+          }
+        </div>
+        }@else{
+        <div class="px-5 py-14 flex flex-col items-center gap-2 text-center">
+          <mat-icon class="text-cm-text-muted" style="font-size:32px;width:32px;height:32px;line-height:32px">
+            layers
+          </mat-icon>
+          <p class="text-[12px] text-cm-text-muted">No topics available yet.</p>
+        </div>
+        }
+
+        <!-- Footer ─────────────────────────────────────────────────── -->
+        <div class="flex items-center justify-between gap-3 px-5 py-4 border-t border-cm-border
+                    bg-cm-surface-muted">
+          <p class="text-[11px] text-cm-text-muted">
+            <span class="font-semibold text-cm-text-secondary">{{getTotalTracks(sub)}}</span> tracks
+            @if(sub.numTrivia){
+            &nbsp;·&nbsp;<span class="font-semibold text-cm-text-secondary">{{sub.numTrivia}}</span> questions
+            }
+          </p>
+
+          <div class="flex items-center gap-2">
+            @if(sub.numTrivia > 0){
+            <button type="button" (click)="onLaunchQuiz(sub)"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold
+                     border border-cm-border bg-cm-surface hover:bg-cm-surface-raised transition-all">
+              <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">quiz</mat-icon>
+              Quick Quiz
+            </button>
+            }
+            <button type="button" (click)="onExploreSubject(sub)"
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-bold
+                     bg-cm-brand text-white hover:bg-indigo-700 active:scale-[0.97] transition-all shadow-sm">
+              Explore Subject
+              <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+
+      </div>
+      }
+      }
+    </div>
+
+  </div>
+
+  }@else{
+  <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
+              dark:shadow-none
+              px-5 py-14 flex flex-col items-center gap-2 text-center">
+    <mat-icon class="text-cm-text-muted" style="font-size:36px;width:36px;height:36px;line-height:36px">
+      school
+    </mat-icon>
+    <p class="text-[13px] text-cm-text-muted">No subjects found.</p>
+  </div>
+  }
+
+</div>

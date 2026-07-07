@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+/* ── Detail panel refresh transition ──────────────────── */
+@keyframes panel-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.panel-enter {
+  animation: panel-fade-in 0.25s ease-out;
+}

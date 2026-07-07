@@ -17,6 +17,9 @@ import { CertificateModel } from '@shared/components/certificate/certificate.mod
 import { certificateModels } from '../welcome/welcome.component';
 import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
+import { MatIconModule } from '@angular/material/icon';
+import { CertTrackComponent } from '@shared/components/cert-track/cert-track.component';
+import { JobCurriculumComponent } from '@shared/components/job-curriculum/job-curriculum.component';
 
 @Component({
   selector: 'app-view-course',
@@ -27,7 +30,10 @@ import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/m
     CommonModule,
     SubjectTrackerCardComponent,
     MeritListWidgetComponent,
-    CertificateComponent
+    CertificateComponent,
+    MatIconModule,
+    CertTrackComponent,
+    JobCurriculumComponent,
   ]
 })
 export class ViewCourseComponent implements OnInit {
@@ -43,8 +49,6 @@ export class ViewCourseComponent implements OnInit {
   courseData: any[];
   showSubjectAction = false;
   certificateModels: CertificateModel[] = [];
-  selectedSubjectIdx = 0;
-  selectedCertIdx = 0;
   meritList: any[] = [
     {
       "id": 1,
@@ -215,32 +219,11 @@ export class ViewCourseComponent implements OnInit {
     return this.courseData.reduce((sum: number, s: any) => sum + (s.subjectTracks?.length ?? 0), 0);
   }
 
-  getCertRequirements(certIndex: number): any[] {
-    if (!this.courseData?.length) return [];
-    let subjects: any[];
-    if (certIndex === 0) {
-      const mandatory = this.courseData.filter((s: any) => s.tag === 'MANDATORY');
-      subjects = mandatory.length > 0 ? mandatory : this.courseData;
-    } else {
-      subjects = this.courseData;
-    }
-    return subjects.map((s: any) => {
-      const tracks = s.subjectTracks ?? [];
-      const completed = tracks.length > 0
-        ? tracks.every((t: any) => t.isCompleted)
-        : (s.coverage ?? 0) >= 80;
-      const progress = tracks.length > 0
-        ? Math.round(tracks.reduce((acc: number, t: any) => acc + (t.progressPercent ?? 0), 0) / tracks.length)
-        : (s.coverage ?? 0);
-      return { id: s.id, title: s.title, completed, progress };
-    });
-  }
+  readonly progressSlotTarget = 3;
 
-  getCertProgress(certIndex: number): number {
-    const reqs = this.getCertRequirements(certIndex);
-    if (!reqs.length) return 0;
-    const completed = reqs.filter((r: any) => r.completed).length;
-    return Math.round((completed / reqs.length) * 100);
+  get progressPlaceholders(): number[] {
+    const remaining = this.progressSlotTarget - (this.attemptedSubjects?.length || 0);
+    return remaining > 0 ? Array(remaining).fill(0) : [];
   }
 
   fetchCourseData() {
@@ -249,8 +232,6 @@ export class ViewCourseComponent implements OnInit {
         // Handle new API shape { jobRole, subjects } as well as legacy flat array
         const subjects: any[] = Array.isArray(data) ? data : (data?.subjects ?? []);
         this.courseData = subjects;
-        this.selectedSubjectIdx = 0;
-        this.selectedCertIdx = 0;
 
         if (!Array.isArray(data) && data?.jobRole) {
           this.courseItem = { ...this.courseItem, ...data.jobRole };
@@ -381,6 +362,10 @@ export class ViewCourseComponent implements OnInit {
 
   takeQuiz() {
     this.snackService.display('snackbar-dark', 'Feature coming soon.', 'bottom', 'center');
+  }
+
+  onViewCertificate(cert: CertificateModel) {
+    this.snackService.display('snackbar-dark', 'Certificate #' + cert.certificateNumber + ' earned!', 'bottom', 'center');
   }
 
   isJobEnrolled(userId: number, jobId: number): boolean {
