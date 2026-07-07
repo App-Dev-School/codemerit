@@ -249,8 +249,4 @@ export class LmsDashboardMainComponent implements OnInit, OnDestroy {
   closeTooltip(): void {
     this.activeTooltip = null;
   }
-
-  raiseRequest(): void {
-    this.snackService.display('snackbar-dark', 'Request feature coming soon. Please contact an admin for now.', 'bottom', 'center');
-  }
 }

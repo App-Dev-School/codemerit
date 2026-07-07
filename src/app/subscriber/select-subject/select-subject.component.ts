@@ -28,11 +28,11 @@ import { Observable, of } from 'rxjs';
     ]),
     trigger('panelSlide', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(28px)' }),
-        animate('320ms cubic-bezier(0.22,1,0.36,1)', style({ opacity: 1, transform: 'translateY(0)' })),
+        style({ transform: 'translateX(100%)' }),
+        animate('300ms cubic-bezier(0.22,1,0.36,1)', style({ transform: 'translateX(0)' })),
       ]),
       transition(':leave', [
-        animate('180ms ease-in', style({ opacity: 0, transform: 'translateY(20px)' })),
+        animate('250ms cubic-bezier(0.4,0,1,1)', style({ transform: 'translateX(100%)' })),
       ]),
     ]),
   ],

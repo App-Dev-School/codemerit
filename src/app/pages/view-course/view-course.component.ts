@@ -11,7 +11,6 @@ import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation } from '@shared/animations';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
 import { CertificateModel } from '@shared/components/certificate/certificate.model';
 import { certificateModels } from '../welcome/welcome.component';
@@ -28,7 +27,6 @@ import { JobCurriculumComponent } from '@shared/components/job-curriculum/job-cu
   animations: [fadeInAnimation],
   imports: [
     CommonModule,
-    SubjectTrackerCardComponent,
     MeritListWidgetComponent,
     CertificateComponent,
     MatIconModule,
@@ -44,7 +42,6 @@ export class ViewCourseComponent implements OnInit {
   showContent = true;
   course = "";
   courseItem: Course;
-  attemptedSubjects: Subject[] = [];
   otherSubjects: Subject[] = [];
   courseData: any[];
   showSubjectAction = false;
@@ -219,13 +216,6 @@ export class ViewCourseComponent implements OnInit {
     return this.courseData.reduce((sum: number, s: any) => sum + (s.subjectTracks?.length ?? 0), 0);
   }
 
-  readonly progressSlotTarget = 3;
-
-  get progressPlaceholders(): number[] {
-    const remaining = this.progressSlotTarget - (this.attemptedSubjects?.length || 0);
-    return remaining > 0 ? Array(remaining).fill(0) : [];
-  }
-
   fetchCourseData() {
     this.master.fetchCourseDetail(this.course).subscribe((data: any) => {
       if (data) {
@@ -238,8 +228,7 @@ export class ViewCourseComponent implements OnInit {
         }
 
         if (this.courseData?.length > 0) {
-          this.attemptedSubjects = this.courseData.filter(s => (s.attempted ?? 0) > 0);
-          this.otherSubjects    = this.courseData.filter(s => !((s.attempted ?? 0) > 0));
+          this.otherSubjects = this.courseData.filter(s => !((s.attempted ?? 0) > 0));
         }
         setTimeout(() => { this.loading = false; }, 1500);
       }
@@ -265,6 +254,10 @@ export class ViewCourseComponent implements OnInit {
     console.log("CourseDash goToSubjects", this.course);
     this.router.navigate(['/dashboard', this.course]);
     this.snackService.display('snackbar-dark', 'Switched to ' + this.course + ' Dash', 'bottom', 'center');
+  }
+
+  openSelectSubject(): void {
+    this.router.navigate(['/select-subject'], { queryParams: { returnUrl: this.router.url } });
   }
 
   launchSubject(item: any) {

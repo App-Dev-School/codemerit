@@ -22,19 +22,19 @@ import { Subscription } from 'rxjs';
     trigger('overlayFade', [
       transition(':enter', [
         style({ opacity: 0 }),
-        animate('420ms ease', style({ opacity: 1 })),
+        animate('220ms ease', style({ opacity: 1 })),
       ]),
       transition(':leave', [
-        animate('360ms ease', style({ opacity: 0 })),
+        animate('200ms ease', style({ opacity: 0 })),
       ]),
     ]),
     trigger('panelSlide', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(48px)' }),
-        animate('680ms cubic-bezier(0.2,0.8,0.2,1)', style({ opacity: 1, transform: 'translateY(0)' })),
+        style({ transform: 'translateX(100%)' }),
+        animate('300ms cubic-bezier(0.22,1,0.36,1)', style({ transform: 'translateX(0)' })),
       ]),
       transition(':leave', [
-        animate('480ms cubic-bezier(0.2,0,0.2,1)', style({ opacity: 0, transform: 'translateY(48px)' })),
+        animate('250ms cubic-bezier(0.4,0,1,1)', style({ transform: 'translateX(100%)' })),
       ]),
     ]),
   ],

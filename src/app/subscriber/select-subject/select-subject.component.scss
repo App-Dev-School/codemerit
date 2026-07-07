@@ -3,15 +3,10 @@
 .ss-overlay {
   position: fixed;
   inset: 0;
-  z-index: 200;
-  background: rgba(2, 6, 23, 0.85);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  overflow-y: auto;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 2rem 1rem 3rem;
+  /* Must clear the app's sidebar overlay (z-index: 99999 in _leftsidebaroverlay.scss) */
+  z-index: 100000;
+  background: rgba(2, 6, 23, 0.6);
+  overflow: hidden;
 }
 
 .ss-loading {
@@ -22,17 +17,20 @@
   text-align: center;
 }
 
+/* Fullscreen panel — slides in/out horizontally, covers the whole viewport */
 .ss-panel {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  max-width: 1300px;
-  border-radius: 20px;
-  overflow: hidden;
+  height: 100%;
+  border-radius: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
-  box-shadow: 0 24px 64px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.2);
 
   :host-context(.dark) & {
     background: #0f172a;
-    box-shadow: 0 24px 64px rgba(0,0,0,.7), 0 2px 8px rgba(0,0,0,.4);
   }
 }
 
@@ -164,15 +162,14 @@
 
 /* Body */
 .ss-panel__body {
+  flex: 1;
   padding: 1.75rem 2rem 2rem;
   background: #f8fafc;
   :host-context(.dark) & { background: #020617; }
 }
 
 @media (max-width: 640px) {
-  .ss-overlay  { padding: 0.75rem 0.5rem 2rem; }
-  .ss-panel    { border-radius: 16px; }
   .ss-panel__header { padding: 1.25rem; }
   .ss-panel__body   { padding: 1.25rem; }
-  .ss-search   { width: 160px; }
+  .ss-search        { width: 140px; }
 }

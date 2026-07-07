@@ -276,7 +276,7 @@ export class DashboardComponent implements OnInit {
   }
 
   goToSubjects() {
-    this.router.navigate(['/select-subject']);
+    this.router.navigate(['/select-subject'], { queryParams: { returnUrl: this.router.url } });
   }
 
   fetchDashboardData() {
