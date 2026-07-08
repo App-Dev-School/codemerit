@@ -1,0 +1,149 @@
+<div class="flex flex-col rounded-2xl border border-cm-border bg-cm-surface overflow-hidden
+            hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+
+  <!-- Colour accent strip -->
+  <div class="h-1.5 w-full shrink-0"
+       [style.background]="'linear-gradient(90deg, ' + (color || '#6366f1') + ', ' + (color || '#6366f1') + '50)'"></div>
+
+  <!-- Header -->
+  <div class="flex items-start gap-3 px-4 pt-4 pb-3">
+    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black text-white shrink-0 shadow-sm"
+         [style.backgroundColor]="color || '#6366f1'">
+      {{index + 1}}
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <h4 class="text-sm font-black text-cm-text-primary leading-tight">{{track.title}}</h4>
+        @if(track.isCompleted){
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold
+                     bg-green-500/10 text-green-600 border border-green-500/20">✓ Done</span>
+        }@else if(track.isStarted){
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold
+                     bg-cm-brand/10 text-cm-brand border border-cm-brand/20">In Progress</span>
+        }@else{
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold
+                     bg-cm-surface-raised text-cm-text-muted border border-cm-border">Not Started</span>
+        }
+      </div>
+      @if(track.description){
+      <p class="text-[11.5px] text-cm-text-muted mt-1 leading-snug line-clamp-2">{{track.description}}</p>
+      }
+    </div>
+  </div>
+
+  <!-- Level chips -->
+  @if(trackLevels.length > 0){
+  <div class="px-4 pb-3 flex items-center gap-1.5 flex-wrap">
+    @for(level of trackLevels; track level){
+    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border"
+          [class]="levelChipClasses(level)">
+      {{level}}
+    </span>
+    }
+  </div>
+  }
+
+  <!-- Progress + stats -->
+  <div class="px-4 pb-3 space-y-2.5 border-t border-cm-border pt-3">
+
+    <div>
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[11px] text-cm-text-muted font-medium">Progress</span>
+        <span class="text-[11px] font-black text-cm-text-primary">
+          {{track.completedTopics || 0}}/{{track.totalTopics || 0}} topics · {{track.progressPercent || 0}}%
+        </span>
+      </div>
+      <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-700"
+             [class.bg-green-500]="track.isCompleted"
+             [style.backgroundColor]="!track.isCompleted ? (color || '#6366f1') : null"
+             [style.width]="(track.progressPercent || 0) + '%'"></div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between text-[11px]">
+      <span class="text-cm-text-muted">
+        @if(questionsToGo > 0){
+          <span class="font-bold text-cm-text-secondary">{{questionsToGo}}</span> questions to go
+        }@else if(track.numTrivia > 0){
+          ✅ All caught up
+        }@else{
+          No quiz questions yet
+        }
+      </span>
+      @if(track.score > 0){
+      <span class="font-black text-green-600">{{track.score}}% score</span>
+      }
+    </div>
+  </div>
+
+  <!-- Footer actions -->
+  <div class="flex items-center gap-2 px-4 pb-4 pt-1 flex-wrap">
+    @if(track.numTrivia > 0){
+    <button type="button" (click)="onTrackQuiz()"
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+             bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
+      💡 Quick Quiz
+    </button>
+    }
+    <button type="button" (click)="toggleExpanded()"
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+             border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+             active:scale-95 transition-all ml-auto">
+      {{track.topics?.length || 0}} topics
+      <svg class="w-3.5 h-3.5 transition-transform duration-200" [class.rotate-180]="isExpanded"
+           fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Expanded topic list -->
+  @if(isExpanded && track.topics?.length > 0){
+  <div class="border-t border-cm-border bg-cm-surface-muted divide-y divide-cm-border">
+    @for(topic of track.topics; track topic.id; let ti = $index){
+    <div class="flex items-center gap-3 px-4 py-2.5">
+
+      <div class="w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black shrink-0"
+           [class.bg-green-500]="topic.isCompleted" [class.border-green-500]="topic.isCompleted"
+           [class.text-white]="topic.isCompleted"
+           [class.bg-cm-surface]="!topic.isCompleted" [class.border-cm-border]="!topic.isCompleted"
+           [class.text-cm-text-muted]="!topic.isCompleted">
+        @if(topic.isCompleted){
+        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        }@else{ {{ti + 1}} }
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <p class="text-[12px] font-semibold text-cm-text-primary truncate">{{topic.title}}</p>
+          @if(topic.label){
+          <span class="shrink-0 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wide border"
+                [class]="levelChipClasses(topic.label)">{{topic.label}}</span>
+          }
+        </div>
+        @if(topic.isStarted){
+        <div class="flex items-center gap-2 mt-1">
+          <div class="flex-1 h-1 rounded-full bg-cm-surface-raised overflow-hidden max-w-[120px]">
+            <div class="h-full rounded-full bg-cm-brand" [style.width]="(topic.coverage || 0) + '%'"></div>
+          </div>
+          <span class="text-[10px] text-cm-text-muted">{{topic.score || 0}}% score</span>
+        </div>
+        }
+      </div>
+
+      @if(topic.numTrivia > 0){
+      <button type="button" (click)="onTopicQuiz(topic)"
+        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold shrink-0
+               border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+               active:scale-95 transition-all">
+        Quiz
+      </button>
+      }
+
+    </div>
+    }
+  </div>
+  }
+
+</div>

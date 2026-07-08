@@ -1,0 +1,12 @@
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+  @for(track of orderedTracks; track track.id; let i = $index){
+  <app-subject-track-widget
+    [track]="track"
+    [color]="color"
+    [index]="i"
+    (topicQuiz)="topicQuiz.emit($event)"
+    (topicExplore)="topicExplore.emit($event)"
+    (trackQuiz)="trackQuiz.emit($event)">
+  </app-subject-track-widget>
+  }
+</div>

@@ -6,14 +6,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core';
 import { Subject } from '@core/models/subject';
+import { CertificationTrack, SubjectTrack } from '@core/models/subject-dashboard.model';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
+import { CertificationTracksComponent } from '@shared/components/certification-tracks/certification-tracks.component';
 import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
+import { SubjectTracksBoardComponent } from '@shared/components/subject-tracks-board/subject-tracks-board.component';
 import { Observable, of } from 'rxjs';
 import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
 import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
@@ -31,6 +34,8 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
     SubjectPerformanceCardComponent,
     SkillRatingWidgetComponent,
     GoalPathComponent,
+    SubjectTracksBoardComponent,
+    CertificationTracksComponent,
   ]
 })
 export class DashboardComponent implements OnInit {
@@ -40,7 +45,7 @@ export class DashboardComponent implements OnInit {
   loadingText = 'Loading Subject Dashboard';
   showContent = true;
   subject = "";
-  subjectData: any;
+  subjectData: any = null;
   currentSubject: any;
   subjectTopics$: Observable<any>;
   nextAction: string = 'Assess Your Skills';
@@ -279,6 +284,20 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/select-subject'], { queryParams: { returnUrl: this.router.url } });
   }
 
+  get hasSubjectTracks(): boolean {
+    return !!this.subjectData?.subjectTracks?.length;
+  }
+
+  get hasCertificationTracks(): boolean {
+    return !!this.subjectData?.certificationTracks?.length;
+  }
+
+  get milestoneCount(): number {
+    return this.hasSubjectTracks
+      ? this.subjectData!.subjectTracks!.length
+      : (this.subjectData?.syllabus?.length ?? 0);
+  }
+
   fetchDashboardData() {
         this.loading = true;
         this.master
@@ -353,6 +372,18 @@ export class DashboardComponent implements OnInit {
 
   onCertificateDownload() {
     this.snackService.display('snackbar-dark', 'Please complete your milestones to unlock the digital certificate.', 'bottom', 'center');
+  }
+
+  onTrackQuiz(track: SubjectTrack) {
+    this.launchQuiz(track.title + ' Quiz', this.currentSubject.id, null);
+  }
+
+  onCertStartLearning(cert: CertificationTrack) {
+    this.activeTab = 'milestones';
+  }
+
+  onCertViewCertificate(cert: CertificationTrack) {
+    this.snackService.display('snackbar-dark', 'Certificate viewing is coming soon.', 'bottom', 'center');
   }
 
    onScheduleMockInt() {
