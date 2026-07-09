@@ -7,13 +7,8 @@
     <header class="bg-slate-900 border-b border-slate-800 px-4 md:px-6 py-3 md:py-4
                    flex items-center justify-between z-20 shrink-0 shadow-md gap-3">
 
-        <!-- Left: hamburger (mobile) + title -->
+        <!-- Left: title -->
         <div class="flex items-center gap-3 min-w-0">
-            <button (click)="toggleSidebar()" title="Candidate info"
-                class="md:hidden p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700
-                       text-slate-400 hover:text-white rounded-lg text-sm transition shrink-0">
-                <i class="fa-solid fa-bars"></i>
-            </button>
             <div class="min-w-0">
                 <div class="flex items-center gap-2">
                     <h1 class="text-base md:text-lg font-bold tracking-tight text-white truncate">
@@ -79,25 +74,8 @@
     <!-- ── Main Workspace ── -->
     <main class="flex-1 flex overflow-hidden relative">
 
-        <!-- Mobile backdrop -->
-        @if (sidebarOpen) {
-            <div class="fixed inset-0 z-40 bg-black/50 md:hidden"
-                 (click)="closeSidebar()"></div>
-        }
-
-        <!-- Left Sidebar — drawer on mobile, inline on md+ -->
+        <!-- Left Sidebar — full-screen tab on mobile, inline on md+ -->
         <aside [class]="asideClass">
-
-            <!-- Mobile sidebar header with close button -->
-            <div class="md:hidden flex items-center justify-between px-4 py-3
-                        bg-slate-900 border-b border-slate-800 shrink-0">
-                <span class="text-sm font-bold text-white">Candidate Info</span>
-                <button (click)="closeSidebar()"
-                    class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700
-                           rounded-lg transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
 
             <!-- Scrollable body -->
             <div class="flex-1 overflow-y-auto overflow-x-hidden scrollable-div min-h-0">
@@ -611,7 +589,7 @@
         </aside>
 
         <!-- Right Panel -->
-        <section class="flex-1 flex flex-col h-full bg-cm-surface-muted relative overflow-hidden">
+        <section [class]="sectionClass">
 
             <!-- ── Pre-start splash ── -->
             @if (!assessmentStarted) {
@@ -675,31 +653,34 @@
                         <option value="database_orm">⑥ Database Design &amp; TypeORM</option>
                         <option value="system_design">⑦ System Design &amp; Architecture</option>
                     </select>
+                    <button (click)="toggleBoardCleared()"
+                        [title]="boardCleared ? 'Show questions' : 'Switch to an empty board'"
+                        [class]="'px-3 py-1.5 text-xs font-semibold rounded-lg border transition flex items-center gap-1.5 ' +
+                                 (boardCleared
+                                   ? 'bg-cm-brand-dim border-cm-brand text-cm-brand-text'
+                                   : 'bg-cm-surface-raised hover:bg-cm-surface-hover border-cm-border text-cm-text-secondary hover:text-cm-text-primary')">
+                        <i [class]="boardCleared ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'"></i>
+                        <span class="hidden sm:inline">{{ boardCleared ? 'Show Questions' : 'Clear Board' }}</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- Dismissed questions restore strip -->
-            @if (dismissedQuestionsList.length > 0) {
-            <div class="bg-cm-surface-muted border-b border-cm-border px-6 py-2
-                        flex items-center gap-2 flex-wrap">
-                <span class="text-[10px] text-cm-text-muted font-bold uppercase tracking-wider shrink-0">
-                    <i class="fa-solid fa-eye-slash mr-1 text-[9px]"></i>Cleared:
-                </span>
-                @for (q of dismissedQuestionsList; track q.id) {
-                <button (click)="restoreQuestion(q)"
-                    class="inline-flex items-center gap-1 text-[10px] font-semibold
-                           px-2 py-0.5 rounded-md border transition-colors
-                           bg-cm-surface border-cm-border text-cm-text-secondary
-                           hover:border-cm-brand hover:bg-cm-brand-dim hover:text-cm-brand-text">
-                    <i class="fa-solid fa-rotate-left text-[9px]"></i>
-                    Q{{ q.id }}: {{ truncateText(q.title, 28) }}
-                </button>
-                }
-            </div>
-            }
-
             <!-- Slide Frame -->
             <div class="flex-1 relative overflow-hidden px-6 pt-6 pb-4 flex flex-col items-center gap-4">
+
+                @if (boardCleared) {
+                <div class="flex-1 flex flex-col items-center justify-center gap-3 text-center">
+                    <i class="fa-solid fa-eye-slash text-3xl text-cm-text-muted"></i>
+                    <p class="text-sm text-cm-text-secondary">Board is cleared.</p>
+                    <button (click)="toggleBoardCleared()"
+                        class="px-4 py-2 bg-cm-brand hover:opacity-90 text-white text-xs font-semibold
+                               rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-eye"></i> Show Questions
+                    </button>
+                </div>
+                }
+
+                @if (!boardCleared) {
                 <div class="relative w-full max-w-4xl flex-1 flex items-center justify-center min-h-0">
                     <div class="w-full relative h-full max-h-[420px]">
 
@@ -767,17 +748,6 @@
                                                transition flex items-center gap-1.5">
                                         <i class="fa-solid fa-eye"></i> Toggle Rubric / Solution
                                     </button>
-                                    <button (click)="dismissQuestion(q)"
-                                        class="px-3.5 py-1.5 text-xs font-semibold rounded-lg border
-                                               transition flex items-center gap-1.5
-                                               bg-rose-50 dark:bg-rose-500/10
-                                               border-rose-200 dark:border-rose-500/30
-                                               text-rose-600 dark:text-rose-400
-                                               hover:bg-rose-100 dark:hover:bg-rose-500/20"
-                                        title="Clear this question from the board">
-                                        <i class="fa-solid fa-eye-slash text-[11px]"></i>
-                                        Clear from board
-                                    </button>
                                 </div>
                             </div>
                         }
@@ -812,6 +782,7 @@
                         Next Question <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
+                }
 
             </div>
 
@@ -820,8 +791,32 @@
         </section>
     </main>
 
+    <!-- ── Mobile bottom tab bar — switch between Question board and Rate & Score, both full-screen ── -->
+    <nav class="md:hidden shrink-0 z-20 flex items-stretch bg-slate-900 border-t border-slate-800">
+        <button (click)="setMobileView('board')"
+            [class]="'flex-1 flex flex-col items-center justify-center gap-1 py-2.5 text-xs font-semibold transition ' +
+                     (mobileView === 'board' ? 'text-cm-brand-text' : 'text-slate-400')">
+            <i class="fa-solid fa-clipboard-question text-base"></i>
+            Question
+        </button>
+        <button (click)="setMobileView('rate')"
+            class="flex-1 flex flex-col items-center justify-center gap-1 py-2.5 relative">
+            <span [class]="'flex flex-col items-center gap-1 text-xs font-semibold transition ' +
+                           (mobileView === 'rate' ? 'text-cm-brand-text' : 'text-slate-400')">
+                <i class="fa-solid fa-star text-base"></i>
+                Rate &amp; Score
+            </span>
+            @if (interviewSkillRatings.length > 0) {
+            <span class="absolute top-1.5 right-[calc(50%-28px)] min-w-[16px] h-4 px-1 flex items-center justify-center
+                         rounded-full bg-cm-brand text-white text-[9px] font-bold leading-none">
+                {{ interviewSkillRatings.length }}
+            </span>
+            }
+        </button>
+    </nav>
+
     <!-- Toast -->
-    <div [class]="'fixed bottom-6 right-6 px-4 py-3 bg-cm-surface border border-cm-border '
+    <div [class]="'fixed bottom-20 md:bottom-6 right-6 px-4 py-3 bg-cm-surface border border-cm-border '
         + 'text-cm-text-primary text-xs font-semibold rounded-xl shadow-2xl '
         + 'transition-all duration-300 transform z-[60] flex items-center gap-2 '
         + (toastVisible ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-20 opacity-0 pointer-events-none')">

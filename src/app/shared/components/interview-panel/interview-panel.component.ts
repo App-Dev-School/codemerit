@@ -85,17 +85,22 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
     this.startTimer();
   }
 
-  // ── Sidebar (mobile drawer) ─────────────────────────────────────────────────
-  sidebarOpen = false;
+  // ── Mobile view switch — full-screen tabs instead of a drawer ───────────────
+  mobileView: 'board' | 'rate' = 'board';
 
-  toggleSidebar(): void { this.sidebarOpen = !this.sidebarOpen; }
-  closeSidebar(): void  { this.sidebarOpen = false; }
+  setMobileView(view: 'board' | 'rate'): void { this.mobileView = view; }
 
   get asideClass(): string {
-    const base    = 'bg-black border-r border-cm-border flex flex-col transition-transform duration-300 ease-in-out shrink-0';
-    const mobile  = `fixed inset-y-0 left-0 z-50 w-80 h-screen ${this.sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`;
-    const desktop = 'md:relative md:translate-x-0 md:w-96 md:h-full md:z-10';
+    const base    = 'bg-black border-r border-cm-border flex-col shrink-0';
+    const mobile  = this.mobileView === 'rate' ? 'flex w-full h-full' : 'hidden';
+    const desktop = 'md:flex md:relative md:w-96 md:h-full md:z-10';
     return `${base} ${mobile} ${desktop}`;
+  }
+
+  get sectionClass(): string {
+    const base = 'flex-1 flex-col h-full bg-cm-surface-muted relative overflow-hidden';
+    const mobile = this.mobileView === 'board' ? 'flex' : 'hidden';
+    return `${base} ${mobile} md:flex`;
   }
 
   // ── Fullscreen ─────────────────────────────────────────────────────────────
@@ -144,9 +149,13 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   // ── Mute ───────────────────────────────────────────────────────────────────
   isMuted = false;
 
-  // ── Dismissed questions ────────────────────────────────────────────────────
-  // Key format: `${subject}:${questionId}` — scoped per-subject
-  private dismissedQuestions = new Set<string>();
+  // ── Board — cleared shows an empty board on demand ─────────────────────────
+  boardCleared = false;
+
+  toggleBoardCleared(): void {
+    this.boardCleared = !this.boardCleared;
+    this.showToast(this.boardCleared ? 'Board cleared.' : 'Questions restored.');
+  }
 
   // ── Skill ratings captured during interview ────────────────────────────────
   interviewSkillRatings: InterviewSkillRating[] = [];
@@ -353,17 +362,11 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
 
   // ── Computed ───────────────────────────────────────────────────────────────
   get activeQuestions(): Question[] {
-    return (this.questionsDatabase[this.activeSubject] ?? [])
-      .filter(q => !this.dismissedQuestions.has(`${this.activeSubject}:${q.id}`));
+    return this.questionsDatabase[this.activeSubject] ?? [];
   }
 
   get activeQuestion(): Question | null {
     return this.activeQuestions[this.activeSlideIndex] ?? null;
-  }
-
-  get dismissedQuestionsList(): Question[] {
-    return (this.questionsDatabase[this.activeSubject] ?? [])
-      .filter(q => this.dismissedQuestions.has(`${this.activeSubject}:${q.id}`));
   }
 
   get activeSubjectTitle(): string {
@@ -464,21 +467,6 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   toggleMute(): void {
     this.isMuted = !this.isMuted;
     this.showToast(this.isMuted ? 'Your microphone has been muted.' : 'Microphone is live.');
-  }
-
-  // ── Dismiss / Restore questions ────────────────────────────────────────────
-  dismissQuestion(q: Question): void {
-    this.dismissedQuestions.add(`${this.activeSubject}:${q.id}`);
-    const remaining = this.activeQuestions;
-    if (this.activeSlideIndex >= remaining.length) {
-      this.activeSlideIndex = Math.max(0, remaining.length - 1);
-    }
-    this.showToast('Question cleared from board.');
-  }
-
-  restoreQuestion(q: Question): void {
-    this.dismissedQuestions.delete(`${this.activeSubject}:${q.id}`);
-    this.showToast('Question restored to board.');
   }
 
   // ── Skill rating dropdowns ─────────────────────────────────────────────────
