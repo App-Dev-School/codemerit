@@ -70,6 +70,7 @@ export class MasterService {
             // Save only res.data so the constructor can read it back as MasterData directly.
             localStorage.setItem(this.storageKey, JSON.stringify(res.data));
             this.dataLoaded.next(true);
+            //use notiwidget here
           }
         }),
         catchError((err) => {

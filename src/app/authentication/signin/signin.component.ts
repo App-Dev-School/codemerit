@@ -66,7 +66,7 @@ export class SigninComponent extends UnsubscribeOnDestroyAdapter implements OnIn
               localStorage.removeItem(AuthConstants.REDIRECT_URL);
               this.router.navigateByUrl(redirectUrl);
               this.loading = false;
-              this.master.fetchMasterDataFromAPI();
+              this.master.fetchMasterDataFromAPI().subscribe();
               return;
             }
             const role = this.authService.currentUserValue.role;
@@ -78,7 +78,7 @@ export class SigninComponent extends UnsubscribeOnDestroyAdapter implements OnIn
                 : this.router.navigate(['/select-job-role']);
             }
             this.loading = false;
-            this.master.fetchMasterDataFromAPI();
+            this.master.fetchMasterDataFromAPI().subscribe();
           }, 1000);
         } else {
           this.error     = 'Invalid credentials. Please try again.';

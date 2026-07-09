@@ -94,29 +94,39 @@ export class CourseDashboardComponent implements OnInit {
     console.log(this.pageTitle, "RouteSnap course", course);
     if (course) {
       this.course = course;
-    } else {
-      if (this.authService.currentUserValue && this.authService.getUserJobRoles()?.length > 0) {
-        const userCourses = this.authService.getUserJobRoles();
-        const firstCourse = userCourses[userCourses.length - 1];
-        this.course = this.master.jobRoles.filter(role => role.id === firstCourse.jobRoleId)[0]?.slug;
-        console.log(this.pageTitle, "RouteSnap course defaulted", this.course);
+      this.onCourseChange(this.course);
+      return;
+    }
+
+    const userJobRoles = this.authService.getUserJobRoles();
+    if (!this.authService.currentUserValue || !(userJobRoles?.length > 0)) {
+      this.goToCourses();
+      return;
+    }
+
+    const firstCourse = userJobRoles[userJobRoles.length - 1];
+    this.resolveDefaultCourseSlug(firstCourse.jobRoleId);
+  }
+
+  // master.jobRoles may still be in-flight right after login, so wait for it before resolving the slug.
+  private resolveDefaultCourseSlug(jobRoleId: number) {
+    const applySlug = () => {
+      const slug = this.master.jobRoles?.find(role => role.id === jobRoleId)?.slug;
+      console.log(this.pageTitle, "RouteSnap course defaulted", slug);
+      if (slug) {
+        this.course = slug;
+        this.onCourseChange(this.course);
       } else {
+        // Enrolled job role no longer exists in the catalog - fall back instead of hanging on "Loading your Dashboard".
         this.goToCourses();
       }
+    };
+
+    if (this.master.jobRoles?.length > 0) {
+      applySlug();
+    } else {
+      this.master.fetchMasterDataFromAPI().subscribe(() => applySlug());
     }
-    if (this.course)
-      this.onCourseChange(this.course);
-    // this.route.paramMap.subscribe(params => {
-    //   console.log("CourseDash @RouteParam change detected =>", params.get("course"));
-    //   if (params.get("course")) {
-    //     this.course = params.get("course");
-    //     if (this.course) {
-    //       this.onCourseChange(this.course);
-    //     }
-    //   } else {
-    //     this.course = "";
-    //   }
-    // });
   }
 
   filterCourse(allJobRoles: any) {
