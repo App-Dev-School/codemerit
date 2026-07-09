@@ -143,16 +143,17 @@ export class CourseDashboardComponent implements OnInit {
       const allJobs = this.master.jobRoles;
       if (allJobs) {
         this.filterCourse(allJobs);
-      } else {
-        //get this from server
-        this.master.fetchJobRoleSubjectMapping().subscribe((data: any) => {
-          console.log("CourseDash #2 fetchJobRoleSubjectMapping", data);
-          if (data && !data.error && data.data) {
-            const allJobRoles = data.data;
-            this.filterCourse(allJobRoles);
-          }
-        });
-      }
+      } 
+      // else {
+      //   //get this from server
+      //   this.master.fetchJobRoleSubjectMapping().subscribe((data: any) => {
+      //     console.log("CourseDash #2 fetchJobRoleSubjectMapping", data);
+      //     if (data && !data.error && data.data) {
+      //       const allJobRoles = data.data;
+      //       this.filterCourse(allJobRoles);
+      //     }
+      //   });
+      // }
 
       //we need list of all subjects in a course along with course details
       this.master.fetchCourseDashboard().subscribe((data: any) => {

@@ -195,16 +195,17 @@ export class ViewCourseComponent implements OnInit {
       if (allJobs) {
         console.log(this.pageTitle, "onCourseChange master exists");
         this.filterCourse(allJobs);
-      } else {
-        //get this from server
-        this.master.fetchJobRoleSubjectMapping().subscribe((data: any) => {
-          console.log(this.pageTitle, "onCourseChange fetchJobRoleSubjectMapping", data);
-          if (data && data.length > 0) {
-            //const allJobRoles = data;
-            this.filterCourse(data);
-          }
-        });
-      }
+      } 
+      // else {
+      //   //get this from server
+      //   this.master.fetchJobRoleSubjectMapping().subscribe((data: any) => {
+      //     console.log(this.pageTitle, "onCourseChange fetchJobRoleSubjectMapping", data);
+      //     if (data && data.length > 0) {
+      //       //const allJobRoles = data;
+      //       this.filterCourse(data);
+      //     }
+      //   });
+      // }
 
       //this is causing infinite loop, need to optimize
       //this.fetchCourseData();

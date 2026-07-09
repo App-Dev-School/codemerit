@@ -8,6 +8,54 @@
     <app-learner-welcome-card></app-learner-welcome-card>
   </div>
 
+  <!-- ── Explore by Job Role ─────────────────────────────────────────────── -->
+  @if(jobRoles?.length) {
+  <div class="min-w-0">
+    <div class="mb-4">
+      <h3 class="text-sm font-bold text-cm-text-primary">Explore by Job Role</h3>
+      <p class="text-xs text-cm-text-muted mt-0.5">Pick a role to see its full curriculum roadmap</p>
+    </div>
+
+    <!-- Pill cloud — size hints at breadth (subject count) -->
+    <div class="flex flex-wrap gap-2.5 mb-6">
+      @for(role of jobRoles; track role.id) {
+      <button type="button" (click)="selectJobRolePill(role)"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-full border font-semibold
+               transition-all duration-150 active:scale-[0.97]"
+        [class]="(role.subjects?.length || 0) > 6 ? 'text-[13px]' : 'text-xs'"
+        [class.bg-cm-brand]="selectedJobRoleId === role.id"
+        [class.border-cm-brand]="selectedJobRoleId === role.id"
+        [class.text-white]="selectedJobRoleId === role.id"
+        [class.bg-cm-surface]="selectedJobRoleId !== role.id"
+        [class.border-cm-border]="selectedJobRoleId !== role.id"
+        [class.text-cm-text-secondary]="selectedJobRoleId !== role.id"
+        [class.hover:border-cm-border-strong]="selectedJobRoleId !== role.id">
+        <span class="w-1.5 h-1.5 rounded-full shrink-0"
+              [style.backgroundColor]="selectedJobRoleId === role.id ? '#fff' : (role.color || '#818cf8')"></span>
+        {{role.title}}
+        @if(role.subjects?.length){
+        <span class="text-[10px] opacity-70">{{role.subjects.length}}</span>
+        }
+      </button>
+      }
+    </div>
+
+    @if(selectedJobRoleId) {
+      @if(loadingCurriculum) {
+      <div class="flex items-center justify-center py-14 bg-cm-surface border border-cm-border-strong rounded-2xl">
+        <i class="fa-solid fa-spinner fa-spin text-cm-text-muted"></i>
+      </div>
+      } @else {
+      <app-job-curriculum
+        [subjects]="selectedJobRoleSubjects"
+        (exploreSubject)="onCurriculumExploreSubject($event)"
+        (launchQuiz)="onCurriculumLaunchQuiz($event)">
+      </app-job-curriculum>
+      }
+    }
+  </div>
+  }
+
   <!-- ── Skills + Leaderboard row ────────────────────────────────────────── -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
 

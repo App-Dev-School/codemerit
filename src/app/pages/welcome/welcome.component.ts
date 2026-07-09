@@ -8,6 +8,7 @@ import { Course } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { CertificateModel, CertificateTemplateId } from '@shared/components/certificate/certificate.model';
+import { JobCurriculumComponent } from '@shared/components/job-curriculum/job-curriculum.component';
 import { LearnerWelcomeCardComponent } from '@shared/components/learner-welcome-card/learner-welcome-card.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { LessonService } from 'src/app/learn/lesson.service';
@@ -118,6 +119,7 @@ export const certificateModels: CertificateModel[] = [
   styleUrls: ['./welcome.component.scss'],
   imports: [
     RouterLink,
+    JobCurriculumComponent,
     LearnerWelcomeCardComponent,
     MeritListWidgetComponent,
   ],
@@ -141,6 +143,12 @@ export class WelcomeComponent implements OnInit {
   subjectsByRole: { [role: string]: Course[] } = {};
   limit: number = 10; // <==== Edit this number to limit API results
   certificateModels: CertificateModel[] = [];
+
+  // Explore-by-job-role pills + reused Curriculum Roadmap (see job-curriculum.component)
+  selectedJobRoleId: number | null = null;
+  selectedJobRoleSubjects: any[] = [];
+  loadingCurriculum = false;
+  private jobRoleSubjectsCache: { [jobRoleId: number]: any[] } = {};
 
   meritList = [
     { id: 1, name: 'Vishal Kumar',  username: 'vishal',  designationName: 'Angular Architect', score: 96, avgAccuracy: 92, image: 'assets/images/users/user.jpg' },
@@ -270,18 +278,18 @@ export class WelcomeComponent implements OnInit {
       this.nextAction = "selfRating";
     });
     // Implement Master Data Relationship
-    this.master.fetchJobRoleSubjectMapping().subscribe(data => {
-      this.subjectRoleMap = data;
-      this.subjectRoleMap.forEach(subject => {
-        console.log("TaskJobRole ", subject);
-        // subject.subjects.forEach(role => {
-        //   if (!this.subjectsByRole[role]) {
-        //     this.subjectsByRole[role] = [];
-        //   }
-        //   this.subjectsByRole[role].push(subject);
-        // });
-      });
-    });
+    // this.master.fetchJobRoleSubjectMapping().subscribe(data => {
+    //   this.subjectRoleMap = data;
+    //   this.subjectRoleMap.forEach(subject => {
+    //     console.log("TaskJobRole ", subject);
+    //     // subject.subjects.forEach(role => {
+    //     //   if (!this.subjectsByRole[role]) {
+    //     //     this.subjectsByRole[role] = [];
+    //     //   }
+    //     //   this.subjectsByRole[role].push(subject);
+    //     // });
+    //   });
+    // });
     //After 5 secons ore more display the next user task
     // setTimeout(() => {
     //   if(!this.authService.currentUserValue.email){
@@ -311,6 +319,42 @@ export class WelcomeComponent implements OnInit {
   }
 
   startedLessonIds: number[] = [];
+
+  get jobRoles(): any[] {
+    return this.master.jobRoles ?? [];
+  }
+
+  selectJobRolePill(role: any): void {
+    if (this.selectedJobRoleId === role.id) {
+      this.selectedJobRoleId = null; // toggle off on repeat click
+      return;
+    }
+    this.selectedJobRoleId = role.id;
+
+    if (this.jobRoleSubjectsCache[role.id]) {
+      this.selectedJobRoleSubjects = this.jobRoleSubjectsCache[role.id];
+      return;
+    }
+
+    this.loadingCurriculum = true;
+    this.master.fetchCourseDetail(role.slug).subscribe((data: any) => {
+      const subjects: any[] = Array.isArray(data) ? data : (data?.subjects ?? []);
+      this.jobRoleSubjectsCache[role.id] = subjects;
+      this.selectedJobRoleSubjects = subjects;
+      this.loadingCurriculum = false;
+    });
+  }
+
+  onCurriculumExploreSubject(subject: any): void {
+    if (subject?.slug) {
+      this.router.navigate(['/dashboard/learn', subject.slug]);
+    }
+  }
+
+  onCurriculumLaunchQuiz(subject: any): void {
+    // Subject dashboard already offers quiz launch — route there for now.
+    this.onCurriculumExploreSubject(subject);
+  }
 
   get pendingLessonsCount(): number {
     return this.engagements.length - this.startedLessonIds.length;

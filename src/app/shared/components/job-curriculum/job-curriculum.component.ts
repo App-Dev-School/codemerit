@@ -64,4 +64,12 @@ export class JobCurriculumComponent {
 
   onLaunchQuiz(subject: any): void     { this.launchQuiz.emit(subject); }
   onExploreSubject(subject: any): void { this.exploreSubject.emit(subject); }
+
+  // Same status scale used for skill grades elsewhere in the app (emerald/amber/red).
+  performanceMeta(value: number): { color: string; bg: string } {
+    if (value >= 80) return { color: '#34d399', bg: 'rgba(52,211,153,0.12)' };
+    if (value >= 50) return { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)' };
+    if (value > 0)   return { color: '#f87171', bg: 'rgba(248,113,113,0.12)' };
+    return { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' };
+  }
 }
