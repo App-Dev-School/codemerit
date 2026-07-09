@@ -16,6 +16,7 @@ import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { QuizHelperService } from '../quiz-helper.service';
 import { QuizConfig, QuizService } from '../quiz.service';
+import { SpeechService } from '@core/service/speech.service';
 
 interface FeedbackState {
   show: boolean;
@@ -94,6 +95,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     private snackBar: MatSnackBar,
     private quizService: QuizService,
     private quizHelper: QuizHelperService,
+    private speech: SpeechService
   ) {
     register();
   }
@@ -197,7 +199,19 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     );
 
     if (this.quizConfig.enableAudio) {
-      this.quizHelper.playSound(isCorrect ? 'right_answer' : 'wrong_answer');
+      // Speech alternative: speak a short verdict, not the raw options array.
+      // Only safe in Interactive mode — Default mode auto-advances in 1.2-1.6s,
+      // too fast for an utterance to finish before the next cancel() cuts it off.
+      try {
+        if (this.quizConfig.mode === 'Interactive') {
+          this.speech.speak(
+            isCorrect ? 'Correct!' : `Oh Incorrect. ${question.answer}`,
+            { profile: isCorrect ? 'cheerful' : 'calm' }
+          );
+        }
+      } catch (error) {
+        console.log('Speech synthesis error:', error);
+      }
     }
 
     if (this.quizConfig.mode === 'Interactive') {
@@ -271,7 +285,9 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       this.startQuestionTimer(this.questions[this.currentQuestionId]);
       if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
     } else {
-      if (this.quizConfig.enableAudio) this.quizHelper.playSound('well-done');
+      if (this.quizConfig.enableAudio) {
+        this.speech.speak("Well Done! You have completed the assessment. Submitting your results now.");
+      }
       this.completeQuiz();
     }
     clearTimeout(this.scheduledAutoNext);
@@ -307,7 +323,9 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showAnswers(): void {
     if (this.currentQuestion?.answer) {
       this.currentQuestion.answerSeen = true;
-      if (this.quizConfig.enableAudio) this.quizHelper.playSound('ping');
+      if (this.quizConfig.enableAudio) {
+        this.speech.speak(this.currentQuestion?.answer || 'Answer not available');
+      }
     }
     this.answerActive = true;
   }
