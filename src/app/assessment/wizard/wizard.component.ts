@@ -1,41 +1,23 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import {
-  MatButtonModule
-} from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatRippleModule } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import {
-  MatRadioModule
-} from '@angular/material/radio';
-import {
-  MatStepperModule
-} from '@angular/material/stepper';
-import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 import { RatingType } from '@core/models/rating-type';
 import { SkillRating, SkillRatingSession } from '@core/models/skill-rating';
+import { SkillType } from '@core/models/skill-type';
 import { UtilsService } from '@core/service/utils.service';
 import { MasterService } from '@core/service/master.service';
-import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rating.component';
-import { SkillType } from '@core/models/skill-type';
 import { AuthService } from '@core/service/auth.service';
-import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import { MatDivider } from '@angular/material/divider';
-import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
+import { SkillRatingComponent } from '@shared/components/skill-rating/skill-rating.component';
+
+type CardState = 'untouched' | 'partial' | 'complete' | 'skipped';
 
 @Component({
   standalone: true,
@@ -44,47 +26,37 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
   styleUrls: ['./wizard.component.scss'],
   imports: [
     CommonModule,
-    BreadcrumbComponent,
     FormsModule,
     ReactiveFormsModule,
-    MatIcon,
-    MatStepperModule,
-    MatRadioModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatCheckboxModule,
-    MatRippleModule,
-    MatInputModule,
-    MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatDivider,
+    MatIconModule,
     SkillRatingComponent,
-    SkillRatingWidgetComponent,
-    MatTableModule
   ],
-  animations: [
-    trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-5px)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ])
-  ]
 })
 export class WizardComponent implements OnInit {
   @Input() jobRoleSlug!: string;
-  subjects: any[] = [];
-  steps: any[] = [];
-  skillForm: FormGroup;
-  loading = true;
+
   private fb = inject(FormBuilder);
+
+  subjects: any[] = [];
+  jobRoleTitle = '';
+  skillForm: FormGroup = this.fb.group({});
+  loading = true;
+  submitting = false;
+  success = false;
+
+  readonly levels = [
+    { value: 'Basic', label: 'Basic' },
+    { value: 'Working', label: 'Working' },
+    { value: 'Expert', label: 'Expert' },
+  ];
 
   constructor(
     public utility: UtilsService,
     private masterService: MasterService,
     private authService: AuthService,
-    private route: ActivatedRoute
-  ) {
-    this.skillForm = this.fb.group({});
-  }
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -96,46 +68,34 @@ export class WizardComponent implements OnInit {
     });
   }
 
-  loadSubjectsForJobRole(slug: string) {
-    // Try to get jobRoles from masterService (assume already loaded)
-    const jobRoles = this.masterService.getJobRoleMap?.() || this.masterService.jobRoles;
-    let jobRole = null;
-    if (Array.isArray(jobRoles)) {
-      jobRole = jobRoles.find((role: any) => role.slug === slug);
-    }
-    if (jobRole && Array.isArray(jobRole.subjects)) {
+  private loadSubjectsForJobRole(slug: string): void {
+    const jobRoles = this.masterService.jobRoles;
+    const jobRole = Array.isArray(jobRoles) ? jobRoles.find((role: any) => role.slug === slug) : null;
+    if (jobRole?.subjects?.length) {
       this.subjects = jobRole.subjects;
-      this.buildStepsAndForm();
+      this.jobRoleTitle = jobRole.title ?? '';
+      this.buildForm();
     } else {
-      console.log("Job Roles not found in MasterService, fetching from API...");
       this.masterService.fetchJobRoleSubjectMapping().subscribe((roles: any[]) => {
         const found = roles.find((role: any) => role.slug === slug);
-        if (found && Array.isArray(found.subjects)) {
-          this.subjects = found.subjects;
-          this.buildStepsAndForm();
-        }
+        this.subjects = found?.subjects ?? [];
+        this.jobRoleTitle = found?.title ?? '';
+        this.buildForm();
       });
     }
   }
 
-  buildStepsAndForm() {
-    // One step per subject, plus summary
-    console.log("Building steps and form for subjects:", this.subjects);
-    this.steps = this.subjects.map((subject, idx) => ({
-      label: subject.title,
-      subject
-    }));
-    //this.steps.push({ label: 'Summary', summary: true });
-
-    // Build form: one group per subject
+  private buildForm(): void {
     const group: any = {};
     for (const subject of this.subjects) {
       const subjectGroup = this.fb.group({
-        knows: [null, Validators.required],
-        level: [null],
-        rating: [null]
+        knows: this.fb.control<boolean | null>(null, Validators.required),
+        level: this.fb.control<string | null>(null),
+        rating: this.fb.control<number | null>(null),
       });
 
+      // "knows" drives validity, but the user never has to answer it directly —
+      // picking a level or a star (below) sets it to true implicitly.
       subjectGroup.get('knows')?.valueChanges.subscribe(val => {
         if (val === true) {
           subjectGroup.get('level')?.setValidators(Validators.required);
@@ -149,28 +109,75 @@ export class WizardComponent implements OnInit {
         subjectGroup.get('rating')?.updateValueAndValidity();
       });
 
+      // A star click goes straight into the FormControl via the CVA on
+      // app-skill-rating, bypassing setLevel()/setKnows() below — so it needs
+      // its own listener to mark "knows" true the same way a level pill does.
+      subjectGroup.get('rating')?.valueChanges.subscribe(val => {
+        if (val && subjectGroup.get('knows')?.value !== true) {
+          subjectGroup.get('knows')?.setValue(true);
+        }
+      });
+
       group[subject.id] = subjectGroup;
     }
     this.skillForm = this.fb.group(group);
     this.loading = false;
   }
 
-
-
   getSubjectGroup(subjectId: number): FormGroup {
     return this.skillForm.get(subjectId.toString()) as FormGroup;
   }
 
-  knowsSubject(subjectId: number): boolean {
-    return this.getSubjectGroup(subjectId)?.get('knows')?.value === true;
+  /** A level pill or a star rating both count as "yes" — no separate Yes/No step. */
+  setLevel(subjectId: number, level: string): void {
+    const group = this.getSubjectGroup(subjectId);
+    if (group?.get('knows')?.value !== true) group?.get('knows')?.setValue(true);
+    group?.get('level')?.setValue(level);
   }
 
+  markNotFamiliar(subjectId: number): void {
+    this.getSubjectGroup(subjectId)?.get('knows')?.setValue(false);
+  }
+
+  undoNotFamiliar(subjectId: number): void {
+    this.getSubjectGroup(subjectId)?.get('knows')?.setValue(null);
+  }
+
+  cardState(subjectId: number): CardState {
+    const group = this.getSubjectGroup(subjectId);
+    const knows = group?.get('knows')?.value;
+    if (knows === false) return 'skipped';
+    if (knows === true) {
+      return group?.get('level')?.value && group?.get('rating')?.value ? 'complete' : 'partial';
+    }
+    return 'untouched';
+  }
+
+  /** null lets the default border-cm-border class show through; a hex value overrides it. */
+  cardBorderColor(subjectId: number): string | null {
+    const state = this.cardState(subjectId);
+    if (state === 'complete') return '#34d399';
+    if (state === 'partial') return '#6366f1';
+    return null;
+  }
+
+  isAnswered(subjectId: number): boolean {
+    const state = this.cardState(subjectId);
+    return state === 'complete' || state === 'skipped';
+  }
+
+  get answeredCount(): number {
+    return this.subjects.filter(s => this.isAnswered(s.id)).length;
+  }
+
+  get progressPercent(): number {
+    return this.subjects.length ? Math.round((this.answeredCount / this.subjects.length) * 100) : 0;
+  }
 
   getAllSubjectEntries(): SkillRating[] {
     const result: SkillRating[] = [];
     for (const subject of this.subjects) {
-      const control = this.skillForm.get(subject.id.toString());
-      const value = control?.value;
+      const value = this.skillForm.get(subject.id.toString())?.value;
       if (value) {
         result.push({
           skillId: subject.id,
@@ -181,43 +188,41 @@ export class WizardComponent implements OnInit {
           knows: value.knows ?? false,
           level: value.level ?? '',
           rating: value.rating ?? 0,
-          grade: value.rating ? this.utility.getGrade(value.rating) : ''
+          grade: value.rating ? this.utility.getGrade(value.rating) : '',
         });
       }
     }
     return result;
   }
 
-  onSubmit() {
-    const flatData = this.getAllSubjectEntries();
+  onSubmit(): void {
+    if (this.skillForm.invalid || this.submitting) return;
+    this.submitting = true;
+
     const assessment: Partial<SkillRatingSession> = {
       userId: this.authService.currentUserValue.id,
       ratedBy: this.authService.currentUserValue.id,
       assessmentTitle: 'Self Skill Rating',
       notes: '',
       ratingType: RatingType.Self,
-      skillRatings: flatData
+      skillRatings: this.getAllSubjectEntries(),
     };
-    console.log('Payload =>', assessment);
-    console.log('flatData =>', flatData);
-    //this.loading = true;
-    //this.subs.sink = 
-    this.authService
-      .submitSkillRatingSession(assessment)
-      .subscribe({
-        next: (res) => {
-          console.log("SubmitSkillrating API", res);
-          if (res && !res.error) {
-            setTimeout(() => {
-              console.log("SubmitSkillrating API User dashboard redirection ", res.data.role);
-              this.authService.redirectToUserDashboard();
-            }, 1000);
-          }
-          //res.data
-        },
-        error: (error) => {
-          console.error("SubmitSkillrating API error", error);
-        },
-      });
+
+    this.authService.submitSkillRatingSession(assessment).subscribe({
+      next: (res) => {
+        if (res && !res.error) {
+          this.success = true;
+          setTimeout(() => {
+            this.router.navigate(['/app/program', this.jobRoleSlug], { replaceUrl: true });
+          }, 5000);
+        } else {
+          this.submitting = false;
+        }
+      },
+      error: (error) => {
+        console.error('SubmitSkillrating API error', error);
+        this.submitting = false;
+      },
+    });
   }
 }

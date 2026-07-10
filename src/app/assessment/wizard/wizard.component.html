@@ -1,145 +1,141 @@
 <section class="content">
-  <div class="content-block">
-    <div class="block-header">
-      <app-breadcrumb [title]="'Wizard'" [items]="['Form']" [active_item]="'Wizard'"></app-breadcrumb>
+<div class="content-block">
+
+  @if (loading) {
+    <div class="fixed inset-0 bg-black/50 z-[1000]"></div>
+    <div class="fixed inset-0 flex items-center justify-center z-[1001]">
+      <div class="bg-cm-surface border border-cm-border rounded-2xl p-8
+                  flex flex-col items-center gap-3 shadow-xl">
+        <img src="assets/images/icons/cube.gif" class="w-16 h-16">
+        <h4 class="text-cm-text-primary font-bold text-base m-0">Loading Evaluation Panel</h4>
+        <p class="text-cm-text-muted text-sm m-0">Please wait</p>
+      </div>
+    </div>
+  } @else if (success) {
+
+    <!-- ── Thank you state — same pattern as the Register component's success
+         card (icon + title + subtitle + spinner), then a timed redirect. -->
+    <div class="flex items-center justify-center" style="min-height: calc(100vh - 140px)">
+      <div class="text-center max-w-md mx-auto px-6">
+        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-cm-brand-dim border border-cm-brand/25
+                    flex items-center justify-center">
+          <mat-icon class="text-cm-brand" style="font-size:48px;width:48px;height:48px;line-height:48px">
+            check_circle
+          </mat-icon>
+        </div>
+        <h2 class="text-2xl font-bold text-cm-text-primary mb-3">Thank You!</h2>
+        <p class="text-sm text-cm-text-muted leading-relaxed mb-6">
+          Your skill ratings have been submitted successfully. We're personalizing your learning path based on your responses.
+        </p>
+        <div class="w-8 h-8 mx-auto rounded-full border-2 border-cm-brand/25 border-t-cm-brand animate-spin"></div>
+      </div>
     </div>
 
-    @if (loading) {
-      <div class="fixed inset-0 bg-black/50 z-[1000]"></div>
-      <div class="fixed inset-0 flex items-center justify-center z-[1001]">
-        <div class="bg-cm-surface border border-cm-border rounded-2xl p-8
-                    flex flex-col items-center gap-3 shadow-xl">
-          <img src="assets/images/icons/cube.gif" class="w-16 h-16">
-          <h4 class="text-cm-text-primary font-bold text-base m-0">Loading Evaluation Panel</h4>
-          <p class="text-cm-text-muted text-sm m-0">Please wait</p>
+  } @else {
+
+  <form [formGroup]="skillForm" (ngSubmit)="onSubmit()">
+
+    <!-- Sticky progress + submit bar — the only "panel", spans full width.
+         top-[76px] clears the app's fixed 60px header + 16px breathing room
+         (same convention as section.content's own margin-top), so this bar
+         never gets hidden behind or overlaps the global header while stuck. -->
+    <div class="sticky top-[76px] z-10 pb-4 pt-1">
+      <div class="bg-cm-surface border border-cm-border-strong rounded-2xl px-5 py-4
+                  flex items-center gap-4 flex-wrap
+                  shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)]">
+        <div class="flex-1 min-w-[200px]">
+          <div class="flex items-center justify-between mb-1.5 gap-3">
+            <h2 class="text-sm font-bold text-cm-text-primary m-0 truncate">
+              Rate your skills
+              @if (jobRoleTitle) { <span class="font-normal text-cm-text-muted">— {{jobRoleTitle}}</span> }
+            </h2>
+            <span class="shrink-0 text-xs font-semibold text-cm-text-muted">{{answeredCount}} / {{subjects.length}} done</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-cm-surface-raised overflow-hidden">
+            <div class="h-full rounded-full bg-cm-brand transition-all duration-500" [style.width.%]="progressPercent"></div>
+          </div>
         </div>
+        <button type="submit" [disabled]="skillForm.invalid || submitting"
+          class="shrink-0 px-5 py-2.5 rounded-xl bg-cm-brand text-white text-sm font-bold
+                 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed
+                 active:scale-[0.98] transition-all">
+          @if (submitting) { Submitting… } @else { Submit Skill Rating }
+        </button>
       </div>
-    } @else {
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Card grid — one self-contained card per subject, nothing hidden behind a click -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      @for (subject of subjects; track subject.id) {
+      @let subjectGroup = getSubjectGroup(subject.id);
+      @let state = cardState(subject.id);
+      <div [formGroup]="subjectGroup"
+        class="rounded-2xl border-2 border-cm-border p-4 transition-colors duration-200"
+        [style.borderColor]="cardBorderColor(subject.id)"
+        [class.bg-cm-surface-muted]="state === 'skipped'"
+        [class.bg-cm-surface]="state !== 'skipped'">
 
-        <!-- Left column: stepper -->
-        <div class="bg-cm-surface border border-cm-border rounded-2xl overflow-hidden">
-          <div class="px-5 py-4 border-b border-cm-border">
-            <h2 class="text-base font-bold text-cm-text-primary m-0">Evaluation Panel</h2>
+        <!-- Header -->
+        <div class="flex items-center gap-2.5 mb-3">
+          <div class="w-9 h-9 rounded-lg border border-cm-border bg-cm-surface-raised
+                      flex items-center justify-center overflow-hidden shrink-0 p-1.5">
+            <img [src]="subject.image || 'assets/images/tech/placeholder.png'"
+                 class="w-full h-full object-contain"
+                 [alt]="subject.title">
           </div>
-          <div class="p-5">
-            <mat-vertical-stepper [linear]="true" [formGroup]="skillForm">
-              <ng-container *ngFor="let step of steps; let i = index">
-                <ng-container *ngIf="!step.summary">
-                  <ng-container *ngIf="getSubjectGroup(step.subject.id) as subjectGroup">
-                    <mat-step [stepControl]="subjectGroup">
-                      <form [formGroup]="subjectGroup">
-                        <ng-template matStepLabel>{{ step.label }}</ng-template>
-                        <h5 class="mt-5">Have you worked with {{ step.subject.title }}?</h5>
-                        <mat-radio-group formControlName="knows">
-                          <mat-radio-button [value]="true">Yes</mat-radio-button>
-                          <mat-radio-button [value]="false">No</mat-radio-button>
-                        </mat-radio-group>
-                        <ng-container *ngIf="knowsSubject(step.subject.id)">
-                          <div class="mt-5" @fadeIn>
-                            <h5 class="mb-2.5">Specify your level in {{ step.subject.title }}.</h5>
-                            <mat-button-toggle-group formControlName="level">
-                              <mat-button-toggle value="Basic">Basic</mat-button-toggle>
-                              <mat-button-toggle value="Working">Working</mat-button-toggle>
-                              <mat-button-toggle value="Expert">Expert</mat-button-toggle>
-                            </mat-button-toggle-group>
-                          </div>
-                          <div class="rating" @fadeIn>
-                            <h5 class="mt-5">Rate your skills in {{ step.subject.title }}.</h5>
-                            <app-skill-rating formControlName="rating"></app-skill-rating>
-                          </div>
-                        </ng-container>
-                        <hr class="my-4">
-                        <div class="step-actions">
-                          <button mat-flat-button mat-ripple matStepperNext>Next</button>
-                        </div>
-                      </form>
-                    </mat-step>
-                  </ng-container>
-                </ng-container>
-                <ng-container *ngIf="step.summary">
-                  <mat-step>
-                    <ng-template matStepLabel class="custom-step-label">Summary Preview</ng-template>
-                    <table mat-table [dataSource]="getAllSubjectEntries()"
-                      class="mat-elevation-z2 full-width-table">
-                      <ng-container matColumnDef="subject">
-                        <th mat-header-cell *matHeaderCellDef> Subject </th>
-                        <td mat-cell *matCellDef="let element"> {{ element.subject }} </td>
-                      </ng-container>
-                      <ng-container matColumnDef="knows">
-                        <th mat-header-cell *matHeaderCellDef> Knows? </th>
-                        <td mat-cell *matCellDef="let element"> {{ element.knows ? 'Yes' : 'No' }} </td>
-                      </ng-container>
-                      <ng-container matColumnDef="rating">
-                        <th mat-header-cell *matHeaderCellDef> Rating </th>
-                        <td mat-cell *matCellDef="let element">
-                          <ng-container *ngIf="element.knows; else noRating">
-                            <ng-container *ngFor="let star of utility.getStarsArray(element.rating)">
-                              <mat-icon color="warn">star</mat-icon>
-                            </ng-container>
-                          </ng-container>
-                          <ng-template #noRating>—</ng-template>
-                        </td>
-                      </ng-container>
-                      <ng-container matColumnDef="grade">
-                        <th mat-header-cell *matHeaderCellDef> Grade </th>
-                        <td mat-cell *matCellDef="let element">
-                          <ng-container *ngIf="element.knows; else noGrade">{{ element.grade }}</ng-container>
-                          <ng-template #noGrade>—</ng-template>
-                        </td>
-                      </ng-container>
-                      <tr mat-header-row *matHeaderRowDef="['subject', 'knows', 'rating', 'grade']"></tr>
-                      <tr mat-row *matRowDef="let row; columns: ['subject', 'knows', 'rating', 'grade'];"></tr>
-                    </table>
-                    <div class="mt-3 mb-5">
-                      <button mat-flat-button color="primary" (click)="onSubmit()">Submit Skills Rating</button>
-                    </div>
-                  </mat-step>
-                </ng-container>
-              </ng-container>
-
-              <mat-step>
-                <p>Display a self agreement to acknowledge that the filled information is correct</p>
-                <ng-template matStepLabel class="custom-step-label">Submit Self Rating</ng-template>
-                <mat-card class="summary-card-all">
-                  <mat-card-header>
-                    <mat-card-title>Skill Rating Summary</mat-card-title>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <div class="summary-list">
-                      <app-skill-rating-widget [skillRatings]="getAllSubjectEntries()"></app-skill-rating-widget>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
-                <div class="mt-3 mb-5 text-center">
-                  <button mat-flat-button color="primary" (click)="onSubmit()">Submit Skills Rating</button>
-                </div>
-              </mat-step>
-
-            </mat-vertical-stepper>
-          </div>
+          <p class="text-[13px] font-bold text-cm-text-primary truncate flex-1 min-w-0">{{subject.title}}</p>
+          @if (state === 'complete') {
+          <mat-icon class="text-green-500 shrink-0" style="font-size:16px;width:16px;height:16px;line-height:16px">
+            check_circle
+          </mat-icon>
+          }
         </div>
 
-        <!-- Right column: live summary -->
+        @if (state === 'skipped') {
         <div>
-          <mat-card class="summary-card-all">
-            <mat-card-header>
-              <mat-card-title>Skill Rating Summary</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="summary-list">
-                <app-skill-rating-widget [skillRatings]="getAllSubjectEntries()"></app-skill-rating-widget>
-              </div>
-            </mat-card-content>
-          </mat-card>
-          <div class="mt-3 mb-5 text-center">
-            <button mat-flat-button color="primary" (click)="onSubmit()">Submit Skills Rating</button>
-          </div>
+          <p class="text-[10px] font-bold uppercase tracking-wide text-cm-text-muted mb-1.5">Not familiar with it</p>
+          @if (subject.description) {
+          <p class="text-[11.5px] text-cm-text-secondary leading-relaxed mb-3 line-clamp-2">{{subject.description}}</p>
+          }
+          <button type="button" (click)="undoNotFamiliar(subject.id)"
+            class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-cm-border
+                   text-cm-text-secondary bg-cm-surface hover:bg-cm-surface-hover hover:border-cm-border-strong
+                   transition-colors">
+            Undo
+          </button>
+        </div>
+        } @else {
+
+        <!-- Level — picking one implies "yes, I know this" -->
+        <div class="flex text-[11px] rounded-lg overflow-hidden border border-cm-border mb-3">
+          @for (lvl of levels; track lvl.value) {
+          <button type="button" (click)="setLevel(subject.id, lvl.value)"
+            class="flex-1 px-2 py-1.5 font-semibold transition-colors"
+            [class.bg-cm-brand]="subjectGroup.get('level')?.value === lvl.value"
+            [class.text-white]="subjectGroup.get('level')?.value === lvl.value"
+            [class.bg-cm-surface]="subjectGroup.get('level')?.value !== lvl.value"
+            [class.text-cm-text-secondary]="subjectGroup.get('level')?.value !== lvl.value">
+            {{lvl.label}}
+          </button>
+          }
         </div>
 
-      </div>
-    }
+        <!-- Rating + skip -->
+        <div class="flex items-center justify-between gap-2">
+          <app-skill-rating formControlName="rating"></app-skill-rating>
+          <button type="button" (click)="markNotFamiliar(subject.id)"
+            class="shrink-0 text-[10.5px] text-cm-text-muted hover:text-cm-text-secondary transition-colors">
+            Not familiar
+          </button>
+        </div>
 
-  </div>
+        }
+      </div>
+      }
+    </div>
+
+  </form>
+  }
+
+</div>
 </section>

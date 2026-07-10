@@ -35,6 +35,9 @@ export class SubjectSkillRatingComponent {
   skillForm!: FormGroup;
   topics: TopicItem[] = [];
   currentIndex: number = 0;
+  /** Highest slide reached so far — the progress bar tracks this, not currentIndex,
+   *  so stepping back to review an earlier topic doesn't look like lost progress. */
+  maxReachedIndex: number = 0;
   subject: any = null;
   @Output() completed = new EventEmitter<SkillRating[]>();
   @ViewChild('swiperRef') swiperRef!: ElementRef<any>;
@@ -162,10 +165,15 @@ export class SubjectSkillRatingComponent {
 
   onSlideChange(event: any) {
     this.currentIndex = event.target.swiper.activeIndex;
+    if (this.currentIndex > this.maxReachedIndex) this.maxReachedIndex = this.currentIndex;
   }
 
   get isLastSlide(): boolean {
     return this.currentIndex === this.topics.length - 1;
+  }
+
+  get progressPercent(): number {
+    return this.topics.length ? Math.round((this.maxReachedIndex / this.topics.length) * 100) : 0;
   }
   getTopicGroup(topic: string): FormGroup {
     return this.skillForm.get(topic) as FormGroup;
