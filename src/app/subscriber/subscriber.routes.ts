@@ -21,6 +21,10 @@ export const SUBSCRIBER_ROUTE: Route[] = [
   // },
   //{ path: '**', component: SelectSubjectComponent }
   //
+  {
+    path: ':course',
+    component: CourseDashboardComponent,
+  },
   { path: '**', component: SelectCourseComponent }
 ];
 

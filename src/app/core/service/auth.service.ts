@@ -158,7 +158,7 @@ export class AuthService {
   }
 
   redirectToUserDashboard() {
-    this.router.navigate(["/account/dashboard"]);
+    this.router.navigate(["/dashboard"]);
   }
 
   getFullProfile(user_name: any, api_key: any): Observable<any> {

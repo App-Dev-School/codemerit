@@ -71,8 +71,7 @@ export class CourseDashboardComponent implements OnInit {
         console.log('Course Dashboard user changed.', localUser);
         //this.snackService.display('snackbar-dark','Course Dashboard user changed.', 'bottom', 'center');
       }else{
-        this.authService.logout();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/authentication/signin']);
       }
     });
     this.router.events.subscribe(event => {
@@ -155,21 +154,27 @@ export class CourseDashboardComponent implements OnInit {
       //   });
       // }
 
-      //we need list of all subjects in a course along with course details
-      this.master.fetchCourseDashboard().subscribe((data: any) => {
-        if (data) {
-           console.log("getAttemptedSubjects 0", data);
-          this.courseData = data;
-          this.attemptedSubjects = this.courseData.filter(item => item.attempted && item.attempted > 0);
-          this.otherSubjects = this.courseData.filter(item => !(item.attempted && item.attempted > 0));
+      //we need list of all subjects in THIS course (by slug) along with course details —
+      //fetchCourseDashboard() ignored the slug entirely (generic "my career" endpoint),
+      //so it never actually matched whichever job role the URL pointed at.
+      this.master.fetchCourseDetail(this.course).subscribe({
+        next: (data: any) => {
+          if (data) {
+            console.log("getAttemptedSubjects 0", data);
+            const subjects: any[] = Array.isArray(data) ? data : (data?.subjects ?? []);
+            this.courseData = subjects;
+            this.attemptedSubjects = subjects.filter(item => item.attempted && item.attempted > 0);
+            this.otherSubjects = subjects.filter(item => !(item.attempted && item.attempted > 0));
 
-          setTimeout(() => {
-            this.loading = false;
-          }, 3000);
-        }
-      }, (err: any) => {
-        this.loading = false;
-        this.snackService.display('snackbar-dark', 'Error loading Course Dashboard.', 'bottom', 'center');
+            setTimeout(() => {
+              this.loading = false;
+            }, 3000);
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.snackService.display('snackbar-dark', 'Error loading Course Dashboard.', 'bottom', 'center');
+        },
       });
     }
   }
@@ -283,6 +288,12 @@ export class CourseDashboardComponent implements OnInit {
     console.log("View Path clicked:", subject);
     if (subject && subject.slug)
       this.router.navigate(['/dashboard/learn', subject?.slug]);
+  }
+
+  assessSkills(): void {
+    if (this.course) {
+      this.router.navigate(['/assessment/skill-rating', this.course]);
+    }
   }
 
 }
