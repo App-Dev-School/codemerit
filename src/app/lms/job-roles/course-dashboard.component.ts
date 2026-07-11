@@ -5,6 +5,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
+import { AuthConstants } from '@config/AuthConstants';
 import { Course, Subject } from '@core/models/subject-role';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -13,7 +14,7 @@ import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
 import { CertificateModel } from '@shared/components/certificate/certificate.model';
-import { certificateModels } from '../welcome/welcome.component';
+import { certificateModels } from '../../pages/welcome/welcome.component';
 import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,9 +22,9 @@ import { CertTrackComponent } from '@shared/components/cert-track/cert-track.com
 import { JobCurriculumComponent } from '@shared/components/job-curriculum/job-curriculum.component';
 
 @Component({
-  selector: 'app-view-course',
-  templateUrl: './view-course.component.html',
-  styleUrls: ['./view-course.component.scss'],
+  selector: 'app-course-dashboard',
+  templateUrl: './course-dashboard.component.html',
+  styleUrls: ['./course-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
     CommonModule,
@@ -34,7 +35,7 @@ import { JobCurriculumComponent } from '@shared/components/job-curriculum/job-cu
     JobCurriculumComponent,
   ]
 })
-export class ViewCourseComponent implements OnInit {
+export class CourseDashboardComponent implements OnInit {
   pageTitle = 'ViewCourse';
   loading = true;
   loadingText = '';
@@ -239,9 +240,21 @@ export class ViewCourseComponent implements OnInit {
     });
   }
 
+  // Visitors browsing this page anonymously have no token to enroll/create-quiz with -
+  // send them to sign in first and bring them straight back to this program page after.
+  private requireSignIn(): boolean {
+    if (this.authService.currentUserValue?.id && this.authService.currentUserValue?.token) {
+      return true;
+    }
+    localStorage.setItem(AuthConstants.REDIRECT_URL, this.router.url);
+    this.router.navigate(['/authentication/signin']);
+    return false;
+  }
+
   onSubscribe(course: any) {
     //this.onSubscribe.emit(course);
     console.log("onSubscribe Course", course);
+    if (!this.requireSignIn()) return;
     this._bottomSheet.open(SetDesignationBottomSheetComponent, {
       data: this.courseItem
     });
@@ -271,6 +284,7 @@ export class ViewCourseComponent implements OnInit {
 
   openQuizLauncher(data?: any) {
     console.log("QuizStartScreen openDialog", data);
+    if (!this.requireSignIn()) return;
     let varDirection: Direction;
     if (localStorage.getItem('isRtl') === 'true') {
       varDirection = 'rtl';

@@ -19,30 +19,8 @@ export class SubjectTrackerCardComponent {
   @Output() launchSubjectExplorer = new EventEmitter<any>();
   @Output() takeQuiz = new EventEmitter<any>();
 
-  getPercentage(count: number): number {
-    const total = Number(this.item.numEasyTrivia) +
-      Number(this.item.numIntTrivia) +
-      Number(this.item.numAdvTrivia);
-    return total > 0 ? (count / total) * 100 : 0;
-  }
-
-  getAttemptPercentage(count: number): number {
-    const total = Number(this.item.attemptedEasy) +
-      Number(this.item.attemptedMedium) +
-      Number(this.item.attemptedHard);
-    return total > 0 ? (count / total) * 100 : 0;
-  }
-
-  findUserLevel(){
-    return this.getUserLevel(+this.item.numEasy, +this.item.numMedium, +this.item.numHard);
-  }
-
-  private getUserLevel(numEasy: number, numMedium: number, numHard: number): string {
-    const max = Math.max(numEasy, numMedium, numHard);
-    if (max === 0) return 'Unclassified';
-    if (max === numHard) return 'Advanced';
-    if (max === numMedium) return 'Intermediate';
-    return 'Beginner';
+  get completedTracksCount(): number {
+    return (this.item?.subjectTracks ?? []).filter((t: any) => t.isCompleted).length;
   }
 
   onViewPath() {

@@ -11,3 +11,15 @@
 .panel-enter {
   animation: panel-fade-in 0.25s ease-out;
 }
+
+/* ── Track completion bar — grows in from 0 regardless of its target width,
+     since the width itself is a fixed inline % (transform is what animates). */
+@keyframes bar-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.track-bar-fill {
+  transform-origin: left;
+  animation: bar-grow 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}

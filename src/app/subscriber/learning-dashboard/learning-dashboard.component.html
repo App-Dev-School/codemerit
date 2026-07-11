@@ -28,6 +28,24 @@
   <!-- ── Main Content ── -->
   @if (!loading && courseItem) {
   <div class="content-block">
+
+    <!-- ── Job Role tabs — compact tags for every enrolled role ── -->
+    @if (enrolledCourses?.length > 0) {
+    <div class="flex flex-wrap gap-2 mb-4">
+      @for (jobRole of enrolledCourses; track jobRole.id) {
+      <button type="button" (click)="selectJobRole(jobRole)"
+        [class]="jobRole.slug === course
+          ? 'inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm transition-all'
+          : 'inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1.5 rounded-full text-xs font-semibold text-cm-text-secondary bg-cm-surface border border-cm-border hover:border-cm-brand/40 hover:text-cm-brand transition-all'"
+        [style.background-color]="jobRole.slug === course ? (jobRole.color || 'var(--cm-brand)') : null">
+        <img [src]="jobRole.image || 'assets/images/tech/placeholder.png'"
+             class="w-5 h-5 rounded-full object-cover bg-white/70" [alt]="jobRole.title">
+        {{ jobRole.title }}
+      </button>
+      }
+    </div>
+    }
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
       <!-- Left — subject tabs (2/3 width) -->
@@ -68,6 +86,16 @@
           <!-- Course subjects -->
           <div class="p-5 text-center space-y-3">
             <h4 class="text-sm font-bold text-cm-text-primary">{{ courseItem.title }}</h4>
+            @if (courseItem?.scope) {
+            <span class="inline-block text-[10px] font-bold uppercase tracking-wider
+                        text-cm-brand-text bg-cm-brand-dim border border-cm-brand/20
+                        rounded-full px-2.5 py-0.5">
+              {{ courseItem.scope }}
+            </span>
+            }
+            @if (courseItem?.description) {
+            <p class="text-xs text-cm-text-muted leading-relaxed">{{ courseItem.description }}</p>
+            }
             @if (courseItem?.subjects) {
             <div class="flex flex-wrap justify-center gap-1.5">
               @for (item of courseItem?.subjects; track item) {
@@ -219,6 +247,9 @@
       <p class="text-sm font-semibold text-cm-text-primary">
         How are you doing as {{ courseItem.title }}?
       </p>
+      @if (courseItem?.body) {
+      <p class="text-xs text-cm-text-muted leading-relaxed">{{ courseItem.body }}</p>
+      }
       @if (!(userData?.designation)) {
       <p class="text-xs text-cm-text-muted">Aspiring to become {{ courseItem.title }}?</p>
       <button (click)="onSubscribe(courseItem)"

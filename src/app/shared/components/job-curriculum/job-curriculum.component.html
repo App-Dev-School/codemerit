@@ -141,18 +141,24 @@
             </p>
           </div>
 
-          <div class="shrink-0 text-right">
-            <p class="text-[22px] font-black tabular-nums leading-none"
-               [class.text-green-500]="getSubjectProgress(sub) === 100"
-               [class.text-cm-brand]="getSubjectProgress(sub) > 0 && getSubjectProgress(sub) < 100"
-               [class.text-cm-text-muted]="getSubjectProgress(sub) === 0">
-              {{getSubjectProgress(sub)}}%
-            </p>
-            <p class="text-[9px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">
-              @if(getSubjectProgress(sub) === 100){ Complete }
-              @else if(getSubjectProgress(sub) > 0){ In Progress }
-              @else{ Not Started }
-            </p>
+          <!-- Coverage (completeness) + Accuracy — a single blended "% Complete"
+               number hid two different signals; show them side by side instead. -->
+          @let headCov = performanceMeta(getSubjectProgress(sub));
+          @let headAcc = performanceMeta(sub.accuracy || 0);
+          <div class="shrink-0 flex items-center gap-3">
+            <div class="text-right">
+              <p class="text-[19px] font-black tabular-nums leading-none" [style.color]="headCov.color">
+                {{getSubjectProgress(sub)}}%
+              </p>
+              <p class="text-[8px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Coverage</p>
+            </div>
+            <div class="w-px h-7 bg-cm-border shrink-0"></div>
+            <div class="text-right">
+              <p class="text-[19px] font-black tabular-nums leading-none" [style.color]="headAcc.color">
+                {{sub.accuracy || 0}}%
+              </p>
+              <p class="text-[8px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Accuracy</p>
+            </div>
           </div>
         </div>
 
@@ -254,17 +260,60 @@
         </div>
         }
 
-        <!-- Topics within this track ────────────────────────────────── -->
+        <!-- Detail tabs — Curriculum / Certifications / Endorsements.
+             certificationTracks and endorsements aren't confirmed API fields yet
+             (see getCertTracks/getEndorsements in the .ts) — sample placeholder
+             data renders until the backend sends them, so the UI is reviewable
+             now; once wired, undefined flips to a real (possibly empty) array
+             and the real empty states below take over automatically. -->
+        <div class="flex items-center gap-1 px-5 pt-2.5 border-b border-cm-border shrink-0 overflow-x-auto overflow-y-hidden">
+          <button type="button" (click)="setTab('curriculum')"
+            class="inline-flex items-center gap-1.5 px-3 py-2.5 text-[11.5px] font-bold whitespace-nowrap
+                   border-b-2 -mb-px transition-colors"
+            [class.border-cm-brand]="activeTab === 'curriculum'"
+            [class.text-cm-brand]="activeTab === 'curriculum'"
+            [class.border-transparent]="activeTab !== 'curriculum'"
+            [class.text-cm-text-muted]="activeTab !== 'curriculum'">
+            <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">route</mat-icon>
+            Curriculum
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised">
+              {{getTotalTracks(sub)}}
+            </span>
+          </button>
+          <button type="button" (click)="setTab('certifications')"
+            class="inline-flex items-center gap-1.5 px-3 py-2.5 text-[11.5px] font-bold whitespace-nowrap
+                   border-b-2 -mb-px transition-colors"
+            [class.border-cm-brand]="activeTab === 'certifications'"
+            [class.text-cm-brand]="activeTab === 'certifications'"
+            [class.border-transparent]="activeTab !== 'certifications'"
+            [class.text-cm-text-muted]="activeTab !== 'certifications'">
+            <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">military_tech</mat-icon>
+            Certifications
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised">
+              {{getCertTracks(sub).length}}
+            </span>
+          </button>
+          <button type="button" (click)="setTab('endorsements')"
+            class="inline-flex items-center gap-1.5 px-3 py-2.5 text-[11.5px] font-bold whitespace-nowrap
+                   border-b-2 -mb-px transition-colors"
+            [class.border-cm-brand]="activeTab === 'endorsements'"
+            [class.text-cm-brand]="activeTab === 'endorsements'"
+            [class.border-transparent]="activeTab !== 'endorsements'"
+            [class.text-cm-text-muted]="activeTab !== 'endorsements'">
+            <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">verified</mat-icon>
+            Endorsements
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised">
+              {{getEndorsements(sub).length}}
+            </span>
+          </button>
+        </div>
+
+        <!-- Tab: Curriculum — topics within this subject ─────────────── -->
+        @if(activeTab === 'curriculum'){
         @if(sub.subjectTracks?.length > 0){
         <div class="flex-1 divide-y divide-cm-border">
-          @for(track of sub.subjectTracks; track track.id || track.name; let ti = $index){
-          <div class="relative flex items-center gap-3.5 px-5 py-3.5 cursor-pointer group
-                      hover:bg-cm-surface-hover transition-colors duration-150"
-               (click)="onExploreSubject(sub)">
-
-            <!-- Left hover accent -->
-            <div class="absolute left-0 inset-y-3 w-[3px] rounded-r-full bg-cm-brand
-                        scale-y-0 group-hover:scale-y-100 transition-transform duration-200 origin-center"></div>
+          @for(track of visibleTracks(sub); track track.id || track.name; let ti = $index){
+          <div class="flex items-start gap-3.5 px-5 py-3.5">
 
             <!-- Status node -->
             <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0
@@ -301,23 +350,90 @@
               </div>
 
               @if(track.totalTopics){
-              <p class="text-[10px] text-cm-text-muted mb-1">
+              <p class="text-[10px] text-cm-text-muted mb-1.5">
                 {{track.completedTopics || 0}}/{{track.totalTopics}} topics
                 @if(track.numTrivia){ · {{track.numTrivia}} Q }
               </p>
               }
-              @if(!track.isCompleted && (track.progressPercent || 0) > 0){
-              <div class="h-1 rounded-full bg-cm-surface-raised overflow-hidden">
-                <div class="h-full rounded-full bg-cm-brand transition-all"
-                     [style.width]="(track.progressPercent || 0) + '%'"></div>
+
+              <!-- Accuracy + Score — icons instead of text labels; score gets a
+                   filled pill so it reads as the headline figure of the two. -->
+              @if(track.accuracy != null || track.score != null){
+              @let tAcc = performanceMeta(track.accuracy || 0);
+              @let tScore = performanceMeta(track.score || 0);
+              <div class="flex items-center gap-3 mb-2">
+                <span class="inline-flex items-center gap-1 text-[10.5px] font-bold" [style.color]="tAcc.color"
+                      title="Accuracy">
+                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">track_changes</mat-icon>
+                  {{track.accuracy || 0}}%
+                </span>
+                <span class="inline-flex items-center gap-1 text-[10.5px] font-black px-1.5 py-0.5 rounded-md"
+                      [style.color]="tScore.color" [style.backgroundColor]="tScore.bg" title="Score">
+                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">emoji_events</mat-icon>
+                  {{track.score || 0}}
+                </span>
+              </div>
+              }
+
+              <!-- Coverage meter — the bar IS the coverage reading (labeled +
+                   quarter ticks so it reads as a calibrated meter, not a generic
+                   loading bar), colored by value like the badges above. -->
+              @let tCov = performanceMeta(track.coverage || track.progressPercent || 0);
+              <div class="mb-2">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide"
+                        [style.color]="tCov.color">
+                    <mat-icon style="font-size:12px;width:12px;height:12px;line-height:12px">donut_large</mat-icon>
+                    Coverage
+                  </span>
+                  <span class="text-[10px] font-black tabular-nums" [style.color]="tCov.color">
+                    {{track.coverage || track.progressPercent || 0}}%
+                  </span>
+                </div>
+                <div class="group/bar relative h-2 rounded-full bg-cm-surface-raised overflow-hidden
+                            transition-all duration-200 hover:h-2.5 cursor-default"
+                     [title]="(track.coverage || track.progressPercent || 0) + '% covered'">
+                  <div class="absolute inset-y-0 left-1/4 w-px bg-cm-surface z-10"></div>
+                  <div class="absolute inset-y-0 left-1/2 w-px bg-cm-surface z-10"></div>
+                  <div class="absolute inset-y-0 left-3/4 w-px bg-cm-surface z-10"></div>
+                  <div class="track-bar-fill h-full rounded-full transition-[width] duration-700 ease-out"
+                       [style.backgroundColor]="tCov.color"
+                       [style.width.%]="track.coverage || track.progressPercent || 0"></div>
+                </div>
+              </div>
+
+              <!-- Topics — one chip per topic, name + status via color/icon -->
+              @if(track.topics?.length){
+              <div class="flex items-center gap-1.5 flex-wrap">
+                @for(topic of track.topics; track topic.id){
+                @let tm = topicMeta(topic);
+                <span class="inline-flex items-center gap-1 text-[8.5px] font-bold tracking-tight px-1.5 py-0.5 rounded-full"
+                      [style.backgroundColor]="tm.bg" [style.color]="tm.color"
+                      [title]="topic.title + (topic.accuracy ? ' · ' + topic.accuracy + '% accuracy' : '')">
+                  @if(tm.icon){
+                  <mat-icon style="font-size:9px;width:9px;height:9px;line-height:9px">{{tm.icon}}</mat-icon>
+                  }
+                  {{topic.title}}
+                </span>
+                }
               </div>
               }
             </div>
 
-            <mat-icon class="text-cm-text-muted group-hover:text-cm-brand transition-colors shrink-0"
-                      style="font-size:16px;width:16px;height:16px;line-height:16px">chevron_right</mat-icon>
-
           </div>
+          }
+          @if(sub.subjectTracks.length > trackPreviewCount){
+          <button type="button" (click)="toggleTracksExpanded()"
+            class="w-full flex items-center justify-center gap-1.5 px-5 py-3 text-[11.5px] font-bold
+                   text-cm-brand hover:bg-cm-surface-hover transition-colors duration-150">
+            @if(tracksExpanded){
+            <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">expand_less</mat-icon>
+            Show fewer tracks
+            }@else{
+            <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">expand_more</mat-icon>
+            View all {{sub.subjectTracks.length}} tracks
+            }
+          </button>
           }
         </div>
         }@else{
@@ -327,6 +443,131 @@
           </mat-icon>
           <p class="text-[12px] text-cm-text-muted">No topics available yet.</p>
         </div>
+        }
+        }
+
+        <!-- Tab: Certifications — cert tracks earnable from this subject ─ -->
+        @if(activeTab === 'certifications'){
+        @if(getCertTracks(sub).length > 0){
+        <div class="flex-1 divide-y divide-cm-border">
+          @for(cert of getCertTracks(sub); track cert.id){
+          @let cm = certMeta(cert);
+          <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-cm-surface-hover transition-colors duration-150">
+            <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center"
+                 [style.backgroundColor]="cm.bg">
+              <mat-icon [style.color]="cm.color" style="font-size:18px;width:18px;height:18px;line-height:18px">
+                {{cm.icon}}
+              </mat-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <p class="text-[12.5px] font-bold text-cm-text-primary truncate">{{cert.title}}</p>
+                @if(cert.level){
+                <span class="shrink-0 text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full
+                             border border-cm-border-strong text-cm-text-muted">{{cert.level}}</span>
+                }
+              </div>
+              <p class="text-[10px] text-cm-text-muted mb-1.5">
+                Issued by {{cert.issuer || 'CodeMerit'}}&nbsp;·&nbsp;Requires {{cert.requiredScore || 70}}%+
+              </p>
+              <div class="h-1 rounded-full bg-cm-surface-raised overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-500"
+                     [style.backgroundColor]="cm.color"
+                     [style.width]="(cert.progressPercent || 0) + '%'"></div>
+              </div>
+            </div>
+            <span class="shrink-0 text-[10px] font-black tabular-nums" [style.color]="cm.color">
+              @if(cert.isCompleted){ Earned } @else { {{cert.progressPercent || 0}}% }
+            </span>
+          </div>
+          }
+        </div>
+        }@else{
+        <div class="flex-1 px-5 py-14 flex flex-col items-center justify-center gap-2 text-center">
+          <mat-icon class="text-cm-text-muted" style="font-size:32px;width:32px;height:32px;line-height:32px">
+            military_tech
+          </mat-icon>
+          <p class="text-[12px] text-cm-text-muted">No certification tracks published yet.</p>
+        </div>
+        }
+        }
+
+        <!-- Tab: Endorsements — SME-endorsed ratings after interviews ──── -->
+        @if(activeTab === 'endorsements'){
+        @if(getEndorsements(sub).length > 0){
+        <div class="flex-1 p-5 space-y-3.5">
+          @for(end of getEndorsements(sub); track end.id){
+          <div class="rounded-xl border border-cm-border bg-cm-surface-raised p-4 sm:p-5">
+            <div class="flex items-start gap-3.5">
+              <div class="w-10 h-10 rounded-full shrink-0 overflow-hidden border border-cm-border bg-cm-brand-dim
+                          flex items-center justify-center">
+                @if(end.raterAvatar){
+                <img [src]="end.raterAvatar" [alt]="end.raterName" class="w-full h-full object-cover">
+                }@else{
+                <span class="text-[12px] font-black text-cm-brand">{{(end.raterName || '?')[0]}}</span>
+                }
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <div class="min-w-0">
+                    <p class="text-[12.5px] font-bold text-cm-text-primary truncate">{{end.raterName}}</p>
+                    @if(end.raterTitle){
+                    <p class="text-[10.5px] text-cm-text-muted truncate mt-0.5">{{end.raterTitle}}</p>
+                    }
+                  </div>
+                  <span class="shrink-0 text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full
+                               bg-violet-500/10 text-violet-500">
+                    @if(end.ratingType === 'INTERVIEW'){ Interview } @else { SME Review }
+                  </span>
+                </div>
+                <div class="flex items-center gap-0.5 mt-2">
+                  @for(star of [1,2,3,4,5]; track star){
+                    @if(end.rating >= star){
+                    <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
+                    }@else if(end.rating >= star - 0.5){
+                    <i class="fa-solid fa-star-half-stroke text-amber-400 text-[10px]"></i>
+                    }@else{
+                    <i class="fa-regular fa-star text-cm-border-strong text-[10px]"></i>
+                    }
+                  }
+                  @if(end.grade){
+                  <span class="text-[10px] text-cm-text-muted ml-1">· {{end.grade}}</span>
+                  }
+                </div>
+                @if(end.notes){
+                <p class="text-[11.5px] text-cm-text-secondary leading-relaxed mt-3">"{{end.notes}}"</p>
+                }
+                @if(end.interviewDate){
+                <p class="text-[9px] text-cm-text-muted mt-2">{{end.interviewDate}}</p>
+                }
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+        }@else{
+        <div class="flex-1 px-5 py-14 flex flex-col items-center justify-center gap-3 text-center">
+          <div class="w-12 h-12 rounded-full bg-cm-surface-raised border border-cm-border
+                      flex items-center justify-center">
+            <mat-icon class="text-cm-text-muted" style="font-size:22px;width:22px;height:22px;line-height:22px">
+              verified
+            </mat-icon>
+          </div>
+          <div>
+            <p class="text-[13px] font-bold text-cm-text-primary mb-1">No SME endorsements yet</p>
+            <p class="text-[11.5px] text-cm-text-muted leading-relaxed max-w-[240px] mx-auto">
+              Endorsements from subject matter experts show up here after an interview or SME review.
+            </p>
+          </div>
+          <button type="button" (click)="onRequestEndorsement(sub)"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[11.5px] font-semibold
+                   text-cm-brand bg-cm-brand-dim border border-cm-brand/25
+                   hover:border-cm-brand/50 active:scale-[0.98] transition-all duration-150">
+            <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">add</mat-icon>
+            Request an Endorsement
+          </button>
+        </div>
+        }
         }
 
         <!-- Footer ─────────────────────────────────────────────────── -->

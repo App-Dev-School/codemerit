@@ -8,11 +8,25 @@
          class="w-10 h-10 rounded-xl object-cover border border-cm-border shrink-0">
 
     <div class="flex-1 min-w-0">
-      <p class="text-sm font-black text-cm-text-primary truncate">{{item?.title}}</p>
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <p class="text-sm font-black text-cm-text-primary truncate">{{item?.title}}</p>
+        @if(item?.tag){
+        <span class="text-[9px] font-bold uppercase tracking-wider text-cm-brand-text
+                     bg-cm-brand-dim border border-cm-brand/20 rounded-full px-1.5 py-0.5 shrink-0">
+          {{item.tag}}
+        </span>
+        }
+        @if(item?.userRank){
+        <span class="text-[9px] font-bold text-amber-600 dark:text-amber-400
+                     bg-amber-500/10 border border-amber-500/20 rounded-full px-1.5 py-0.5 shrink-0">
+          Rank #{{item.userRank}}
+        </span>
+        }
+      </div>
       @if(item?.attempted > 0){
       <p class="text-[11px] text-cm-text-muted mt-0.5">
-        <span class="font-semibold text-cm-text-secondary">{{findUserLevel()}}</span>
-        @if(item?.avgAccuracy){ · {{item.avgAccuracy}}% accuracy }
+        <span class="font-semibold text-cm-text-secondary">{{item.correct}}/{{item.attempted}} correct</span>
+        @if(item?.accuracy){ · {{item.accuracy}}% accuracy }
       </p>
       }@else{
       <p class="text-[11px] text-cm-text-muted mt-0.5">Not started yet</p>
@@ -31,7 +45,7 @@
 
   </div>
 
-  <!-- ── Body: coverage + level breakdown ─────────────────────── -->
+  <!-- ── Body: coverage + track progress ─────────────────────── -->
   @if(!profileMode){
   <div class="px-4 pt-3 pb-2 space-y-3">
 
@@ -49,47 +63,55 @@
     </div>
     }
 
-    <!-- Level-wise attempt chips -->
-    @if(item?.attempted > 0 && item?.numEasyTrivia > 0){
+    <!-- Attempted / Correct / Wrong stat chips -->
+    @if(item?.attempted > 0){
     <div class="grid grid-cols-3 gap-1.5">
+
+      <div class="rounded-xl p-2.5 text-center bg-cm-surface-raised border border-cm-border">
+        <p class="text-[9px] font-black uppercase tracking-widest text-cm-text-muted mb-1">Attempted</p>
+        <p class="text-sm font-black text-cm-text-primary">{{item.attempted}}</p>
+      </div>
 
       <div class="rounded-xl p-2.5 text-center bg-green-500/10 border border-green-500/20">
         <p class="text-[9px] font-black uppercase tracking-widest text-green-600 dark:text-green-400 mb-1">
-          Basic
+          Correct
         </p>
-        <p class="text-sm font-black text-green-600 dark:text-green-400">
-          {{((item.attemptedEasy / item.numEasyTrivia) * 100) | number:'1.0-0'}}%
-        </p>
+        <p class="text-sm font-black text-green-600 dark:text-green-400">{{item.correct}}</p>
       </div>
 
-      <div class="rounded-xl p-2.5 text-center bg-orange-500/10 border border-orange-500/20">
-        <p class="text-[9px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 mb-1">
-          Mid
-        </p>
-        <p class="text-sm font-black text-orange-600 dark:text-orange-400">
-          {{((item.attemptedMedium / item.numIntTrivia) * 100) | number:'1.0-0'}}%
-        </p>
-      </div>
-
-      <div class="rounded-xl p-2.5 text-center bg-cm-surface-raised border border-cm-border">
-        <p class="text-[9px] font-black uppercase tracking-widest text-cm-text-muted mb-1">Adv</p>
-        <p class="text-sm font-black text-cm-text-primary">
-          {{((item.attemptedHard / item.numAdvTrivia) * 100) | number:'1.0-0'}}%
-        </p>
+      <div class="rounded-xl p-2.5 text-center bg-red-500/10 border border-red-500/20">
+        <p class="text-[9px] font-black uppercase tracking-widest text-red-600 dark:text-red-400 mb-1">Wrong</p>
+        <p class="text-sm font-black text-red-600 dark:text-red-400">{{item.wrong}}</p>
       </div>
 
     </div>
     }
 
-    <!-- Admin: difficulty distribution bar -->
-    @if(user?.role === 'Admin' && item?.numTrivia > 0){
-    <div class="flex h-2 rounded-full overflow-hidden bg-cm-surface-raised">
-      <div class="h-full bg-green-500"
-           [style.width]="getPercentage(item.numEasyTrivia) + '%'"></div>
-      <div class="h-full bg-orange-400"
-           [style.width]="getPercentage(item.numIntTrivia) + '%'"></div>
-      <div class="h-full bg-slate-500"
-           [style.width]="getPercentage(item.numAdvTrivia) + '%'"></div>
+    <!-- Track completion -->
+    @if(item?.subjectTracks?.length > 0){
+    <div>
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-[10px] font-bold text-cm-text-muted uppercase tracking-wider">Tracks</span>
+        <span class="text-[11px] font-black text-cm-text-primary">
+          {{completedTracksCount}}/{{item.subjectTracks.length}} completed
+        </span>
+      </div>
+      <div class="h-1.5 w-full rounded-full bg-cm-surface-raised overflow-hidden">
+        <div class="h-full rounded-full bg-cm-brand transition-all duration-700"
+             [style.width]="(completedTracksCount / item.subjectTracks.length * 100) + '%'"></div>
+      </div>
+    </div>
+    }
+
+    <!-- Popular topics — quick-start suggestions before the subject is attempted -->
+    @if(!(item?.attempted > 0) && item?.popularTopics?.length > 0){
+    <div class="flex flex-wrap gap-1.5">
+      @for (topic of item.popularTopics.slice(0, 3); track topic.id) {
+      <span class="text-[10px] font-medium text-cm-text-secondary bg-cm-surface-raised
+                   border border-cm-border rounded-full px-2 py-1">
+        {{topic.shortDesc || topic.title}}
+      </span>
+      }
     </div>
     }
 

@@ -91,7 +91,10 @@ export class AuthService {
   }
 
   getUserJobRoles(): UserJobRole[] {
-    return this.userJobRoles;
+    // this.userJobRoles is only populated inside login() and does not survive a page reload
+    // (AuthService is reconstructed but nothing rehydrates it). currentUserValue.userJobRoles
+    // is part of the cached user object in localStorage, so it always reflects reality.
+    return this.currentUserValue?.userJobRoles ?? this.userJobRoles ?? [];
   }
 
   register(postData: any): Observable<any> {

@@ -11,7 +11,7 @@ import {
 import { AuthService } from '@core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
-import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
+import { SetDesignationBottomSheetComponent } from 'src/app/lms/job-roles/confirm-course-enroll.component';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -104,7 +104,7 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
     if (this.actionMode === 'skill-rating') {
       this.router.navigate(['/assessment/skill-rating', this.subject]);
     } else {
-      this.router.navigate(['/app/program', this.subject]);
+      this.router.navigate(['/jobRole', this.subject]);
     }
   }
 

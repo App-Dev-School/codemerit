@@ -5,16 +5,12 @@ import { PricingComponent } from "./pricing/pricing.component";
 import { WelcomeComponent } from "./welcome/welcome.component";
 import { SelectSubjectComponent } from "../subscriber/select-subject/select-subject.component";
 import { SelectCourseComponent } from "../subscriber/select-course/select-course.component";
-import { ViewCourseComponent } from "./view-course/view-course.component";
 import { StandardQuizComponent } from "./browse-quizzes/browse-quizzes.component";
+import { UiTestsComponent } from "./ui-tests/ui-tests.component";
 export const PAGES_ROUTE: Route[] = [
   {
     path: "welcome",
     component: WelcomeComponent,
-  },
-  {
-    path: 'program/:course',
-    component: ViewCourseComponent,
   },
   // {
   //   path: 'select-subject',
@@ -39,5 +35,9 @@ export const PAGES_ROUTE: Route[] = [
   {
     path: "standard-quiz",
     component: StandardQuizComponent,
+  },
+  {
+    path: "ui-tests",
+    component: UiTestsComponent,
   },
 ];

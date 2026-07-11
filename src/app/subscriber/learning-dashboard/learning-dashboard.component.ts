@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
 import { Course, Subject } from '@core/models/subject-role';
+import { UserJobRole } from '@core/models/userJobRole.model';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation } from '@shared/animations';
@@ -15,12 +16,12 @@ import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 import { QuizService } from 'src/app/quiz/quiz.service';
-import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/confirm-course-enroll.component';
+import { SetDesignationBottomSheetComponent } from 'src/app/lms/job-roles/confirm-course-enroll.component';
 
 @Component({
-  selector: 'app-course-dashboard',
-  templateUrl: './course-dashboard.component.html',
-  styleUrls: ['./course-dashboard.component.scss'],
+  selector: 'app-learning-dashboard',
+  templateUrl: './learning-dashboard.component.html',
+  styleUrls: ['./learning-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
     NgTemplateOutlet,
@@ -28,7 +29,7 @@ import { SetDesignationBottomSheetComponent } from 'src/app/pages/view-course/co
     SubjectTrackerCardComponent
   ]
 })
-export class CourseDashboardComponent implements OnInit {
+export class LearningDashboardComponent implements OnInit {
   pageTitle = 'MainDashboard';
   activeTabIndex = 0;
   loading = true;
@@ -38,6 +39,7 @@ export class CourseDashboardComponent implements OnInit {
   showContent = true;
   course = "";
   courseItem: Course;
+  enrolledCourses: { id: number; slug: string; title: string; image: string; color: string }[] = [];
   attemptedSubjects: Subject[] = [];
   otherSubjects: Subject[] = [];
   courseData: any[];
@@ -88,14 +90,11 @@ export class CourseDashboardComponent implements OnInit {
     // }, 3333);
   }
 
+  // This route is entered without a job-role slug most of the time — it shows every job role
+  // the user is enrolled in as tabs, defaulting to the one in the URL (if any) or the latest enrollment.
   takeRouteParams() {
-    const course = this.route.snapshot.paramMap.get('course');
-    console.log(this.pageTitle, "RouteSnap course", course);
-    if (course) {
-      this.course = course;
-      this.onCourseChange(this.course);
-      return;
-    }
+    const routeSlug = this.route.snapshot.paramMap.get('course');
+    console.log(this.pageTitle, "RouteSnap course", routeSlug);
 
     const userJobRoles = this.authService.getUserJobRoles();
     if (!this.authService.currentUserValue || !(userJobRoles?.length > 0)) {
@@ -103,29 +102,47 @@ export class CourseDashboardComponent implements OnInit {
       return;
     }
 
-    const firstCourse = userJobRoles[userJobRoles.length - 1];
-    this.resolveDefaultCourseSlug(firstCourse.jobRoleId);
+    this.resolveEnrolledCourses(userJobRoles, routeSlug);
   }
 
-  // master.jobRoles may still be in-flight right after login, so wait for it before resolving the slug.
-  private resolveDefaultCourseSlug(jobRoleId: number) {
-    const applySlug = () => {
-      const slug = this.master.jobRoles?.find(role => role.id === jobRoleId)?.slug;
-      console.log(this.pageTitle, "RouteSnap course defaulted", slug);
-      if (slug) {
-        this.course = slug;
-        this.onCourseChange(this.course);
-      } else {
-        // Enrolled job role no longer exists in the catalog - fall back instead of hanging on "Loading your Dashboard".
+  // master.jobRoles may still be in-flight right after login, so wait for it before resolving slugs.
+  private resolveEnrolledCourses(userJobRoles: UserJobRole[], routeSlug: string | null) {
+    const applyRoles = () => {
+      this.enrolledCourses = userJobRoles
+        .map(ujr => {
+          const role = this.master.jobRoles?.find(r => r.id === ujr.jobRoleId);
+          return role ? { id: role.id, slug: role.slug, title: role.title, image: role.image, color: role.color } : null;
+        })
+        .filter(Boolean);
+
+      if (!this.enrolledCourses.length) {
+        // Enrolled job roles no longer exist in the catalog - fall back instead of hanging on "Loading your Dashboard".
         this.goToCourses();
+        return;
       }
+
+      const initial = (routeSlug && this.enrolledCourses.find(c => c.slug === routeSlug))
+        || this.enrolledCourses[this.enrolledCourses.length - 1];
+
+      this.course = initial.slug;
+      this.onCourseChange(this.course);
     };
 
     if (this.master.jobRoles?.length > 0) {
-      applySlug();
+      applyRoles();
     } else {
-      this.master.fetchMasterDataFromAPI().subscribe(() => applySlug());
+      this.master.fetchMasterDataFromAPI().subscribe(() => applyRoles());
     }
+  }
+
+  // Tab click handler for the compact job-role tag bar at the top of the page.
+  selectJobRole(courseTab: { id: number; slug: string; title: string; image: string; color: string }) {
+    if (!courseTab || courseTab.slug === this.course) return;
+    this.activeTabIndex = 0;
+    this.loading = true;
+    this.loadingText = 'Loading your Dashboard';
+    this.router.navigate(['/jobRole', courseTab.slug], { replaceUrl: true });
+    this.onCourseChange(courseTab.slug);
   }
 
   filterCourse(allJobRoles: any) {
@@ -161,6 +178,11 @@ export class CourseDashboardComponent implements OnInit {
         next: (data: any) => {
           if (data) {
             console.log("getAttemptedSubjects 0", data);
+            // programDetails returns the authoritative jobRole (description, body, scope, etc.) -
+            // overlay it onto whatever the master.jobRoles catalog lookup already produced.
+            if (data.jobRole) {
+              this.courseItem = { ...this.courseItem, ...data.jobRole };
+            }
             const subjects: any[] = Array.isArray(data) ? data : (data?.subjects ?? []);
             this.courseData = subjects;
             this.attemptedSubjects = subjects.filter(item => item.attempted && item.attempted > 0);

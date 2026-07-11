@@ -53,16 +53,17 @@ export const APP_ROUTE: Route[] = [
                     import('./pages/pages.routes').then(
                         (m) => m.PAGES_ROUTE
                     ),
+            },
+            {
+                // No AuthGuard here on purpose — this is the public per-job-role landing
+                // page and must stay visitor-accessible; it checks the session itself.
+                path: 'jobRole/:course',
+                loadComponent: () =>
+                    import('./lms/job-roles/course-dashboard.component')
+                        .then(m => m.CourseDashboardComponent)
             }
         ],
     },
-    // {
-    //     path: 'view/:course',
-    //     component: MainLayoutComponent,
-    //     loadComponent: () =>
-    //         import('./pages/view-course/view-course.component')
-    //             .then(m => m.ViewCourseComponent)
-    // },
     {
         path: 'authentication',
         component: AuthLayoutComponent,

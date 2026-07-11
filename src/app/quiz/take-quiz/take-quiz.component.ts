@@ -49,11 +49,16 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   questions: QuizQuestion[] = [];
   currentQuestionId = 0;
   loading = true;
-  loadingText = 'Launching Quiz';
+  loadingText = 'Loading Assessment Panel';
   quizSlug = '';
   completed = false;
   quizResult: any;
   quizDuration = 300;
+
+  // Shown once loading finishes and before any question timer starts —
+  // user must read + accept before we touch the swiper/timer.
+  showAgreement = false;
+  agreementAccepted = false;
 
   warningActive = false;
   hintActive = false;
@@ -130,7 +135,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   private loadQuiz(): void {
     const quizSub = this.quizService.getQuiz(this.quizSlug).subscribe(data => {
       this.quiz = data;
-      this.loadingText = 'Loading Assessment Panel';
       this.questions = (data.questions || []).map((q: any) => ({
         ...q,
         options: q.options || [],
@@ -140,14 +144,26 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       this.currentQuestion = this.questions[this.currentQuestionId];
       this.quizDuration = this.questions.reduce((sum, q) => sum + (q.timeAllowed || 0), 0);
       console.log('QuizPlayer Questions Loaded', this.questions);
-      if (this.questions.length) {
-        this.startQuestionTimer(this.questions[0]);
-        this.disableOptionClickTemporarily();
-      }
-      const loadingTimeout = setTimeout(() => { this.loading = false; }, 3000);
+      // Question timer/swiper don't start here anymore — they wait for acceptAgreement(),
+      // so the countdown can't burn down while the user is still reading the terms.
+      const loadingTimeout = setTimeout(() => {
+        this.loading = false;
+        this.showAgreement = this.questions.length > 0;
+      }, 3000);
       this.scheduledAutoNext = loadingTimeout;
     });
     this.subscriptions.push(quizSub);
+  }
+
+  toggleAgreementCheck(): void {
+    this.agreementAccepted = !this.agreementAccepted;
+  }
+
+  acceptAgreement(): void {
+    if (!this.agreementAccepted || !this.questions.length) return;
+    this.showAgreement = false;
+    this.startQuestionTimer(this.questions[0]);
+    this.disableOptionClickTemporarily();
   }
 
   startQuestionTimer(question: QuizQuestion): void {

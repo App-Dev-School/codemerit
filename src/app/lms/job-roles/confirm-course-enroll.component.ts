@@ -127,7 +127,7 @@ export class SetDesignationBottomSheetComponent {
 
   viewCourseDetails() {
     this._bottomSheetRef.dismiss(null);
-    this.router.navigate(['/app/program', this.courseItem?.slug]).then(() => {
+    this.router.navigate(['/jobRole', this.courseItem?.slug]).then(() => {
       console.log('Navigation completed!');
     });
   }

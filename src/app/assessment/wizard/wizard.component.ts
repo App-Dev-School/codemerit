@@ -213,7 +213,7 @@ export class WizardComponent implements OnInit {
         if (res && !res.error) {
           this.success = true;
           setTimeout(() => {
-            this.router.navigate(['/app/program', this.jobRoleSlug], { replaceUrl: true });
+            this.router.navigate(['/jobRole', this.jobRoleSlug], { replaceUrl: true });
           }, 5000);
         } else {
           this.submitting = false;

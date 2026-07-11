@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { CourseDashboardComponent } from './course-dashboard.component';
+import { LearningDashboardComponent } from './learning-dashboard.component';
 
 describe('DashboardComponent', () => {
-  let component: CourseDashboardComponent;
-  let fixture: ComponentFixture<CourseDashboardComponent>;
+  let component: LearningDashboardComponent;
+  let fixture: ComponentFixture<LearningDashboardComponent>;
 
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-    imports: [CourseDashboardComponent],
+    imports: [LearningDashboardComponent],
 }).compileComponents();
     })
   );
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CourseDashboardComponent);
+    fixture = TestBed.createComponent(LearningDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

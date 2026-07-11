@@ -10,6 +10,8 @@ export interface Course {
   id: number;
   title: string;
   description: string;
+  body?: string;
+  scope?: string;
   slug: string;
   image: string;
   color: string;
