@@ -103,8 +103,9 @@
               </div>
               @if(!req.completed && req.progress > 0){
               <div class="flex items-center gap-2">
-                <div class="flex-1 h-1 rounded-full bg-cm-surface-hover overflow-hidden">
-                  <div class="h-full rounded-full bg-cm-brand" [style.width]="req.progress + '%'"></div>
+                <div class="flex-1 h-2 rounded-full bg-cm-surface-hover overflow-hidden">
+                  <div class="h-full rounded-full bg-cm-brand transition-[width] duration-1000 ease-out"
+                       [appRevealProgress]="req.progress"></div>
                 </div>
                 <span class="text-[10px] text-cm-brand font-bold tabular-nums shrink-0 w-7 text-right">
                   {{req.progress}}%
@@ -129,11 +130,11 @@
             {{getCertProgress(selectedCertIdx)}}%
           </span>
         </div>
-        <div class="h-2.5 rounded-full bg-cm-surface-hover overflow-hidden mb-4">
-          <div class="h-full rounded-full transition-all duration-700"
+        <div class="h-3 rounded-full bg-cm-surface-hover overflow-hidden mb-4">
+          <div class="h-full rounded-full transition-[width] duration-1000 ease-out"
                [class.bg-green-500]="getCertProgress(selectedCertIdx) === 100"
                [class.bg-cm-brand]="getCertProgress(selectedCertIdx) < 100"
-               [style.width]="getCertProgress(selectedCertIdx) + '%'">
+               [appRevealProgress]="getCertProgress(selectedCertIdx)">
           </div>
         </div>
 

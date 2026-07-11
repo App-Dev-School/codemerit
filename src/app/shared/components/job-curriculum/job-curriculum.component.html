@@ -97,11 +97,11 @@
                 {{getSubjectProgress(subject)}}%
               </span>
             </div>
-            <div class="h-1 rounded-full bg-cm-surface-hover overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500"
+            <div class="h-2 rounded-full bg-cm-surface-hover overflow-hidden">
+              <div class="h-full rounded-full transition-[width] duration-1000 ease-out"
                    [class.bg-green-500]="isSubjectComplete(subject)"
                    [class.bg-cm-brand]="!isSubjectComplete(subject)"
-                   [style.width]="getSubjectProgress(subject) + '%'"></div>
+                   [appRevealProgress]="getSubjectProgress(subject)"></div>
             </div>
 
           </div>
@@ -121,43 +121,55 @@
                   dark:shadow-none panel-enter">
 
         <!-- Subject header -->
-        <div class="flex items-center gap-4 px-5 py-4 border-b border-cm-border
+        <div class="px-5 py-4 border-b border-cm-border
                     bg-gradient-to-br from-violet-50/70 to-cm-surface dark:from-violet-500/5 dark:to-transparent">
-          <div class="w-11 h-11 rounded-xl shrink-0 overflow-hidden border border-cm-border">
-            @if(sub.image){
-            <img [src]="sub.image" [alt]="sub.title" class="w-full h-full object-cover">
-            }@else{
-            <div class="w-full h-full bg-cm-brand-dim flex items-center justify-center">
-              <mat-icon class="text-cm-brand" style="font-size:20px">menu_book</mat-icon>
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl shrink-0 overflow-hidden border border-cm-border">
+              @if(sub.image){
+              <img [src]="sub.image" [alt]="sub.title" class="w-full h-full object-cover">
+              }@else{
+              <div class="w-full h-full bg-cm-brand-dim flex items-center justify-center">
+                <mat-icon class="text-cm-brand" style="font-size:20px">menu_book</mat-icon>
+              </div>
+              }
             </div>
-            }
+
+            <div class="flex-1 min-w-0">
+              <h3 class="text-[14.5px] font-black text-cm-text-primary truncate">{{sub.title}}</h3>
+              <p class="text-[11px] text-cm-text-muted mt-0.5">
+                Stage {{selectedIdx + 1}} of {{subjects.length}}&nbsp;·&nbsp;
+                {{getCompletedTracks(sub)}}/{{getTotalTracks(sub)}} tracks done
+              </p>
+            </div>
+
+            <!-- Score is the headline figure (moved here from the stats grid below,
+                 where it sat alongside volume metrics as just another card). Same
+                 font size as the Subject Track level score for visual consistency. -->
+            @let headScore = performanceMeta(sub.score || 0);
+            <div class="shrink-0 text-right">
+              <p class="text-[26px] font-black tabular-nums leading-none" [style.color]="headScore.color">
+                {{sub.score || 0}}%
+              </p>
+              <p class="text-[8px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Score</p>
+            </div>
           </div>
 
-          <div class="flex-1 min-w-0">
-            <h3 class="text-[14.5px] font-black text-cm-text-primary truncate">{{sub.title}}</h3>
-            <p class="text-[11px] text-cm-text-muted mt-0.5">
-              Stage {{selectedIdx + 1}} of {{subjects.length}}&nbsp;·&nbsp;
-              {{getCompletedTracks(sub)}}/{{getTotalTracks(sub)}} tracks done
-            </p>
-          </div>
-
-          <!-- Coverage (completeness) + Accuracy — a single blended "% Complete"
-               number hid two different signals; show them side by side instead. -->
+          <!-- Journey Completed — full-width progress bar, same treatment as the
+               Coverage meters elsewhere on this page (reveals on scroll). -->
           @let headCov = performanceMeta(getSubjectProgress(sub));
-          @let headAcc = performanceMeta(sub.accuracy || 0);
-          <div class="shrink-0 flex items-center gap-3">
-            <div class="text-right">
-              <p class="text-[19px] font-black tabular-nums leading-none" [style.color]="headCov.color">
+          <div class="mt-3">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[9px] font-bold uppercase tracking-wide text-cm-text-muted">Journey Completed</span>
+              <span class="text-[10px] font-black tabular-nums" [style.color]="headCov.color">
                 {{getSubjectProgress(sub)}}%
-              </p>
-              <p class="text-[8px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Coverage</p>
+              </span>
             </div>
-            <div class="w-px h-7 bg-cm-border shrink-0"></div>
-            <div class="text-right">
-              <p class="text-[19px] font-black tabular-nums leading-none" [style.color]="headAcc.color">
-                {{sub.accuracy || 0}}%
-              </p>
-              <p class="text-[8px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Accuracy</p>
+            <div class="relative h-3 rounded-full bg-cm-surface-raised overflow-hidden
+                        transition-all duration-200 hover:h-3.5 cursor-default"
+                 [title]="getSubjectProgress(sub) + '% journey completed'">
+              <div class="h-full rounded-full transition-[width] duration-1000 ease-out"
+                   [style.backgroundColor]="headCov.color"
+                   [appRevealProgress]="getSubjectProgress(sub)"></div>
             </div>
           </div>
         </div>
@@ -178,10 +190,9 @@
           </p>
           }
 
-          @if(sub.numQuestions || sub.accuracy || sub.score || sub.attempted){
+          @if(sub.numQuestions || sub.accuracy || sub.attempted){
           @let accMeta = performanceMeta(sub.accuracy || 0);
-          @let scoreMeta = performanceMeta(sub.score || 0);
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-3 gap-2">
 
             <!-- Questions — fixed accent (a volume, not a performance signal) -->
             <div class="flex items-center gap-2.5 rounded-xl border border-cm-border bg-cm-surface-raised px-3 py-2.5">
@@ -218,17 +229,6 @@
               </div>
             </div>
 
-            <!-- Score — color reflects the value -->
-            <div class="flex items-center gap-2.5 rounded-xl border border-cm-border bg-cm-surface-raised px-3 py-2.5">
-              <div class="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center" [style.backgroundColor]="scoreMeta.bg">
-                <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px" [style.color]="scoreMeta.color">emoji_events</mat-icon>
-              </div>
-              <div class="min-w-0">
-                <p class="text-[15px] font-black tabular-nums leading-none" [style.color]="scoreMeta.color">{{sub.score || 0}}%</p>
-                <p class="text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Score</p>
-              </div>
-            </div>
-
           </div>
           }
 
@@ -260,60 +260,22 @@
         </div>
         }
 
-        <!-- Detail tabs — Curriculum / Certifications / Endorsements.
-             certificationTracks and endorsements aren't confirmed API fields yet
-             (see getCertTracks/getEndorsements in the .ts) — sample placeholder
-             data renders until the backend sends them, so the UI is reviewable
-             now; once wired, undefined flips to a real (possibly empty) array
-             and the real empty states below take over automatically. -->
-        <div class="flex items-center gap-1 px-5 pt-2.5 border-b border-cm-border shrink-0 overflow-x-auto overflow-y-hidden">
-          <button type="button" (click)="setTab('curriculum')"
-            class="inline-flex items-center gap-1.5 px-3 py-2.5 text-[11.5px] font-bold whitespace-nowrap
-                   border-b-2 -mb-px transition-colors"
-            [class.border-cm-brand]="activeTab === 'curriculum'"
-            [class.text-cm-brand]="activeTab === 'curriculum'"
-            [class.border-transparent]="activeTab !== 'curriculum'"
-            [class.text-cm-text-muted]="activeTab !== 'curriculum'">
-            <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">route</mat-icon>
-            Curriculum
-            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised">
-              {{getTotalTracks(sub)}}
-            </span>
-          </button>
-          <button type="button" (click)="setTab('certifications')"
-            class="inline-flex items-center gap-1.5 px-3 py-2.5 text-[11.5px] font-bold whitespace-nowrap
-                   border-b-2 -mb-px transition-colors"
-            [class.border-cm-brand]="activeTab === 'certifications'"
-            [class.text-cm-brand]="activeTab === 'certifications'"
-            [class.border-transparent]="activeTab !== 'certifications'"
-            [class.text-cm-text-muted]="activeTab !== 'certifications'">
-            <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">military_tech</mat-icon>
-            Certifications
-            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised">
-              {{getCertTracks(sub).length}}
-            </span>
-          </button>
-          <button type="button" (click)="setTab('endorsements')"
-            class="inline-flex items-center gap-1.5 px-3 py-2.5 text-[11.5px] font-bold whitespace-nowrap
-                   border-b-2 -mb-px transition-colors"
-            [class.border-cm-brand]="activeTab === 'endorsements'"
-            [class.text-cm-brand]="activeTab === 'endorsements'"
-            [class.border-transparent]="activeTab !== 'endorsements'"
-            [class.text-cm-text-muted]="activeTab !== 'endorsements'">
-            <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">verified</mat-icon>
-            Endorsements
-            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised">
-              {{getEndorsements(sub).length}}
-            </span>
-          </button>
+        <!-- Curriculum — topics within this subject. Certifications/Endorsements
+             moved to a page-level tab (see course-dashboard); this widget only
+             ever shows curriculum content now. -->
+        <div class="flex items-center gap-2 px-5 pt-4 pb-1 border-b border-cm-border shrink-0">
+          <mat-icon class="text-cm-brand" style="font-size:15px;width:15px;height:15px;line-height:15px">route</mat-icon>
+          <span class="text-[11.5px] font-bold text-cm-text-primary">Curriculum</span>
+          <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised text-cm-text-muted">
+            {{getTotalTracks(sub)}}
+          </span>
         </div>
 
-        <!-- Tab: Curriculum — topics within this subject ─────────────── -->
-        @if(activeTab === 'curriculum'){
         @if(sub.subjectTracks?.length > 0){
         <div class="flex-1 divide-y divide-cm-border">
           @for(track of visibleTracks(sub); track track.id || track.name; let ti = $index){
-          <div class="flex items-start gap-3.5 px-5 py-3.5">
+          <div class="px-5 py-3.5">
+          <div class="flex items-start gap-3.5">
 
             <!-- Status node -->
             <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0
@@ -333,7 +295,7 @@
 
             <!-- Info -->
             <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center justify-between gap-3 mb-1.5">
                 <p class="text-[12.5px] font-bold truncate"
                    [class.text-cm-text-secondary]="track.isCompleted"
                    [class.text-cm-text-primary]="!track.isCompleted">
@@ -349,77 +311,145 @@
                 </span>
               </div>
 
-              @if(track.totalTopics){
-              <p class="text-[10px] text-cm-text-muted mb-1.5">
-                {{track.completedTopics || 0}}/{{track.totalTopics}} topics
-                @if(track.numTrivia){ · {{track.numTrivia}} Q }
-              </p>
-              }
+              <!-- Stats (left) + Score (right, the headline figure) — plain label/value
+                   pairs instead of icon chips; Score gets real visual weight since it's
+                   the one number that matters most at a glance. -->
+              <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0 flex-1">
+                  @if(track.totalTopics || track.numTrivia || track.accuracy != null){
+                  <div class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 mb-2">
+                    @if(track.totalTopics){
+                    <span class="text-[10.5px] text-cm-text-muted">
+                      <span class="font-bold text-cm-text-primary">{{track.completedTopics || 0}}/{{track.totalTopics}}</span> Topics
+                    </span>
+                    }
+                    @if(track.numTrivia){
+                    <span class="text-[10.5px] text-cm-text-muted">
+                      <span class="font-bold text-cm-text-primary">{{track.numTrivia}}</span> Questions
+                    </span>
+                    }
+                    @if(track.accuracy != null){
+                    @let tAcc = performanceMeta(track.accuracy || 0);
+                    <span class="text-[10.5px]" [style.color]="tAcc.color">
+                      <span class="font-bold">{{track.accuracy || 0}}%</span> Accuracy
+                    </span>
+                    }
+                  </div>
+                  }
 
-              <!-- Accuracy + Score — icons instead of text labels; score gets a
-                   filled pill so it reads as the headline figure of the two. -->
-              @if(track.accuracy != null || track.score != null){
-              @let tAcc = performanceMeta(track.accuracy || 0);
-              @let tScore = performanceMeta(track.score || 0);
-              <div class="flex items-center gap-3 mb-2">
-                <span class="inline-flex items-center gap-1 text-[10.5px] font-bold" [style.color]="tAcc.color"
-                      title="Accuracy">
-                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">track_changes</mat-icon>
-                  {{track.accuracy || 0}}%
-                </span>
-                <span class="inline-flex items-center gap-1 text-[10.5px] font-black px-1.5 py-0.5 rounded-md"
-                      [style.color]="tScore.color" [style.backgroundColor]="tScore.bg" title="Score">
-                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">emoji_events</mat-icon>
-                  {{track.score || 0}}
-                </span>
-              </div>
-              }
-
-              <!-- Coverage meter — the bar IS the coverage reading (labeled +
-                   quarter ticks so it reads as a calibrated meter, not a generic
-                   loading bar), colored by value like the badges above. -->
-              @let tCov = performanceMeta(track.coverage || track.progressPercent || 0);
-              <div class="mb-2">
-                <div class="flex items-center justify-between mb-1">
-                  <span class="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide"
-                        [style.color]="tCov.color">
-                    <mat-icon style="font-size:12px;width:12px;height:12px;line-height:12px">donut_large</mat-icon>
-                    Coverage
-                  </span>
-                  <span class="text-[10px] font-black tabular-nums" [style.color]="tCov.color">
-                    {{track.coverage || track.progressPercent || 0}}%
-                  </span>
+                  <!-- Coverage meter — the bar IS the coverage reading, colored by value.
+                       No sub-segments here (no per-difficulty breakdown exists for a
+                       track) — just the one % value. -->
+                  @let tCov = performanceMeta(track.coverage || track.progressPercent || 0);
+                  <div>
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[9px] font-bold uppercase tracking-wide text-cm-text-muted">Coverage</span>
+                      <span class="text-[10px] font-black tabular-nums" [style.color]="tCov.color">
+                        {{track.coverage || track.progressPercent || 0}}%
+                      </span>
+                    </div>
+                    <div class="relative h-3 rounded-full bg-cm-surface-raised overflow-hidden
+                                transition-all duration-200 hover:h-3.5 cursor-default"
+                         [title]="(track.coverage || track.progressPercent || 0) + '% covered'">
+                      <div class="h-full rounded-full transition-[width] duration-1000 ease-out"
+                           [style.backgroundColor]="tCov.color"
+                           [appRevealProgress]="track.coverage || track.progressPercent || 0"></div>
+                    </div>
+                  </div>
                 </div>
-                <div class="group/bar relative h-2 rounded-full bg-cm-surface-raised overflow-hidden
-                            transition-all duration-200 hover:h-2.5 cursor-default"
-                     [title]="(track.coverage || track.progressPercent || 0) + '% covered'">
-                  <div class="absolute inset-y-0 left-1/4 w-px bg-cm-surface z-10"></div>
-                  <div class="absolute inset-y-0 left-1/2 w-px bg-cm-surface z-10"></div>
-                  <div class="absolute inset-y-0 left-3/4 w-px bg-cm-surface z-10"></div>
-                  <div class="track-bar-fill h-full rounded-full transition-[width] duration-700 ease-out"
-                       [style.backgroundColor]="tCov.color"
-                       [style.width.%]="track.coverage || track.progressPercent || 0"></div>
-                </div>
-              </div>
 
-              <!-- Topics — one chip per topic, name + status via color/icon -->
+                @if(track.score != null){
+                @let tScoreBig = performanceMeta(track.score || 0);
+                <div class="text-right shrink-0">
+                  <p class="text-[26px] font-black tabular-nums leading-none" [style.color]="tScoreBig.color">
+                    {{track.score || 0}}%
+                  </p>
+                  <p class="text-[8px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Score</p>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+
+              <!-- Topics — full detail cards (not tiny chips): status + title + level/question
+                   count in the header, Score/Accuracy/Correct-Wrong once attempted, and a
+                   labeled Coverage bar in the footer. Full width, deliberately NOT indented
+                   under the numbered status node above. Only 2-up on desktop (not 3) since
+                   these cards now carry a lot more information than a name-only chip did. -->
               @if(track.topics?.length){
-              <div class="flex items-center gap-1.5 flex-wrap">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-3">
                 @for(topic of track.topics; track topic.id){
                 @let tm = topicMeta(topic);
-                <span class="inline-flex items-center gap-1 text-[8.5px] font-bold tracking-tight px-1.5 py-0.5 rounded-full"
-                      [style.backgroundColor]="tm.bg" [style.color]="tm.color"
-                      [title]="topic.title + (topic.accuracy ? ' · ' + topic.accuracy + '% accuracy' : '')">
-                  @if(tm.icon){
-                  <mat-icon style="font-size:9px;width:9px;height:9px;line-height:9px">{{tm.icon}}</mat-icon>
+                @let tScore = performanceMeta(topic.score || 0);
+                @let tAcc = performanceMeta(topic.accuracy || 0);
+                @let tCov = performanceMeta(topic.coverage || 0);
+                <div class="rounded-xl border border-cm-border bg-cm-surface overflow-hidden
+                            shadow-[0_1px_2px_rgba(0,0,0,0.05),0_3px_8px_rgba(0,0,0,0.07)] dark:shadow-none">
+
+                  <!-- Header: status icon + title + attempted / not-started flag -->
+                  <div class="flex items-center gap-2 px-2.5 pt-2 pb-1.5">
+                    <div class="w-[26px] h-[26px] rounded-full flex items-center justify-center shrink-0"
+                         [style.backgroundColor]="tm.bg">
+                      @if(tm.icon){
+                      <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px;-webkit-text-stroke:0.45px currentColor"
+                                [style.color]="tm.color">{{tm.icon}}</mat-icon>
+                      }@else{
+                      <span class="w-2 h-2 rounded-full" [style.backgroundColor]="tm.color"></span>
+                      }
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-[11px] font-bold text-cm-text-primary truncate" [title]="topic.title">{{topic.title}}</p>
+                      @if(topic.numTrivia){
+                      <p class="text-[8.5px] text-cm-text-muted mt-0.5">{{topic.attempted || 0}}/{{topic.numTrivia}} attempted</p>
+                      }
+                    </div>
+                    @if(!topic.isStarted){
+                    <span class="text-[7.5px] font-bold uppercase tracking-wide text-cm-text-muted shrink-0">Not started</span>
+                    }
+                  </div>
+
+                  <!-- Stats: Score / Accuracy / Level (falls back to Correct-Wrong if no level) —
+                       only once there's something to show. -->
+                  @if((topic.attempted || 0) > 0){
+                  <div class="grid grid-cols-3 gap-1 px-2.5 pb-2">
+                    <div class="text-center rounded-md bg-cm-surface-raised py-1">
+                      <p class="text-[11.5px] font-black tabular-nums leading-none" [style.color]="tScore.color">{{topic.score || 0}}%</p>
+                      <p class="text-[6px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">Score</p>
+                    </div>
+                    <div class="text-center rounded-md bg-cm-surface-raised py-1">
+                      <p class="text-[11.5px] font-black tabular-nums leading-none" [style.color]="tAcc.color">{{topic.accuracy || 0}}%</p>
+                      <p class="text-[6px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">Accuracy</p>
+                    </div>
+                    <div class="text-center rounded-md bg-cm-surface-raised py-1">
+                      @if(topic.label){
+                      <p class="text-[11.5px] font-black text-cm-text-primary leading-none truncate px-0.5">{{topic.label}}</p>
+                      <p class="text-[6px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">Level</p>
+                      }@else{
+                      <p class="text-[11.5px] font-black tabular-nums leading-none">
+                        <span class="text-green-500">{{topic.correct || 0}}</span><span class="text-cm-text-muted">/</span><span class="text-red-500">{{topic.wrong || 0}}</span>
+                      </p>
+                      <p class="text-[6px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">Correct/Wrong</p>
+                      }
+                    </div>
+                  </div>
                   }
-                  {{topic.title}}
-                </span>
+
+                  <!-- Coverage footer — labeled, unlike the old bare strip -->
+                  <div class="px-2.5 py-1.5 border-t border-cm-border bg-cm-surface-muted">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[7px] font-bold uppercase tracking-wide text-cm-text-muted">Coverage</span>
+                      <span class="text-[8px] font-black tabular-nums" [style.color]="tCov.color">{{topic.coverage || 0}}%</span>
+                    </div>
+                    <div class="h-1 rounded-full bg-cm-surface-raised overflow-hidden">
+                      <div class="h-full rounded-full transition-all duration-500"
+                           [style.backgroundColor]="tCov.color"
+                           [style.width.%]="topic.coverage || 0"></div>
+                    </div>
+                  </div>
+                </div>
                 }
               </div>
               }
-            </div>
-
           </div>
           }
           @if(sub.subjectTracks.length > trackPreviewCount){
@@ -443,131 +473,6 @@
           </mat-icon>
           <p class="text-[12px] text-cm-text-muted">No topics available yet.</p>
         </div>
-        }
-        }
-
-        <!-- Tab: Certifications — cert tracks earnable from this subject ─ -->
-        @if(activeTab === 'certifications'){
-        @if(getCertTracks(sub).length > 0){
-        <div class="flex-1 divide-y divide-cm-border">
-          @for(cert of getCertTracks(sub); track cert.id){
-          @let cm = certMeta(cert);
-          <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-cm-surface-hover transition-colors duration-150">
-            <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center"
-                 [style.backgroundColor]="cm.bg">
-              <mat-icon [style.color]="cm.color" style="font-size:18px;width:18px;height:18px;line-height:18px">
-                {{cm.icon}}
-              </mat-icon>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <p class="text-[12.5px] font-bold text-cm-text-primary truncate">{{cert.title}}</p>
-                @if(cert.level){
-                <span class="shrink-0 text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full
-                             border border-cm-border-strong text-cm-text-muted">{{cert.level}}</span>
-                }
-              </div>
-              <p class="text-[10px] text-cm-text-muted mb-1.5">
-                Issued by {{cert.issuer || 'CodeMerit'}}&nbsp;·&nbsp;Requires {{cert.requiredScore || 70}}%+
-              </p>
-              <div class="h-1 rounded-full bg-cm-surface-raised overflow-hidden">
-                <div class="h-full rounded-full transition-all duration-500"
-                     [style.backgroundColor]="cm.color"
-                     [style.width]="(cert.progressPercent || 0) + '%'"></div>
-              </div>
-            </div>
-            <span class="shrink-0 text-[10px] font-black tabular-nums" [style.color]="cm.color">
-              @if(cert.isCompleted){ Earned } @else { {{cert.progressPercent || 0}}% }
-            </span>
-          </div>
-          }
-        </div>
-        }@else{
-        <div class="flex-1 px-5 py-14 flex flex-col items-center justify-center gap-2 text-center">
-          <mat-icon class="text-cm-text-muted" style="font-size:32px;width:32px;height:32px;line-height:32px">
-            military_tech
-          </mat-icon>
-          <p class="text-[12px] text-cm-text-muted">No certification tracks published yet.</p>
-        </div>
-        }
-        }
-
-        <!-- Tab: Endorsements — SME-endorsed ratings after interviews ──── -->
-        @if(activeTab === 'endorsements'){
-        @if(getEndorsements(sub).length > 0){
-        <div class="flex-1 p-5 space-y-3.5">
-          @for(end of getEndorsements(sub); track end.id){
-          <div class="rounded-xl border border-cm-border bg-cm-surface-raised p-4 sm:p-5">
-            <div class="flex items-start gap-3.5">
-              <div class="w-10 h-10 rounded-full shrink-0 overflow-hidden border border-cm-border bg-cm-brand-dim
-                          flex items-center justify-center">
-                @if(end.raterAvatar){
-                <img [src]="end.raterAvatar" [alt]="end.raterName" class="w-full h-full object-cover">
-                }@else{
-                <span class="text-[12px] font-black text-cm-brand">{{(end.raterName || '?')[0]}}</span>
-                }
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between gap-2 flex-wrap">
-                  <div class="min-w-0">
-                    <p class="text-[12.5px] font-bold text-cm-text-primary truncate">{{end.raterName}}</p>
-                    @if(end.raterTitle){
-                    <p class="text-[10.5px] text-cm-text-muted truncate mt-0.5">{{end.raterTitle}}</p>
-                    }
-                  </div>
-                  <span class="shrink-0 text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full
-                               bg-violet-500/10 text-violet-500">
-                    @if(end.ratingType === 'INTERVIEW'){ Interview } @else { SME Review }
-                  </span>
-                </div>
-                <div class="flex items-center gap-0.5 mt-2">
-                  @for(star of [1,2,3,4,5]; track star){
-                    @if(end.rating >= star){
-                    <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
-                    }@else if(end.rating >= star - 0.5){
-                    <i class="fa-solid fa-star-half-stroke text-amber-400 text-[10px]"></i>
-                    }@else{
-                    <i class="fa-regular fa-star text-cm-border-strong text-[10px]"></i>
-                    }
-                  }
-                  @if(end.grade){
-                  <span class="text-[10px] text-cm-text-muted ml-1">· {{end.grade}}</span>
-                  }
-                </div>
-                @if(end.notes){
-                <p class="text-[11.5px] text-cm-text-secondary leading-relaxed mt-3">"{{end.notes}}"</p>
-                }
-                @if(end.interviewDate){
-                <p class="text-[9px] text-cm-text-muted mt-2">{{end.interviewDate}}</p>
-                }
-              </div>
-            </div>
-          </div>
-          }
-        </div>
-        }@else{
-        <div class="flex-1 px-5 py-14 flex flex-col items-center justify-center gap-3 text-center">
-          <div class="w-12 h-12 rounded-full bg-cm-surface-raised border border-cm-border
-                      flex items-center justify-center">
-            <mat-icon class="text-cm-text-muted" style="font-size:22px;width:22px;height:22px;line-height:22px">
-              verified
-            </mat-icon>
-          </div>
-          <div>
-            <p class="text-[13px] font-bold text-cm-text-primary mb-1">No SME endorsements yet</p>
-            <p class="text-[11.5px] text-cm-text-muted leading-relaxed max-w-[240px] mx-auto">
-              Endorsements from subject matter experts show up here after an interview or SME review.
-            </p>
-          </div>
-          <button type="button" (click)="onRequestEndorsement(sub)"
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[11.5px] font-semibold
-                   text-cm-brand bg-cm-brand-dim border border-cm-brand/25
-                   hover:border-cm-brand/50 active:scale-[0.98] transition-all duration-150">
-            <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">add</mat-icon>
-            Request an Endorsement
-          </button>
-        </div>
-        }
         }
 
         <!-- Footer ─────────────────────────────────────────────────── -->

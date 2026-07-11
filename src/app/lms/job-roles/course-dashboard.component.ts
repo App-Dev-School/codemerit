@@ -47,6 +47,9 @@ export class CourseDashboardComponent implements OnInit {
   courseData: any[];
   showSubjectAction = false;
   certificateModels: CertificateModel[] = [];
+
+  // Master tab bar above the Curriculum Roadmap — controls which single section renders below it.
+  detailTab: 'curriculum' | 'certifications' | 'endorsements' | 'overview' = 'curriculum';
   meritList: any[] = [
     {
       "id": 1,
@@ -218,6 +221,50 @@ export class CourseDashboardComponent implements OnInit {
     return this.courseData.reduce((sum: number, s: any) => sum + (s.subjectTracks?.length ?? 0), 0);
   }
 
+  setDetailTab(tab: 'curriculum' | 'certifications' | 'endorsements' | 'overview'): void {
+    this.detailTab = tab;
+  }
+
+  // Weighted-equal average coverage across subjects — used by the compact "enrolled" hero.
+  get overallCoverage(): number {
+    if (!this.courseData?.length) return 0;
+    const total = this.courseData.reduce((sum: number, s: any) => sum + (s.coverage || 0), 0);
+    return Math.round(total / this.courseData.length);
+  }
+
+  get totalQuestions(): number {
+    if (!this.courseData?.length) return 0;
+    return this.courseData.reduce((sum: number, s: any) => sum + (s.numTrivia || s.numQuestions || 0), 0);
+  }
+
+  // Aggregated across every subject in this job role — relocated here from
+  // JobCurriculumComponent, which now only ever renders curriculum content.
+  // `endorsements` isn't a confirmed API field yet, so subjects without it fall
+  // back to the same sample data as before; swap this out once the backend sends it.
+  get endorsements(): any[] {
+    if (!this.courseData?.length) return [];
+    return this.courseData.reduce((all: any[], subject: any) => {
+      const list = subject?.endorsements !== undefined ? subject.endorsements : this.mockEndorsements(subject);
+      return all.concat(list.map((e: any) => ({ ...e, subjectTitle: subject.title })));
+    }, []);
+  }
+
+  private mockEndorsements(subject: any): any[] {
+    const title = subject?.title || 'this subject';
+    return [
+      {
+        id: `${subject?.id}-e1`, raterName: 'Kunal Anand', raterTitle: 'Senior Architect · CodeMerit',
+        raterAvatar: '', rating: 4.5, grade: 'Excellent', ratingType: 'INTERVIEW',
+        notes: `Demonstrated a strong working knowledge of ${title}, with clear and structured answers throughout the technical round.`,
+        interviewDate: 'Interviewed May 2026',
+      },
+    ];
+  }
+
+  requestEndorsement(): void {
+    this.snackService.display('snackbar-dark', 'Endorsement requests are coming soon.', 'bottom', 'center');
+  }
+
   fetchCourseData() {
     this.master.fetchCourseDetail(this.course).subscribe((data: any) => {
       if (data) {
@@ -368,8 +415,15 @@ export class CourseDashboardComponent implements OnInit {
       this.router.navigate(['/dashboard/learn', subject?.slug]);
   }
 
-  takeQuiz() {
-    this.snackService.display('snackbar-dark', 'Feature coming soon.', 'bottom', 'center');
+  // Real quiz launch (not a stub) — prefers a subject already in progress, else the first
+  // subject in this job role, and opens the same quiz-creation flow used from the roadmap.
+  startQuickQuiz(): void {
+    if (!this.courseData?.length) {
+      this.snackService.display('snackbar-dark', 'No subjects available yet for a quiz.', 'bottom', 'center');
+      return;
+    }
+    const target = this.courseData.find((s: any) => (s.attempted || 0) > 0) || this.courseData[0];
+    this.openQuizLauncher(target);
   }
 
   onViewCertificate(cert: CertificateModel) {
