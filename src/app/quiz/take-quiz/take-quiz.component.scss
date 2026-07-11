@@ -58,6 +58,134 @@
   to { transform: rotate(360deg); }
 }
 
+// ── Quiz Agreement ───────────────────────────────────────
+.tq-agreement {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--cm-surface-muted, #f8fafc);
+  z-index: 250;
+}
+
+.tq-agreement__card {
+  width: 100%;
+  max-width: 560px;
+  max-height: min(88dvh, 720px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  border: 1px solid var(--cm-border);
+  background: var(--cm-surface);
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: tqCardIn 0.32s ease-out both;
+}
+
+.tq-agreement__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--cm-border);
+  flex-shrink: 0;
+}
+
+.tq-agreement__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  font-size: 15px;
+}
+
+.tq-agreement__title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--cm-text-primary);
+  margin: 0 0 3px;
+}
+
+.tq-agreement__sub {
+  font-size: 12px;
+  color: var(--cm-text-muted);
+  margin: 0;
+}
+
+.tq-agreement__scroll {
+  flex: 1;
+  min-height: 0;
+}
+
+.tq-agreement__terms {
+  padding: 16px 22px;
+  font-size: 13px;
+  line-height: 1.68;
+  color: var(--cm-text-secondary);
+
+  p, ul { margin: 0 0 14px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  strong { color: var(--cm-text-primary); font-weight: 700; }
+}
+
+.tq-agreement__terms-h {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6366f1;
+  margin: 0 0 8px;
+
+  &:not(:first-child) { margin-top: 4px; }
+}
+
+:host-context(.dark) .tq-agreement__terms-h {
+  color: #a5b4fc;
+}
+
+.tq-agreement__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 22px;
+  border-top: 1px solid var(--cm-border);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--cm-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+
+  input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    margin-top: 1px;
+    flex-shrink: 0;
+    accent-color: #6366f1;
+    cursor: pointer;
+  }
+}
+
+.tq-agreement__continue {
+  margin: 0 22px 20px;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
 // ── Header ───────────────────────────────────────────────
 .tq-header {
   display: flex;
@@ -978,4 +1106,6 @@
   .tq-btn { padding: 11px 18px; font-size: 13px; min-height: 42px; }
   .tq-aux-btn { padding: 7px 11px; }
   .tq-card { border-radius: 16px; }
+  .tq-agreement { padding: 0; }
+  .tq-agreement__card { max-width: 100%; height: 100%; max-height: 100dvh; border-radius: 0; }
 }

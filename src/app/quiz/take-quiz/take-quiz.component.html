@@ -10,8 +10,74 @@
     </div>
   }
 
+  <!-- ═══ QUIZ AGREEMENT ═══════════════════════════════════════════════════ -->
+  @if (!loading && showAgreement && quiz) {
+    <div class="tq-agreement">
+      <div class="tq-agreement__card">
+
+        <div class="tq-agreement__head">
+          <i class="fa-solid fa-file-shield tq-agreement__icon"></i>
+          <div>
+            <h4 class="tq-agreement__title">Before you begin</h4>
+            <p class="tq-agreement__sub">
+              {{ quiz.title }} · {{ questions.length }} question{{ questions.length === 1 ? '' : 's' }}
+              @if (quizDuration) { · ~{{ quizDuration / 60 | number:'1.0-0' }} min }
+            </p>
+          </div>
+        </div>
+
+        <ng-scrollbar visibility="hover" class="tq-agreement__scroll">
+          <div class="tq-agreement__terms">
+
+            <h5 class="tq-agreement__terms-h">Purpose</h5>
+            <p>This quiz is for interactive learning and self-assessment — it helps you and CodeMerit understand
+              where you stand and personalize what you learn next. Please attempt it honestly, using only your own
+              knowledge. Do not use AI tools, search engines, notes, or another person's help to answer — the result
+              only reflects your real skill if the answers are genuinely yours.</p>
+
+            <h5 class="tq-agreement__terms-h">Session Rules</h5>
+            <ul>
+              <li>There is <strong>no pause option</strong> — once started, complete the quiz in a single sitting.</li>
+              <li>Each question has its own time limit; unanswered questions are counted once time runs out.</li>
+              <li>If you're unsure of an answer, prefer <strong>skipping or leaving it unanswered</strong> over
+                guessing randomly — random guesses can distort your skill profile more than a skipped question.</li>
+              <li>Navigating away, refreshing, or closing this tab mid-quiz may end your attempt early.</li>
+            </ul>
+
+            <h5 class="tq-agreement__terms-h">Conduct &amp; Integrity</h5>
+            <ul>
+              <li>Work independently — collaborating with others during the quiz isn't allowed.</li>
+              <li>Hints and revealed answers (where offered) are logged and may reduce how a question is scored.</li>
+              <li>Repeated attempts of the same quiz are meant for practice; take your first attempt seriously.</li>
+            </ul>
+
+            <h5 class="tq-agreement__terms-h">Technical &amp; Scoring</h5>
+            <ul>
+              <li>Make sure you have a stable connection before starting — submission requires connectivity.</li>
+              <li>Your responses, timing, and score are recorded and used to track your progress and coverage.</li>
+              <li>Scoring, timers, and question order follow the configuration you selected for this quiz.</li>
+            </ul>
+
+          </div>
+        </ng-scrollbar>
+
+        <label class="tq-agreement__check">
+          <input type="checkbox" [checked]="agreementAccepted" (click)="toggleAgreementCheck()">
+          <span>I have read and agree to the terms above, and confirm I'll attempt this quiz honestly and without assistance.</span>
+        </label>
+
+        <button class="tq-btn tq-btn--primary tq-agreement__continue"
+                [disabled]="!agreementAccepted"
+                (click)="acceptAgreement()">
+          Continue <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+      </div>
+    </div>
+  }
+
   <!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
-  @if (!loading && quiz) {
+  @if (!loading && !showAgreement && quiz) {
     <header class="tq-header" [class.tq-header--warn]="warningActive">
 
       <!-- Left: Settings + icon + title -->
@@ -59,7 +125,7 @@
   }
 
   <!-- ═══ WARNING BANNER (non-interactive, 10s alert) ════════════════════════ -->
-  @if (!loading && quizConfig.mode !== 'Interactive' && showWarningToast) {
+  @if (!loading && !showAgreement && quizConfig.mode !== 'Interactive' && showWarningToast) {
     <div class="tq-warn-banner">
       <i class="fa-solid fa-triangle-exclamation"></i>
       Only 10 seconds left — choose your answer!
@@ -67,7 +133,7 @@
   }
 
   <!-- ═══ SWIPER BODY ═══════════════════════════════════════════════════════ -->
-  @if (!loading) {
+  @if (!loading && !showAgreement) {
     <div class="tq-body">
 
       @if (questions?.length > 0) {
@@ -262,7 +328,7 @@
   }
 
   <!-- ═══ FOOTER ═══════════════════════════════════════════════════════════ -->
-  @if (!loading) {
+  @if (!loading && !showAgreement) {
     <footer class="tq-footer">
 
       <!-- Prev -->
