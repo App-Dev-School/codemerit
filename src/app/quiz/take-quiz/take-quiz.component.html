@@ -16,47 +16,84 @@
       <div class="tq-agreement__card">
 
         <div class="tq-agreement__head">
-          <i class="fa-solid fa-file-shield tq-agreement__icon"></i>
-          <div>
-            <h4 class="tq-agreement__title">Before you begin</h4>
-            <p class="tq-agreement__sub">
-              {{ quiz.title }} · {{ questions.length }} question{{ questions.length === 1 ? '' : 's' }}
-              @if (quizDuration) { · ~{{ quizDuration / 60 | number:'1.0-0' }} min }
-            </p>
+          <p class="tq-agreement__eyebrow"><i class="fa-solid fa-file-shield"></i> Before you begin</p>
+          <h4 class="tq-agreement__title">{{ quiz.title }}</h4>
+
+          <div class="tq-agreement__stats">
+            <div class="tq-agreement__stat">
+              <i class="fa-solid fa-list-check"></i>
+              <span class="tq-agreement__stat-val">{{ questions.length }}</span>
+              <span class="tq-agreement__stat-label">Question{{ questions.length === 1 ? '' : 's' }}</span>
+            </div>
+            @if (quizDuration) {
+            <div class="tq-agreement__stat">
+              <i class="fa-regular fa-clock"></i>
+              <span class="tq-agreement__stat-val">~{{ quizDuration / 60 | number:'1.0-0' }}</span>
+              <span class="tq-agreement__stat-label">Minutes</span>
+            </div>
+            }
+            <div class="tq-agreement__stat">
+              <i class="fa-solid fa-bolt"></i>
+              <span class="tq-agreement__stat-val">{{ quizConfig?.mode || 'Default' }}</span>
+              <span class="tq-agreement__stat-label">Mode</span>
+            </div>
           </div>
         </div>
 
-        <ng-scrollbar visibility="hover" class="tq-agreement__scroll">
+        <ng-scrollbar visibility="visible" appearance="compact" class="tq-agreement__scroll">
           <div class="tq-agreement__terms">
 
-            <h5 class="tq-agreement__terms-h">Purpose</h5>
-            <p>This quiz is for interactive learning and self-assessment — it helps you and CodeMerit understand
-              where you stand and personalize what you learn next. Please attempt it honestly, using only your own
-              knowledge. Do not use AI tools, search engines, notes, or another person's help to answer — the result
-              only reflects your real skill if the answers are genuinely yours.</p>
+            <p class="tq-agreement__terms-intro">Please read through the sections below — you'll need to agree
+              before the quiz begins.</p>
 
-            <h5 class="tq-agreement__terms-h">Session Rules</h5>
-            <ul>
-              <li>There is <strong>no pause option</strong> — once started, complete the quiz in a single sitting.</li>
-              <li>Each question has its own time limit; unanswered questions are counted once time runs out.</li>
-              <li>If you're unsure of an answer, prefer <strong>skipping or leaving it unanswered</strong> over
-                guessing randomly — random guesses can distort your skill profile more than a skipped question.</li>
-              <li>Navigating away, refreshing, or closing this tab mid-quiz may end your attempt early.</li>
-            </ul>
+            <div class="tq-agreement__section">
+              <div class="tq-agreement__section-head">
+                <span class="tq-agreement__section-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                <h5>Purpose</h5>
+              </div>
+              <p>This quiz is for interactive learning and self-assessment — it helps you and CodeMerit understand
+                where you stand and personalize what you learn next. Please attempt it honestly, using only your own
+                knowledge. Do not use AI tools, search engines, notes, or another person's help to answer — the
+                result only reflects your real skill if the answers are genuinely yours.</p>
+            </div>
 
-            <h5 class="tq-agreement__terms-h">Conduct &amp; Integrity</h5>
-            <ul>
-              <li>Work independently — collaborating with others during the quiz isn't allowed.</li>
-              <li>Hints and revealed answers (where offered) are logged and may reduce how a question is scored.</li>
-              <li>Repeated attempts of the same quiz are meant for practice; take your first attempt seriously.</li>
-            </ul>
+            <div class="tq-agreement__section">
+              <div class="tq-agreement__section-head">
+                <span class="tq-agreement__section-icon"><i class="fa-solid fa-stopwatch"></i></span>
+                <h5>Session Rules</h5>
+              </div>
+              <ul>
+                <li>There is <strong>no pause option</strong> — once started, complete the quiz in a single sitting.</li>
+                <li>Each question has its own time limit; unanswered questions are counted once time runs out.</li>
+                <li>If you're unsure of an answer, prefer <strong>skipping or leaving it unanswered</strong> over
+                  guessing randomly — random guesses can distort your skill profile more than a skipped question.</li>
+                <li>Navigating away, refreshing, or closing this tab mid-quiz may end your attempt early.</li>
+              </ul>
+            </div>
 
-            <h5 class="tq-agreement__terms-h">Technical &amp; Scoring</h5>
-            <ul>
-              <li>Make sure you have a stable connection before starting — submission requires connectivity.</li>
-              <li>Your responses, timing, and score are recorded and used to track your progress and coverage.</li>
-              <li>Scoring, timers, and question order follow the configuration you selected for this quiz.</li>
-            </ul>
+            <div class="tq-agreement__section">
+              <div class="tq-agreement__section-head">
+                <span class="tq-agreement__section-icon"><i class="fa-solid fa-user-shield"></i></span>
+                <h5>Conduct &amp; Integrity</h5>
+              </div>
+              <ul>
+                <li>Work independently — collaborating with others during the quiz isn't allowed.</li>
+                <li>Hints and revealed answers (where offered) are logged and may reduce how a question is scored.</li>
+                <li>Repeated attempts of the same quiz are meant for practice; take your first attempt seriously.</li>
+              </ul>
+            </div>
+
+            <div class="tq-agreement__section">
+              <div class="tq-agreement__section-head">
+                <span class="tq-agreement__section-icon"><i class="fa-solid fa-wifi"></i></span>
+                <h5>Technical &amp; Scoring</h5>
+              </div>
+              <ul>
+                <li>Make sure you have a stable connection before starting — submission requires connectivity.</li>
+                <li>Your responses, timing, and score are recorded and used to track your progress and coverage.</li>
+                <li>Scoring, timers, and question order follow the configuration you selected for this quiz.</li>
+              </ul>
+            </div>
 
           </div>
         </ng-scrollbar>
