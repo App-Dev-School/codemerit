@@ -20,6 +20,7 @@ import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/m
 import { MatIconModule } from '@angular/material/icon';
 import { CertTrackComponent } from '@shared/components/cert-track/cert-track.component';
 import { JobCurriculumComponent } from '@shared/components/job-curriculum/job-curriculum.component';
+import { JourneyLocatorComponent } from '@shared/components/journey-locator/journey-locator.component';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -33,6 +34,7 @@ import { JobCurriculumComponent } from '@shared/components/job-curriculum/job-cu
     MatIconModule,
     CertTrackComponent,
     JobCurriculumComponent,
+    JourneyLocatorComponent
   ]
 })
 export class CourseDashboardComponent implements OnInit {

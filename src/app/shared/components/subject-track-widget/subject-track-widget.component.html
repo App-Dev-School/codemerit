@@ -12,8 +12,23 @@
       {{index + 1}}
     </div>
     <div class="flex-1 min-w-0">
-      <h4 class="text-sm font-black text-cm-text-primary leading-tight truncate">{{track.title}}</h4>
+      <div class="flex items-center justify-between gap-2">
+        <h4 class="text-sm font-black text-cm-text-primary leading-tight truncate">{{track.title}}</h4>
+        @if(track.userRank){
+        <span class="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold
+                     bg-amber-500/10 text-amber-600 border border-amber-500/20"
+              title="Your rank among learners on this track">
+          🏆 #{{track.userRank}}
+        </span>
+        }
+      </div>
       <div class="flex items-center gap-1.5 flex-wrap mt-1">
+        @if(track.userLevel && track.userLevel !== 'Not Started'){
+        <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide shrink-0"
+              [style.backgroundColor]="levelMeta(track.userLevel).bg" [style.color]="levelMeta(track.userLevel).color">
+          {{track.userLevel}}
+        </span>
+        }
         @for(level of trackLevels; track level){
         <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border shrink-0"
               [class]="levelChipClasses(level)">

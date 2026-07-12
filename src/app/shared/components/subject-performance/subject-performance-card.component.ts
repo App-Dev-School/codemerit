@@ -41,7 +41,6 @@ export class SubjectPerformanceCardComponent implements OnInit, OnChanges {
   @Input() showAverageAccuracy = true;
   @Input() compact = false;
   @Input() indicators: MeritIndicators[] = [];
-  @Output() exploreSubject = new EventEmitter<Subject>();
   @Output() enrollSubject = new EventEmitter<Subject>();
   public cardChartOptions!: Partial<ChartOptions>;
 
@@ -66,17 +65,17 @@ export class SubjectPerformanceCardComponent implements OnInit, OnChanges {
     return 'text-red-500';
   }
 
-  levelMeta(level: string): { color: string; bg: string } {
+  levelMeta(level: string): { color: string; bg: string; textClass: string } {
     const l = (level || '').toLowerCase();
     if (l.includes('expert') || l.includes('master') || l.includes('complete'))
-      return { color: '#34d399', bg: 'rgba(52,211,153,0.12)' };
+      return { color: '#34d399', bg: 'rgba(52,211,153,0.12)', textClass: 'text-cm-text-primary dark:text-emerald-400' };
     if (l.includes('proficient') || l.includes('advance'))
-      return { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)' };
+      return { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', textClass: 'text-cm-text-primary dark:text-violet-400' };
     if (l.includes('intermediate'))
-      return { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)' };
-    if (l.includes('beginner'))
-      return { color: '#38bdf8', bg: 'rgba(56,189,248,0.12)' };
-    return { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' };
+      return { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)', textClass: 'text-cm-text-primary dark:text-amber-400' };
+    if (l.includes('beginner') || l.includes('developing'))
+      return { color: '#38bdf8', bg: 'rgba(56,189,248,0.12)', textClass: 'text-cm-text-primary dark:text-sky-400' };
+    return { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)', textClass: 'text-cm-text-primary dark:text-slate-400' };
   }
 
   private buildChart() {
@@ -109,6 +108,5 @@ export class SubjectPerformanceCardComponent implements OnInit, OnChanges {
     };
   }
 
-  onExploreSubject(subject: Subject) { this.exploreSubject.next(subject); }
   onEnrollSubject(subject: Subject) { this.enrollSubject.next(subject); }
 }

@@ -298,20 +298,35 @@ export class DashboardComponent implements OnInit {
       : (this.subjectData?.syllabus?.length ?? 0);
   }
 
+  get difficultyBreakdown(): { key: string; total: number; attempted: number; correct: number; wrong: number }[] {
+    if (!this.subjectData) return [];
+    const d = this.subjectData;
+    const tiers = [
+      { key: 'Easy',         total: d.numEasyTrivia || 0, attempted: d.attemptedEasy   || 0, correct: d.correctEasy   || 0, wrong: d.wrongEasy   || 0 },
+      { key: 'Intermediate', total: d.numIntTrivia  || 0, attempted: d.attemptedMedium || 0, correct: d.correctMedium || 0, wrong: d.wrongMedium || 0 },
+      { key: 'Advanced',     total: d.numAdvTrivia  || 0, attempted: d.attemptedHard   || 0, correct: d.correctHard   || 0, wrong: d.wrongHard   || 0 },
+    ];
+    return tiers.filter(t => t.total > 0);
+  }
+
+  get subjectSkillRatings(): any[] {
+    return this.subjectData?.skillRatings ?? [];
+  }
+
   fetchDashboardData() {
         this.loading = true;
         this.master
           .fetchSubjectDashboard(this.currentSubject.slug)
           .subscribe({
             next: (response) => {
-              console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
+              //console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
               if (response) {
                 this.subjectData = response.data;
                 console.log(this.pageTitle, '@subjectData:', this.subjectData);
                 console.log(this.pageTitle, '@syllabus:', this.subjectData?.syllabus);
               }
               setTimeout(() => {
-                //this.loading = false;
+                this.loading = false;
               }, 3000);
             },
             error: (error) => {
