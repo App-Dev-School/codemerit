@@ -69,25 +69,20 @@
               </select>
             </div>
             <div class="form-field">
-              <label class="form-label">Tech Area</label>
+              <label class="form-label">Tech Role</label>
               <select formControlName="techArea" class="glass-input" (change)="onTechAreaChange()">
-                <option value="" disabled>Select an area…</option>
-                <option value="frontend">Frontend Engineering</option>
-                <option value="backend">Backend Engineering</option>
-                <option value="fullstack">Full-Stack Development</option>
-                <option value="aiml">AI / ML Engineering</option>
-                <option value="data">Data Engineering</option>
-                <option value="devops">DevOps &amp; Cloud</option>
-                <option value="gamedev">Game Development</option>
-                <option value="mobile">Mobile Development</option>
+                <option value="" disabled>Select a tech role…</option>
+                @for (role of jobRoles; track role.id) {
+                  <option [value]="role.id">{{ role.title }}</option>
+                }
               </select>
             </div>
             <div class="form-field">
               <label class="form-label">Select Track</label>
               <select formControlName="track" class="glass-input">
-                <option value="" disabled>Select a Tech Area first…</option>
-                @for (track of availableTracks; track track) {
-                  <option [value]="trackValue(track)">{{ track }}</option>
+                <option value="" disabled>Select a Tech Role first…</option>
+                @for (track of availableTracks; track track.id) {
+                  <option [value]="trackValue(track)">{{ track.title }}</option>
                 }
               </select>
             </div>
@@ -152,9 +147,9 @@
                      placeholder="e.g. 5" class="glass-input"/>
             </div>
             <div class="form-field">
-              <label class="form-label">Describe Your Biggest Technical Achievement</label>
+              <label class="form-label">Brief About You</label>
               <textarea rows="4" formControlName="achievement"
-                        placeholder="I migrated our monolithic architecture to microservices, reducing deployment times by 40%…"
+                        placeholder="Tell us about your background and what makes you unique…"
                         class="glass-input" style="resize:none"></textarea>
             </div>
           </div>

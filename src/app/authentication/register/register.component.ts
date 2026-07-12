@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/service/auth.service';
+import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
 
@@ -49,12 +50,13 @@ export class RegisterComponent implements OnInit {
     mobile:    ['iOS / Swift Developer', 'Android / Kotlin Developer', 'React Native Specialist', 'Flutter Engineer'],
   };
 
-  availableTracks: string[] = [];
+  availableTracks: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
+    private masterService: MasterService,
     private snackbar: SnackbarService,
   ) {}
 
@@ -96,18 +98,46 @@ export class RegisterComponent implements OnInit {
     return 'step-label step-label--pending';
   }
 
-  trackValue(track: string): string {
-    return track.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+  trackValue(track: any): string {
+    return track?.id || '';
+  }
+
+  get jobRoles(): any[] {
+    return this.masterService.jobRoles || [];
   }
 
   // ─── Form interactions ─────────────────────────────────────────
 
   onTechAreaChange() {
-    const area = this.form.get('techArea')!.value as string;
-    this.availableTracks = this.techData[area] || [];
+    const jobRoleId = Number(this.form.get('techArea')!.value);
+    const selectedRole = this.jobRoles.find((role: any) => Number(role.id) === jobRoleId);
     const trackCtrl = this.form.get('track')!;
     trackCtrl.setValue('');
-    this.availableTracks.length ? trackCtrl.enable() : trackCtrl.disable();
+    trackCtrl.disable();
+    this.availableTracks = [];
+
+    if (!selectedRole?.slug) {
+      return;
+    }
+
+    this.masterService.fetchCourseDetail(selectedRole.slug).subscribe((data: any) => {
+      const tracksFromSubjects = (data?.subjects || [])
+        .flatMap((subject: any) => subject?.subjectTracks || []);
+      const tracksFromCertifications = (data?.certificationTracks || [])
+        .flatMap((certification: any) => certification?.subjectTracks || []);
+
+      const trackMap = new Map<number, any>();
+      [...tracksFromSubjects, ...tracksFromCertifications].forEach((track: any) => {
+        if (track?.id) {
+          trackMap.set(Number(track.id), track);
+        }
+      });
+
+      this.availableTracks = [...trackMap.values()]
+        .sort((a: any, b: any) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0));
+
+      this.availableTracks.length ? trackCtrl.enable() : trackCtrl.disable();
+    });
   }
 
   onMasteryInput(event: Event) {
@@ -166,6 +196,8 @@ export class RegisterComponent implements OnInit {
     }
     this.loading = true;
     const v = this.form.getRawValue();
+    const selectedRole = this.jobRoles.find((role: any) => Number(role.id) === Number(v.techArea));
+    const selectedTrack = this.availableTracks.find((track: any) => Number(track.id) === Number(v.track));
     const postData = {
       firstName:       v.firstName,
       lastName:        v.lastName || '',
@@ -174,9 +206,11 @@ export class RegisterComponent implements OnInit {
       mobile:          null,
       city:            null,
       country:         'India',
-      about:           v.track || '',
-      techArea:        v.techArea,
-      track:           v.track,
+      about:           v.achievement || '',
+      techArea:        selectedRole?.title || v.techArea,
+      techRoleId:      v.techArea,
+      subjectTrackId:  v.track,
+      track:           selectedTrack?.title || '',
       dreamRole:       v.dreamRole,
       masteryLevel:    v.masteryLevel,
       focusAreas:      v.focusAreas,
