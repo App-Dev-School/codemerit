@@ -93,17 +93,12 @@
 }
 
 .tq-agreement__eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 7px;
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #6366f1;
   margin: 0 0 8px;
-
-  i { font-size: 11px; }
 }
 
 :host-context(.dark) .tq-agreement__eyebrow {
@@ -173,60 +168,48 @@
   color: var(--cm-text-secondary);
 
   p { margin: 0; }
-  ul { margin: 0; padding-left: 19px; }
-  li { margin-bottom: 6px; }
-  li::marker { color: #6366f1; }
   strong { color: var(--cm-text-primary); font-weight: 700; }
 }
 
-.tq-agreement__terms-intro {
-  font-size: 12px;
-  font-style: italic;
-  color: var(--cm-text-muted);
-  margin-bottom: 16px !important;
-}
+// Formal, exam-terms style numbering: 1. Title / a. b. c. sub-clauses —
+// both the heading and body text share the same left edge as the number.
+.tq-terms-list {
+  margin: 0;
+  padding-left: 22px;
+  counter-reset: tq-term;
 
-// Each section reads as its own grouped block, not a wall of text
-.tq-agreement__section {
-  padding: 14px 16px;
-  border-radius: 14px;
-  background: var(--cm-surface-raised, #f8fafc);
-  border: 1px solid var(--cm-border);
+  > li {
+    padding-left: 4px;
 
-  & + & { margin-top: 12px; }
-}
+    & + li { margin-top: 14px; }
 
-.tq-agreement__section-head {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 8px;
-
-  h5 {
-    font-size: 12.5px;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    color: var(--cm-text-primary);
-    margin: 0;
+    &::marker {
+      font-weight: 800;
+      color: var(--cm-text-primary);
+    }
   }
 }
 
-.tq-agreement__section-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(99, 102, 241, 0.12);
-  color: #6366f1;
-  font-size: 11px;
+.tq-terms-list h5 {
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--cm-text-primary);
+  margin: 0 0 4px;
 }
 
-:host-context(.dark) .tq-agreement__section-icon {
-  background: rgba(99, 102, 241, 0.2);
-  color: #a5b4fc;
+.tq-terms-list ol[type="a"] {
+  margin: 6px 0 0;
+  padding-left: 18px;
+
+  li {
+    margin-bottom: 5px;
+
+    &::marker {
+      font-weight: 700;
+      color: var(--cm-text-muted);
+    }
+  }
 }
 
 .tq-agreement__check {
@@ -589,25 +572,11 @@
 }
 
 .tq-question {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: var(--cm-text-primary);
   line-height: 1.68;
   margin-bottom: 14px;
-}
-
-.tq-code {
-  background: var(--cm-surface-raised, #f1f5f9);
-  border: 1px solid var(--cm-border);
-  border-radius: 10px;
-  padding: 14px 16px;
-  font-size: 13px;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-  overflow-x: auto;
-  margin-bottom: 14px;
-  line-height: 1.65;
-  color: var(--cm-text-primary);
-  white-space: pre;
 }
 
 .tq-divider {

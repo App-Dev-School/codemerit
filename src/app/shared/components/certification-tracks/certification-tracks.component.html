@@ -27,12 +27,13 @@
               shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
               dark:shadow-none">
 
-    <!-- Identity block -->
+    <!-- Identity block — full-width header -->
     <div class="flex items-start gap-4 px-6 pt-6 pb-5
                 bg-gradient-to-br from-violet-50/70 to-cm-surface dark:from-violet-500/5 dark:to-transparent
                 border-b border-cm-border">
       @if(cert.jobRole?.image){
-      <img [src]="cert.jobRole.image" [alt]="cert.jobRole.title" class="w-11 h-11 rounded-xl object-cover border border-cm-border shrink-0">
+      <img [src]="cert.jobRole.image" [alt]="cert.jobRole.title"
+           class="w-11 h-11 rounded-xl object-cover border border-cm-border shrink-0">
       }@else{
       <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0"
            [style.backgroundColor]="cert.jobRole?.color || '#6366f1'">
@@ -47,107 +48,208 @@
         </span>
         }
         <h3 class="text-[19px] font-black text-cm-text-primary leading-tight">{{cert.title}}</h3>
-        @if(cert.description){
-        <p class="text-[12px] text-cm-text-muted mt-1.5 leading-relaxed">{{cert.description}}</p>
-        }
       </div>
     </div>
 
-    <!-- Requirements — step list with connector line -->
-    <div class="px-6 py-5 border-b border-cm-border">
-      <p class="text-[9px] font-black uppercase tracking-[0.16em] text-cm-text-muted mb-4">
-        Requires {{cert.totalSubjectTracks}} Subject {{cert.totalSubjectTracks === 1 ? 'Track' : 'Tracks'}}
-      </p>
-      <div>
-        @for(req of cert.subjectTracks; track req.id; let ri = $index; let last = $last){
-        <div class="flex items-start gap-3" [class.pb-5]="!last">
+    <!-- Two-column body: left = content, right = certificate preview -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-cm-border">
 
-          <div class="flex flex-col items-center shrink-0">
-            <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center
-                        text-[10px] font-black transition-all duration-300"
-                 [class.bg-green-500]="req.isCompleted" [class.border-green-500]="req.isCompleted"
-                 [class.text-white]="req.isCompleted"
-                 [class.bg-cm-surface]="!req.isCompleted" [class.border-cm-border]="!req.isCompleted"
-                 [class.text-cm-text-muted]="!req.isCompleted">
-              @if(req.isCompleted){
-              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-              }@else{ {{ri + 1}} }
-            </div>
-            @if(!last){
-            <div class="w-px flex-1 bg-cm-border mt-1" style="min-height:20px"></div>
-            }
-          </div>
+      <!-- ── LEFT: description + steps + progress + CTA ── -->
+      <div class="lg:col-span-3 px-6 py-5 space-y-5">
 
-          <div class="flex-1 min-w-0 pt-0.5">
-            <div class="flex items-center justify-between gap-2 mb-1">
-              <p class="text-[12.5px] truncate"
-                 [class.font-bold]="req.isCompleted" [class.text-cm-text-primary]="req.isCompleted"
-                 [class.text-cm-text-secondary]="!req.isCompleted">{{req.title}}</p>
-              @if(req.isCompleted){
-              <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-green-500 text-white shrink-0">Done</span>
-              }@else if((req.progressPercent || 0) === 0){
-              <span class="text-[9px] text-cm-text-muted shrink-0">Not started</span>
-              }
-            </div>
-            @if(!req.isCompleted && (req.progressPercent || 0) > 0){
-            <div class="flex items-center gap-2">
-              <div class="flex-1 h-1 rounded-full bg-cm-surface-hover overflow-hidden">
-                <div class="h-full rounded-full bg-cm-brand" [style.width]="req.progressPercent + '%'"></div>
+        @if(cert.description){
+        <p class="text-[12px] text-cm-text-muted leading-relaxed">{{cert.description}}</p>
+        }
+
+        <!-- Subject tracks step list -->
+        <div>
+          <p class="text-[9px] font-black uppercase tracking-[0.16em] text-cm-text-muted mb-4">
+            Requires {{cert.totalSubjectTracks}} Subject {{cert.totalSubjectTracks === 1 ? 'Track' : 'Tracks'}}
+          </p>
+          <div>
+            @for(req of cert.subjectTracks; track req.id; let ri = $index; let last = $last){
+            <div class="flex items-start gap-3" [class.pb-5]="!last">
+
+              <div class="flex flex-col items-center shrink-0">
+                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center
+                            text-[10px] font-black transition-all duration-300"
+                     [class.bg-green-500]="req.isCompleted" [class.border-green-500]="req.isCompleted"
+                     [class.text-white]="req.isCompleted"
+                     [class.bg-cm-surface]="!req.isCompleted" [class.border-cm-border]="!req.isCompleted"
+                     [class.text-cm-text-muted]="!req.isCompleted">
+                  @if(req.isCompleted){
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  }@else{ {{ri + 1}} }
+                </div>
+                @if(!last){
+                <div class="w-px flex-1 bg-cm-border mt-1" style="min-height:20px"></div>
+                }
               </div>
-              <span class="text-[10px] text-cm-brand font-bold tabular-nums shrink-0 w-7 text-right">
-                {{req.progressPercent}}%
-              </span>
+
+              <div class="flex-1 min-w-0 pt-0.5">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                  <p class="text-[12.5px] truncate"
+                     [class.font-bold]="req.isCompleted" [class.text-cm-text-primary]="req.isCompleted"
+                     [class.text-cm-text-secondary]="!req.isCompleted">{{req.title}}</p>
+                  @if(req.isCompleted){
+                  <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-green-500 text-white shrink-0">Done</span>
+                  }@else if((req.progressPercent || 0) === 0){
+                  <span class="text-[9px] text-cm-text-muted shrink-0">Not started</span>
+                  }
+                </div>
+                @if(!req.isCompleted && (req.progressPercent || 0) > 0){
+                <div class="flex items-center gap-2">
+                  <div class="flex-1 h-1 rounded-full bg-cm-surface-hover overflow-hidden">
+                    <div class="h-full rounded-full bg-cm-brand" [style.width]="req.progressPercent + '%'"></div>
+                  </div>
+                  <span class="text-[10px] text-cm-brand font-bold tabular-nums shrink-0 w-7 text-right">
+                    {{req.progressPercent}}%
+                  </span>
+                </div>
+                }
+              </div>
+
             </div>
             }
           </div>
+        </div>
+
+        <!-- Overall progress bar -->
+        <div class="pt-1">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] font-semibold text-cm-text-secondary">
+              Overall · {{getCompletedCount(cert)}}/{{cert.totalSubjectTracks}} tracks
+            </span>
+            <span class="text-[13px] font-black tabular-nums"
+                  [class.text-green-500]="getProgress(cert) === 100"
+                  [class.text-cm-brand]="getProgress(cert) > 0 && getProgress(cert) < 100"
+                  [class.text-cm-text-muted]="getProgress(cert) === 0">
+              {{getProgress(cert)}}%
+            </span>
+          </div>
+          <div class="h-2.5 rounded-full bg-cm-surface-hover overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700"
+                 [class.bg-green-500]="getProgress(cert) === 100"
+                 [class.bg-cm-brand]="getProgress(cert) < 100"
+                 [style.width]="getProgress(cert) + '%'"></div>
+          </div>
+        </div>
+
+        <!-- CTA — inline on desktop, full-width on mobile -->
+        <div>
+          @if(getProgress(cert) === 100 && cert.myCertificate){
+          <button type="button" (click)="onViewCertificate(cert)"
+            class="w-full lg:w-auto inline-flex items-center justify-center gap-2
+                   px-6 py-2.5 rounded-xl font-black text-[13px]
+                   bg-green-600 hover:bg-green-700 text-white transition-all active:scale-[0.98] shadow-md">
+            🏆 View Certificate
+          </button>
+          }@else if(getProgress(cert) === 100){
+          <button type="button" disabled
+            class="w-full lg:w-auto inline-flex items-center justify-center gap-2
+                   px-6 py-2.5 rounded-xl font-black text-[13px]
+                   bg-cm-surface-raised text-cm-text-muted border border-cm-border cursor-not-allowed">
+            Certificate Processing…
+          </button>
+          }@else{
+          <button type="button" (click)="onStartLearning(cert)"
+            class="w-full lg:w-auto inline-flex items-center justify-center gap-2
+                   px-6 py-2.5 rounded-xl font-black text-[13px]
+                   bg-cm-brand hover:opacity-90 text-white transition-all active:scale-[0.98] shadow-md">
+            🚀 Start Learning
+          </button>
+          <p class="text-[10px] text-cm-text-muted mt-2">
+            Complete all {{cert.totalSubjectTracks}} subject tracks to unlock your certificate
+          </p>
+          }
+        </div>
+
+      </div>
+
+      <!-- ── RIGHT: certificate preview ── -->
+      <div class="lg:col-span-2 px-6 py-8 bg-cm-surface-muted/40 flex items-center justify-center">
+        <div class="w-full max-w-[260px]">
+
+          @if(getProgress(cert) === 100 && cert.myCertificate){
+
+          <!-- Earned certificate card -->
+          <div class="relative rounded-2xl overflow-hidden border-2 border-amber-400/60
+                      bg-gradient-to-br from-amber-50 via-white to-yellow-50
+                      dark:from-amber-900/20 dark:via-cm-surface dark:to-yellow-900/10
+                      shadow-lg shadow-amber-200/40 dark:shadow-amber-900/20 text-center px-6 py-7">
+            <!-- decorative ribbon corners -->
+            <div class="absolute top-0 left-0 w-12 h-12 border-t-[3px] border-l-[3px] border-amber-400/60 rounded-tl-2xl pointer-events-none"></div>
+            <div class="absolute top-0 right-0 w-12 h-12 border-t-[3px] border-r-[3px] border-amber-400/60 rounded-tr-2xl pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-12 h-12 border-b-[3px] border-l-[3px] border-amber-400/60 rounded-bl-2xl pointer-events-none"></div>
+            <div class="absolute bottom-0 right-0 w-12 h-12 border-b-[3px] border-r-[3px] border-amber-400/60 rounded-br-2xl pointer-events-none"></div>
+
+            <div class="text-5xl mb-3">🏆</div>
+            <p class="text-[8.5px] font-black uppercase tracking-[0.18em] text-amber-600 dark:text-amber-400 mb-1">
+              Certificate of Completion
+            </p>
+            <p class="text-sm font-black text-cm-text-primary leading-snug mb-2">{{cert.title}}</p>
+            @if(cert.jobRole?.title){
+            <p class="text-[10px] text-cm-text-muted">{{cert.jobRole.title}} Path</p>
+            }
+            <!-- seal -->
+            <div class="mt-4 flex items-center justify-center">
+              <div class="w-10 h-10 rounded-full border-2 border-amber-400/70 bg-amber-50 dark:bg-amber-900/30
+                          flex items-center justify-center text-amber-500 text-lg">★</div>
+            </div>
+          </div>
+
+          }@else{
+
+          <!-- Locked preview -->
+          <div class="relative rounded-2xl border border-dashed border-cm-border bg-cm-surface overflow-hidden text-center px-6 py-7">
+
+            <!-- Dimmed certificate mockup beneath the overlay -->
+            <div class="opacity-25 pointer-events-none select-none" aria-hidden="true">
+              <div class="absolute top-0 left-0 w-10 h-10 border-t-[3px] border-l-[3px] border-cm-border-strong rounded-tl-2xl"></div>
+              <div class="absolute top-0 right-0 w-10 h-10 border-t-[3px] border-r-[3px] border-cm-border-strong rounded-tr-2xl"></div>
+              <div class="absolute bottom-0 left-0 w-10 h-10 border-b-[3px] border-l-[3px] border-cm-border-strong rounded-bl-2xl"></div>
+              <div class="absolute bottom-0 right-0 w-10 h-10 border-b-[3px] border-r-[3px] border-cm-border-strong rounded-br-2xl"></div>
+              <div class="text-4xl mb-2">🏆</div>
+              <p class="text-[8px] font-black uppercase tracking-widest text-cm-text-muted mb-1">Certificate of Completion</p>
+              <p class="text-xs font-bold text-cm-text-muted">{{cert.title}}</p>
+              @if(cert.jobRole?.title){
+              <p class="text-[9px] text-cm-text-muted mt-0.5">{{cert.jobRole.title}}</p>
+              }
+              <div class="mt-3 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-full border-2 border-cm-border text-cm-text-muted text-base flex items-center justify-center">★</div>
+              </div>
+            </div>
+
+            <!-- Lock overlay -->
+            <div class="flex flex-col items-center justify-center gap-2 py-2">
+              <div class="w-14 h-14 rounded-full bg-cm-surface-raised border border-cm-border
+                          flex items-center justify-center shadow-sm">
+                <svg class="w-6 h-6 text-cm-text-muted" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="1.75">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002
+                       2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+              </div>
+              @if(cert.totalSubjectTracks - getCompletedCount(cert) > 0){
+              <p class="text-xs font-bold text-cm-text-primary">
+                {{cert.totalSubjectTracks - getCompletedCount(cert)}} track{{cert.totalSubjectTracks - getCompletedCount(cert) === 1 ? '' : 's'}} left to unlock
+              </p>
+              }@else{
+              <p class="text-xs font-bold text-cm-text-primary">Certificate processing</p>
+              }
+              <p class="text-[10px] text-cm-text-muted">Earn this upon completing all required tracks</p>
+            </div>
+
+          </div>
+
+          }
 
         </div>
-        }
-      </div>
-    </div>
-
-    <!-- Overall progress + CTA -->
-    <div class="px-6 py-5 bg-cm-surface-muted">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-[11px] font-semibold text-cm-text-secondary">
-          Overall Progress · {{getCompletedCount(cert)}}/{{cert.totalSubjectTracks}} tracks
-        </span>
-        <span class="text-[13px] font-black tabular-nums"
-              [class.text-green-500]="getProgress(cert) === 100"
-              [class.text-cm-brand]="getProgress(cert) > 0 && getProgress(cert) < 100"
-              [class.text-cm-text-muted]="getProgress(cert) === 0">
-          {{getProgress(cert)}}%
-        </span>
-      </div>
-      <div class="h-2.5 rounded-full bg-cm-surface-hover overflow-hidden mb-4">
-        <div class="h-full rounded-full transition-all duration-700"
-             [class.bg-green-500]="getProgress(cert) === 100"
-             [class.bg-cm-brand]="getProgress(cert) < 100"
-             [style.width]="getProgress(cert) + '%'"></div>
       </div>
 
-      @if(getProgress(cert) === 100 && cert.myCertificate){
-      <button type="button" (click)="onViewCertificate(cert)"
-        class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-[13px]
-               bg-green-600 hover:bg-green-700 text-white transition-all active:scale-[0.98] shadow-md">
-        🏆 View Certificate
-      </button>
-      }@else if(getProgress(cert) === 100){
-      <button type="button" disabled
-        class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-[13px]
-               bg-cm-surface-raised text-cm-text-muted border border-cm-border cursor-not-allowed">
-        Certificate Processing
-      </button>
-      }@else{
-      <button type="button" (click)="onStartLearning(cert)"
-        class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-[13px]
-               bg-cm-brand hover:opacity-90 text-white transition-all active:scale-[0.98] shadow-md">
-        🚀 Start Learning
-      </button>
-      <p class="text-[10px] text-cm-text-muted text-center mt-2">
-        Complete all {{cert.totalSubjectTracks}} subject tracks to unlock
-      </p>
-      }
     </div>
 
   </div>

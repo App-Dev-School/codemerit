@@ -66,6 +66,19 @@ export class SubjectPerformanceCardComponent implements OnInit, OnChanges {
     return 'text-red-500';
   }
 
+  levelMeta(level: string): { color: string; bg: string } {
+    const l = (level || '').toLowerCase();
+    if (l.includes('expert') || l.includes('master') || l.includes('complete'))
+      return { color: '#34d399', bg: 'rgba(52,211,153,0.12)' };
+    if (l.includes('proficient') || l.includes('advance'))
+      return { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)' };
+    if (l.includes('intermediate'))
+      return { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)' };
+    if (l.includes('beginner'))
+      return { color: '#38bdf8', bg: 'rgba(56,189,248,0.12)' };
+    return { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' };
+  }
+
   private buildChart() {
     if (!this.subject) return;
     const color = this.subject.color || '#6366f1';

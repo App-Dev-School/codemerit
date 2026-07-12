@@ -16,7 +16,7 @@
       <div class="tq-agreement__card">
 
         <div class="tq-agreement__head">
-          <p class="tq-agreement__eyebrow"><i class="fa-solid fa-file-shield"></i> Before you begin</p>
+          <p class="tq-agreement__eyebrow">Before you begin</p>
           <h4 class="tq-agreement__title">{{ quiz.title }}</h4>
 
           <div class="tq-agreement__stats">
@@ -43,64 +43,51 @@
         <ng-scrollbar visibility="visible" appearance="compact" class="tq-agreement__scroll">
           <div class="tq-agreement__terms">
 
-            <p class="tq-agreement__terms-intro">Please read through the sections below — you'll need to agree
-              before the quiz begins.</p>
-
-            <div class="tq-agreement__section">
-              <div class="tq-agreement__section-head">
-                <span class="tq-agreement__section-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+            <ol class="tq-terms-list">
+              <li>
                 <h5>Purpose</h5>
-              </div>
-              <p>This quiz is for interactive learning and self-assessment — it helps you and CodeMerit understand
-                where you stand and personalize what you learn next. Please attempt it honestly, using only your own
-                knowledge. Do not use AI tools, search engines, notes, or another person's help to answer — the
-                result only reflects your real skill if the answers are genuinely yours.</p>
-            </div>
+                <p>This is a skill assessment, not a graded exam. It gives you and CodeMerit an honest read on
+                  where you stand, so we can personalize what you learn next — so answer from your own knowledge
+                  only, with no AI tools, search, notes, or outside help. The result only means something if it's
+                  really yours.</p>
+              </li>
 
-            <div class="tq-agreement__section">
-              <div class="tq-agreement__section-head">
-                <span class="tq-agreement__section-icon"><i class="fa-solid fa-stopwatch"></i></span>
+              <li>
                 <h5>Session Rules</h5>
-              </div>
-              <ul>
-                <li>There is <strong>no pause option</strong> — once started, complete the quiz in a single sitting.</li>
-                <li>Each question has its own time limit; unanswered questions are counted once time runs out.</li>
-                <li>If you're unsure of an answer, prefer <strong>skipping or leaving it unanswered</strong> over
-                  guessing randomly — random guesses can distort your skill profile more than a skipped question.</li>
-                <li>Navigating away, refreshing, or closing this tab mid-quiz may end your attempt early.</li>
-              </ul>
-            </div>
+                <ol type="a">
+                  <li>No pausing — once you start, finish in one sitting.</li>
+                  <li>Each question runs its own timer; time out and it's counted as unanswered.</li>
+                  <li>Unsure of an answer? Leave it blank rather than guess — a random guess skews your skill
+                    profile more than a skip does.</li>
+                  <li>Leaving the tab, refreshing, or navigating away may end your attempt early.</li>
+                </ol>
+              </li>
 
-            <div class="tq-agreement__section">
-              <div class="tq-agreement__section-head">
-                <span class="tq-agreement__section-icon"><i class="fa-solid fa-user-shield"></i></span>
+              <li>
                 <h5>Conduct &amp; Integrity</h5>
-              </div>
-              <ul>
-                <li>Work independently — collaborating with others during the quiz isn't allowed.</li>
-                <li>Hints and revealed answers (where offered) are logged and may reduce how a question is scored.</li>
-                <li>Repeated attempts of the same quiz are meant for practice; take your first attempt seriously.</li>
-              </ul>
-            </div>
+                <ol type="a">
+                  <li>Work on your own — no collaborating with others mid-quiz.</li>
+                  <li>Hints and revealed answers, where offered, are logged and can lower a question's score.</li>
+                  <li>Repeat attempts are for practice — make your first one count.</li>
+                </ol>
+              </li>
 
-            <div class="tq-agreement__section">
-              <div class="tq-agreement__section-head">
-                <span class="tq-agreement__section-icon"><i class="fa-solid fa-wifi"></i></span>
+              <li>
                 <h5>Technical &amp; Scoring</h5>
-              </div>
-              <ul>
-                <li>Make sure you have a stable connection before starting — submission requires connectivity.</li>
-                <li>Your responses, timing, and score are recorded and used to track your progress and coverage.</li>
-                <li>Scoring, timers, and question order follow the configuration you selected for this quiz.</li>
-              </ul>
-            </div>
+                <ol type="a">
+                  <li>Check your connection before starting — submitting your quiz needs it.</li>
+                  <li>Your answers, timing, and score are saved to track your progress over time.</li>
+                  <li>Timers, scoring, and question order follow this quiz's configuration.</li>
+                </ol>
+              </li>
+            </ol>
 
           </div>
         </ng-scrollbar>
 
         <label class="tq-agreement__check">
           <input type="checkbox" [checked]="agreementAccepted" (click)="toggleAgreementCheck()">
-          <span>I have read and agree to the terms above, and confirm I'll attempt this quiz honestly and without assistance.</span>
+          <span>I agree to these terms and will attempt this quiz honestly, on my own, and without outside assistance.</span>
         </label>
 
         <button class="tq-btn tq-btn--primary tq-agreement__continue"
@@ -215,9 +202,14 @@
                       <!-- Question body: code or rich HTML -->
                       @if (isCodeQuestion(question.question)) {
                         <p class="tq-read-note">Read carefully before answering.</p>
-                        <pre class="tq-code"><code>{{ question.question }}</code></pre>
+                        <pre class="tq-question"><code>{{ question.question }}</code></pre>
                       }
-                      <div [class.tq-question]="!isCodeQuestion(question.question)"
+                      <!-- <div [class.tq-question]="!isCodeQuestion(question.question)"
+                           [class.tiptap]="isCodeQuestion(question.question)"
+                           [innerHTML]="question.question">
+                      </div> -->
+
+                      <div class="tq-question"
                            [class.tiptap]="isCodeQuestion(question.question)"
                            [innerHTML]="question.question">
                       </div>
@@ -379,13 +371,13 @@
 
       <!-- Center: Hint + Answer toggles -->
       <div class="tq-footer__aux">
-        @if (quizConfig.showHint && currentQuestion?.hint !== '') {
+        @if (quizConfig.showHint && currentQuestion?.hint) {
           <button class="tq-aux-btn" [class.tq-aux-btn--on]="hintActive" (click)="showHint()">
             <i class="fa-solid fa-lightbulb"></i>
             <span>Hint</span>
           </button>
         }
-        @if (quizConfig.showAnswers && currentQuestion?.answer !== '') {
+        @if (quizConfig.showAnswers && currentQuestion?.answer) {
           <button class="tq-aux-btn" [class.tq-aux-btn--on]="answerActive" (click)="showAnswers()">
             <i class="fa-solid fa-eye"></i>
             <span>Answer</span>

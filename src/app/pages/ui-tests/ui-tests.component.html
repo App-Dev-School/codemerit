@@ -1,0 +1,71 @@
+<section class="content">
+  <div class="content-block">
+
+    <div class="mb-6">
+      <h4 class="text-lg font-bold text-cm-text-primary">UI Test Bench — Unused Shared Components</h4>
+      <p class="text-sm text-cm-text-secondary mt-1">
+        Temporary review page. Renders every shared component currently unreferenced in the app so they can be
+        visually inspected before deletion. Not linked from navigation — remove this route and folder once reviewed.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+      <!-- 1. activity-list -->
+      <div class="border border-cm-border rounded-2xl p-5 bg-cm-surface">
+        <h6 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">1. activity-list — ActivityListComponent</h6>
+        <app-activity-list [activities]="activities"></app-activity-list>
+      </div>
+
+      <!-- 2. celebration-overlay -->
+      <div class="border border-cm-border rounded-2xl p-5 bg-cm-surface">
+        <h6 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">2. celebration-overlay — CelebrationOverlayComponent</h6>
+        <div class="relative h-64 rounded-xl overflow-hidden bg-black/80">
+          <app-celebration-overlay [enabled]="true" [theme]="'golden_star'" [autoDisableMs]="0"></app-celebration-overlay>
+        </div>
+      </div>
+
+      <!-- 3. daily-lessons-widget -->
+      <div class="border border-cm-border rounded-2xl p-5 bg-cm-surface">
+        <h6 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">3. daily-lessons-widget — DailyLessonsWidgetComponent</h6>
+        <app-daily-lessons-widget></app-daily-lessons-widget>
+      </div>
+
+      <!-- 5. file-upload -->
+      <div class="border border-cm-border rounded-2xl p-5 bg-cm-surface">
+        <h6 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">5. file-upload — FileUploadComponent</h6>
+        <app-file-upload [(ngModel)]="uploadedFile" [ngModelOptions]="{standalone: true}"></app-file-upload>
+      </div>
+
+      <!-- 7. medal-card -->
+      <div class="border border-cm-border rounded-2xl p-5 bg-cm-surface">
+        <h6 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">7. medal-card — MedalCardComponent</h6>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <app-medal-card userName="Guest" action="selfRating" (medalAction)="onMedalAction($event)"></app-medal-card>
+          <app-medal-card userName="Guest" action="takeQuiz" (medalAction)="onMedalAction($event)"></app-medal-card>
+          <app-medal-card userName="Guest" action="login" (medalAction)="onMedalAction($event)"></app-medal-card>
+        </div>
+      </div>
+
+      <!-- 8. quiz-attempts -->
+      <div class="border border-cm-border rounded-2xl p-5 bg-cm-surface">
+        <h6 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">8. quiz-attempts — QuizAttemptsComponent</h6>
+        <app-quiz-attempts [questions]="attemptQuestions"></app-quiz-attempts>
+      </div>
+
+      <!-- 11. subject-form -->
+      <div class="border border-cm-border rounded-2xl p-5 bg-cm-surface">
+        <h6 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">11. subject-form — SubjectFormComponent</h6>
+        <app-subject-form></app-subject-form>
+      </div>
+
+      <!-- 13. topic-wise-score -->
+      <div class="border border-cm-border rounded-2xl p-5 bg-cm-surface">
+        <h6 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">13. topic-wise-score — TopicsScore (selector: app-topics-score)</h6>
+        <app-topics-score [topicScores]="topicScores"></app-topics-score>
+      </div>
+
+    </div>
+
+  </div>
+</section>

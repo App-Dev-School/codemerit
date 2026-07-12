@@ -34,6 +34,7 @@ export interface SubjectTrack {
   completedTopics: number;
   progressPercent: number;
   isCompleted: boolean;
+  userLevel: string | null;
   meritList: any[];
   userRank: number | null;
   topics: SubjectTrackTopic[];

@@ -29,8 +29,8 @@
   @if (!loading && courseItem) {
   <div class="content-block">
 
-    <!-- ── Page header: title + role switcher (single dropdown, not a button row) ── -->
-    <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+    <!-- ── Page header ── -->
+    <div class="flex items-center justify-between gap-3 pt-4 pb-5 sm:pt-0 sm:pb-6 flex-wrap">
       <div>
         <p class="text-[11px] font-bold uppercase tracking-widest text-cm-text-muted">My Learning</p>
         <h1 class="text-lg font-black text-cm-text-primary leading-tight mt-0.5">
@@ -85,85 +85,36 @@
       }
     </div>
 
+    <!-- ── Grid: mobile = single col, profile first; lg = 3 col, profile right ── -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
-      <!-- Left — subject sections (2/3 width) -->
-      <div class="lg:col-span-2 space-y-7">
+      <!-- ── RIGHT SIDEBAR (profile + widgets) — first in DOM = first on mobile ── -->
+      <div class="order-first lg:order-last space-y-4">
 
-        <!-- In Progress -->
-        <div>
-          <h3 class="text-sm font-black text-cm-text-primary mb-4">
-            In Progress
-            <span class="text-cm-text-muted font-semibold">({{ attemptedSubjects.length }})</span>
-          </h3>
-
-          @if (attemptedSubjects?.length > 0) {
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            @for (item of attemptedSubjects; track item.id) {
-            <app-subject-tracker-card
-              [user]="userData" [item]="item"
-              (launchSubjectExplorer)="launchSubjectExplorer($event)"
-              (takeQuiz)="openQuizLauncher(item)">
-            </app-subject-tracker-card>
-            }
-          </div>
-          } @else {
-          <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
-            <i class="fa-regular fa-clock text-cm-text-muted text-2xl mb-3 block"></i>
-            <p class="text-sm text-cm-text-muted">No subjects in progress yet. Start with a subject below to get going!</p>
-          </div>
-          }
-        </div>
-
-        <!-- To Start -->
-        <div>
-          <h3 class="text-sm font-black text-cm-text-primary mb-4">
-            To Start
-            <span class="text-cm-text-muted font-semibold">({{ otherSubjects.length }})</span>
-          </h3>
-
-          @if (otherSubjects?.length > 0) {
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            @for (item of otherSubjects; track item.id) {
-            <button type="button" (click)="launchSubjectExplorer(item)"
-              class="flex flex-col items-center gap-2 p-3.5 rounded-2xl border border-cm-border bg-cm-surface
-                     hover:border-cm-brand/40 hover:bg-cm-surface-hover active:scale-[0.97]
-                     transition-all duration-150 text-center">
-              <img [src]="item.image || 'assets/images/tech/placeholder.png'"
-                   class="w-10 h-10 rounded-xl object-contain border border-cm-border bg-cm-surface-raised p-1"
-                   [alt]="item.title">
-              <span class="text-xs font-bold text-cm-text-primary leading-snug line-clamp-2">{{ item.title }}</span>
-              @if (item.numTrivia > 0) {
-              <span class="text-[10px] text-cm-text-muted">{{ item.numTrivia }} questions</span>
-              }
-            </button>
-            }
-          </div>
-          } @else {
-          <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
-            <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-3 block"></i>
-            <p class="text-sm text-cm-text-muted">All subjects have been started. Keep up the good work!</p>
-          </div>
-          }
-        </div>
-
-      </div>
-
-      <!-- Right — profile + widgets (1/3 width) -->
-      <div class="space-y-4">
-
-        <!-- Profile card: avatar → star → snapshot stats → course subjects → View Profile -->
+        <!-- Profile card -->
         <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
                     shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
 
-          <!-- Avatar + name + star badge -->
-          <div class="px-5 pt-7 pb-5 text-center
+          <!-- Avatar + name + job role -->
+          <div class="px-5 pt-6 pb-5 text-center
                       bg-gradient-to-br from-violet-50/70 to-cm-surface
                       dark:from-violet-500/5 dark:to-transparent border-b border-cm-border">
-            <img src="assets/images/users/user.jpg"
-                 class="w-16 h-16 rounded-full object-cover mx-auto mb-3
-                        border-2 border-cm-brand shadow-sm"
-                 [alt]="userData?.firstName">
+
+            <!-- Avatar with star badge -->
+            <div class="relative inline-block mb-3">
+              <img src="assets/images/users/user.jpg"
+                   class="w-16 h-16 rounded-full object-cover border-2 border-cm-brand shadow-sm"
+                   [alt]="userData?.firstName">
+              <!-- Star badge — bottom-right of avatar -->
+              <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full
+                          bg-cm-brand-dim border-2 border-cm-surface
+                          flex items-center justify-center">
+                <svg class="w-3 h-3 text-cm-brand" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                </svg>
+              </div>
+            </div>
+
             <h4 class="text-sm font-bold text-cm-text-primary leading-snug">
               {{ userData?.firstName }} {{ userData?.lastName }}
             </h4>
@@ -174,17 +125,9 @@
             } @else {
             <p class="text-xs text-cm-text-muted mt-0.5">New Joiner</p>
             }
-
-            <div class="w-12 h-12 rounded-full bg-cm-brand-dim border border-cm-brand/20
-                        flex items-center justify-center mx-auto mt-4">
-              <svg class="w-6 h-6 text-cm-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-              </svg>
-            </div>
           </div>
 
-          <!-- Snapshot stats — real aggregates from courseData, not decorative -->
+          <!-- Snapshot stats -->
           <div class="grid grid-cols-3 divide-x divide-cm-border border-b border-cm-border">
             <div class="px-2 py-3.5 text-center">
               <p class="text-base font-black text-cm-text-primary tabular-nums leading-none">{{ courseData?.length || 0 }}</p>
@@ -201,32 +144,34 @@
           </div>
 
           <!-- Course subjects -->
-          <div class="p-5 text-center space-y-3">
-            <h4 class="text-sm font-bold text-cm-text-primary">{{ courseItem.title }}</h4>
-            @if (courseItem?.scope) {
-            <span class="inline-block text-[10px] font-bold uppercase tracking-wider
-                        text-cm-brand-text bg-cm-brand-dim border border-cm-brand/20
-                        rounded-full px-2.5 py-0.5">
-              {{ courseItem.scope }}
-            </span>
-            }
+          <div class="p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-cm-text-primary">{{ courseItem.title }}</h4>
+              @if (courseItem?.scope) {
+              <span class="text-[10px] font-bold uppercase tracking-wider
+                          text-cm-brand-text bg-cm-brand-dim border border-cm-brand/20
+                          rounded-full px-2.5 py-0.5">
+                {{ courseItem.scope }}
+              </span>
+              }
+            </div>
             @if (courseItem?.description) {
             <p class="text-xs text-cm-text-muted leading-relaxed">{{ courseItem.description }}</p>
             }
             @if (courseItem?.subjects) {
-            <div class="flex flex-wrap justify-center gap-1.5">
+            <div class="flex flex-wrap gap-1.5">
               @for (item of courseItem?.subjects; track item) {
               <img class="w-8 h-8 rounded-full object-contain border border-cm-border"
                    [src]="item.image" [alt]="item.title">
               }
             </div>
             }
-            <div class="border-t border-cm-border pt-3">
+            <div class="pt-1">
               <button (click)="viewProfile()"
-                      class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold
-                             text-cm-brand bg-cm-brand-dim border border-cm-brand/25
+                      class="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl
+                             text-xs font-semibold text-cm-brand bg-cm-brand-dim border border-cm-brand/25
                              hover:border-cm-brand/50 active:scale-[0.98] transition-all duration-150">
-                <i class="fa-solid fa-rotate text-[10px]"></i> View Profile
+                <i class="fa-solid fa-user text-[10px]"></i> View Profile
               </button>
             </div>
           </div>
@@ -238,14 +183,16 @@
           <div class="flex items-center gap-3 px-5 py-4 border-b border-cm-border">
             <div class="w-9 h-9 rounded-xl bg-cm-brand-dim border border-cm-brand/20
                         flex items-center justify-center shrink-0">
-              <svg class="w-4 h-4 text-cm-brand" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg class="w-4 h-4 text-cm-brand" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
             </div>
             <div class="min-w-0">
               <p class="text-sm font-bold text-cm-text-primary">Rate Your Skills</p>
               <p class="text-[11px] text-cm-text-muted mt-0.5 truncate">Self-assess {{ courseItem.title }}</p>
             </div>
           </div>
-          <div class="p-5 text-center space-y-3">
+          <div class="p-5 space-y-3">
             <p class="text-xs text-cm-text-muted leading-relaxed">
               Rate your proficiency across all {{ courseItem?.subjects?.length || 0 }} subjects to personalize your learning path.
             </p>
@@ -258,7 +205,7 @@
           </div>
         </div>
 
-        <!-- Continue Learning — resume the most active in-progress subject -->
+        <!-- Continue Learning -->
         @if (attemptedSubjects?.length > 0) {
         <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
                     shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
@@ -307,7 +254,7 @@
         </div>
         }
 
-        <!-- Discover New — nudge toward a not-yet-started subject -->
+        <!-- Discover New -->
         @if (otherSubjects?.length > 0) {
         <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
                     shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
@@ -343,6 +290,102 @@
         }
 
       </div>
+      <!-- ── /RIGHT SIDEBAR ── -->
+
+
+      <!-- ── LEFT MAIN — subject sections ── -->
+      <div class="order-last lg:order-first lg:col-span-2 space-y-7">
+
+        <!-- In Progress -->
+        <div>
+          <!-- Section heading -->
+          <div class="flex items-center gap-2.5 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20
+                        flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24"
+                   stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-cm-text-primary leading-none">In Progress</h3>
+              <p class="text-[11px] text-cm-text-muted mt-0.5">
+                {{ attemptedSubjects.length }}
+                {{ attemptedSubjects.length === 1 ? 'subject' : 'subjects' }} active
+              </p>
+            </div>
+          </div>
+
+          @if (attemptedSubjects?.length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (item of attemptedSubjects; track item.id) {
+            <app-subject-tracker-card
+              [user]="userData" [item]="item"
+              (launchSubjectExplorer)="launchSubjectExplorer($event)"
+              (takeQuiz)="openQuizLauncher(item)">
+            </app-subject-tracker-card>
+            }
+          </div>
+          } @else {
+          <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
+            <i class="fa-regular fa-clock text-cm-text-muted text-2xl mb-3 block"></i>
+            <p class="text-sm text-cm-text-muted">No subjects in progress yet.</p>
+            <p class="text-xs text-cm-text-muted mt-1 opacity-70">Start with a subject below to get going!</p>
+          </div>
+          }
+        </div>
+
+        <!-- To Start -->
+        <div>
+          <!-- Section heading -->
+          <div class="flex items-center gap-2.5 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20
+                        flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24"
+                   stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-cm-text-primary leading-none">Ready to Begin</h3>
+              <p class="text-[11px] text-cm-text-muted mt-0.5">
+                {{ otherSubjects.length }}
+                {{ otherSubjects.length === 1 ? 'subject' : 'subjects' }} waiting
+              </p>
+            </div>
+          </div>
+
+          @if (otherSubjects?.length > 0) {
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            @for (item of otherSubjects; track item.id) {
+            <button type="button" (click)="launchSubjectExplorer(item)"
+              class="flex flex-col items-center gap-2 p-3.5 rounded-2xl border border-cm-border bg-cm-surface
+                     hover:border-cm-brand/40 hover:bg-cm-surface-hover active:scale-[0.97]
+                     transition-all duration-150 text-center">
+              <img [src]="item.image || 'assets/images/tech/placeholder.png'"
+                   class="w-10 h-10 rounded-xl object-contain border border-cm-border bg-cm-surface-raised p-1"
+                   [alt]="item.title">
+              <span class="text-xs font-bold text-cm-text-primary leading-snug line-clamp-2">{{ item.title }}</span>
+              @if (item.numTrivia > 0) {
+              <span class="text-[10px] text-cm-text-muted">{{ item.numTrivia }} questions</span>
+              }
+            </button>
+            }
+          </div>
+          } @else {
+          <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
+            <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-3 block"></i>
+            <p class="text-sm text-cm-text-muted">All subjects have been started.</p>
+            <p class="text-xs text-cm-text-muted mt-1 opacity-70">Keep up the good work!</p>
+          </div>
+          }
+        </div>
+
+      </div>
+      <!-- ── /LEFT MAIN ── -->
+
     </div>
   </div>
   }

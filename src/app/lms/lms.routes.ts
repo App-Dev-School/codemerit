@@ -35,4 +35,9 @@ export const LMS_ROUTE: Route[] = [
     loadChildren: () =>
       import('./subject-tracks/subject-tracks.routes').then((m) => m.SUBJECT_TRACKS_ROUTE),
   },
+  {
+    path: 'certification-tracks',
+    loadChildren: () =>
+      import('./certification-tracks/certification-tracks.routes').then((m) => m.CERTIFICATION_TRACKS_ROUTE),
+  },
 ];
