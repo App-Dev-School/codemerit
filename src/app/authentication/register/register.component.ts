@@ -17,7 +17,7 @@ import { ParticleCanvasComponent } from '@shared/components/particle-canvas/part
 export class RegisterComponent implements OnInit {
 
   currentStep = 1;
-  readonly totalSteps = 4;
+  readonly totalSteps = 3;
   highestStepReached = 1;
   loading = false;
   success = false;
@@ -28,15 +28,9 @@ export class RegisterComponent implements OnInit {
   masteryLabelClass = 'mastery-val mastery-val--beginner';
 
   readonly steps = [
-    { label: 'Goal Setting' },
-    { label: 'Skill Mapping' },
-    { label: 'Experience' },
-    { label: 'Become SME' },
-  ];
-
-  readonly focusAreaOptions = [
-    'Sys Architecture', 'API Design', 'Cloud Computing', 'CI/CD Pipelines',
-    'Data Modeling', 'Cybersecurity', 'Agile / Scrum', 'Testing / QA',
+    { label: 'Career Goal' },
+    { label: 'Your Skills' },
+    { label: 'Create Account' },
   ];
 
   readonly techData: Record<string, string[]> = {
@@ -66,13 +60,11 @@ export class RegisterComponent implements OnInit {
       track:           [{ value: '', disabled: true }, Validators.required],
       dreamRole:       [''],
       masteryLevel:    [25],
-      focusAreas:      [[]],
       yearsExperience: [null],
       achievement:     [''],
       firstName:       ['', [Validators.required, Validators.maxLength(20)]],
       lastName:        ['', Validators.maxLength(20)],
       email:           ['', [Validators.required, Validators.email]],
-      password:        ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
@@ -121,19 +113,8 @@ export class RegisterComponent implements OnInit {
     }
 
     this.masterService.fetchCourseDetail(selectedRole.slug).subscribe((data: any) => {
-      const tracksFromSubjects = (data?.subjects || [])
-        .flatMap((subject: any) => subject?.subjectTracks || []);
-      const tracksFromCertifications = (data?.certificationTracks || [])
-        .flatMap((certification: any) => certification?.subjectTracks || []);
-
-      const trackMap = new Map<number, any>();
-      [...tracksFromSubjects, ...tracksFromCertifications].forEach((track: any) => {
-        if (track?.id) {
-          trackMap.set(Number(track.id), track);
-        }
-      });
-
-      this.availableTracks = [...trackMap.values()]
+      this.availableTracks = (data?.certificationTracks || [])
+        .slice()
         .sort((a: any, b: any) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0));
 
       this.availableTracks.length ? trackCtrl.enable() : trackCtrl.disable();
@@ -148,17 +129,6 @@ export class RegisterComponent implements OnInit {
     else               { this.masteryLabel = 'Advanced';     this.masteryLabelClass = 'mastery-val mastery-val--advanced'; }
   }
 
-  toggleFocusArea(area: string) {
-    const current: string[] = [...(this.form.get('focusAreas')!.value || [])];
-    const idx = current.indexOf(area);
-    idx > -1 ? current.splice(idx, 1) : current.push(area);
-    this.form.get('focusAreas')!.setValue(current);
-  }
-
-  isFocusAreaSelected(area: string): boolean {
-    return (this.form.get('focusAreas')!.value as string[]).includes(area);
-  }
-
   // ─── Stepper navigation ────────────────────────────────────────
 
   nextStep() {
@@ -166,7 +136,7 @@ export class RegisterComponent implements OnInit {
       const techArea = this.form.get('techArea')!.value;
       const track    = this.form.get('track')!.value;
       if (!techArea || !track) {
-        this.snackbar.display('snackbar-danger', 'Please select a Tech Area and Track to continue.', 'bottom', 'center');
+        this.snackbar.display('snackbar-danger', 'Please select a career area and certification target to continue.', 'bottom', 'center');
         return;
       }
     }
@@ -184,13 +154,21 @@ export class RegisterComponent implements OnInit {
     if (this.isReachable(step)) this.currentStep = step;
   }
 
-  // ─── Submit ────────────────────────────────────────────────────
+  // ─── Account connect (Step 3) ───────────────────────────────────
+  // TODO: wire up real Google/LinkedIn OAuth once backend endpoints exist.
+  // Once wired, a successful connect should populate firstName/lastName/
+  // email from the provider and call onSubmit() directly.
+
+  connectWith(provider: 'Google' | 'LinkedIn') {
+    this.snackbar.display('snackbar-info', `${provider} sign-in is coming soon. Please check back shortly.`, 'bottom', 'center');
+  }
+
+  // ─── Submit (manual fallback) ────────────────────────────────────
 
   onSubmit() {
     const firstName = this.form.get('firstName')!;
     const email     = this.form.get('email')!;
-    const password  = this.form.get('password')!;
-    if (firstName.invalid || email.invalid || password.invalid) {
+    if (firstName.invalid || email.invalid) {
       this.snackbar.display('snackbar-danger', 'Please fill all required fields correctly.', 'bottom', 'center');
       return;
     }
@@ -198,25 +176,24 @@ export class RegisterComponent implements OnInit {
     const v = this.form.getRawValue();
     const selectedRole = this.jobRoles.find((role: any) => Number(role.id) === Number(v.techArea));
     const selectedTrack = this.availableTracks.find((track: any) => Number(track.id) === Number(v.track));
+
     const postData = {
-      firstName:       v.firstName,
-      lastName:        v.lastName || '',
-      email:           v.email,
-      password:        v.password,
-      mobile:          null,
-      city:            null,
-      country:         'India',
-      about:           v.achievement || '',
-      techArea:        selectedRole?.title || v.techArea,
-      techRoleId:      v.techArea,
-      subjectTrackId:  v.track,
-      track:           selectedTrack?.title || '',
-      dreamRole:       v.dreamRole,
-      masteryLevel:    v.masteryLevel,
-      focusAreas:      v.focusAreas,
-      yearsExperience: v.yearsExperience,
-      achievement:     v.achievement,
-      flow:            'Registration',
+      firstName:             v.firstName,
+      lastName:              v.lastName || '',
+      email:                 v.email,
+      mobile:                null,
+      city:                  null,
+      country:               'India',
+      about:                 v.achievement || '',
+      techArea:              selectedRole?.title || v.techArea,
+      techRoleId:            v.techArea,
+      certificationTrackId:  v.track,
+      track:                 selectedTrack?.title || '',
+      dreamRole:             v.dreamRole,
+      masteryLevel:          v.masteryLevel,
+      yearsExperience:       v.yearsExperience,
+      achievement:           v.achievement,
+      flow:                  'Registration',
     };
 
     this.authService.register(postData).subscribe({

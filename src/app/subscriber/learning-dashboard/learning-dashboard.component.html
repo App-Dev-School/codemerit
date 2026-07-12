@@ -29,41 +29,135 @@
   @if (!loading && courseItem) {
   <div class="content-block">
 
-    <!-- ── Job Role tabs — compact tags for every enrolled role ── -->
-    @if (enrolledCourses?.length > 0) {
-    <div class="flex flex-wrap gap-2 mb-4">
-      @for (jobRole of enrolledCourses; track jobRole.id) {
-      <button type="button" (click)="selectJobRole(jobRole)"
-        [class]="jobRole.slug === course
-          ? 'inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm transition-all'
-          : 'inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1.5 rounded-full text-xs font-semibold text-cm-text-secondary bg-cm-surface border border-cm-border hover:border-cm-brand/40 hover:text-cm-brand transition-all'"
-        [style.background-color]="jobRole.slug === course ? (jobRole.color || 'var(--cm-brand)') : null">
-        <img [src]="jobRole.image || 'assets/images/tech/placeholder.png'"
-             class="w-5 h-5 rounded-full object-cover bg-white/70" [alt]="jobRole.title">
-        {{ jobRole.title }}
-      </button>
+    <!-- ── Page header: title + role switcher (single dropdown, not a button row) ── -->
+    <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-widest text-cm-text-muted">My Learning</p>
+        <h1 class="text-lg font-black text-cm-text-primary leading-tight mt-0.5">
+          {{ userData?.firstName ? 'Welcome back, ' + userData.firstName : 'Your Dashboard' }}
+        </h1>
+      </div>
+
+      @if (enrolledCourses?.length > 1) {
+      <div class="relative">
+        <button type="button" (click)="roleMenuOpen = !roleMenuOpen"
+          class="inline-flex items-center gap-2.5 pl-2 pr-3 py-2 rounded-xl border border-cm-border-strong
+                 bg-cm-surface hover:border-cm-brand/40 transition-all duration-150 shadow-sm">
+          <img [src]="courseItem.image || 'assets/images/tech/placeholder.png'"
+               class="w-7 h-7 rounded-lg object-cover" [alt]="courseItem.title">
+          <span class="text-left">
+            <span class="block text-[9px] font-bold uppercase tracking-wider text-cm-text-muted leading-none mb-1">
+              Viewing Role
+            </span>
+            <span class="block text-xs font-bold text-cm-text-primary leading-none">{{ courseItem.title }}</span>
+          </span>
+          <svg class="w-3.5 h-3.5 text-cm-text-muted transition-transform duration-150"
+               [class.rotate-180]="roleMenuOpen"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        @if (roleMenuOpen) {
+        <div class="fixed inset-0 z-40" (click)="roleMenuOpen = false"></div>
+        <div class="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-cm-border-strong
+                    bg-cm-surface shadow-2xl z-50 overflow-hidden">
+          @for (jobRole of enrolledCourses; track jobRole.id) {
+          <button type="button" (click)="selectJobRoleFromMenu(jobRole)"
+            [class]="'w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-cm-surface-hover '
+                     + (jobRole.slug === course ? 'bg-cm-brand-dim' : '')">
+            <img [src]="jobRole.image || 'assets/images/tech/placeholder.png'"
+                 class="w-9 h-9 rounded-lg object-cover border border-cm-border shrink-0" [alt]="jobRole.title">
+            <span class="flex-1 text-xs font-bold text-cm-text-primary truncate">{{ jobRole.title }}</span>
+            @if (jobRole.slug === course) {
+            <i class="fa-solid fa-check text-cm-brand text-xs shrink-0"></i>
+            }
+          </button>
+          }
+          <button type="button" (click)="roleMenuOpen = false; goToCourses()"
+            class="w-full flex items-center gap-2 px-4 py-3 text-left border-t border-cm-border
+                   text-xs font-semibold text-cm-brand hover:bg-cm-surface-hover transition-colors">
+            <i class="fa-solid fa-plus text-[10px]"></i> Explore More Roles
+          </button>
+        </div>
+        }
+      </div>
       }
     </div>
-    }
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
-      <!-- Left — subject tabs (2/3 width) -->
-      <div class="lg:col-span-2 mt-4">
-        <ng-container *ngTemplateOutlet="courseSubjectSummary"></ng-container>
+      <!-- Left — subject sections (2/3 width) -->
+      <div class="lg:col-span-2 space-y-7">
+
+        <!-- In Progress -->
+        <div>
+          <h3 class="text-sm font-black text-cm-text-primary mb-4">
+            In Progress
+            <span class="text-cm-text-muted font-semibold">({{ attemptedSubjects.length }})</span>
+          </h3>
+
+          @if (attemptedSubjects?.length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (item of attemptedSubjects; track item.id) {
+            <app-subject-tracker-card
+              [user]="userData" [item]="item"
+              (launchSubjectExplorer)="launchSubjectExplorer($event)"
+              (takeQuiz)="openQuizLauncher(item)">
+            </app-subject-tracker-card>
+            }
+          </div>
+          } @else {
+          <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
+            <i class="fa-regular fa-clock text-cm-text-muted text-2xl mb-3 block"></i>
+            <p class="text-sm text-cm-text-muted">No subjects in progress yet. Start with a subject below to get going!</p>
+          </div>
+          }
+        </div>
+
+        <!-- To Start -->
+        <div>
+          <h3 class="text-sm font-black text-cm-text-primary mb-4">
+            To Start
+            <span class="text-cm-text-muted font-semibold">({{ otherSubjects.length }})</span>
+          </h3>
+
+          @if (otherSubjects?.length > 0) {
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            @for (item of otherSubjects; track item.id) {
+            <button type="button" (click)="launchSubjectExplorer(item)"
+              class="flex flex-col items-center gap-2 p-3.5 rounded-2xl border border-cm-border bg-cm-surface
+                     hover:border-cm-brand/40 hover:bg-cm-surface-hover active:scale-[0.97]
+                     transition-all duration-150 text-center">
+              <img [src]="item.image || 'assets/images/tech/placeholder.png'"
+                   class="w-10 h-10 rounded-xl object-contain border border-cm-border bg-cm-surface-raised p-1"
+                   [alt]="item.title">
+              <span class="text-xs font-bold text-cm-text-primary leading-snug line-clamp-2">{{ item.title }}</span>
+              @if (item.numTrivia > 0) {
+              <span class="text-[10px] text-cm-text-muted">{{ item.numTrivia }} questions</span>
+              }
+            </button>
+            }
+          </div>
+          } @else {
+          <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
+            <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-3 block"></i>
+            <p class="text-sm text-cm-text-muted">All subjects have been started. Keep up the good work!</p>
+          </div>
+          }
+        </div>
+
       </div>
 
-      <!-- Right — profile + actions (1/3 width) -->
+      <!-- Right — profile + widgets (1/3 width) -->
       <div class="space-y-4">
 
-        <app-congratulations-card [user]="userData"></app-congratulations-card>
-
-        <!-- User profile card -->
+        <!-- Profile card: avatar → star → snapshot stats → course subjects → View Profile -->
         <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
                     shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
 
-          <!-- Avatar + name header -->
-          <div class="px-5 pt-6 pb-5 text-center
+          <!-- Avatar + name + star badge -->
+          <div class="px-5 pt-7 pb-5 text-center
                       bg-gradient-to-br from-violet-50/70 to-cm-surface
                       dark:from-violet-500/5 dark:to-transparent border-b border-cm-border">
             <img src="assets/images/users/user.jpg"
@@ -79,8 +173,31 @@
             </p>
             } @else {
             <p class="text-xs text-cm-text-muted mt-0.5">New Joiner</p>
-            <span class="text-[11px] text-cm-text-muted">Let us know your Tech Career Preference</span>
             }
+
+            <div class="w-12 h-12 rounded-full bg-cm-brand-dim border border-cm-brand/20
+                        flex items-center justify-center mx-auto mt-4">
+              <svg class="w-6 h-6 text-cm-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Snapshot stats — real aggregates from courseData, not decorative -->
+          <div class="grid grid-cols-3 divide-x divide-cm-border border-b border-cm-border">
+            <div class="px-2 py-3.5 text-center">
+              <p class="text-base font-black text-cm-text-primary tabular-nums leading-none">{{ courseData?.length || 0 }}</p>
+              <p class="text-[9.5px] font-bold text-cm-text-muted mt-1.5 uppercase tracking-wide">Subjects</p>
+            </div>
+            <div class="px-2 py-3.5 text-center">
+              <p class="text-base font-black text-cm-text-primary tabular-nums leading-none">{{ overallCoverage }}%</p>
+              <p class="text-[9.5px] font-bold text-cm-text-muted mt-1.5 uppercase tracking-wide">Coverage</p>
+            </div>
+            <div class="px-2 py-3.5 text-center">
+              <p class="text-base font-black text-cm-text-primary tabular-nums leading-none">{{ overallAccuracy }}%</p>
+              <p class="text-[9.5px] font-bold text-cm-text-muted mt-1.5 uppercase tracking-wide">Accuracy</p>
+            </div>
           </div>
 
           <!-- Course subjects -->
@@ -115,9 +232,115 @@
           </div>
         </div>
 
-        <ng-container *ngTemplateOutlet="courseSkillAssessment"></ng-container>
-        <ng-container *ngTemplateOutlet="courseEnroll"></ng-container>
-        <ng-container *ngTemplateOutlet="courseAssistant"></ng-container>
+        <!-- Rate Your Skills -->
+        <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div class="flex items-center gap-3 px-5 py-4 border-b border-cm-border">
+            <div class="w-9 h-9 rounded-xl bg-cm-brand-dim border border-cm-brand/20
+                        flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-cm-brand" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-cm-text-primary">Rate Your Skills</p>
+              <p class="text-[11px] text-cm-text-muted mt-0.5 truncate">Self-assess {{ courseItem.title }}</p>
+            </div>
+          </div>
+          <div class="p-5 text-center space-y-3">
+            <p class="text-xs text-cm-text-muted leading-relaxed">
+              Rate your proficiency across all {{ courseItem?.subjects?.length || 0 }} subjects to personalize your learning path.
+            </p>
+            <button (click)="assessSkills()"
+                    class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl
+                           text-xs font-semibold text-cm-brand bg-cm-brand-dim border border-cm-brand/25
+                           hover:border-cm-brand/50 active:scale-[0.98] transition-all duration-150">
+              <i class="fa-solid fa-star text-[10px]"></i> Start Skill Assessment
+            </button>
+          </div>
+        </div>
+
+        <!-- Continue Learning — resume the most active in-progress subject -->
+        @if (attemptedSubjects?.length > 0) {
+        <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div class="flex items-center gap-3 px-5 py-4 border-b border-cm-border">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20
+                        flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-play text-emerald-500 text-sm"></i>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-cm-text-primary">Continue Learning</p>
+              <p class="text-[11px] text-cm-text-muted mt-0.5">Pick up where you left off</p>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-3">
+              <img [src]="attemptedSubjects[0].image || 'assets/images/tech/placeholder.png'"
+                   class="w-11 h-11 rounded-xl object-cover border border-cm-border shrink-0"
+                   [alt]="attemptedSubjects[0].title">
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-bold text-cm-text-primary truncate">{{ attemptedSubjects[0].title }}</p>
+                @if (attemptedSubjects[0].coverage > 0) {
+                <p class="text-[11px] text-cm-text-muted mt-0.5">{{ attemptedSubjects[0].coverage }}% covered</p>
+                }
+              </div>
+            </div>
+            @if (attemptedSubjects[0].coverage > 0) {
+            <div class="h-1.5 w-full rounded-full bg-cm-surface-raised overflow-hidden">
+              <div class="h-full rounded-full bg-emerald-500 transition-all duration-700"
+                   [style.width]="attemptedSubjects[0].coverage + '%'"></div>
+            </div>
+            }
+            <div class="flex gap-2">
+              <button (click)="launchSubjectExplorer(attemptedSubjects[0])"
+                      class="flex-1 py-2 rounded-xl border border-cm-border text-xs font-semibold
+                             text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+                             active:scale-95 transition-all">
+                Explore
+              </button>
+              <button (click)="openQuizLauncher(attemptedSubjects[0])"
+                      class="flex-1 py-2 rounded-xl bg-cm-brand text-white text-xs font-semibold
+                             hover:opacity-90 active:scale-95 transition-all">
+                Next Quiz
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- Discover New — nudge toward a not-yet-started subject -->
+        @if (otherSubjects?.length > 0) {
+        <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div class="flex items-center gap-3 px-5 py-4 border-b border-cm-border">
+            <div class="w-9 h-9 rounded-xl bg-violet-500/10 border border-violet-500/20
+                        flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-compass text-violet-500 text-sm"></i>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-cm-text-primary">Discover New</p>
+              <p class="text-[11px] text-cm-text-muted mt-0.5">A subject you haven't tried yet</p>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-3">
+              <img [src]="otherSubjects[0].image || 'assets/images/tech/placeholder.png'"
+                   class="w-11 h-11 rounded-xl object-cover border border-cm-border shrink-0"
+                   [alt]="otherSubjects[0].title">
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-bold text-cm-text-primary truncate">{{ otherSubjects[0].title }}</p>
+                @if (otherSubjects[0].numTrivia > 0) {
+                <p class="text-[11px] text-cm-text-muted mt-0.5">{{ otherSubjects[0].numTrivia }} questions ready</p>
+                }
+              </div>
+            </div>
+            <button (click)="launchSubjectExplorer(otherSubjects[0])"
+                    class="w-full py-2.5 rounded-xl bg-violet-500 text-white text-xs font-semibold
+                           hover:opacity-90 active:scale-[0.98] transition-all">
+              Start {{ otherSubjects[0].title }}
+            </button>
+          </div>
+        </div>
+        }
 
       </div>
     </div>
@@ -126,145 +349,3 @@
 
 </section>
 }
-
-<!-- ── Subject Tabs Template ── -->
-<ng-template #courseSubjectSummary>
-  <!-- Tab bar -->
-  <div class="flex border-b border-cm-border mb-4">
-    @for (tab of [{label:'In Progress'},{label:'To Start'}]; track tab.label; let i = $index) {
-    <button type="button" (click)="activeTabIndex = i"
-      [class]="activeTabIndex === i
-        ? 'px-4 py-2.5 text-xs font-bold text-cm-brand border-b-2 border-cm-brand -mb-px bg-transparent'
-        : 'px-4 py-2.5 text-xs font-medium text-cm-text-muted border-b-2 border-transparent -mb-px hover:text-cm-text-primary transition-colors'">
-      {{tab.label}}
-    </button>
-    }
-  </div>
-
-  <!-- In Progress panel -->
-  @if (activeTabIndex === 0) {
-    @if (attemptedSubjects?.length > 0) {
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      @for (item of attemptedSubjects; track item.id) {
-      <app-subject-tracker-card
-        [user]="userData" [item]="item"
-        (launchSubjectExplorer)="launchSubjectExplorer($event)"
-        (takeQuiz)="openQuizLauncher(item)">
-      </app-subject-tracker-card>
-      }
-    </div>
-    } @else {
-    <div class="py-12 text-center">
-      <i class="fa-regular fa-clock text-cm-text-muted text-2xl mb-3 block"></i>
-      <p class="text-sm text-cm-text-muted">No subjects in progress yet. Start with a subject to get going!</p>
-    </div>
-    }
-  }
-
-  <!-- To Start panel -->
-  @if (activeTabIndex === 1) {
-    @if (otherSubjects?.length > 0) {
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      @for (item of otherSubjects; track item.id) {
-      <app-subject-tracker-card
-        [user]="userData" [item]="item"
-        (launchSubjectExplorer)="launchSubjectExplorer($event)"
-        (takeQuiz)="openQuizLauncher(item)">
-      </app-subject-tracker-card>
-      }
-    </div>
-    } @else {
-    <div class="py-12 text-center">
-      <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-3 block"></i>
-      <p class="text-sm text-cm-text-muted">All subjects have been started. Keep up the good work!</p>
-    </div>
-    }
-  }
-</ng-template>
-
-
-<!-- ── Skill Assessment Card Template ── -->
-<ng-template #courseSkillAssessment>
-  <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
-              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
-    <div class="flex items-center gap-3 px-5 py-4 border-b border-cm-border
-                bg-gradient-to-br from-violet-50/60 to-cm-surface
-                dark:from-violet-500/5 dark:to-transparent">
-      <div class="w-9 h-9 rounded-xl bg-cm-brand-dim border border-cm-brand/20
-                  flex items-center justify-center shrink-0">
-        <svg class="w-4 h-4 text-cm-brand" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      </div>
-      <h3 class="text-sm font-bold text-cm-text-primary">Rate Your Skills</h3>
-    </div>
-    <div class="p-5 text-center space-y-3">
-      <p class="text-sm font-semibold text-cm-text-secondary">
-        Self-assess {{ courseItem.title }}
-      </p>
-      <p class="text-xs text-cm-text-muted leading-relaxed">
-        Rate your proficiency across all {{ courseItem?.subjects?.length || 0 }} subjects to personalize your learning path.
-      </p>
-      <button (click)="assessSkills()"
-              class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl
-                     text-xs font-semibold text-cm-brand bg-cm-brand-dim border border-cm-brand/25
-                     hover:border-cm-brand/50 active:scale-[0.98] transition-all duration-150">
-        <i class="fa-solid fa-star text-[10px]"></i> Start Skill Assessment
-      </button>
-    </div>
-  </div>
-</ng-template>
-
-
-<!-- ── Enroll Card Template ── -->
-<ng-template #courseEnroll>
-  <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
-              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
-    <div class="px-5 py-4 border-b border-cm-border
-                bg-gradient-to-br from-violet-50/60 to-cm-surface
-                dark:from-violet-500/5 dark:to-transparent">
-      <h3 class="text-sm font-bold text-cm-text-primary">Enroll Now</h3>
-    </div>
-    <div class="p-5 text-center space-y-3">
-      <img src="assets/images/icons/hinting.gif" class="w-14 mx-auto" alt="hint">
-      <p class="text-sm font-semibold text-cm-text-secondary">Keep Exploring</p>
-      <p class="text-xs text-cm-text-muted leading-relaxed">
-        Your timeline, goals and rewards will appear as you progress.
-      </p>
-    </div>
-  </div>
-</ng-template>
-
-
-<!-- ── Course Assistant Template ── -->
-<ng-template #courseAssistant>
-  <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
-              shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
-    <div class="px-5 py-4 border-b border-cm-border
-                bg-gradient-to-br from-violet-50/60 to-cm-surface
-                dark:from-violet-500/5 dark:to-transparent">
-      <h3 class="text-sm font-bold text-cm-text-primary">Welcome {{ userData?.firstName }}</h3>
-    </div>
-    <div class="p-5 text-center space-y-4">
-      <p class="text-sm font-semibold text-cm-text-primary">
-        How are you doing as {{ courseItem.title }}?
-      </p>
-      @if (courseItem?.body) {
-      <p class="text-xs text-cm-text-muted leading-relaxed">{{ courseItem.body }}</p>
-      }
-      @if (!(userData?.designation)) {
-      <p class="text-xs text-cm-text-muted">Aspiring to become {{ courseItem.title }}?</p>
-      <button (click)="onSubscribe(courseItem)"
-              class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl
-                     text-xs font-semibold text-cm-brand bg-cm-brand-dim border border-cm-brand/25
-                     hover:border-cm-brand/50 active:scale-[0.98] transition-all duration-150">
-        <i class="fa-solid fa-rotate text-[10px]"></i> Enroll for Certification
-      </button>
-      }
-      <button (click)="goToCourses()"
-              class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl
-                     text-xs font-semibold text-cm-brand bg-cm-brand-dim border border-cm-brand/25
-                     hover:border-cm-brand/50 active:scale-[0.98] transition-all duration-150">
-        <i class="fa-solid fa-medal text-[10px]"></i> Explore Other Roles
-      </button>
-    </div>
-  </div>
-</ng-template>

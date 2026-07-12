@@ -66,11 +66,62 @@ export class JobCurriculumComponent {
     return this._subjects.reduce((sum, s) => sum + (s.subjectTracks?.length ?? 0), 0);
   }
 
+  // Journey Completed — average of each track's own progressPercent (topics
+  // completed / total topics) rather than a binary "is the whole track done"
+  // count, so the bar moves as soon as the user finishes any topic instead of
+  // jumping only when an entire track is cleared.
   getSubjectProgress(subject: any): number {
     const tracks: any[] = subject?.subjectTracks ?? [];
     if (!tracks.length) return Math.round(subject?.coverage ?? 0);
-    const completed = tracks.filter((t: any) => t.isCompleted).length;
-    return Math.round((completed / tracks.length) * 100);
+    const sum = tracks.reduce((s: number, t: any) => s + (t.progressPercent ?? (t.isCompleted ? 100 : 0)), 0);
+    return Math.round(sum / tracks.length);
+  }
+
+  // The curriculum API (fetchCourseDetail) does not send score/accuracy/attempted
+  // on the subject itself — only on its subjectTracks. Roll those up so the
+  // subject header shows real numbers instead of always reading 0. `subject?.x ??`
+  // keeps this compatible if a future/other API response does send the field directly.
+  private weightedAvg(tracks: any[], valueKey: string, weightKey: string): number {
+    const totalWeight = tracks.reduce((s: number, t: any) => s + (t[weightKey] || 0), 0);
+    if (!totalWeight) return 0;
+    const sum = tracks.reduce((s: number, t: any) => s + (t[valueKey] || 0) * (t[weightKey] || 0), 0);
+    return Math.round(sum / totalWeight);
+  }
+
+  getSubjectScore(subject: any): number {
+    if (subject?.score) return subject.score;
+    return this.weightedAvg(subject?.subjectTracks ?? [], 'score', 'numTrivia');
+  }
+
+  getSubjectAccuracy(subject: any): number {
+    if (subject?.accuracy) return subject.accuracy;
+    return this.weightedAvg(subject?.subjectTracks ?? [], 'accuracy', 'attempted');
+  }
+
+  getSubjectAttempted(subject: any): number {
+    if (subject?.attempted) return subject.attempted;
+    return (subject?.subjectTracks ?? []).reduce((s: number, t: any) => s + (t.attempted || 0), 0);
+  }
+
+  // Ordinal so subject-level userLevel can be derived as "weakest track" — a
+  // subject isn't genuinely Advanced while one of its tracks is still Beginner.
+  private levelRank(level: string): number {
+    const l = (level || '').toLowerCase();
+    if (l.includes('expert') || l.includes('master') || l.includes('complete')) return 4;
+    if (l.includes('advance')) return 3;
+    if (l.includes('intermediate')) return 2;
+    if (l.includes('beginner')) return 1;
+    return 0;
+  }
+
+  // The API sends userLevel per track/topic, never on the subject itself —
+  // roll it up as the lowest (least progressed) level among the subject's tracks.
+  getSubjectUserLevel(subject: any): string {
+    const tracks: any[] = subject?.subjectTracks ?? [];
+    if (subject?.userLevel) return subject.userLevel;
+    if (!tracks.length) return 'Not Started';
+    return tracks.reduce((weakest: any, t: any) =>
+      this.levelRank(t.userLevel) < this.levelRank(weakest.userLevel) ? t : weakest, tracks[0]).userLevel || 'Not Started';
   }
 
   getOverallProgress(): number {
@@ -96,5 +147,53 @@ export class JobCurriculumComponent {
     if (value >= 50) return { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)' };
     if (value > 0)   return { color: '#f87171', bg: 'rgba(248,113,113,0.12)' };
     return { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' };
+  }
+
+  // userLevel is a *stage* (how far the user has progressed), not a *grade* —
+  // deliberately a different color family than performanceMeta (blue→violet→emerald
+  // progression) so a "Beginner" pill is never confused with a "bad score" red.
+  userLevelMeta(level: string): { color: string; bg: string } {
+    const l = (level || '').toLowerCase();
+    if (l.includes('expert') || l.includes('master') || l.includes('complete'))
+      return { color: '#34d399', bg: 'rgba(52,211,153,0.12)' };
+    if (l.includes('advance'))
+      return { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)' };
+    if (l.includes('intermediate'))
+      return { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)' };
+    if (l.includes('beginner'))
+      return { color: '#38bdf8', bg: 'rgba(56,189,248,0.12)' };
+    return { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' };
+  }
+
+  // Per-difficulty attempt/accuracy breakdown, shared by track- and topic-level
+  // entities since both carry the same attempted/correctEasy|Medium|Hard fields.
+  // Only tiers the user has actually attempted are meant to be rendered.
+  difficultyStats(entity: any): { key: string; attempted: number; correct: number; accuracy: number }[] {
+    const tiers = [
+      { key: 'Easy',   attempted: entity?.attemptedEasy   || 0, correct: entity?.correctEasy   || 0 },
+      { key: 'Medium', attempted: entity?.attemptedMedium || 0, correct: entity?.correctMedium || 0 },
+      { key: 'Hard',   attempted: entity?.attemptedHard   || 0, correct: entity?.correctHard   || 0 },
+    ];
+    return tiers.map(t => ({ ...t, accuracy: t.attempted ? Math.round((t.correct / t.attempted) * 100) : 0 }));
+  }
+
+  hasDifficultyData(entity: any): boolean {
+    return this.difficultyStats(entity).some(t => t.attempted > 0);
+  }
+
+  // Subject-level difficulty rollup — the API doesn't send this directly on the
+  // subject, so sum it from the subject's own subjectTracks.
+  subjectDifficultyStats(subject: any): { key: string; attempted: number; correct: number; accuracy: number }[] {
+    const tracks: any[] = subject?.subjectTracks ?? [];
+    const agg = { attemptedEasy: 0, correctEasy: 0, attemptedMedium: 0, correctMedium: 0, attemptedHard: 0, correctHard: 0 };
+    tracks.forEach((t: any) => {
+      agg.attemptedEasy   += t.attemptedEasy   || 0;
+      agg.correctEasy     += t.correctEasy     || 0;
+      agg.attemptedMedium += t.attemptedMedium || 0;
+      agg.correctMedium   += t.correctMedium   || 0;
+      agg.attemptedHard   += t.attemptedHard   || 0;
+      agg.correctHard     += t.correctHard     || 0;
+    });
+    return this.difficultyStats(agg);
   }
 }

@@ -135,7 +135,19 @@
             </div>
 
             <div class="flex-1 min-w-0">
-              <h3 class="text-[14.5px] font-black text-cm-text-primary truncate">{{sub.title}}</h3>
+              <div class="flex items-center gap-1.5">
+                <h3 class="text-[14.5px] font-black text-cm-text-primary truncate">{{sub.title}}</h3>
+                <!-- Rolled up from subjectTracks as the weakest track's userLevel — the API
+                     never sends userLevel on the subject itself. Skipped at "Not Started"
+                     since nothing attempted yet is already implied by the 0% score. -->
+                @if(getSubjectUserLevel(sub) !== 'Not Started'){
+                @let subLvl = userLevelMeta(getSubjectUserLevel(sub));
+                <span class="text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full shrink-0"
+                      [style.backgroundColor]="subLvl.bg" [style.color]="subLvl.color">
+                  {{getSubjectUserLevel(sub)}}
+                </span>
+                }
+              </div>
               <p class="text-[11px] text-cm-text-muted mt-0.5">
                 Stage {{selectedIdx + 1}} of {{subjects.length}}&nbsp;·&nbsp;
                 {{getCompletedTracks(sub)}}/{{getTotalTracks(sub)}} tracks done
@@ -144,11 +156,14 @@
 
             <!-- Score is the headline figure (moved here from the stats grid below,
                  where it sat alongside volume metrics as just another card). Same
-                 font size as the Subject Track level score for visual consistency. -->
-            @let headScore = performanceMeta(sub.score || 0);
+                 font size as the Subject Track level score for visual consistency.
+                 The curriculum API doesn't send score on the subject itself, only on
+                 subjectTracks, so getSubjectScore() rolls it up from there. -->
+            @let subScore = getSubjectScore(sub);
+            @let headScore = performanceMeta(subScore);
             <div class="shrink-0 text-right">
               <p class="text-[26px] font-black tabular-nums leading-none" [style.color]="headScore.color">
-                {{sub.score || 0}}%
+                {{subScore}}%
               </p>
               <p class="text-[8px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Score</p>
             </div>
@@ -175,13 +190,13 @@
         </div>
 
         <!-- Subject details — description, stats, difficulty mix.
-             Field names (description/accuracy/score/numQuestions/attempted/
-             numEasyTrivia/numIntTrivia/numAdvTrivia/isSubscribed) match the
-             Subject shape used elsewhere (subjectDashboard API, master catalog).
-             Each block is @if-guarded so it silently no-ops if programDetails
-             doesn't actually return that field — verify against the live
-             response and adjust names here if it differs. -->
-        @if(sub.description || sub.numQuestions || sub.accuracy || sub.score || sub.isSubscribed){
+             The curriculum API (fetchCourseDetail) doesn't send score/accuracy/
+             attempted/numEasyTrivia|numIntTrivia|numAdvTrivia on the subject itself
+             — only on its subjectTracks — so getSubjectAttempted()/getSubjectAccuracy()
+             roll those up, and subjectDifficultyStats() sums the per-track Easy/
+             Medium/Hard attempts. Each still falls back to a direct field if some
+             other caller does send it. -->
+        @if(sub.description || sub.numQuestions || getSubjectAttempted(sub) || sub.isSubscribed){
         <div class="px-5 py-4 border-b border-cm-border space-y-3.5">
 
           @if(sub.description){
@@ -190,8 +205,9 @@
           </p>
           }
 
-          @if(sub.numQuestions || sub.accuracy || sub.attempted){
-          @let accMeta = performanceMeta(sub.accuracy || 0);
+          @if(sub.numQuestions || sub.numTrivia || getSubjectAttempted(sub)){
+          @let subAcc = getSubjectAccuracy(sub);
+          @let accMeta = performanceMeta(subAcc);
           <div class="grid grid-cols-3 gap-2">
 
             <!-- Questions — fixed accent (a volume, not a performance signal) -->
@@ -213,7 +229,7 @@
                 <mat-icon class="text-violet-500" style="font-size:16px;width:16px;height:16px;line-height:16px">edit_note</mat-icon>
               </div>
               <div class="min-w-0">
-                <p class="text-[15px] font-black text-cm-text-primary tabular-nums leading-none">{{sub.attempted || 0}}</p>
+                <p class="text-[15px] font-black text-cm-text-primary tabular-nums leading-none">{{getSubjectAttempted(sub)}}</p>
                 <p class="text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Attempted</p>
               </div>
             </div>
@@ -224,7 +240,7 @@
                 <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px" [style.color]="accMeta.color">track_changes</mat-icon>
               </div>
               <div class="min-w-0">
-                <p class="text-[15px] font-black tabular-nums leading-none" [style.color]="accMeta.color">{{sub.accuracy || 0}}%</p>
+                <p class="text-[15px] font-black tabular-nums leading-none" [style.color]="accMeta.color">{{subAcc}}%</p>
                 <p class="text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Accuracy</p>
               </div>
             </div>
@@ -232,6 +248,9 @@
           </div>
           }
 
+          <!-- Difficulty mix — static content composition (numEasyTrivia etc.) when a
+               caller sends it, otherwise the user's own attempted/correct rollup by
+               difficulty summed across this subject's tracks. -->
           @if(sub.numEasyTrivia || sub.numIntTrivia || sub.numAdvTrivia){
           <div class="flex items-center gap-2 flex-wrap">
             @if(sub.numEasyTrivia){
@@ -256,6 +275,27 @@
             }
           </div>
           }
+          @if(!sub.numEasyTrivia && !sub.numIntTrivia && !sub.numAdvTrivia){
+          @let subDiff = subjectDifficultyStats(sub);
+          @if(subDiff[0].attempted || subDiff[1].attempted || subDiff[2].attempted){
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[9px] font-bold uppercase tracking-wide text-cm-text-muted mr-0.5">By difficulty</span>
+            @for(tier of subDiff; track tier.key){
+            @if(tier.attempted){
+            @let tm = performanceMeta(tier.accuracy);
+            <span class="text-[10px] font-bold px-2 py-1 rounded-md" [style.backgroundColor]="tm.bg" [style.color]="tm.color">
+              {{tier.key}} {{tier.correct}}/{{tier.attempted}}
+            </span>
+            }
+            }
+            @if(sub.isSubscribed){
+            <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-cm-brand-dim text-cm-brand-text ml-auto">
+              Subscribed
+            </span>
+            }
+          </div>
+          }
+          }
 
         </div>
         }
@@ -265,7 +305,7 @@
              ever shows curriculum content now. -->
         <div class="flex items-center gap-2 px-5 pt-4 pb-1 border-b border-cm-border shrink-0">
           <mat-icon class="text-cm-brand" style="font-size:15px;width:15px;height:15px;line-height:15px">route</mat-icon>
-          <span class="text-[11.5px] font-bold text-cm-text-primary">Curriculum</span>
+          <span class="text-[11.5px] font-bold text-cm-text-primary">Topics</span>
           <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised text-cm-text-muted">
             {{getTotalTracks(sub)}}
           </span>
@@ -296,11 +336,23 @@
             <!-- Info -->
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between gap-3 mb-1.5">
-                <p class="text-[12.5px] font-bold truncate"
-                   [class.text-cm-text-secondary]="track.isCompleted"
-                   [class.text-cm-text-primary]="!track.isCompleted">
-                  {{track.title || track.name || ('Topic ' + (ti + 1))}}
-                </p>
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <p class="text-[12.5px] font-bold truncate"
+                     [class.text-cm-text-secondary]="track.isCompleted"
+                     [class.text-cm-text-primary]="!track.isCompleted">
+                    {{track.title || track.name || ('Topic ' + (ti + 1))}}
+                  </p>
+                  <!-- User's demonstrated mastery stage — skipped when "Not Started" since
+                       the Pending status alongside already conveys that, and duplicating it
+                       here would just be noise. -->
+                  @if(track.userLevel && track.userLevel !== 'Not Started'){
+                  @let trackLvl = userLevelMeta(track.userLevel);
+                  <span class="text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full shrink-0"
+                        [style.backgroundColor]="trackLvl.bg" [style.color]="trackLvl.color">
+                    {{track.userLevel}}
+                  </span>
+                  }
+                </div>
                 <span class="text-[9px] font-black uppercase tracking-wide shrink-0"
                       [class.text-green-500]="track.isCompleted"
                       [class.text-cm-brand]="!track.isCompleted && (track.progressPercent || 0) > 0"
@@ -337,9 +389,7 @@
                   </div>
                   }
 
-                  <!-- Coverage meter — the bar IS the coverage reading, colored by value.
-                       No sub-segments here (no per-difficulty breakdown exists for a
-                       track) — just the one % value. -->
+                  <!-- Coverage meter — the bar IS the coverage reading, colored by value. -->
                   @let tCov = performanceMeta(track.coverage || track.progressPercent || 0);
                   <div>
                     <div class="flex items-center justify-between mb-1">
@@ -356,6 +406,22 @@
                            [appRevealProgress]="track.coverage || track.progressPercent || 0"></div>
                     </div>
                   </div>
+
+                  <!-- Per-difficulty accuracy — only the tiers the user has actually
+                       attempted, colored by how well they did on that tier specifically.
+                       Surfaces e.g. "strong on Easy, weak on Hard" at a glance. -->
+                  @if(hasDifficultyData(track)){
+                  <div class="flex items-center gap-1.5 flex-wrap mt-2">
+                    @for(tier of difficultyStats(track); track tier.key){
+                    @if(tier.attempted){
+                    @let dm = performanceMeta(tier.accuracy);
+                    <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-md" [style.backgroundColor]="dm.bg" [style.color]="dm.color">
+                      {{tier.key}} {{tier.correct}}/{{tier.attempted}}
+                    </span>
+                    }
+                    }
+                  </div>
+                  }
                 </div>
 
                 @if(track.score != null){
@@ -387,60 +453,81 @@
                             shadow-[0_1px_2px_rgba(0,0,0,0.05),0_3px_8px_rgba(0,0,0,0.07)] dark:shadow-none">
 
                   <!-- Header: status icon + title + attempted / not-started flag -->
-                  <div class="flex items-center gap-2 px-2.5 pt-2 pb-1.5">
-                    <div class="w-[26px] h-[26px] rounded-full flex items-center justify-center shrink-0"
+                  <div class="flex items-center gap-2.5 px-3 pt-3 pb-2">
+                    <!-- <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
                          [style.backgroundColor]="tm.bg">
                       @if(tm.icon){
-                      <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px;-webkit-text-stroke:0.45px currentColor"
+                      <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px;-webkit-text-stroke:0.4px currentColor"
                                 [style.color]="tm.color">{{tm.icon}}</mat-icon>
                       }@else{
                       <span class="w-2 h-2 rounded-full" [style.backgroundColor]="tm.color"></span>
                       }
-                    </div>
+                    </div> -->
                     <div class="min-w-0 flex-1">
-                      <p class="text-[11px] font-bold text-cm-text-primary truncate" [title]="topic.title">{{topic.title}}</p>
+                      <div class="flex items-center gap-1.5">
+                        <p class="text-[12px] font-bold text-cm-text-primary truncate" [title]="topic.title">{{topic.title}}</p>
+                        @if(topic.userLevel && topic.userLevel !== 'Not Started'){
+                        @let topicLvl = userLevelMeta(topic.userLevel);
+                        <span class="text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full shrink-0"
+                              [style.backgroundColor]="topicLvl.bg" [style.color]="topicLvl.color">
+                          {{topic.userLevel}}
+                        </span>
+                        }
+                      </div>
                       @if(topic.numTrivia){
-                      <p class="text-[8.5px] text-cm-text-muted mt-0.5">{{topic.attempted || 0}}/{{topic.numTrivia}} attempted</p>
+                      <p class="text-[9px] text-cm-text-muted mt-0.5">{{topic.attempted || 0}}/{{topic.numTrivia}} attempted</p>
                       }
                     </div>
                     @if(!topic.isStarted){
-                    <span class="text-[7.5px] font-bold uppercase tracking-wide text-cm-text-muted shrink-0">Not started</span>
+                    <span class="text-[8px] font-semibold text-cm-text-muted shrink-0">Not started</span>
                     }
                   </div>
 
-                  <!-- Stats: Score / Accuracy / Level (falls back to Correct-Wrong if no level) —
-                       only once there's something to show. -->
+                  <!-- Stats: Score / Accuracy / Correct-Wrong. userLevel already has its own
+                       pill in the header above, so this stays a plain breakdown instead of
+                       repeating it. Separated from the header by a divider + real top padding
+                       so the metrics read as their own section instead of a cramped continuation. -->
                   @if((topic.attempted || 0) > 0){
-                  <div class="grid grid-cols-3 gap-1 px-2.5 pb-2">
-                    <div class="text-center rounded-md bg-cm-surface-raised py-1">
-                      <p class="text-[11.5px] font-black tabular-nums leading-none" [style.color]="tScore.color">{{topic.score || 0}}%</p>
-                      <p class="text-[6px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">Score</p>
+                  <div class="grid grid-cols-3 gap-1.5 px-3 pt-2.5 pb-2.5 border-t border-cm-border">
+                    <div class="text-center rounded-lg bg-cm-surface-raised py-2">
+                      <p class="text-[13px] font-black tabular-nums leading-none" [style.color]="tScore.color">{{topic.score || 0}}%</p>
+                      <p class="text-[8px] text-cm-text-muted mt-1">Score</p>
                     </div>
-                    <div class="text-center rounded-md bg-cm-surface-raised py-1">
-                      <p class="text-[11.5px] font-black tabular-nums leading-none" [style.color]="tAcc.color">{{topic.accuracy || 0}}%</p>
-                      <p class="text-[6px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">Accuracy</p>
+                    <div class="text-center rounded-lg bg-cm-surface-raised py-2">
+                      <p class="text-[13px] font-black tabular-nums leading-none" [style.color]="tAcc.color">{{topic.accuracy || 0}}%</p>
+                      <p class="text-[8px] text-cm-text-muted mt-1">Accuracy</p>
                     </div>
-                    <div class="text-center rounded-md bg-cm-surface-raised py-1">
-                      @if(topic.label){
-                      <p class="text-[11.5px] font-black text-cm-text-primary leading-none truncate px-0.5">{{topic.label}}</p>
-                      <p class="text-[6px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">Level</p>
-                      }@else{
-                      <p class="text-[11.5px] font-black tabular-nums leading-none">
+                    <div class="text-center rounded-lg bg-cm-surface-raised py-2">
+                      <p class="text-[13px] font-black tabular-nums leading-none">
                         <span class="text-green-500">{{topic.correct || 0}}</span><span class="text-cm-text-muted">/</span><span class="text-red-500">{{topic.wrong || 0}}</span>
                       </p>
-                      <p class="text-[6px] text-cm-text-muted mt-0.5 uppercase tracking-wide font-semibold">Correct/Wrong</p>
-                      }
+                      <p class="text-[8px] text-cm-text-muted mt-1">Correct/Wrong</p>
                     </div>
                   </div>
                   }
 
-                  <!-- Coverage footer — labeled, unlike the old bare strip -->
-                  <div class="px-2.5 py-1.5 border-t border-cm-border bg-cm-surface-muted">
-                    <div class="flex items-center justify-between mb-1">
-                      <span class="text-[7px] font-bold uppercase tracking-wide text-cm-text-muted">Coverage</span>
-                      <span class="text-[8px] font-black tabular-nums" [style.color]="tCov.color">{{topic.coverage || 0}}%</span>
+                  <!-- Per-difficulty accuracy — same tier chips as the track level, scoped
+                       to this topic; only rendered once there's something to show. -->
+                  @if(hasDifficultyData(topic)){
+                  <div class="flex items-center gap-1.5 flex-wrap px-3 pb-2.5">
+                    @for(tier of difficultyStats(topic); track tier.key){
+                    @if(tier.attempted){
+                    @let dm = performanceMeta(tier.accuracy);
+                    <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-md" [style.backgroundColor]="dm.bg" [style.color]="dm.color">
+                      {{tier.key}} {{tier.correct}}/{{tier.attempted}}
+                    </span>
+                    }
+                    }
+                  </div>
+                  }
+
+                  <!-- Coverage footer -->
+                  <div class="px-3 py-2.5 border-t border-cm-border bg-cm-surface-muted">
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-[8px] font-semibold text-cm-text-muted">Coverage</span>
+                      <span class="text-[10px] font-black tabular-nums" [style.color]="tCov.color">{{topic.coverage || 0}}%</span>
                     </div>
-                    <div class="h-1 rounded-full bg-cm-surface-raised overflow-hidden">
+                    <div class="h-1.5 rounded-full bg-cm-surface-raised overflow-hidden">
                       <div class="h-full rounded-full transition-all duration-500"
                            [style.backgroundColor]="tCov.color"
                            [style.width.%]="topic.coverage || 0"></div>

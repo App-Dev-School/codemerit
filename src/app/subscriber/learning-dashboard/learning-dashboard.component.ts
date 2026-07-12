@@ -1,22 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Direction } from '@angular/cdk/bidi';
-import { NgTemplateOutlet } from '@angular/common';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
-import { Course, Subject } from '@core/models/subject-role';
+import { Course } from '@core/models/subject-role';
 import { UserJobRole } from '@core/models/userJobRole.model';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation } from '@shared/animations';
-import { CongratulationsCardComponent } from '@shared/components/congratulations-card/congratulations-card.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 import { QuizService } from 'src/app/quiz/quiz.service';
-import { SetDesignationBottomSheetComponent } from 'src/app/lms/job-roles/confirm-course-enroll.component';
 
 @Component({
   selector: 'app-learning-dashboard',
@@ -24,14 +20,11 @@ import { SetDesignationBottomSheetComponent } from 'src/app/lms/job-roles/confir
   styleUrls: ['./learning-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
-    NgTemplateOutlet,
-    CongratulationsCardComponent,
     SubjectTrackerCardComponent
   ]
 })
 export class LearningDashboardComponent implements OnInit {
   pageTitle = 'MainDashboard';
-  activeTabIndex = 0;
   loading = true;
   loadingText = 'Loading your Dashboard';
   //generatingQuiz = false;
@@ -40,8 +33,10 @@ export class LearningDashboardComponent implements OnInit {
   course = "";
   courseItem: Course;
   enrolledCourses: { id: number; slug: string; title: string; image: string; color: string }[] = [];
-  attemptedSubjects: Subject[] = [];
-  otherSubjects: Subject[] = [];
+  // Runtime shape from fetchCourseDetail() is richer than the Subject model
+  // (attempted, correct, coverage, numTrivia, …), so these stay loosely typed.
+  attemptedSubjects: any[] = [];
+  otherSubjects: any[] = [];
   courseData: any[];
   showSubjectAction = false;
   courseChartConfig = {
@@ -52,11 +47,11 @@ export class LearningDashboardComponent implements OnInit {
   };
   //For displaying test data
   debugDisplay = false;
+  roleMenuOpen = false;
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog,
-    private _bottomSheet: MatBottomSheet,
     public authService: AuthService,
     private quizService: QuizService,
     private snackService: SnackbarService
@@ -91,7 +86,7 @@ export class LearningDashboardComponent implements OnInit {
   }
 
   // This route is entered without a job-role slug most of the time — it shows every job role
-  // the user is enrolled in as tabs, defaulting to the one in the URL (if any) or the latest enrollment.
+  // the user is enrolled in via the role switcher, defaulting to the one in the URL (if any) or the latest enrollment.
   takeRouteParams() {
     const routeSlug = this.route.snapshot.paramMap.get('course');
     console.log(this.pageTitle, "RouteSnap course", routeSlug);
@@ -135,10 +130,9 @@ export class LearningDashboardComponent implements OnInit {
     }
   }
 
-  // Tab click handler for the compact job-role tag bar at the top of the page.
+  // Click handler for entries in the role switcher dropdown.
   selectJobRole(courseTab: { id: number; slug: string; title: string; image: string; color: string }) {
     if (!courseTab || courseTab.slug === this.course) return;
-    this.activeTabIndex = 0;
     this.loading = true;
     this.loadingText = 'Loading your Dashboard';
     this.router.navigate(['/jobRole', courseTab.slug], { replaceUrl: true });
@@ -201,12 +195,23 @@ export class LearningDashboardComponent implements OnInit {
     }
   }
   
-  onSubscribe(course: any) {
-    //this.onSubscribe.emit(course);
-    console.log("onSubscribe Course", course);
-    this._bottomSheet.open(SetDesignationBottomSheetComponent, {
-      data: this.courseItem
-    });
+  // Aggregate coverage across every subject in the active role — real numbers
+  // derived from courseData, not a separate summary API call.
+  get overallCoverage(): number {
+    if (!this.courseData?.length) return 0;
+    const sum = this.courseData.reduce((acc, s) => acc + (s.coverage || 0), 0);
+    return Math.round(sum / this.courseData.length);
+  }
+
+  get overallAccuracy(): number {
+    const totalAttempted = this.courseData?.reduce((acc, s) => acc + (s.attempted || 0), 0) || 0;
+    const totalCorrect = this.courseData?.reduce((acc, s) => acc + (s.correct || 0), 0) || 0;
+    return totalAttempted > 0 ? Math.round((totalCorrect / totalAttempted) * 100) : 0;
+  }
+
+  selectJobRoleFromMenu(courseTab: { id: number; slug: string; title: string; image: string; color: string }) {
+    this.roleMenuOpen = false;
+    this.selectJobRole(courseTab);
   }
 
   viewMeritList() {

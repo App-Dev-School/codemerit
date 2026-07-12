@@ -189,7 +189,7 @@
 .form-stack {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;   // more space between stacked fields (Step 2 & 3)
+  gap: 1.75rem;   // more space between stacked fields (Step 2)
 }
 
 .form-field { display: flex; flex-direction: column; min-width: 0; }
@@ -197,6 +197,7 @@
 // ── Form labels ───────────────────────────────────────────────
 .form-label     { @include auth.form-label; display: block; }
 .form-label-row { @include auth.form-label; display: flex; justify-content: space-between; align-items: center; }
+.form-label-optional { font-weight: 400; color: #6b7280; }
 
 // ── Mastery value badge ───────────────────────────────────────
 .mastery-val         { font-weight: 700; }
@@ -214,63 +215,99 @@
 // ── Glass inputs (inputs, selects, textareas) ─────────────────
 .glass-input { @include auth.glass-input; }
 
-// ── Focus area chips ──────────────────────────────────────────
-// flex-wrap lets each chip size to its own content — no fixed
-// column widths that cramp longer labels like "CI/CD Pipelines".
-.focus-areas-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-
-.focus-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0.9rem;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.03);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.2s ease, border-color 0.2s ease;
-  box-sizing: border-box;
-
-  input[type="checkbox"] {
-    accent-color: #3b82f6;
-    width: 0.95rem;
-    height: 0.95rem;
-    flex-shrink: 0;
-    cursor: pointer;
-  }
-
-  span {
-    font-size: 0.8rem;
-    color: #e2e8f0;
-    line-height: 1;
-  }
-
-  &:hover { background: rgba(255, 255, 255, 0.08); }
-
-  &--selected {
-    border-color: #8b5cf6;
-    background: rgba(139, 92, 246, 0.15);
-
-    span { color: #e9d5ff; }
-  }
-}
-
 // ── Field error messages ──────────────────────────────────────
 .field-error { @include auth.field-error; }
+
+// ── Account connect (Step 3) ───────────────────────────────────
+.connect-account {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.connect-copy {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  line-height: 1.6;
+}
+
+.connect-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+  }
+}
+
+.connect-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+  svg { flex-shrink: 0; }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &--google:hover    { border-color: rgba(66, 133, 244, 0.5); }
+  &--linkedin:hover  { border-color: rgba(10, 102, 194, 0.5); }
+}
+
+.connect-hint {
+  font-size: 0.76rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.connect-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  color: #6b7280;
+  font-size: 0.76rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
 
 // ── Navigation row ────────────────────────────────────────────
 .form-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1.5rem;
   margin-top: 2.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  // The shared action-btn mixin is width:100% by default (fine when it's
+  // the only control in a row); here it shares the row with Back, so it
+  // needs to size to its content instead of stretching into it.
+  .action-btn {
+    width: auto;
+    min-width: 10rem;
+  }
 }
 
 // ── Back button ───────────────────────────────────────────────

@@ -265,7 +265,7 @@ export class DashboardComponent implements OnInit {
                 //this.cdRef.markForCheck();
                 this.snackService.display('snackbar-success', 'Congrats for the beginning. Start Deep Diving ' + this.currentSubject.title + '!', 'bottom', 'center');
                 this.loading = false;
-              }, 1500);
+              }, 2000);
             }
           } else {
             this.loading = false;
@@ -304,14 +304,14 @@ export class DashboardComponent implements OnInit {
           .fetchSubjectDashboard(this.currentSubject.slug)
           .subscribe({
             next: (response) => {
-              //console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
+              console.log(this.pageTitle, '#3 SubjectDashAPI Response:', response);
               if (response) {
                 this.subjectData = response.data;
                 console.log(this.pageTitle, '@subjectData:', this.subjectData);
                 console.log(this.pageTitle, '@syllabus:', this.subjectData?.syllabus);
               }
               setTimeout(() => {
-                this.loading = false;
+                //this.loading = false;
               }, 3000);
             },
             error: (error) => {
