@@ -1,3 +1,9 @@
+// ── Host — fills its grid cell so all cards in a row share the same height ──
+:host {
+  display: block;
+  height: 100%;
+}
+
 // ── Card ────────────────────────────────────────────────────────────────────
 .quiz-card {
   height: 100%;
@@ -18,7 +24,7 @@
   to   { opacity: 1; transform: translateY(0);    }
 }
 
-// ── Meta badges (Timed / Hints / Navigate) ──────────────────────────────────
+// ── Meta badges ( Hints / Navigate) ──────────────────────────────────
 .meta-badge {
   display: inline-flex;
   align-items: center;
@@ -26,20 +32,10 @@
   padding: 3px 9px;
   border-radius: 6px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 
   i { font-size: 9px; }
-}
-
-.meta-badge--timed {
-  background: rgba(245, 158, 11, .14);
-  border: 1px solid rgba(245, 158, 11, .28);
-  color: #92400e;
-}
-:host-context(.dark) .meta-badge--timed {
-  background: rgba(245, 158, 11, .18);
-  border-color: rgba(245, 158, 11, .35);
-  color: #fff;
 }
 
 .meta-badge--hints {
@@ -48,9 +44,9 @@
   color: #075985;
 }
 :host-context(.dark) .meta-badge--hints {
-  background: rgba(14, 165, 233, .18);
-  border-color: rgba(14, 165, 233, .35);
-  color: #fff;
+  background: rgba(14, 165, 233, .16);
+  border-color: rgba(14, 165, 233, .38);
+  color: #7dd3fc;
 }
 
 .meta-badge--navigate {
@@ -59,9 +55,9 @@
   color: #065f46;
 }
 :host-context(.dark) .meta-badge--navigate {
-  background: rgba(16, 185, 129, .18);
-  border-color: rgba(16, 185, 129, .35);
-  color: #fff;
+  background: rgba(16, 185, 129, .16);
+  border-color: rgba(16, 185, 129, .38);
+  color: #6ee7b7;
 }
 
 // ── Take Quiz CTA (primary gradient) ────────────────────────────────────────

@@ -7,6 +7,9 @@ interface SubjectVM {
   image: string;
   chipStyle: string;
   iconBgStyle: string;
+  avatarStyle: string;
+  initials: string;
+  imgError: boolean;
 }
 
 @Component({
@@ -32,6 +35,9 @@ export class QuizThumbnailComponent implements OnInit {
       image:       s.image  ?? '',
       chipStyle:   this.chipStyle(s),
       iconBgStyle: this.iconBgStyle(s),
+      avatarStyle: this.avatarBgStyle(s),
+      initials:    this.initials(s.title),
+      imgError:    false,
     }));
     this.bannerBlobStyle = this.blobStyle(raw);
     this.accentColor     = raw.length ? this.resolveColor(raw[0]) : '#6366f1';
@@ -105,8 +111,8 @@ export class QuizThumbnailComponent implements OnInit {
       'background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.22);color:#4338ca;';
   }
 
-  private iconBgStyle(s: any): string {
-    const shared = 'width:38px;height:38px;border-radius:10px;object-fit:contain;padding:5px;flex-shrink:0;backdrop-filter:blur(6px);';
+  private iconBoxBase(s: any): string {
+    const shared = 'width:38px;height:38px;border-radius:10px;flex-shrink:0;backdrop-filter:blur(6px);';
     if (this.valid(s?.color)) {
       return shared +
         `background:${this.rgba(s.color, 0.22)};` +
@@ -116,5 +122,20 @@ export class QuizThumbnailComponent implements OnInit {
     return shared +
       'background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);' +
       'box-shadow:0 2px 10px rgba(0,0,0,.25);';
+  }
+
+  private iconBgStyle(s: any): string {
+    return this.iconBoxBase(s) + 'object-fit:contain;padding:5px;';
+  }
+
+  /** Fallback shown in place of the subject icon when there's no image (or it fails to load) */
+  private avatarBgStyle(s: any): string {
+    return this.iconBoxBase(s) +
+      'display:flex;align-items:center;justify-content:center;' +
+      'font-size:13px;font-weight:800;color:rgba(255,255,255,.92);';
+  }
+
+  private initials(title: string): string {
+    return (title ?? '').trim().slice(0, 2).toUpperCase() || '?';
   }
 }

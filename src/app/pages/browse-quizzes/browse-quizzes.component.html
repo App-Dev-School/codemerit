@@ -1,8 +1,8 @@
 @if (showContent) {
 <section class="content" [@topToBottom]>
   <div class="content-block">
-    <div class="pr-[25px] pb-12 pt-4">
-
+    <!-- <div class="pr-[25px] pb-12 pt-4"> -->
+<div class="px-6 pb-24 pt-6">
       <!-- ══ LOADING STATE ══════════════════════════════════════════════════ -->
       @if (isLoading) {
 
@@ -53,56 +53,108 @@
         <div class="space-y-5">
 
           <!-- Page header ─────────────────────────────────────────────────── -->
-          <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex flex-col gap-3">
 
-            <!-- Title + subtitle -->
-            <div>
-              <h1 class="text-xl font-black text-cm-text-primary tracking-tight leading-tight">
-                Browse Quizzes
-              </h1>
-              <p class="text-[12px] text-cm-text-muted mt-0.5">
-                Practice &amp; assess your skills with curated quizzes
-              </p>
-            </div>
+            <!-- Title row -->
+            <div class="flex flex-wrap items-start justify-between gap-3">
 
-            <!-- Actions -->
-            <div class="flex items-center gap-2.5">
+              <!-- Title + subtitle -->
+              <div>
+                <h1 class="text-xl font-black text-cm-text-primary tracking-tight leading-tight">
+                  Browse Quizzes
+                </h1>
+                <p class="text-[12px] text-cm-text-muted mt-0.5">
+                  Practice &amp; assess your skills with curated quizzes
+                </p>
+              </div>
 
               <!-- Quiz count badge -->
               @if (quizzes.length > 0) {
                 <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl
                              bg-cm-surface border border-cm-border shadow-sm
-                             text-xs font-bold text-cm-text-primary">
+                             text-xs font-semibold text-cm-text-primary">
                   <i class="fa-solid fa-layer-group text-[10px] text-indigo-500"></i>
-                  {{ quizzes.length }} quizzes
+                  @if (searchTerm) {
+                    {{ filteredQuizzes.length }} of {{ quizzes.length }} quizzes
+                  } @else {
+                    {{ quizzes.length }} quizzes
+                  }
                 </span>
               }
+            </div>
+
+            <!-- Search + Filters row -->
+            <div class="flex items-center gap-2.5">
+
+              <!-- Search input — grows to fill available width, full-width on mobile -->
+              <div class="relative flex-1 min-w-0">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2
+                          text-cm-text-muted text-xs pointer-events-none"></i>
+                <input type="text"
+                       [(ngModel)]="searchTerm"
+                       (ngModelChange)="onSearchChange()"
+                       placeholder="Search quizzes by title or topic..."
+                       class="w-full pl-9 pr-9 py-2.5 rounded-xl text-xs font-medium
+                              bg-cm-surface border border-cm-border text-cm-text-primary
+                              placeholder:text-cm-text-muted placeholder:font-normal
+                              focus:outline-none focus:ring-2 focus:ring-cm-brand-ring focus:border-cm-brand
+                              transition-colors" />
+                @if (searchTerm) {
+                  <button (click)="clearSearch()"
+                          class="absolute right-3 top-1/2 -translate-y-1/2
+                                 text-cm-text-muted hover:text-cm-text-primary transition-colors">
+                    <i class="fa-solid fa-circle-xmark text-xs"></i>
+                  </button>
+                }
+              </div>
 
               <!-- Filter trigger button -->
               <button (click)="toggleRightSidebar()"
-                      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                      class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl flex-shrink-0
                              text-xs font-bold text-white transition-all
                              bg-gradient-to-br from-indigo-500 to-violet-500
                              shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40">
                 <i class="fa-solid fa-sliders" style="font-size:12px;"></i>
-                Filters
+                <span class="hidden sm:inline">Filters</span>
               </button>
 
             </div>
           </div>
 
           <!-- Quiz grid ───────────────────────────────────────────────────── -->
-          @if (quizzes.length > 0) {
-            <div class="flex flex-wrap gap-4">
-              @for (quiz of quizzes; track quiz.id) {
-                <div class="min-w-[268px] flex-[1_1_268px] max-w-[420px]">
-                  <app-quiz-thumbnail
-                    [quiz]="quiz"
-                    (quizSelected)="takeQuiz($event)"
-                    (viewAttempts)="viewAttempts($event)">
-                  </app-quiz-thumbnail>
-                </div>
+          @if (filteredQuizzes.length > 0) {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              @for (quiz of filteredQuizzes; track quiz.id) {
+                <app-quiz-thumbnail
+                  [quiz]="quiz"
+                  (quizSelected)="takeQuiz($event)"
+                  (viewAttempts)="viewAttempts($event)">
+                </app-quiz-thumbnail>
               }
+            </div>
+          }
+
+          <!-- Empty: search returned nothing ─────────────────────────────── -->
+          @if (quizzes.length > 0 && filteredQuizzes.length === 0) {
+            <div class="flex flex-col items-center justify-center py-20 gap-4 text-center
+                        rounded-2xl border border-cm-border bg-cm-surface">
+              <div class="w-16 h-16 rounded-2xl bg-cm-surface-raised border border-cm-border
+                          flex items-center justify-center">
+                <i class="fa-solid fa-magnifying-glass text-cm-text-muted text-2xl"></i>
+              </div>
+              <div class="space-y-1.5">
+                <p class="text-sm font-bold text-cm-text-primary">No quizzes match "{{ searchTerm }}"</p>
+                <p class="text-xs text-cm-text-muted max-w-[280px] leading-relaxed">
+                  Try a different search term, or clear the search to see all quizzes.
+                </p>
+              </div>
+              <button (click)="clearSearch()"
+                      class="flex items-center gap-2 px-4 py-2 rounded-lg
+                             text-xs font-bold text-white
+                             bg-gradient-to-br from-indigo-500 to-violet-500
+                             shadow-md shadow-indigo-500/20">
+                <i class="fa-solid fa-rotate-left text-[10px]"></i> Clear Search
+              </button>
             </div>
           }
 

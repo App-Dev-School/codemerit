@@ -33,6 +33,8 @@ export class StandardQuizComponent implements OnInit {
   showContent = true;
   private rightSidebarService = inject(RightSidebarService);
   quizzes: any[] = [];
+  filteredQuizzes: any[] = [];
+  searchTerm = '';
   subjects: any[] = [];
   allTopics: any[] = [];
   // Filtered topics for selected subject
@@ -190,6 +192,35 @@ export class StandardQuizComponent implements OnInit {
     this.applyFilter();
   }
 
+  onSearchChange(): void {
+    this.applySearch();
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.applySearch();
+  }
+
+  private applySearch(): void {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      this.filteredQuizzes = this.quizzes;
+      return;
+    }
+    this.filteredQuizzes = this.quizzes.filter((quiz: any) => {
+      const title = (quiz.title || '').toLowerCase();
+      const description = (quiz.description || '').toLowerCase();
+      const subjectNames = (quiz.subjects || [])
+        .map((s: any) => (s.title || '').toLowerCase())
+        .join(' ');
+      return (
+        title.includes(term) ||
+        description.includes(term) ||
+        subjectNames.includes(term)
+      );
+    });
+  }
+
   loadQuizzes(): void {
     this.isLoading = true;
     this.quizService
@@ -214,6 +245,7 @@ export class StandardQuizComponent implements OnInit {
             this.quizzes,
           );
 
+          this.applySearch();
           this.isLoading = false;
         },
         error: (error) => {
