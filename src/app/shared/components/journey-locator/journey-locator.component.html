@@ -1,0 +1,84 @@
+<section class="journey-locator">
+  <div class="map-screen">
+    <div class="map-header">
+      <h1>{{ title }}</h1>
+      <p>{{ subtitle }}</p>
+    </div>
+
+    <div #canvas class="journey-canvas" [class.interactive]="isInteractive">
+      <div
+        #trackContainer
+        class="skeleton-track"
+        [style.transform]="'translateX(' + trackOffset + 'px)'"
+      >
+        <div class="track-progress-fill" [style.width.px]="progressWidth"></div>
+        <div
+          class="radar-wavefront"
+          [class.is-hidden]="!radarVisible"
+          [style.left.px]="radarLeft"
+          [style.width.px]="radarSize"
+          [style.height.px]="radarSize"
+        ></div>
+
+        @for (track of tracks; track track.id) {
+          <div
+            #trackNode
+            class="branch-node"
+            [class.scanned-active]="isScanned(track)"
+            [class.state-complete]="isComplete(track)"
+            [class.state-active]="isActive(track)"
+            [class.cta-ready]="track.status === 'active' && ctaReady"
+          >
+            <div class="junction-point">
+              @if (isComplete(track)) {
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+              } @else if (track.status === 'locked') {
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                </svg>
+              } @else {
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8" />
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                </svg>
+              }
+            </div>
+
+            <div class="info-card">
+              <div class="subject-name">{{ track.name }}</div>
+
+              @if (track.status === 'locked') {
+                <div class="data-row">Status: <span class="data-val">Locked Unit</span></div>
+              } @else {
+                <div class="data-row">Quiz Score: <span class="data-val">{{ track.score || '--' }}</span></div>
+                <div class="data-row">Accuracy: <span class="data-val">{{ track.accuracy ? track.accuracy + '%' : '--' }}</span></div>
+              }
+
+              <div class="meta-tags">
+                <span class="tag-level">{{ track.level }}</span>
+                <span class="tag-progress">{{ track.completed }}% Done</span>
+              </div>
+
+              @if (track.status === 'active') {
+                <div class="resume-action-container">
+                  <button type="button" class="prime-cta-btn" (click)="onResume(track)">
+                    Resume Learning Plan
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-dock" [class.show]="dockVisible">
+    <span class="dock-text">
+      <strong>{{ completedCount }}/{{ tracks.length }} Units Completed</strong>
+    </span>
+    <button type="button" class="dock-btn" (click)="openDashboard.emit()">Open Dashboard Overview</button>
+  </div>
+</section>
