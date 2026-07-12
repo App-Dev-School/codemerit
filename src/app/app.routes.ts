@@ -77,6 +77,12 @@ export const APP_ROUTE: Route[] = [
                 .then(m => m.SubjectSkillRatingComponent)
     },
     {
+        path: 'journey-locator',
+        loadComponent: () =>
+            import('./shared/components/journey-locator/journey-locator.component')
+                .then(m => m.JourneyLocatorComponent)
+    },
+    {
         path: "select-subject",
         //component: AuthLayoutComponent,
         loadComponent: () =>
