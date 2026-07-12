@@ -127,10 +127,20 @@ export class CreateUserComponent implements OnInit, OnDestroy {
             this.loading = false;
             if (!data.error) {
               this.userDetail = data.data;
+              this.authForm.patchValue({
+                firstName: this.userDetail.firstName,
+                lastName: this.userDetail.lastName,
+                email: this.userDetail.email,
+                mobile: this.userDetail.mobile,
+                city: this.userDetail.city,
+                country: this.userDetail.country,
+                designation: this.userDetail.designation,
+                linkedinUrl: this.userDetail.profile.linkedinUrl
+              });
               console.log("NgEditUser userDetail", this.userDetail);
               if (this.userDetail == null || this.userDetail == undefined) {
                 // this.noDataView = true;
-                //this.authService.redirectToErrorPage();
+                //this authService.redirectToErrorPage();
               }
             } else {
               //this.noDataView = true;
