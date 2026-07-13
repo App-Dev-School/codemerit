@@ -59,14 +59,24 @@
                 <i [class]="isMuted ? 'fa-solid fa-microphone-slash' : 'fa-solid fa-microphone'"></i>
             </button>
 
+            <!-- Decline / No-show -->
+            <button (click)="openDeclinePanel()" [disabled]="submitting"
+                class="flex items-center gap-2 bg-slate-800 hover:bg-rose-500/10 border border-slate-700
+                       hover:border-rose-500/40 text-slate-400 hover:text-rose-400
+                       text-sm font-semibold rounded-lg transition
+                       px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-user-slash"></i>
+                <span class="hidden md:inline">Decline</span>
+            </button>
+
             <!-- Submit — icon-only on mobile, full label on desktop -->
-            <button (click)="submitAndExit()"
+            <button (click)="submitAndExit()" [disabled]="submitting"
                 class="flex items-center gap-2 bg-cm-brand hover:opacity-90 text-white
                        text-sm font-semibold rounded-lg transition shadow-lg shadow-cm-brand/20
-                       px-3 py-2 md:px-4">
-                <i class="fa-solid fa-clipboard-check"></i>
-                <span class="hidden sm:inline">Submit</span>
-                <span class="hidden md:inline"> Feedback</span>
+                       px-3 py-2 md:px-4 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i [class]="submitting ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-clipboard-check'"></i>
+                <span class="hidden sm:inline">{{ submitting ? 'Submitting…' : 'Submit' }}</span>
+                <span class="hidden md:inline">{{ submitting ? '' : ' Feedback' }}</span>
             </button>
         </div>
     </header>
@@ -541,6 +551,17 @@
                 </div>
             </div>
 
+            <!-- Overall Feedback -->
+            <div class="p-5 border-b border-cm-border space-y-2">
+                <h3 class="text-xs font-bold text-cm-text-muted uppercase tracking-wider">Overall Feedback</h3>
+                <textarea rows="3" [(ngModel)]="interviewFeedback"
+                    placeholder="Summarize the candidate's performance…"
+                    class="w-full box-border bg-cm-surface-muted border border-cm-border text-cm-text-primary
+                           text-xs rounded-lg px-3 py-2 outline-none
+                           focus:ring-1 focus:ring-cm-brand transition
+                           placeholder:text-cm-text-muted resize-none"></textarea>
+            </div>
+
             <!-- Tags -->
             <div class="p-5 flex-1 flex flex-col min-h-[160px] space-y-3">
                 <div class="flex items-center justify-between">
@@ -570,7 +591,7 @@
                 <div class="flex gap-2 pt-2">
                     <textarea #tagInputEl rows="3" [(ngModel)]="tagInput"
                         (keydown)="handleTagInput($event)"
-                        placeholder="Add feedback..."
+                        placeholder="Type a badge and press Enter…"
                         class="flex-1 bg-cm-surface-muted border border-cm-border text-cm-text-primary
                                text-xs rounded-lg px-3 py-2 outline-none
                                focus:ring-1 focus:ring-cm-brand transition
@@ -823,5 +844,48 @@
         <i class="fa-solid fa-circle-check text-emerald-500 text-base"></i>
         <span>{{ toastMessage }}</span>
     </div>
+
+    <!-- Decline / No-show modal -->
+    @if (declinePanelOpen) {
+    <div class="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center px-4"
+         (click)="closeDeclinePanel()">
+        <div class="w-full max-w-sm bg-cm-surface border border-cm-border rounded-2xl shadow-2xl z-[1001] p-5 space-y-4"
+             (click)="$event.stopPropagation()">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/30
+                            flex items-center justify-center text-rose-400 shrink-0">
+                    <i class="fa-solid fa-user-slash text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-cm-text-primary">Decline / No-show</h3>
+                    <p class="text-[11px] text-cm-text-muted">This ends the interview without a completed evaluation.</p>
+                </div>
+            </div>
+
+            <textarea rows="3" [(ngModel)]="declineReasonInput"
+                placeholder="Reason (e.g. candidate did not join the scheduled interview)…"
+                class="w-full box-border bg-cm-surface-muted border border-cm-border text-cm-text-primary
+                       text-xs rounded-lg px-3 py-2 outline-none
+                       focus:ring-1 focus:ring-cm-brand transition
+                       placeholder:text-cm-text-muted resize-none"></textarea>
+
+            <div class="flex items-center justify-end gap-2">
+                <button (click)="closeDeclinePanel()" [disabled]="submitting"
+                    class="px-3.5 py-2 text-xs font-semibold rounded-lg border border-cm-border
+                           text-cm-text-secondary hover:bg-cm-surface-hover transition
+                           disabled:opacity-40 disabled:cursor-not-allowed">
+                    Cancel
+                </button>
+                <button (click)="confirmDecline()" [disabled]="submitting || !declineReasonInput.trim()"
+                    class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-rose-500 hover:opacity-90 text-white
+                           transition flex items-center gap-1.5
+                           disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i [class]="submitting ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-user-slash'"></i>
+                    {{ submitting ? 'Submitting…' : 'Confirm Decline' }}
+                </button>
+            </div>
+        </div>
+    </div>
+    }
 
 </div>

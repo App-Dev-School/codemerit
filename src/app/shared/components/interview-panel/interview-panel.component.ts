@@ -1,6 +1,6 @@
 import {
   AfterViewInit, Component, ElementRef, EventEmitter,
-  OnDestroy, OnInit, Output, Renderer2, ViewChild, inject
+  Input, OnDestroy, OnInit, Output, Renderer2, ViewChild, inject
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,8 @@ import { ThemeService } from '@core';
 import { MasterService } from '@core/service/master.service';
 import { RatingType } from '@core/models/rating-type';
 import { SkillType } from '@core/models/skill-type';
+import { SkillRating } from '@core/models/skill-rating';
+import { InterviewStatus, InterviewSubmissionEvent } from '@core/models/interview';
 
 interface Question {
   id: number;
@@ -56,9 +58,13 @@ interface Particle {
 })
 export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @Output() submitted = new EventEmitter<string>();
+  @Input() submitting = false;
+  @Output() submitted = new EventEmitter<InterviewSubmissionEvent>();
   @ViewChild('celebCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('tagInputEl') tagInputRef!: ElementRef<HTMLTextAreaElement>;
+
+  // When the interviewer opened this panel — used as the interview startTime
+  private readonly sessionStartTime = new Date();
 
   // ── Theme ──────────────────────────────────────────────────────────────────
   readonly themeService = inject(ThemeService);
@@ -145,6 +151,13 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
   // ── Tags ───────────────────────────────────────────────────────────────────
   tags: string[] = ['Analytical', 'Fast Thinker', 'System Architecture'];
   tagInput = '';
+
+  // ── Overall feedback ──────────────────────────────────────────────────────
+  interviewFeedback = '';
+
+  // ── Decline / No-show ─────────────────────────────────────────────────────
+  declinePanelOpen = false;
+  declineReasonInput = '';
 
   // ── Mute ───────────────────────────────────────────────────────────────────
   isMuted = false;
@@ -642,12 +655,84 @@ export class InterviewPanelComponent implements OnInit, AfterViewInit, OnDestroy
     return 'px-3 py-2.5 bg-white dark:bg-cm-surface-raised shadow-sm hover:shadow-md hover:bg-cm-surface-hover border border-transparent';
   }
 
+  // ── Skill rating → API mapping ────────────────────────────────────────────
+  // Fixed synthetic ids (negative, outside the real master-data id space) so
+  // these "Other Skill Metrics" sliders can travel as SkillType.Metric rows
+  // in the same skillRatings array as Subject/Topic/JobRole/Question ratings.
+  private readonly metricDefs: { id: number; name: string }[] = [
+    { id: -1, name: 'Fundamental Knowledge' },
+    { id: -2, name: 'Coding & Syntax' },
+    { id: -3, name: 'Logical Ability / Problem Solving' },
+    { id: -4, name: 'Communication' },
+  ];
+
+  private toMetricSkillRatings(): SkillRating[] {
+    const values = [this.ratings.coding, this.ratings.system, this.ratings.problem, this.ratings.comm];
+    return this.metricDefs.map((def, i) => ({
+      skillId: def.id,
+      skillType: SkillType.Metric,
+      rating: values[i],
+      ratingType: RatingType.Interview,
+      skillName: def.name,
+    }));
+  }
+
+  private toApiSkillRatings(): SkillRating[] {
+    const boardRatings = this.interviewSkillRatings.map(r => ({
+      skillId: r.skillId,
+      skillType: r.skillType,
+      rating: r.rating,
+      ratingType: r.ratingType,
+      skillName: r.skillName,
+      imageUrl: r.imageUrl,
+      note: r.note || undefined,
+      questionId: r.linkedToQuestion ? r.questionId : undefined,
+    }));
+    return [...boardRatings, ...this.toMetricSkillRatings()];
+  }
+
+  private buildSubmissionEvent(status: InterviewStatus, declineReason?: string): InterviewSubmissionEvent {
+    const endTime = new Date();
+    return {
+      status,
+      feedback: this.interviewFeedback.trim(),
+      declineReason,
+      skillRatings: this.toApiSkillRatings(),
+      milestone: this.candidateStatusText,
+      tags: [...this.tags],
+      startTime: this.sessionStartTime.toISOString(),
+      endTime: endTime.toISOString(),
+      durationSeconds: Math.round((endTime.getTime() - this.sessionStartTime.getTime()) / 1000),
+    };
+  }
+
   // ── Submit ─────────────────────────────────────────────────────────────────
   submitAndExit(): void {
+    if (this.submitting) return;
+    const payload = this.buildSubmissionEvent(InterviewStatus.Completed);
     this.activeCelebTheme = 'classic_confetti';
     this.spawnBurst(90, true);
     this.showToast(`Assessment Submitted! Avg Score: ${this.averageScore}/10`);
-    this.submitted.emit('done');
+    this.submitted.emit(payload);
+  }
+
+  // ── Decline / No-show ─────────────────────────────────────────────────────
+  openDeclinePanel(): void {
+    this.declinePanelOpen = true;
+  }
+
+  closeDeclinePanel(): void {
+    this.declinePanelOpen = false;
+    this.declineReasonInput = '';
+  }
+
+  confirmDecline(): void {
+    if (this.submitting) return;
+    const reason = this.declineReasonInput.trim();
+    if (!reason) { this.showToast('Please provide a reason before declining.'); return; }
+    const payload = this.buildSubmissionEvent(InterviewStatus.Declined, reason);
+    this.declinePanelOpen = false;
+    this.submitted.emit(payload);
   }
 
   // ── Toast ──────────────────────────────────────────────────────────────────

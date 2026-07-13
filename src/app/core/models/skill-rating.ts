@@ -13,6 +13,8 @@ export interface SkillRating {
   grade?: string;
   skillName?: string
   imageUrl?: string
+  note?: string
+  questionId?: number
 
   createdAt?: string
   updatedAt?: string
