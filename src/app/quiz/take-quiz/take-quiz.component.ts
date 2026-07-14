@@ -3,8 +3,9 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, V
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { QuizEntity } from '@core/models/dtos/GenerateQuizDto';
+import { QuizEntity, SubmitQuizResponse } from '@core/models/dtos/GenerateQuizDto';
 import { QuizQuestion } from '@core/models/quiz-question';
+import { NewlyEarned } from '@core/models/gamification.model';
 import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
 import { UtilsService } from '@core/service/utils.service';
@@ -393,16 +394,24 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.loadingText = 'Submitting Quiz';
     const analytics = this.quizService.processAndSaveResults(this.questions, this.quiz.id);
     const sub = this.quizService.submitQuiz(analytics).subscribe(
-      (data: any) => {
-        this.quizResult = data.data;
+      (response: SubmitQuizResponse) => {
+        this.quizResult = response.data;
+        const newlyEarned = response.data.newlyEarned ?? null;
         const completeTimeout = setTimeout(() => {
           this.completed = true;
-          this.navigateToResult(this.quizResult.resultCode);
+          this.navigateToResult(this.quizResult.resultCode, newlyEarned);
         }, 3000);
         this.scheduledAutoNext = completeTimeout;
       },
       (error: any) => {
-        this.showNotification('snackbar-danger', error, 'bottom', 'center');
+        this.loading = false;
+        if (error?.status === 403) {
+          const message = error?.error?.message || "You've used all your attempts for this quiz.";
+          this.showNotification('snackbar-danger', message, 'bottom', 'center');
+        } else {
+          const message = error?.error?.message || error?.message || 'Something went wrong submitting your quiz. Please try again.';
+          this.showNotification('snackbar-danger', message, 'bottom', 'center');
+        }
       },
     );
     this.subscriptions.push(sub);
@@ -453,8 +462,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     });
   }
 
-  navigateToResult(resultCode: string): void {
-    this.router.navigate(['quiz/result', resultCode], { replaceUrl: true });
+  navigateToResult(resultCode: string, newlyEarned: NewlyEarned | null = null): void {
+    this.router.navigate(['quiz/result', resultCode], {
+      replaceUrl: true,
+      state: { newlyEarned },
+    });
   }
 
   triggerCelebration(event: MouseEvent): void {

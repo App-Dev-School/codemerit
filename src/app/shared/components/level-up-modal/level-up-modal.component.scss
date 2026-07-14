@@ -1,0 +1,93 @@
+.lu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1rem;
+}
+
+.lu-card {
+  position: relative;
+  width: 100%;
+  max-width: 22rem;
+  padding: 2rem 1.75rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(160deg, var(--cm-surface-raised, #1e1e2e), var(--cm-surface, #16161f));
+  border: 1px solid var(--cm-brand, #6366f1);
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(99, 102, 241, 0.35);
+}
+
+.lu-card__glow {
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.lu-card__eyebrow {
+  position: relative;
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cm-brand-text, #a5b4fc);
+}
+
+.lu-card__level {
+  position: relative;
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-top: 0.5rem;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lu-card__title {
+  position: relative;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+  color: var(--cm-text-primary, #f1f1f4);
+}
+
+.lu-card__sub {
+  position: relative;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--cm-text-secondary, #a1a1aa);
+}
+
+.lu-card__cta {
+  position: relative;
+  margin-top: 1.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #fff;
+  background: var(--cm-brand, #6366f1);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.lu-card__cta:hover {
+  opacity: 0.9;
+}
+
+.lu-card__cta:active {
+  transform: scale(0.96);
+}

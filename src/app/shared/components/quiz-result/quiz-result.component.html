@@ -2,6 +2,44 @@
 <canvas #celebCanvas style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 
 <!-- ══════════════════════════════════════════════
+  GAMIFICATION CELEBRATION SEQUENCE
+══════════════════════════════════════════════ -->
+@if (showXpPill && newlyEarned?.xpAwarded) {
+  <div class="xp-pill" [@zoomInOut]>+{{ newlyEarned?.xpAwarded }} XP</div>
+}
+
+@if (activeCelebration?.type === 'levelUp' && newlyEarned?.level) {
+  <app-level-up-modal [level]="newlyEarned!.level" (dismiss)="dismissCelebration()"></app-level-up-modal>
+}
+
+@if (activeBadge) {
+  <app-badge-earned-card variant="reveal" [badge]="activeBadge!" (dismiss)="dismissCelebration()"></app-badge-earned-card>
+}
+
+@if (activeCelebration?.type === 'streak') {
+  <div class="streak-overlay" (click)="dismissCelebration()">
+    <div class="streak-card" [@zoomInOut] (click)="$event.stopPropagation()">
+      <div class="streak-card__icon">🔥</div>
+      <h3 class="streak-card__title">{{ newlyEarned?.streak?.milestoneHit }}-Day Streak!</h3>
+      <p class="streak-card__sub">You've practiced {{ newlyEarned?.streak?.current }} days in a row. Keep it up!</p>
+      <button type="button" class="streak-card__cta" (click)="dismissCelebration()">Continue</button>
+    </div>
+  </div>
+}
+
+@if (activeCertificate) {
+  <div class="cert-overlay" (click)="dismissCelebration()">
+    <div class="cert-card" [@zoomInOut] (click)="$event.stopPropagation()">
+      <span class="cert-card__eyebrow">Certificate Unlocked!</span>
+      <div class="cert-card__icon">🎓</div>
+      <h3 class="cert-card__title">{{ activeCertificate.title || 'New Certification' }}</h3>
+      <p class="cert-card__sub">You've earned a certificate. View it on your dashboard.</p>
+      <button type="button" class="cert-card__cta" (click)="dismissCelebration()">Continue</button>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════
   SCORE CARD
 ══════════════════════════════════════════════ -->
 <div class="result-hero">

@@ -4,6 +4,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
 import { User } from '@core/models/user';
+import { NewlyEarned } from '@core/models/gamification.model';
 import { AuthService } from '@core/service/auth.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
@@ -34,6 +35,9 @@ export class ViewResultComponent implements OnInit {
   quizResultCode = '';
   quizResult: any;
   userData: User;
+  // Only ever populated on the live post-quiz navigation — never on a
+  // reload/deep-link, since Router navigation `state` doesn't survive those.
+  newlyEarned: NewlyEarned | null = null;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -43,6 +47,8 @@ export class ViewResultComponent implements OnInit {
     private quizHelper: QuizHelperService,
     private _bottomSheet: MatBottomSheet) {
     this.userData = this.authService.currentUserValue;
+    const navState = this.router.getCurrentNavigation()?.extras?.state as { newlyEarned?: NewlyEarned | null } | undefined;
+    this.newlyEarned = navState?.newlyEarned ?? null;
   }
 
   ngOnInit(): void {

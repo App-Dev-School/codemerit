@@ -1,7 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { QuizResult } from '@core/models/quiz';
+import { EarnedCertificate, NewlyEarned, NewlyEarnedBadge } from '@core/models/gamification.model';
+import { zoomInOutAnimation } from '@shared/animations';
+import { LevelUpModalComponent } from '@shared/components/level-up-modal/level-up-modal.component';
+import { BadgeEarnedCardComponent } from '@shared/components/badge-earned-card/badge-earned-card.component';
 import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
+
+type CelebrationStep =
+  | { type: 'levelUp' }
+  | { type: 'streak' }
+  | { type: 'badge'; badge: NewlyEarnedBadge }
+  | { type: 'certificate'; certificate: EarnedCertificate };
+
+const GAMIFICATION_CACHE_KEY = 'cm_last_gamification_stats';
+// Auto-advance timing for celebration reveal cards (level-up/streak/badge/cert) — long
+// enough to actually read a title + description, not just glimpse it. Manual dismiss
+// (tap/Continue) still works before this fires.
+const CELEBRATION_STEP_MS = 6000;
+const XP_PILL_MS = 4000;
 
 interface Particle {
   x: number; y: number;
@@ -17,12 +34,15 @@ interface Particle {
   selector: 'app-quiz-result',
   templateUrl: './quiz-result.component.html',
   styleUrl: './quiz-result.component.scss',
-  imports: [CommonModule, QuizProgressComponent]
+  imports: [CommonModule, QuizProgressComponent, LevelUpModalComponent, BadgeEarnedCardComponent],
+  animations: [zoomInOutAnimation],
 })
-export class QuizResultComponent implements AfterViewInit, OnDestroy {
+export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Output() onShareResult = new EventEmitter<string>();
   @Output() onContinue    = new EventEmitter<string>();
+
+  @Input() newlyEarned: NewlyEarned | null = null;
 
   @ViewChild('celebCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -31,6 +51,13 @@ export class QuizResultComponent implements AfterViewInit, OnDestroy {
   private animFrameId?: number;
   private canvasReady = false;
   private readonly onResize = () => this.resizeCanvas();
+
+  // Gamification celebration sequence state
+  celebrationQueue: CelebrationStep[] = [];
+  activeCelebration: CelebrationStep | null = null;
+  showXpPill = false;
+  private celebrationStarted = false;
+  private celebrationAutoTimer?: ReturnType<typeof setTimeout>;
 
   constructor(private zone: NgZone) {}
 
@@ -73,11 +100,98 @@ export class QuizResultComponent implements AfterViewInit, OnDestroy {
     this.canvasReady = true;
     this.zone.runOutsideAngular(() => this.runAnimationLoop());
     if (this.isPassed) this.triggerCelebration();
+    this.maybeStartCelebrationSequence();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['newlyEarned']) {
+      this.maybeStartCelebrationSequence();
+    }
   }
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize);
     if (this.animFrameId) cancelAnimationFrame(this.animFrameId);
+    if (this.celebrationAutoTimer) clearTimeout(this.celebrationAutoTimer);
+  }
+
+  // ── Gamification celebration sequence ──────────────────────────────
+  // Never treat `newlyEarned != null` alone, or bare `xpAwarded > 0` alone,
+  // as "something to celebrate" — xpAwarded can legitimately be 0 on a
+  // replay while other fields are still empty, and vice versa.
+  private hasCelebratableContent(ne: NewlyEarned): boolean {
+    return !!(
+      ne.leveledUp ||
+      ne.streak?.milestoneHit ||
+      ne.badgesEarned?.length ||
+      ne.certificatesEarned?.length
+    );
+  }
+
+  private maybeStartCelebrationSequence(): void {
+    if (this.celebrationStarted || !this.canvasReady) return;
+    const ne = this.newlyEarned;
+    if (!ne) return;
+    this.celebrationStarted = true;
+
+    this.cacheGamificationStats(ne);
+
+    // xpAwarded === 0 is a normal replay-of-mastered-content outcome — never
+    // animate a "+0 XP" reward for it.
+    if (ne.xpAwarded > 0) {
+      this.showXpPill = true;
+      setTimeout(() => (this.showXpPill = false), XP_PILL_MS);
+    }
+
+    if (!this.hasCelebratableContent(ne)) return;
+    this.celebrationQueue = this.buildCelebrationQueue(ne);
+    // Let the base score-card / pass confetti settle first.
+    setTimeout(() => this.startNextCelebration(), 900);
+  }
+
+  private buildCelebrationQueue(ne: NewlyEarned): CelebrationStep[] {
+    const queue: CelebrationStep[] = [];
+    if (ne.leveledUp) queue.push({ type: 'levelUp' });
+    if (ne.streak?.milestoneHit) queue.push({ type: 'streak' });
+    for (const badge of ne.badgesEarned ?? []) queue.push({ type: 'badge', badge });
+    for (const certificate of ne.certificatesEarned ?? []) queue.push({ type: 'certificate', certificate });
+    return queue;
+  }
+
+  private startNextCelebration(): void {
+    if (this.celebrationAutoTimer) clearTimeout(this.celebrationAutoTimer);
+    this.activeCelebration = this.celebrationQueue.shift() ?? null;
+    if (!this.activeCelebration) return;
+    const isBigMoment = this.activeCelebration.type === 'levelUp' || this.activeCelebration.type === 'certificate';
+    this.spawnBurst(isBigMoment ? 140 : 60, isBigMoment);
+    this.celebrationAutoTimer = setTimeout(() => this.dismissCelebration(), CELEBRATION_STEP_MS);
+  }
+
+  dismissCelebration(): void {
+    if (this.celebrationAutoTimer) clearTimeout(this.celebrationAutoTimer);
+    this.startNextCelebration();
+  }
+
+  get activeBadge(): NewlyEarnedBadge | null {
+    return this.activeCelebration?.type === 'badge' ? this.activeCelebration.badge : null;
+  }
+
+  get activeCertificate(): EarnedCertificate | null {
+    return this.activeCelebration?.type === 'certificate' ? this.activeCelebration.certificate : null;
+  }
+
+  private cacheGamificationStats(ne: NewlyEarned): void {
+    if (ne.totalPoints == null || !ne.level) return;
+    try {
+      sessionStorage.setItem(GAMIFICATION_CACHE_KEY, JSON.stringify({
+        totalPoints: ne.totalPoints,
+        level: ne.level,
+        streak: ne.streak ?? null,
+        cachedAt: new Date().toISOString(),
+      }));
+    } catch {
+      // sessionStorage unavailable (private mode, etc.) — non-critical, skip silently.
+    }
   }
 
   private triggerCelebration(): void {

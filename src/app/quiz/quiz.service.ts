@@ -247,14 +247,14 @@ getSubjectsTopics(): Observable<any> {
     return this.httpService.postData(url, item, api_key)
   }
 
-  submitQuiz(item: QuizResult): Observable<QuizResult> {
+  submitQuiz(item: QuizResult): Observable<SubmitQuizResponse> {
     let api_key = '';
     if (this.authService.currentUser && this.authService.currentUser) {
       api_key = this.authService.currentUserValue.token;
     }
     const url = 'apis/quiz/submit';
     console.log('QuizPlayer Submitted Quiz => ', item);
-    return this.httpService.postData<QuizResult>(url, item, api_key);
+    return this.httpService.postData<SubmitQuizResponse>(url, item, api_key);
   }
 
   updateQuiz(topic: any, topicId: any): Observable<any> {

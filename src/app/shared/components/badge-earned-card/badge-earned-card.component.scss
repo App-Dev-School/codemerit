@@ -1,0 +1,131 @@
+.bec-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1rem;
+}
+
+.bec-card {
+  width: 100%;
+  max-width: 22rem;
+  padding: 2rem 1.75rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(160deg, var(--cm-surface-raised, #1e1e2e), var(--cm-surface, #16161f));
+  border: 1px solid #f59e0b;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(245, 158, 11, 0.3);
+}
+
+.bec-card__eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fbbf24;
+}
+
+.bec-card__icon {
+  font-size: 3.5rem;
+  margin-top: 0.5rem;
+  line-height: 1;
+}
+
+.bec-card__name {
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  color: var(--cm-text-primary, #f1f1f4);
+}
+
+.bec-card__desc {
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--cm-text-secondary, #a1a1aa);
+}
+
+.bec-card__points {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.bec-card__cta {
+  display: block;
+  margin: 1.5rem auto 0;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #fff;
+  background: var(--cm-brand, #6366f1);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.bec-card__cta:hover {
+  opacity: 0.9;
+}
+
+.bec-card__cta:active {
+  transform: scale(0.96);
+}
+
+/* Tile variant — used by the badge showcase grid (Story 2) */
+.bec-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.25rem 1rem;
+  border-radius: 1rem;
+  background: var(--cm-surface-raised, #1e1e2e);
+  border: 1px solid var(--cm-border, #2a2a38);
+}
+
+.bec-tile--locked {
+  opacity: 0.55;
+  filter: grayscale(1);
+}
+
+.bec-tile__icon {
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.bec-tile__name {
+  margin-top: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--cm-text-primary, #f1f1f4);
+}
+
+.bec-tile__desc {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--cm-text-secondary, #a1a1aa);
+}
+
+.bec-tile__foot {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.6875rem;
+  color: var(--cm-text-muted, #71717a);
+}
+
+.bec-tile__points {
+  font-weight: 700;
+  color: #fbbf24;
+}

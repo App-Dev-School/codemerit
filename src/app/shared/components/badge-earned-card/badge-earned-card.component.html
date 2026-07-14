@@ -1,0 +1,30 @@
+@if (variant === 'reveal') {
+  <div class="bec-overlay" (click)="onDismiss()">
+    <div class="bec-card" [@bounceIn] (click)="$event.stopPropagation()">
+      <span class="bec-card__eyebrow">New Badge Unlocked!</span>
+      <div class="bec-card__icon">🏆</div>
+      <h3 class="bec-card__name">{{ badge?.name }}</h3>
+      @if (badge?.description) {
+        <p class="bec-card__desc">{{ badge?.description }}</p>
+      }
+      @if (badge?.points) {
+        <span class="bec-card__points">+{{ badge?.points }} pts</span>
+      }
+      <button type="button" class="bec-card__cta" (click)="onDismiss()">Continue</button>
+    </div>
+  </div>
+} @else {
+  <div class="bec-tile" [class.bec-tile--locked]="locked">
+    <div class="bec-tile__icon">{{ locked ? '🔒' : '🏆' }}</div>
+    <h4 class="bec-tile__name">{{ badge?.name }}</h4>
+    <p class="bec-tile__desc">{{ badge?.description }}</p>
+    <div class="bec-tile__foot">
+      @if (badge?.points) {
+        <span class="bec-tile__points">{{ badge?.points }} pts</span>
+      }
+      @if (!locked && badge?.earnedAt) {
+        <span class="bec-tile__date">{{ badge?.earnedAt | date:'MMM d, y' }}</span>
+      }
+    </div>
+  </div>
+}
