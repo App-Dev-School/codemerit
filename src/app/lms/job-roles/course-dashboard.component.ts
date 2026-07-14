@@ -52,83 +52,8 @@ export class CourseDashboardComponent implements OnInit {
 
   // Master tab bar above the Curriculum Roadmap — controls which single section renders below it.
   detailTab: 'curriculum' | 'certifications' | 'endorsements' | 'overview' = 'curriculum';
-  meritList: any[] = [
-    {
-      "id": 1,
-      "name": "Vishal Kumar",
-      "username": "vishal-kumar",
-      "image": null,
-      "designationName": null,
-      "totalCorrect": 10,
-      "totalWrong": 0,
-      "totalAttempts": 10,
-      "avgAccuracy": 100,
-      "coverage": 4.6,
-      "baseScore": 100,
-      "score": 80.9,
-      "rank": 1
-    },
-    {
-      "id": 9,
-      "name": "Sanika ",
-      "username": "sanika",
-      "image": null,
-      "designationName": null,
-      "totalCorrect": 10,
-      "totalWrong": 0,
-      "totalAttempts": 10,
-      "avgAccuracy": 100,
-      "coverage": 4.6,
-      "baseScore": 100,
-      "score": 80.9,
-      "rank": 1
-    },
-    {
-      "id": 6,
-      "name": "Naman Jaiswal",
-      "username": "naman-jaiswal",
-      "image": null,
-      "designationName": null,
-      "totalCorrect": 50,
-      "totalWrong": 5,
-      "totalAttempts": 67,
-      "avgAccuracy": 74.6,
-      "coverage": 30.7,
-      "baseScore": 73.1,
-      "score": 64.6,
-      "rank": 3
-    },
-    {
-      "id": 19,
-      "name": "Carolin ",
-      "username": "carolin",
-      "image": null,
-      "designationName": null,
-      "totalCorrect": 10,
-      "totalWrong": 10,
-      "totalAttempts": 20,
-      "avgAccuracy": 50,
-      "coverage": 9.2,
-      "baseScore": 40,
-      "score": 33.8,
-      "rank": 4
-    },
-    {
-      "id": 5,
-      "name": "Jyoti Kumari",
-      "username": "anumpam-singh",
-      "image": null,
-      "designationName": null,
-      "totalCorrect": 2,
-      "totalWrong": 0,
-      "totalAttempts": 10,
-      "avgAccuracy": 20,
-      "coverage": 4.6,
-      "baseScore": 20,
-      "score": 16.9,
-      "rank": 5
-    }
-  ];
+  meritList: any[] = [];
+  userRank: number | null = null;
 
   //For displaying test data
   debugDisplay = false;
@@ -276,6 +201,11 @@ export class CourseDashboardComponent implements OnInit {
 
         if (!Array.isArray(data) && data?.jobRole) {
           this.courseItem = { ...this.courseItem, ...data.jobRole };
+        }
+
+        if (!Array.isArray(data)) {
+          this.meritList = data?.meritList ?? [];
+          this.userRank = data?.userRank ?? null;
         }
 
         if (this.courseData?.length > 0) {

@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
 import { HttpService } from './http.service';
 import { AdminDashboardResponse } from 'src/app/admin/dtos/admin-dashboard.model';
 import { LmsDashboardResponse } from 'src/app/lms/dtos/lms-dashboard.model';
-import { MyBadgesResponse } from '@core/models/gamification.model';
+import { LeaderboardPeriod, LeaderboardResponse, MyBadgesResponse } from '@core/models/gamification.model';
 
 export interface MasterData {
   subjects: any[];
@@ -205,6 +205,20 @@ export class MasterService {
         catchError((err) => {
           console.error('CourseAPI Failed :', err);
           return of({}); // return empty array instead of null
+        }),
+      );
+  }
+
+  // Public + optional auth — pass the token if present, but don't gate the call on login.
+  fetchLeaderboard(period: LeaderboardPeriod = 'all-time'): Observable<LeaderboardResponse> {
+    const fallback: LeaderboardResponse = { leaderboard: [], userRank: null, period, periodStart: null };
+    return this.httpService
+      .get('apis/master/leaderboard?period=' + period, this.authService.currentUserValue?.token)
+      .pipe(
+        map((res: { error: boolean; message: string; data: LeaderboardResponse }) => !res.error ? res.data : fallback),
+        catchError((err) => {
+          console.error('fetchLeaderboard Failed', err);
+          return of(fallback);
         }),
       );
   }

@@ -15,7 +15,7 @@ import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-
 import { BadgeGridComponent } from '@shared/components/badge-grid/badge-grid.component';
 import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-streak-widget.component';
 import { NextBestActionCardComponent } from '@shared/components/next-best-action-card/next-best-action-card.component';
-import { CachedGamificationStats, GAMIFICATION_STATS_CACHE_KEY, MyBadgesResponse, NextTrackNudge } from '@core/models/gamification.model';
+import { CachedGamificationStats, GAMIFICATION_STATS_CACHE_KEY, LeaderboardPeriod, LeaderboardResponse, MyBadgesResponse, NextTrackNudge } from '@core/models/gamification.model';
 import { QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
@@ -56,13 +56,18 @@ export class LearningDashboardComponent implements OnInit {
   debugDisplay = false;
   roleMenuOpen = false;
 
-  activeTab: 'overview' | 'badges' = 'overview';
+  activeTab: 'overview' | 'badges' | 'leaderboard' = 'overview';
   badges: MyBadgesResponse | null = null;
   badgesLoading = false;
   private badgesFetched = false;
   xpStreakStats: CachedGamificationStats | null = null;
   nextCertificationTrack: NextTrackNudge | null = null;
   nextSubjectTrack: NextTrackNudge | null = null;
+
+  leaderboardPeriod: LeaderboardPeriod = 'all-time';
+  leaderboard: LeaderboardResponse | null = null;
+  leaderboardLoading = false;
+  readonly leaderboardPeriods: LeaderboardPeriod[] = ['all-time', 'weekly', 'monthly'];
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
@@ -344,16 +349,20 @@ export class LearningDashboardComponent implements OnInit {
   }
 
   // The API gives us a subjectTrack id/title/progress, not a routable subject
-  // slug — rather than guess a possibly-wrong deep link, send the learner back
-  // to their subject list where the actual next step is visible.
+  // slug — rather than guess a possibly-wrong deep link, scroll the learner
+  // down to their subject list, where the card already lives (switching tabs
+  // is a no-op here since the card only renders on the Overview tab).
   onNudgeContinue(): void {
-    this.setActiveTab('overview');
+    document.getElementById('subjects-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  setActiveTab(tab: 'overview' | 'badges'): void {
+  setActiveTab(tab: 'overview' | 'badges' | 'leaderboard'): void {
     this.activeTab = tab;
     if (tab === 'badges' && !this.badgesFetched) {
       this.loadBadges();
+    }
+    if (tab === 'leaderboard' && !this.leaderboard) {
+      this.loadLeaderboard();
     }
   }
 
@@ -363,6 +372,26 @@ export class LearningDashboardComponent implements OnInit {
     this.master.fetchMyBadges().subscribe((res) => {
       this.badges = res;
       this.badgesLoading = false;
+    });
+  }
+
+  get userInVisibleLeaderboard(): boolean {
+    const rank = this.leaderboard?.userRank;
+    if (!rank || !this.leaderboard?.leaderboard) return false;
+    return this.leaderboard.leaderboard.some((entry) => entry.rank === rank);
+  }
+
+  setLeaderboardPeriod(period: LeaderboardPeriod): void {
+    if (period === this.leaderboardPeriod) return;
+    this.leaderboardPeriod = period;
+    this.loadLeaderboard();
+  }
+
+  private loadLeaderboard(): void {
+    this.leaderboardLoading = true;
+    this.master.fetchLeaderboard(this.leaderboardPeriod).subscribe((res) => {
+      this.leaderboard = res;
+      this.leaderboardLoading = false;
     });
   }
 
