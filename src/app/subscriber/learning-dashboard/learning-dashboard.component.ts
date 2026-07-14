@@ -14,7 +14,8 @@ import { CoursePickerComponent } from '@shared/components/select-course/course-p
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
 import { BadgeGridComponent } from '@shared/components/badge-grid/badge-grid.component';
 import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-streak-widget.component';
-import { CachedGamificationStats, GAMIFICATION_STATS_CACHE_KEY, MyBadgesResponse } from '@core/models/gamification.model';
+import { NextBestActionCardComponent } from '@shared/components/next-best-action-card/next-best-action-card.component';
+import { CachedGamificationStats, GAMIFICATION_STATS_CACHE_KEY, MyBadgesResponse, NextTrackNudge } from '@core/models/gamification.model';
 import { QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
@@ -26,6 +27,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
     SubjectTrackerCardComponent,
     BadgeGridComponent,
     XpStreakWidgetComponent,
+    NextBestActionCardComponent,
   ]
 })
 export class LearningDashboardComponent implements OnInit {
@@ -59,6 +61,8 @@ export class LearningDashboardComponent implements OnInit {
   badgesLoading = false;
   private badgesFetched = false;
   xpStreakStats: CachedGamificationStats | null = null;
+  nextCertificationTrack: NextTrackNudge | null = null;
+  nextSubjectTrack: NextTrackNudge | null = null;
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
@@ -193,6 +197,10 @@ export class LearningDashboardComponent implements OnInit {
             this.courseData = subjects;
             this.attemptedSubjects = subjects.filter(item => item.attempted && item.attempted > 0);
             this.otherSubjects = subjects.filter(item => !(item.attempted && item.attempted > 0));
+            // Only populated when authenticated — null for both means every
+            // certification track for this role is already achieved.
+            this.nextCertificationTrack = data?.nextCertificationTrack ?? null;
+            this.nextSubjectTrack = data?.nextSubjectTrack ?? null;
 
             setTimeout(() => {
               this.loading = false;
@@ -333,6 +341,13 @@ export class LearningDashboardComponent implements OnInit {
     if (this.course) {
       this.router.navigate(['/assessment/skill-rating', this.course]);
     }
+  }
+
+  // The API gives us a subjectTrack id/title/progress, not a routable subject
+  // slug — rather than guess a possibly-wrong deep link, send the learner back
+  // to their subject list where the actual next step is visible.
+  onNudgeContinue(): void {
+    this.setActiveTab('overview');
   }
 
   setActiveTab(tab: 'overview' | 'badges'): void {

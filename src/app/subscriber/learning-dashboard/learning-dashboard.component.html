@@ -327,6 +327,13 @@
 
         @if (activeTab === 'overview') {
 
+        <!-- Next Best Action -->
+        <app-next-best-action-card class="block"
+          [nextCertificationTrack]="nextCertificationTrack"
+          [nextSubjectTrack]="nextSubjectTrack"
+          (continueClick)="onNudgeContinue()">
+        </app-next-best-action-card>
+
         <!-- In Progress -->
         <div>
           <!-- Section heading -->
