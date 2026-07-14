@@ -9,7 +9,15 @@
   width: 100%;
   height: 100%;
   display: block;
-  pointer-events: auto; /* enable clicks to create bursts */
+  /* Click-to-burst is a tuning-panel demo convenience, not a production
+     behavior — only intercept clicks when the tuning controls are shown,
+     so an embedded overlay (controlsEnabled=false) never blocks clicks on
+     whatever UI sits underneath it. */
+  pointer-events: none;
+}
+
+.overlay-canvas--interactive {
+  pointer-events: auto;
 }
 
 .controls {

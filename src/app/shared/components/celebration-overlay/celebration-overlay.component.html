@@ -1,5 +1,6 @@
 <div class="celebration-wrap" [attr.aria-hidden]="!enabled">
-  <canvas #canvas class="overlay-canvas" (mousedown)="triggerBurst($event.clientX, $event.clientY)" (touchstart)="triggerBurst($event.touches?.[0]?.clientX, $event.touches?.[0]?.clientY)"></canvas>
+  <canvas #canvas class="overlay-canvas" [class.overlay-canvas--interactive]="controlsEnabled"
+          (mousedown)="triggerBurst($event.clientX, $event.clientY)" (touchstart)="triggerBurst($event.touches?.[0]?.clientX, $event.touches?.[0]?.clientY)"></canvas>
 
   <div class="controls" [class.locked]="!controlsEnabled">
     <div class="preset-row">

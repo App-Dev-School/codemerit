@@ -57,6 +57,7 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
   showXpPill = false;
   private celebrationStarted = false;
   private celebrationAutoTimer?: ReturnType<typeof setTimeout>;
+  private passCelebrationTimers: ReturnType<typeof setTimeout>[] = [];
 
   constructor(private zone: NgZone) {}
 
@@ -112,6 +113,8 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
     window.removeEventListener('resize', this.onResize);
     if (this.animFrameId) cancelAnimationFrame(this.animFrameId);
     if (this.celebrationAutoTimer) clearTimeout(this.celebrationAutoTimer);
+    this.passCelebrationTimers.forEach(t => clearTimeout(t));
+    this.passCelebrationTimers = [];
   }
 
   // ── Gamification celebration sequence ──────────────────────────────
@@ -193,9 +196,28 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
   }
 
+  // Scaled by how far above the pass mark the score is — a bare pass gets a
+  // brief single burst, a perfect score gets a longer, bigger multi-wave
+  // finale. Normalized against passMarks (not a hardcoded 50/100) so this
+  // holds up regardless of what a given quiz's pass threshold actually is.
   private triggerCelebration(): void {
-    this.spawnBurst(100, true);
-    setTimeout(() => this.spawnBurst(60, false), 600);
+    const score = Number(this.result?.score ?? 0);
+    const pass = this.passMarks;
+    const t = Math.max(0, Math.min(1, (score - pass) / Math.max(1, 100 - pass)));
+
+    const waveCount = 1 + Math.round(t * 3);      // 1..4 waves
+    const baseSize = 50 + Math.round(t * 90);     // 50..140 particles in the first wave
+    const waveGapMs = 550;
+
+    this.passCelebrationTimers.forEach(timer => clearTimeout(timer));
+    this.passCelebrationTimers = [];
+
+    for (let i = 0; i < waveCount; i++) {
+      const timer = setTimeout(() => {
+        this.spawnBurst(i === 0 ? baseSize : Math.round(baseSize * 0.5), i === 0);
+      }, i * waveGapMs);
+      this.passCelebrationTimers.push(timer);
+    }
   }
 
   private spawnBurst(count: number, center = false): void {

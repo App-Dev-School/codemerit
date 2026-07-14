@@ -66,6 +66,16 @@ export const bounceInAnimation = trigger('bounceIn', [
   ])
 ]);
 
+// 🔹 Pop pulse — restarts on every bound value change (not just :enter/:leave),
+// for content that stays mounted but needs to "pop" each time its value ticks
+// (e.g. a countdown number).
+export const popPulseAnimation = trigger('popPulse', [
+  transition('* => *', [
+    style({ transform: 'scale(0.4)', opacity: 0 }),
+    animate('220ms cubic-bezier(0.34, 1.56, 0.64, 1)', style({ transform: 'scale(1)', opacity: 1 })),
+  ]),
+]);
+
 // 🔹 Fade + Slide from Bottom
 export const bottomToTopAnimation = trigger('bottomToTop', [
   transition(':enter', [

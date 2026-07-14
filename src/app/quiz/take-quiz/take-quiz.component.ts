@@ -9,9 +9,10 @@ import { NewlyEarned } from '@core/models/gamification.model';
 import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
 import { UtilsService } from '@core/service/utils.service';
-import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
+import { CelebrationOverlayComponent } from '@shared/components/celebration-overlay/celebration-overlay.component';
 import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
+import { popPulseAnimation } from '@shared/animations';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
@@ -35,11 +36,12 @@ interface FeedbackState {
   templateUrl: './take-quiz.component.html',
   styleUrls: ['./take-quiz.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  animations: [popPulseAnimation],
   imports: [
     CommonModule,
     NgClass,
     NgScrollbar,
-    CelebrationComponent,
+    CelebrationOverlayComponent,
   ],
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
@@ -61,6 +63,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showAgreement = false;
   agreementAccepted = false;
 
+  // Shown after agreement is accepted, before the first question timer
+  // starts — a 3-2-1-Go beat so the first question doesn't just snap in.
+  showCountdown = false;
+  countdownValue = 3;
+
   warningActive = false;
   hintActive = false;
   answerActive = false;
@@ -70,9 +77,10 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showWarningToast = false;
   userData: User;
   scheduledAutoNext: any;
-  celebrationTrigger: { x: number; y: number } | null = null;
+  private celebrationWaveTimers: any[] = [];
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
+  @ViewChild('celebs') celebrationOverlay?: CelebrationOverlayComponent;
   displayingAuthDialog = false;
   quizConfig: QuizConfig;
 
@@ -111,6 +119,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.questionTimerInterval) clearInterval(this.questionTimerInterval);
     if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
     if (this.scheduledAutoNext) clearTimeout(this.scheduledAutoNext);
+    this.celebrationWaveTimers.forEach(t => clearTimeout(t));
+    this.celebrationWaveTimers = [];
     this.subscriptions.forEach(sub => {
       if (sub && typeof sub.unsubscribe === 'function') sub.unsubscribe();
     });
@@ -163,8 +173,28 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   acceptAgreement(): void {
     if (!this.agreementAccepted || !this.questions.length) return;
     this.showAgreement = false;
-    this.startQuestionTimer(this.questions[0]);
-    this.disableOptionClickTemporarily();
+    this.runCountdown();
+  }
+
+  private runCountdown(): void {
+    this.showCountdown = true;
+    this.countdownValue = 3;
+    if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
+    const tick = () => {
+      if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
+      this.countdownValue--;
+      if (this.countdownValue > 0) {
+        this.scheduledAutoNext = setTimeout(tick, 800);
+        return;
+      }
+      // Brief "Go!" beat (countdownValue === 0) before the first question reveals.
+      this.scheduledAutoNext = setTimeout(() => {
+        this.showCountdown = false;
+        this.startQuestionTimer(this.questions[0]);
+        this.disableOptionClickTemporarily();
+      }, 700);
+    };
+    this.scheduledAutoNext = setTimeout(tick, 800);
   }
 
   startQuestionTimer(question: QuizQuestion): void {
@@ -231,8 +261,9 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }
     }
 
+    if (isCorrect) this.triggerCelebration($event, (question as any).marks);
+
     if (this.quizConfig.mode === 'Interactive') {
-      if (isCorrect) this.triggerCelebration($event);
       this.showFeedback(isCorrect, false, question);
       return;
     }
@@ -469,20 +500,33 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     });
   }
 
-  triggerCelebration(event: MouseEvent): void {
+  // Every correct answer gets a burst. Higher-mark questions don't just get
+  // denser particles, they get a longer celebration — a handful of waves
+  // staggered over time, not one bigger instant blast, so a high-value
+  // question actually *feels* longer, not just busier.
+  triggerCelebration(event: MouseEvent, marks: number): void {
     try {
       const rect = (event.target as HTMLElement).getBoundingClientRect();
-      this.celebrationTrigger = {
-        x: event.clientX,
-        y: event.clientY - rect.height / 2,
-      };
+      const x = event.clientX;
+      const y = event.clientY - rect.height / 2;
+      const m = marks || 1;
+
+      this.celebrationWaveTimers.forEach(t => clearTimeout(t));
+      this.celebrationWaveTimers = [];
+
+      const waveCount = Math.min(5, Math.ceil(m / 2));       // 1 mark -> 1 wave, 10 marks -> 5 waves
+      const waveIntensity = Math.min(60, 20 + m * 4);         // particles per wave
+      const waveGapMs = 350;
+
+      for (let i = 0; i < waveCount; i++) {
+        const timer = setTimeout(() => {
+          this.celebrationOverlay?.triggerBurst(x, y, waveIntensity);
+        }, i * waveGapMs);
+        this.celebrationWaveTimers.push(timer);
+      }
     } catch (error) {
       console.log('triggerCelebration error', error);
     }
-  }
-
-  onCelebrationFinished(): void {
-    console.log('🎉 Celebration animation completed!');
   }
 
   getQuestionLevel(level: number): string {

@@ -1,6 +1,13 @@
 @if (!completed) {
 <div class="tq-shell fixed inset-0 flex flex-col overflow-hidden bg-cm-surface-muted">
 
+  <!-- Single shared burst overlay for the whole quiz session — one instance,
+       triggered programmatically on each correct answer. controlsEnabled=false
+       hides the tuning panel and makes the canvas click-through. -->
+  <app-celebration-overlay #celebs [enabled]="true" theme="golden_star"
+                            [maxParticles]="0" [controlsEnabled]="false" [autoDisableMs]="0">
+  </app-celebration-overlay>
+
   <!-- ═══ LOADING ══════════════════════════════════════════════════════════ -->
   @if (loading) {
     <div class="tq-loading">
@@ -100,8 +107,18 @@
     </div>
   }
 
+  <!-- ═══ COUNTDOWN ════════════════════════════════════════════════════════ -->
+  @if (showCountdown) {
+    <div class="tq-countdown">
+      <span class="tq-countdown__num" [@popPulse]="countdownValue">
+        {{ countdownValue > 0 ? countdownValue : 'Go!' }}
+      </span>
+      <p class="tq-countdown__label">Get ready…</p>
+    </div>
+  }
+
   <!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
-  @if (!loading && !showAgreement && quiz) {
+  @if (!loading && !showAgreement && !showCountdown && quiz) {
     <header class="tq-header" [class.tq-header--warn]="warningActive">
 
       <!-- Left: Settings + icon + title -->
@@ -149,7 +166,7 @@
   }
 
   <!-- ═══ WARNING BANNER (non-interactive, 10s alert) ════════════════════════ -->
-  @if (!loading && !showAgreement && quizConfig.mode !== 'Interactive' && showWarningToast) {
+  @if (!loading && !showAgreement && !showCountdown && quizConfig.mode !== 'Interactive' && showWarningToast) {
     <div class="tq-warn-banner">
       <i class="fa-solid fa-triangle-exclamation"></i>
       Only 10 seconds left — choose your answer!
@@ -157,7 +174,7 @@
   }
 
   <!-- ═══ SWIPER BODY ═══════════════════════════════════════════════════════ -->
-  @if (!loading && !showAgreement) {
+  @if (!loading && !showAgreement && !showCountdown) {
     <div class="tq-body">
 
       @if (questions?.length > 0) {
@@ -335,12 +352,6 @@
                         </div>
                       }
 
-                      <!-- Celebration trigger -->
-                      <app-celebration [trigger]="celebrationTrigger"
-                                       [marks]="question.marks"
-                                       (animationDone)="onCelebrationFinished()">
-                      </app-celebration>
-
                     </div>
                   </ng-scrollbar>
                 </div>
@@ -357,7 +368,7 @@
   }
 
   <!-- ═══ FOOTER ═══════════════════════════════════════════════════════════ -->
-  @if (!loading && !showAgreement) {
+  @if (!loading && !showAgreement && !showCountdown) {
     <footer class="tq-footer">
 
       <!-- Prev -->

@@ -46,8 +46,12 @@ Outputs
 
 Public API
 ----------
-- `triggerBurst(clientX?: number, clientY?: number)` — spawn an explosive burst at the given client coordinates (or center if omitted).
+- `triggerBurst(clientX?: number, clientY?: number, count = 45)` — spawn an explosive burst of `count` particles at the given client coordinates (or center if omitted).
 - `applyPreset(name: string)` — programmatically apply preset (`golden_star`, `cyber_matrix`, `cyber_sparks`, `classic_confetti`).
+
+Embedding without the tuning panel
+-----------------------------------
+Set `[controlsEnabled]="false"` when embedding this in real UI (not a demo/tuning page). This hides the preset/slider panel *and* makes the canvas click-through (`pointer-events: none`) — with controls off, the canvas no longer intercepts clicks meant for whatever sits underneath it. Trigger bursts programmatically instead, e.g. via a template reference and `@ViewChild`.
 
 Parent Integration Examples
 ---------------------------
