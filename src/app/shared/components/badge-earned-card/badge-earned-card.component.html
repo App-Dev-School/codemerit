@@ -1,6 +1,9 @@
 @if (variant === 'reveal') {
-  <div class="bec-overlay" (click)="onDismiss()">
-    <div class="bec-card" [@bounceIn] (click)="$event.stopPropagation()">
+  <!-- No backdrop-click-to-dismiss here on purpose — a badge is worth requiring
+       a deliberate acknowledgment (the Continue button below), not an accidental
+       outside tap. -->
+  <div class="bec-overlay">
+    <div class="bec-card" [@bounceIn]>
       <span class="bec-card__eyebrow">New Badge Unlocked!</span>
       <div class="bec-card__icon">🏆</div>
       <h3 class="bec-card__name">{{ badge?.name }}</h3>

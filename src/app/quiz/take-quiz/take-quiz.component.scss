@@ -348,6 +348,36 @@
   text-overflow: ellipsis;
 }
 
+.tq-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #fed7aa;
+  background: rgba(249, 115, 22, 0.16);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  flex-shrink: 0;
+}
+
+.tq-speed-toast {
+  position: fixed;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10002;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  pointer-events: none;
+}
+
 // ── Timer ring ───────────────────────────────────────────
 .tq-timer {
   position: relative;

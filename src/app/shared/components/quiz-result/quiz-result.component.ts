@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { QuizResult } from '@core/models/quiz';
 import { EarnedCertificate, GAMIFICATION_STATS_CACHE_KEY, NewlyEarned, NewlyEarnedBadge } from '@core/models/gamification.model';
+import { ShareService } from '@core/service/share.service';
+import { SnackbarService } from '@core/service/snackbar.service';
 import { zoomInOutAnimation } from '@shared/animations';
 import { LevelUpModalComponent } from '@shared/components/level-up-modal/level-up-modal.component';
 import { BadgeEarnedCardComponent } from '@shared/components/badge-earned-card/badge-earned-card.component';
@@ -13,11 +15,20 @@ type CelebrationStep =
   | { type: 'badge'; badge: NewlyEarnedBadge }
   | { type: 'certificate'; certificate: EarnedCertificate };
 
-// Auto-advance timing for celebration reveal cards (level-up/streak/badge/cert) — long
+// Auto-advance timing for celebration reveal cards (level-up/streak/cert) — long
 // enough to actually read a title + description, not just glimpse it. Manual dismiss
-// (tap/Continue) still works before this fires.
+// (tap/Continue) still works before this fires. Badges are exempt — see startNextCelebration.
 const CELEBRATION_STEP_MS = 6000;
-const XP_PILL_MS = 4000;
+
+// Full sequence timeline, so nothing overlaps: base pass/fail confetti is the
+// first thing the user sees (T+0), then it's given a moment to settle before
+// the XP pill takes over as the visual focus, then a further moment before
+// the level-up/streak/badge/certificate queue begins.
+const BASE_CONFETTI_SETTLE_MS = 1200;
+const XP_PILL_MS = 3200;
+const QUEUE_GAP_AFTER_XP_MS = 500;
+
+const GOLD_PALETTE = ['#eab308', '#f59e0b', '#fbbf24', '#fde047', '#facc15'];
 
 interface Particle {
   x: number; y: number;
@@ -42,6 +53,10 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
   @Output() onContinue    = new EventEmitter<string>();
 
   @Input() newlyEarned: NewlyEarned | null = null;
+  // Subject the quiz belongs to (id/slug/title, optionally image/description/
+  // color enriched by the parent from MasterService's catalog) — feeds the
+  // hero section between the score card and the result breakdown.
+  @Input() heroSubject: any = null;
 
   @ViewChild('celebCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -58,12 +73,35 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
   private celebrationStarted = false;
   private celebrationAutoTimer?: ReturnType<typeof setTimeout>;
   private passCelebrationTimers: ReturnType<typeof setTimeout>[] = [];
+  private sequenceTimers: ReturnType<typeof setTimeout>[] = [];
 
-  constructor(private zone: NgZone) {}
+  downloading = false;
+
+  constructor(
+    private zone: NgZone,
+    private shareService: ShareService,
+    private snackService: SnackbarService,
+  ) {}
 
   doOnShareResult() { this.onShareResult.emit('quizResultCard'); }
   doOnContinue()    { this.onContinue.emit(''); }
-  downloadReport()  {}
+
+  async downloadReport(): Promise<void> {
+    if (this.downloading) return;
+    this.downloading = true;
+    try {
+      const filename = `quiz-result-${this.result?.resultCode || 'report'}.png`;
+      const ok = await this.shareService.downloadCardAsImage('quizResultCard', filename);
+      if (!ok) {
+        this.snackService.display('snackbar-dark', 'Could not generate the report image. Please try again.', 'bottom', 'center');
+      }
+    } catch (error) {
+      console.error('downloadReport error', error);
+      this.snackService.display('snackbar-dark', 'Could not generate the report image. Please try again.', 'bottom', 'center');
+    } finally {
+      this.downloading = false;
+    }
+  }
 
   get passMarks(): number {
     return (this.result?.quiz as any)?.settings?.passMarks ?? (this.result as any)?.passMarks ?? 60;
@@ -115,6 +153,8 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
     if (this.celebrationAutoTimer) clearTimeout(this.celebrationAutoTimer);
     this.passCelebrationTimers.forEach(t => clearTimeout(t));
     this.passCelebrationTimers = [];
+    this.sequenceTimers.forEach(t => clearTimeout(t));
+    this.sequenceTimers = [];
   }
 
   // ── Gamification celebration sequence ──────────────────────────────
@@ -138,17 +178,23 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
 
     this.cacheGamificationStats(ne);
 
-    // xpAwarded === 0 is a normal replay-of-mastered-content outcome — never
-    // animate a "+0 XP" reward for it.
+    // Sequential timeline, nothing overlaps: base confetti settles first, then
+    // the XP pill takes the spotlight, then (once IT settles) the level-up/
+    // streak/badge/certificate queue begins. xpAwarded === 0 is a normal
+    // replay-of-mastered-content outcome — never animate a "+0 XP" reward,
+    // and skip straight to the queue without waiting on a pill that won't show.
+    let queueStartDelay = BASE_CONFETTI_SETTLE_MS;
     if (ne.xpAwarded > 0) {
-      this.showXpPill = true;
-      setTimeout(() => (this.showXpPill = false), XP_PILL_MS);
+      this.sequenceTimers.push(setTimeout(() => {
+        this.showXpPill = true;
+        this.sequenceTimers.push(setTimeout(() => (this.showXpPill = false), XP_PILL_MS));
+      }, BASE_CONFETTI_SETTLE_MS));
+      queueStartDelay = BASE_CONFETTI_SETTLE_MS + XP_PILL_MS + QUEUE_GAP_AFTER_XP_MS;
     }
 
     if (!this.hasCelebratableContent(ne)) return;
     this.celebrationQueue = this.buildCelebrationQueue(ne);
-    // Let the base score-card / pass confetti settle first.
-    setTimeout(() => this.startNextCelebration(), 900);
+    this.sequenceTimers.push(setTimeout(() => this.startNextCelebration(), queueStartDelay));
   }
 
   private buildCelebrationQueue(ne: NewlyEarned): CelebrationStep[] {
@@ -164,6 +210,16 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
     if (this.celebrationAutoTimer) clearTimeout(this.celebrationAutoTimer);
     this.activeCelebration = this.celebrationQueue.shift() ?? null;
     if (!this.activeCelebration) return;
+
+    if (this.activeCelebration.type === 'badge') {
+      // Badges require deliberate acknowledgment — no auto-advance timer, and
+      // a dense golden burst to make the moment feel earned. The card itself
+      // (badge-earned-card, reveal variant) also has no backdrop-dismiss, only
+      // its own Continue button — see that component for the other half of this.
+      this.spawnBurst(180, true, GOLD_PALETTE);
+      return;
+    }
+
     const isBigMoment = this.activeCelebration.type === 'levelUp' || this.activeCelebration.type === 'certificate';
     this.spawnBurst(isBigMoment ? 140 : 60, isBigMoment);
     this.celebrationAutoTimer = setTimeout(() => this.dismissCelebration(), CELEBRATION_STEP_MS);
@@ -220,15 +276,15 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
   }
 
-  private spawnBurst(count: number, center = false): void {
+  private spawnBurst(count: number, center = false, palette?: string[]): void {
     const c = this.canvasRef?.nativeElement;
     if (!c) return;
     for (let i = 0; i < count; i++) {
       if (center) {
-        this.particles.push(this.makeParticle(c.width / 2, c.height / 3));
+        this.particles.push(this.makeParticle(c.width / 2, c.height / 3, palette));
       } else {
-        this.particles.push(this.makeParticle(c.width / 3,       c.height / 3));
-        this.particles.push(this.makeParticle((c.width / 3) * 2, c.height / 3));
+        this.particles.push(this.makeParticle(c.width / 3,       c.height / 3, palette));
+        this.particles.push(this.makeParticle((c.width / 3) * 2, c.height / 3, palette));
       }
     }
   }
@@ -255,8 +311,8 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
     c.height = window.innerHeight;
   }
 
-  private makeParticle(x: number, y: number): Particle {
-    const pal  = ['#f43f5e','#10b981','#3b82f6','#eab308','#a855f7','#ff7849'];
+  private makeParticle(x: number, y: number, palette?: string[]): Particle {
+    const pal  = palette ?? ['#f43f5e','#10b981','#3b82f6','#eab308','#a855f7','#ff7849'];
     const shps = ['rect','ribbon'];
     const vx = (Math.random() - 0.5) * 12 * 3;
     const vy = (Math.random() - 0.5) * 12 * 3 - 2;

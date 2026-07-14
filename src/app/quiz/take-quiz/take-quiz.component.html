@@ -4,9 +4,14 @@
   <!-- Single shared burst overlay for the whole quiz session — one instance,
        triggered programmatically on each correct answer. controlsEnabled=false
        hides the tuning panel and makes the canvas click-through. -->
-  <app-celebration-overlay #celebs [enabled]="true" theme="golden_star"
+  <app-celebration-overlay #celebs [enabled]="true" [theme]="celebrationTheme"
                             [maxParticles]="0" [controlsEnabled]="false" [autoDisableMs]="0">
   </app-celebration-overlay>
+
+  <!-- Speed appreciation toast — separate from the confetti, rewards fast answers specifically -->
+  @if (showSpeedBonus) {
+    <div class="tq-speed-toast" [@popPulse]="speedBonusLabel">{{ speedBonusLabel }}</div>
+  }
 
   <!-- ═══ LOADING ══════════════════════════════════════════════════════════ -->
   @if (loading) {
@@ -130,6 +135,9 @@
           <img [src]="quiz.image" class="tq-subject-icon" alt="">
         }
         <span class="tq-quiz-title">{{ quiz.title }}</span>
+        @if (comboCount >= 2) {
+          <span class="tq-combo" [@popPulse]="comboCount">🔥 {{ comboCount }}</span>
+        }
       </div>
 
       <!-- Right: SVG timer ring -->

@@ -79,6 +79,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   scheduledAutoNext: any;
   private celebrationWaveTimers: any[] = [];
 
+  // Consecutive-correct streak — drives the combo chip and escalates the
+  // confetti theme (see celebrationTheme). Resets on any wrong answer/timeout.
+  comboCount = 0;
+  showSpeedBonus = false;
+  speedBonusLabel = '';
+
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
   @ViewChild('celebs') celebrationOverlay?: CelebrationOverlayComponent;
   displayingAuthDialog = false;
@@ -144,6 +150,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {}
 
   private loadQuiz(): void {
+    this.comboCount = 0;
     const quizSub = this.quizService.getQuiz(this.quizSlug).subscribe(data => {
       this.quiz = data;
       this.questions = (data.questions || []).map((q: any) => ({
@@ -215,6 +222,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
       if (this.questionTimeLeft <= 0) {
         clearInterval(this.questionTimerInterval);
+        this.registerAnswerOutcome(false);
         if (this.quizConfig.mode === 'Default') {
           this.onSlideNext();
         } else {
@@ -261,7 +269,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }
     }
 
-    if (isCorrect) this.triggerCelebration($event, (question as any).marks);
+    this.registerAnswerOutcome(isCorrect);
+    if (isCorrect) {
+      this.triggerCelebration($event, (question as any).marks);
+      this.showSpeedAppreciation(question);
+    }
 
     if (this.quizConfig.mode === 'Interactive') {
       this.showFeedback(isCorrect, false, question);
@@ -527,6 +539,37 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     } catch (error) {
       console.log('triggerCelebration error', error);
     }
+  }
+
+  // "How big" a burst is comes from question marks (triggerCelebration above).
+  // "What flavor" it is comes from the current streak — the confetti escalates
+  // in style, not just size, as the user gets hot.
+  get celebrationTheme(): 'golden_star' | 'cyber_sparks' | 'classic_confetti' {
+    if (this.comboCount >= 5) return 'classic_confetti';
+    if (this.comboCount >= 3) return 'cyber_sparks';
+    return 'golden_star';
+  }
+
+  private registerAnswerOutcome(isCorrect: boolean): void {
+    this.comboCount = isCorrect ? this.comboCount + 1 : 0;
+  }
+
+  // A quick, distinct appreciation toast for answering well under the time
+  // limit — separate from the marks-based confetti burst, so speed itself
+  // feels rewarded, not just correctness.
+  private showSpeedAppreciation(question: QuizQuestion): void {
+    const allowed = question.timeAllowed || 0;
+    if (!allowed) return;
+    const remainingRatio = this.questionTimeLeft / allowed;
+
+    let label = '';
+    if (remainingRatio >= 0.7) label = '⚡ Lightning Fast!';
+    else if (remainingRatio >= 0.4) label = '🚀 Quick!';
+    if (!label) return;
+
+    this.speedBonusLabel = label;
+    this.showSpeedBonus = true;
+    setTimeout(() => { this.showSpeedBonus = false; }, 1400);
   }
 
   getQuestionLevel(level: number): string {

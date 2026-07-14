@@ -6,6 +6,7 @@ import { QuizQuestion } from '@core/models/quiz-question';
 import { User } from '@core/models/user';
 import { NewlyEarned } from '@core/models/gamification.model';
 import { AuthService } from '@core/service/auth.service';
+import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
 import { ShareBottomSheetComponent } from '@shared/components/share-bottom-sheet/share-bottom-sheet.component';
@@ -38,6 +39,10 @@ export class ViewResultComponent implements OnInit {
   // Only ever populated on the live post-quiz navigation — never on a
   // reload/deep-link, since Router navigation `state` doesn't survive those.
   newlyEarned: NewlyEarned | null = null;
+  // The subject the quiz belongs to, enriched with the richer catalog fields
+  // (image/description/color) from MasterService when the quiz-result response
+  // itself only carries the bare id/slug/title. Feeds the "hero" CTA card.
+  heroSubject: any = null;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -45,6 +50,7 @@ export class ViewResultComponent implements OnInit {
     private snackService: SnackbarService,
     private quizService: QuizService,
     private quizHelper: QuizHelperService,
+    private master: MasterService,
     private _bottomSheet: MatBottomSheet) {
     this.userData = this.authService.currentUserValue;
     const navState = this.router.getCurrentNavigation()?.extras?.state as { newlyEarned?: NewlyEarned | null } | undefined;
@@ -79,6 +85,7 @@ export class ViewResultComponent implements OnInit {
         console.log("loadQuizResult API #####", data);
         setTimeout(() => {
           this.quizResult = data;
+          this.resolveHeroSubject();
           this.loadingText = '';
           this.loading = false;
         }, 3000);
@@ -86,6 +93,29 @@ export class ViewResultComponent implements OnInit {
           this.createResultEffect();
         }, 4000);
       });
+  }
+
+  // The quiz-result response only carries a thin subject reference (id/slug/
+  // title, confirmed via onContinue() below) — cross-reference MasterService's
+  // already-loaded subject catalog to backfill image/description/color for a
+  // richer "hero" card, falling back gracefully if no match is found.
+  private resolveHeroSubject(): void {
+    const raw = this.quizResult?.subjects?.[0];
+    if (!raw) {
+      this.heroSubject = null;
+      return;
+    }
+    const catalogMatch = this.master.subjects?.find(
+      (s: any) => (raw.id != null && s.id === raw.id) || (raw.slug && s.slug === raw.slug)
+    );
+    this.heroSubject = {
+      id: raw.id ?? catalogMatch?.id,
+      slug: raw.slug ?? catalogMatch?.slug,
+      title: raw.title ?? catalogMatch?.title,
+      description: raw.description ?? catalogMatch?.description,
+      image: raw.image ?? catalogMatch?.image,
+      color: raw.color ?? catalogMatch?.color,
+    };
   }
 
   createResultEffect() {
