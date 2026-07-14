@@ -1,3 +1,17 @@
+// Shared sessionStorage key used to hand off the last-known XP/level/streak totals
+// from a quiz submission (quiz-result.component.ts writes it) to any UI that wants
+// to show "my current stats" (xp-streak-widget.component.ts reads it) — a stopgap
+// until backend exposes a dedicated "my current totals" endpoint outside the
+// one-shot post-quiz newlyEarned payload.
+export const GAMIFICATION_STATS_CACHE_KEY = 'cm_last_gamification_stats';
+
+export interface CachedGamificationStats {
+  totalPoints: number;
+  level: LevelInfo;
+  streak: StreakInfo | null;
+  cachedAt: string;
+}
+
 export interface LevelInfo {
   level: number;
   title: string;

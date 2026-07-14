@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { QuizResult } from '@core/models/quiz';
-import { EarnedCertificate, NewlyEarned, NewlyEarnedBadge } from '@core/models/gamification.model';
+import { EarnedCertificate, GAMIFICATION_STATS_CACHE_KEY, NewlyEarned, NewlyEarnedBadge } from '@core/models/gamification.model';
 import { zoomInOutAnimation } from '@shared/animations';
 import { LevelUpModalComponent } from '@shared/components/level-up-modal/level-up-modal.component';
 import { BadgeEarnedCardComponent } from '@shared/components/badge-earned-card/badge-earned-card.component';
@@ -13,7 +13,6 @@ type CelebrationStep =
   | { type: 'badge'; badge: NewlyEarnedBadge }
   | { type: 'certificate'; certificate: EarnedCertificate };
 
-const GAMIFICATION_CACHE_KEY = 'cm_last_gamification_stats';
 // Auto-advance timing for celebration reveal cards (level-up/streak/badge/cert) — long
 // enough to actually read a title + description, not just glimpse it. Manual dismiss
 // (tap/Continue) still works before this fires.
@@ -183,7 +182,7 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
   private cacheGamificationStats(ne: NewlyEarned): void {
     if (ne.totalPoints == null || !ne.level) return;
     try {
-      sessionStorage.setItem(GAMIFICATION_CACHE_KEY, JSON.stringify({
+      sessionStorage.setItem(GAMIFICATION_STATS_CACHE_KEY, JSON.stringify({
         totalPoints: ne.totalPoints,
         level: ne.level,
         streak: ne.streak ?? null,

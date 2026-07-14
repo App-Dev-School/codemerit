@@ -177,6 +177,9 @@
           </div>
         </div>
 
+        <!-- XP / Streak widget -->
+        <app-xp-streak-widget class="block mt-4" [stats]="xpStreakStats"></app-xp-streak-widget>
+
         <!-- Rate Your Skills -->
         <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
                     shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
@@ -296,6 +299,34 @@
       <!-- ── LEFT MAIN — subject sections ── -->
       <div class="order-last lg:order-first lg:col-span-2 space-y-7">
 
+        <!-- Tab strip -->
+        <div class="flex items-center gap-1 p-1 rounded-xl bg-cm-surface-raised border border-cm-border w-fit">
+          <button type="button" (click)="setActiveTab('overview')"
+            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+            [class.bg-cm-brand]="activeTab === 'overview'"
+            [class.text-white]="activeTab === 'overview'"
+            [class.text-cm-text-secondary]="activeTab !== 'overview'">
+            Overview
+          </button>
+          <button type="button" (click)="setActiveTab('badges')"
+            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+            [class.bg-cm-brand]="activeTab === 'badges'"
+            [class.text-white]="activeTab === 'badges'"
+            [class.text-cm-text-secondary]="activeTab !== 'badges'">
+            Badges
+          </button>
+        </div>
+
+        @if (activeTab === 'badges') {
+          <app-badge-grid class="block mt-4"
+            [earned]="badges?.earned ?? []"
+            [locked]="badges?.locked ?? []"
+            [loading]="badgesLoading">
+          </app-badge-grid>
+        }
+
+        @if (activeTab === 'overview') {
+
         <!-- In Progress -->
         <div>
           <!-- Section heading -->
@@ -382,6 +413,8 @@
           </div>
           }
         </div>
+
+        }
 
       </div>
       <!-- ── /LEFT MAIN ── -->

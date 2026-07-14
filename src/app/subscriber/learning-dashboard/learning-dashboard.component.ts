@@ -12,6 +12,9 @@ import { fadeInAnimation } from '@shared/animations';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
+import { BadgeGridComponent } from '@shared/components/badge-grid/badge-grid.component';
+import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-streak-widget.component';
+import { CachedGamificationStats, GAMIFICATION_STATS_CACHE_KEY, MyBadgesResponse } from '@core/models/gamification.model';
 import { QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
@@ -20,7 +23,9 @@ import { QuizService } from 'src/app/quiz/quiz.service';
   styleUrls: ['./learning-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
-    SubjectTrackerCardComponent
+    SubjectTrackerCardComponent,
+    BadgeGridComponent,
+    XpStreakWidgetComponent,
   ]
 })
 export class LearningDashboardComponent implements OnInit {
@@ -48,6 +53,12 @@ export class LearningDashboardComponent implements OnInit {
   //For displaying test data
   debugDisplay = false;
   roleMenuOpen = false;
+
+  activeTab: 'overview' | 'badges' = 'overview';
+  badges: MyBadgesResponse | null = null;
+  badgesLoading = false;
+  private badgesFetched = false;
+  xpStreakStats: CachedGamificationStats | null = null;
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
@@ -80,6 +91,7 @@ export class LearningDashboardComponent implements OnInit {
       }
     });
     this.takeRouteParams();
+    this.loadCachedGamificationStats();
     // setTimeout(() => {
     //   this.loading = false;
     // }, 3333);
@@ -320,6 +332,34 @@ export class LearningDashboardComponent implements OnInit {
   assessSkills(): void {
     if (this.course) {
       this.router.navigate(['/assessment/skill-rating', this.course]);
+    }
+  }
+
+  setActiveTab(tab: 'overview' | 'badges'): void {
+    this.activeTab = tab;
+    if (tab === 'badges' && !this.badgesFetched) {
+      this.loadBadges();
+    }
+  }
+
+  private loadBadges(): void {
+    this.badgesLoading = true;
+    this.badgesFetched = true;
+    this.master.fetchMyBadges().subscribe((res) => {
+      this.badges = res;
+      this.badgesLoading = false;
+    });
+  }
+
+  // Reads the last-known XP/level/streak cached by quiz-result.component.ts right
+  // after a quiz submit — see GAMIFICATION_STATS_CACHE_KEY doc comment for why
+  // there's no live endpoint for this yet.
+  private loadCachedGamificationStats(): void {
+    try {
+      const raw = sessionStorage.getItem(GAMIFICATION_STATS_CACHE_KEY);
+      this.xpStreakStats = raw ? JSON.parse(raw) : null;
+    } catch {
+      this.xpStreakStats = null;
     }
   }
 

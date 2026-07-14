@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { HttpService } from './http.service';
 import { AdminDashboardResponse } from 'src/app/admin/dtos/admin-dashboard.model';
 import { LmsDashboardResponse } from 'src/app/lms/dtos/lms-dashboard.model';
+import { MyBadgesResponse } from '@core/models/gamification.model';
 
 export interface MasterData {
   subjects: any[];
@@ -204,6 +205,19 @@ export class MasterService {
         catchError((err) => {
           console.error('CourseAPI Failed :', err);
           return of({}); // return empty array instead of null
+        }),
+      );
+  }
+
+  fetchMyBadges(): Observable<MyBadgesResponse> {
+    const fallback: MyBadgesResponse = { earned: [], locked: [] };
+    return this.httpService
+      .get('apis/achievements/my-badges', this.authService.currentUserValue?.token)
+      .pipe(
+        map((res: { error: boolean; message: string; data: MyBadgesResponse }) => !res.error ? res.data : fallback),
+        catchError((err) => {
+          console.error('fetchMyBadges Failed', err);
+          return of(fallback);
         }),
       );
   }
