@@ -4,7 +4,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
 import { User } from '@core/models/user';
-import { NewlyEarned } from '@core/models/gamification.model';
+import { LeaderboardResponse, MyBadgesResponse, NewlyEarned, NextTrackNudge } from '@core/models/gamification.model';
 import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -43,6 +43,14 @@ export class ViewResultComponent implements OnInit {
   // (image/description/color) from MasterService when the quiz-result response
   // itself only carries the bare id/slug/title. Feeds the "hero" CTA card.
   heroSubject: any = null;
+
+  // "Keep the momentum going" widgets — all reuse endpoints/data that already
+  // existed before this page needed them, no backend changes required.
+  badges: MyBadgesResponse | null = null;
+  leaderboardTeaser: LeaderboardResponse | null = null;
+  tryNextSubjects: any[] = [];
+  nextCertificationTrack: NextTrackNudge | null = null;
+  nextSubjectTrack: NextTrackNudge | null = null;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -86,6 +94,7 @@ export class ViewResultComponent implements OnInit {
         setTimeout(() => {
           this.quizResult = data;
           this.resolveHeroSubject();
+          this.resolveTryNextSubjects();
           this.loadingText = '';
           this.loading = false;
         }, 3000);
@@ -93,6 +102,54 @@ export class ViewResultComponent implements OnInit {
           this.createResultEffect();
         }, 4000);
       });
+    this.loadMomentumWidgets();
+  }
+
+  // "Your overall status" widgets — independent of this specific submission,
+  // so they're worth showing even on a revisited/deep-linked old result, not
+  // just a fresh one. Only meaningful for a logged-in user; MasterService's
+  // own fallbacks (empty arrays / nulls) keep this silent otherwise.
+  private loadMomentumWidgets(): void {
+    if (!this.authService.currentUserValue) return;
+    this.master.fetchMyBadges().subscribe((res) => { this.badges = res; });
+    this.master.fetchLeaderboard('weekly').subscribe((res) => { this.leaderboardTeaser = res; });
+    this.resolveNextBestAction();
+  }
+
+  // Picks the user's most-recently-enrolled job role (same "latest enrollment"
+  // convention learning-dashboard.component.ts uses) and pulls its
+  // nextCertificationTrack/nextSubjectTrack from programDetails — the exact
+  // fields Story 3 already wired for the Learning Dashboard nudge card, just
+  // resolved fresh here since this page doesn't otherwise know which job role
+  // is relevant.
+  private resolveNextBestAction(): void {
+    const userJobRoles = this.authService.getUserJobRoles();
+    if (!userJobRoles?.length) return;
+
+    const applyResolve = () => {
+      const latest = userJobRoles[userJobRoles.length - 1];
+      const role = this.master.jobRoles?.find((r: any) => r.id === latest?.jobRoleId);
+      if (!role?.slug) return;
+      this.master.fetchCourseDetail(role.slug).subscribe((data: any) => {
+        this.nextCertificationTrack = data?.nextCertificationTrack ?? null;
+        this.nextSubjectTrack = data?.nextSubjectTrack ?? null;
+      });
+    };
+
+    if (this.master.jobRoles?.length > 0) {
+      applyResolve();
+    } else {
+      this.master.fetchMasterDataFromAPI().subscribe(() => applyResolve());
+    }
+  }
+
+  // Simple "explore something else" strip — picks a few subjects from the
+  // already-loaded catalog, excluding the one this quiz was on. Not
+  // personalized (no extra fetch needed), just keeps momentum beyond the one
+  // subject already covered by the hero card.
+  private resolveTryNextSubjects(): void {
+    const others = (this.master.subjects ?? []).filter((s: any) => s.id !== this.heroSubject?.id);
+    this.tryNextSubjects = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
   }
 
   // The quiz-result response only carries a thin subject reference (id/slug/

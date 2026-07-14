@@ -1,0 +1,29 @@
+<a routerLink="/dashboard" [queryParams]="{ tab: 'badges' }" class="bpt-card">
+  <div class="bpt-head">
+    <div class="bpt-icon">🏆</div>
+    <div class="bpt-body">
+      <p class="bpt-title">{{ earned.length }} of {{ total }} badges earned</p>
+      @if (latestBadge) {
+        <p class="bpt-sub">Latest: {{ latestBadge.name }}</p>
+      } @else {
+        <p class="bpt-sub">Complete quizzes to start earning badges</p>
+      }
+    </div>
+  </div>
+
+  @if (previewSlots.length) {
+    <div class="bpt-strip">
+      @for (slot of previewSlots; track slot.badge.code) {
+        <span class="bpt-chip" [class.bpt-chip--locked]="slot.locked" [title]="slot.badge.name">
+          {{ slot.locked ? '🔒' : '🏅' }}
+        </span>
+      }
+    </div>
+  }
+
+  <div class="bpt-track mt-5">
+    <div class="bpt-fill" [style.width.%]="percent"></div>
+  </div>
+
+  <span class="bpt-cta">View All Badges <i class="fa-solid fa-arrow-right"></i></span>
+</a>

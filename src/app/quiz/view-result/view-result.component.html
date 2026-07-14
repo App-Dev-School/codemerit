@@ -14,7 +14,10 @@
     </div>
     }
     @if (quizResult) {
-    <app-quiz-result [result]="quizResult" [newlyEarned]="newlyEarned" [heroSubject]="heroSubject" (onShareResult)="onShareResult()" (onContinue)="onContinue()"></app-quiz-result>
+    <app-quiz-result [result]="quizResult" [newlyEarned]="newlyEarned" [heroSubject]="heroSubject"
+      [badges]="badges" [leaderboardTeaser]="leaderboardTeaser" [tryNextSubjects]="tryNextSubjects"
+      [nextCertificationTrack]="nextCertificationTrack" [nextSubjectTrack]="nextSubjectTrack"
+      (onShareResult)="onShareResult()" (onContinue)="onContinue()"></app-quiz-result>
     }
   </div>
 </div>

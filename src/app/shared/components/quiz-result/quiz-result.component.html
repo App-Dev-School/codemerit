@@ -28,15 +28,8 @@
 }
 
 @if (activeCertificate) {
-  <div class="cert-overlay" (click)="dismissCelebration()">
-    <div class="cert-card" [@zoomInOut] (click)="$event.stopPropagation()">
-      <span class="cert-card__eyebrow">Certificate Unlocked!</span>
-      <div class="cert-card__icon">🎓</div>
-      <h3 class="cert-card__title">{{ activeCertificate.title || 'New Certification' }}</h3>
-      <p class="cert-card__sub">You've earned a certificate. View it on your dashboard.</p>
-      <button type="button" class="cert-card__cta" (click)="dismissCelebration()">Continue</button>
-    </div>
-  </div>
+  <app-certificate-unlock-modal [certificate]="activeCertificate" (dismiss)="dismissCelebration()">
+  </app-certificate-unlock-modal>
 }
 
 <!-- ══════════════════════════════════════════════
@@ -190,7 +183,7 @@
   "Continue" action that used to live in the CTA row above.
 ══════════════════════════════════════════════ -->
 @if (result?.quiz?.id) {
-  <div class="subject-hero-wrap m-16">
+  <div class="subject-hero-wrap">
     <div class="subject-hero"
          [style.background]="heroSubject?.color
            ? 'linear-gradient(120deg,' + heroSubject.color + '26, transparent 70%)'
@@ -203,7 +196,7 @@
         </div>
       }
       <div class="subject-hero__body">
-        <p class="subject-hero__eyebrow">Keep the momentum going</p>
+        <p class="subject-hero__eyebrow">Up next</p>
         <h3 class="subject-hero__title">
           {{ heroSubject?.title ? heroSubject.title : 'Ready for what\'s next?' }}
         </h3>
@@ -297,37 +290,86 @@
 
     </div>
 
-    <!-- Topics sidebar -->
-    @if (result?.topics && result?.topics?.length > 0) {
-      <aside class="topics-panel">
-        <div class="topics-panel__head">
-          <span class="topics-panel__title">Covered Topics</span>
-          <span class="topics-panel__count">{{ result.topics.length }}</span>
-        </div>
-        <div class="topics-panel__body">
-          @for (topic of result.topics; track topic.id) {
-            <div class="topic-row">
-              <div class="topic-row__meta">
-                <span class="topic-row__name">{{ topic.title }}</span>
-                <span class="topic-row__pct"
-                      [style.color]="(+topic.coverage || 0) >= 70 ? '#22c55e'
-                        : (+topic.coverage || 0) >= 40 ? '#f59e0b' : '#ef4444'">
-                  {{ topic.coverage != null ? topic.coverage + '%' : '—' }}
-                </span>
-              </div>
-              <div class="topic-bar">
-                <div class="topic-bar__fill"
-                     [style.width]="(+topic.coverage || 0) + '%'"
-                     [style.background]="(+topic.coverage || 0) >= 70
-                       ? 'linear-gradient(90deg,#22c55e,#34d399)'
-                       : (+topic.coverage || 0) >= 40
-                         ? 'linear-gradient(90deg,#f59e0b,#fbbf24)'
-                         : 'linear-gradient(90deg,#ef4444,#f97316)'">
-                </div>
-              </div>
+    <!-- Sidebar rail — sticky column: momentum widgets + try-next + nudge,
+         stacked full-width, sitting above Covered Topics in the same sticky
+         column (rather than as separate full-width sections on their own). -->
+    @if (xpStreakStats || badges || leaderboardTeaser || tryNextSubjects?.length
+         || nextCertificationTrack || nextSubjectTrack
+         || (result?.topics && result?.topics?.length > 0)) {
+      <aside class="side-rail">
+
+        @if (xpStreakStats) {
+          <app-xp-streak-widget class="block" [stats]="xpStreakStats"></app-xp-streak-widget>
+        }
+        @if (badges) {
+          <app-badge-progress-teaser class="block"
+            [earned]="badges.earned" [locked]="badges.locked">
+          </app-badge-progress-teaser>
+        }
+        @if (leaderboardTeaser) {
+          <app-leaderboard-rank-teaser class="block"
+            [userRank]="leaderboardTeaser.userRank" [period]="leaderboardTeaser.period"
+            [topEntries]="leaderboardTeaser.leaderboard">
+          </app-leaderboard-rank-teaser>
+        }
+
+        @if (tryNextSubjects?.length) {
+          <div class="try-next-block">
+            <h3 class="side-rail__heading">Try This Next</h3>
+            <div class="try-next-row">
+              @for (subject of tryNextSubjects; track subject.id) {
+                <a [routerLink]="['/dashboard/learn', subject.slug]" class="try-next-card">
+                  <img [src]="subject.image || 'assets/images/tech/placeholder.png'" [alt]="subject.title" class="try-next-card__img">
+                  <span class="try-next-card__title">{{ subject.title }}</span>
+                  <span class="try-next-card__cta">Start <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+              }
             </div>
-          }
-        </div>
+          </div>
+        }
+
+        @if (nextCertificationTrack || nextSubjectTrack) {
+          <app-next-best-action-card class="block"
+            [nextCertificationTrack]="nextCertificationTrack"
+            [nextSubjectTrack]="nextSubjectTrack"
+            (continueClick)="doOnContinue()">
+          </app-next-best-action-card>
+        }
+
+        <!-- Covered topics -->
+        @if (result?.topics && result?.topics?.length > 0) {
+          <div class="topics-panel">
+            <div class="topics-panel__head">
+              <span class="topics-panel__title">Covered Topics</span>
+              <span class="topics-panel__count">{{ result.topics.length }}</span>
+            </div>
+            <div class="topics-panel__body">
+              @for (topic of result.topics; track topic.id) {
+                <div class="topic-row">
+                  <div class="topic-row__meta">
+                    <span class="topic-row__name">{{ topic.title }}</span>
+                    <span class="topic-row__pct"
+                          [style.color]="(+topic.coverage || 0) >= 70 ? '#22c55e'
+                            : (+topic.coverage || 0) >= 40 ? '#f59e0b' : '#ef4444'">
+                      {{ topic.coverage != null ? topic.coverage + '%' : '—' }}
+                    </span>
+                  </div>
+                  <div class="topic-bar">
+                    <div class="topic-bar__fill"
+                         [style.width]="(+topic.coverage || 0) + '%'"
+                         [style.background]="(+topic.coverage || 0) >= 70
+                           ? 'linear-gradient(90deg,#22c55e,#34d399)'
+                           : (+topic.coverage || 0) >= 40
+                             ? 'linear-gradient(90deg,#f59e0b,#fbbf24)'
+                             : 'linear-gradient(90deg,#ef4444,#f97316)'">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
       </aside>
     }
 

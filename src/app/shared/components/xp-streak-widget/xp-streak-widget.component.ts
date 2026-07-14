@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CachedGamificationStats, getLevelProgress, LevelProgress } from '@core/models/gamification.model';
 
 @Component({
   selector: 'app-xp-streak-widget',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './xp-streak-widget.component.html',
   styleUrl: './xp-streak-widget.component.scss',
 })

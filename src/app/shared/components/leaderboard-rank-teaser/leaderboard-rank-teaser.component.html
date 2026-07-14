@@ -1,0 +1,33 @@
+<a routerLink="/dashboard" [queryParams]="{ tab: 'leaderboard' }" class="lrt-card">
+  <div class="lrt-head">
+    <div class="lrt-icon" [class.lrt-icon--ranked]="userRank">
+      {{ userRank ? '🏆' : '🎯' }}
+    </div>
+    <div class="lrt-body">
+      @if (userRank) {
+        <p class="lrt-title">You're rank #{{ userRank }}</p>
+        <p class="lrt-sub">This {{ periodLabel }} — keep climbing</p>
+      } @else {
+        <p class="lrt-title">Not ranked yet</p>
+        <p class="lrt-sub">Earn more XP to appear on the leaderboard</p>
+      }
+
+      @if (avatarStack.length) {
+        <div class="lrt-avatars">
+          @for (entry of avatarStack; track entry.userId) {
+            <span class="lrt-avatar" [title]="entry.name">
+              @if (entry.image) {
+                <img [src]="entry.image" [alt]="entry.name">
+              } @else {
+                {{ initials(entry.name) }}
+              }
+            </span>
+          }
+          <span class="lrt-avatars__label">top this {{ periodLabel }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <span class="lrt-cta">View Leaderboard <i class="fa-solid fa-arrow-right"></i></span>
+</a>

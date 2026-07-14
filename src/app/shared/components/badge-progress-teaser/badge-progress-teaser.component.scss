@@ -1,0 +1,134 @@
+.bpt-card {
+  display: block;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+
+  :host-context(.dark) & {
+    background: #0f172a;
+    border-color: #1e293b;
+  }
+}
+
+.bpt-card:hover {
+  border-color: #fbbf24;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.12);
+}
+
+.bpt-card:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.bpt-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bpt-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.bpt-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.bpt-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+
+  :host-context(.dark) & { color: #f1f5f9; }
+}
+
+.bpt-sub {
+  font-size: 11px;
+  color: #64748b;
+  margin: 2px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  :host-context(.dark) & { color: #94a3b8; }
+}
+
+.bpt-strip {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 8px;
+}
+
+.bpt-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  font-size: 13px;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.bpt-chip--locked {
+  background: #f1f5f9;
+  opacity: 0.6;
+  filter: grayscale(1);
+
+  :host-context(.dark) & { background: #1e293b; }
+}
+
+.bpt-track {
+  height: 5px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  overflow: hidden;
+
+  :host-context(.dark) & { background: #1e293b; }
+}
+
+.bpt-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  transition: width 0.5s ease;
+}
+
+.bpt-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.1);
+
+  i {
+    font-size: 10px;
+    transition: transform 0.15s ease;
+  }
+
+  :host-context(.dark) & { color: #fbbf24; }
+}
+
+.bpt-card:hover .bpt-cta i {
+  transform: translateX(3px);
+}

@@ -101,6 +101,13 @@ export class LearningDashboardComponent implements OnInit {
     });
     this.takeRouteParams();
     this.loadCachedGamificationStats();
+    // Lets other pages (e.g. the quiz-result widgets) deep-link straight to a
+    // specific tab, e.g. /dashboard?tab=badges — falls back to 'overview' for
+    // any missing/unrecognized value.
+    const requestedTab = this.route.snapshot.queryParamMap.get('tab');
+    if (requestedTab === 'badges' || requestedTab === 'leaderboard') {
+      this.setActiveTab(requestedTab);
+    }
     // setTimeout(() => {
     //   this.loading = false;
     // }, 3333);

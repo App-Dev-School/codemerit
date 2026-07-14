@@ -1,12 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { QuizResult } from '@core/models/quiz';
-import { EarnedCertificate, GAMIFICATION_STATS_CACHE_KEY, NewlyEarned, NewlyEarnedBadge } from '@core/models/gamification.model';
+import { CachedGamificationStats, EarnedCertificate, GAMIFICATION_STATS_CACHE_KEY, LeaderboardResponse, MyBadgesResponse, NewlyEarned, NewlyEarnedBadge, NextTrackNudge } from '@core/models/gamification.model';
 import { ShareService } from '@core/service/share.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { zoomInOutAnimation } from '@shared/animations';
 import { LevelUpModalComponent } from '@shared/components/level-up-modal/level-up-modal.component';
 import { BadgeEarnedCardComponent } from '@shared/components/badge-earned-card/badge-earned-card.component';
+import { CertificateUnlockModalComponent } from '@shared/components/certificate-unlock-modal/certificate-unlock-modal.component';
+import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-streak-widget.component';
+import { BadgeProgressTeaserComponent } from '@shared/components/badge-progress-teaser/badge-progress-teaser.component';
+import { LeaderboardRankTeaserComponent } from '@shared/components/leaderboard-rank-teaser/leaderboard-rank-teaser.component';
+import { NextBestActionCardComponent } from '@shared/components/next-best-action-card/next-best-action-card.component';
 import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
 
 type CelebrationStep =
@@ -15,9 +21,10 @@ type CelebrationStep =
   | { type: 'badge'; badge: NewlyEarnedBadge }
   | { type: 'certificate'; certificate: EarnedCertificate };
 
-// Auto-advance timing for celebration reveal cards (level-up/streak/cert) — long
+// Auto-advance timing for celebration reveal cards (level-up/streak) — long
 // enough to actually read a title + description, not just glimpse it. Manual dismiss
-// (tap/Continue) still works before this fires. Badges are exempt — see startNextCelebration.
+// (tap/Continue) still works before this fires. Badges and certificates are
+// exempt — see startNextCelebration.
 const CELEBRATION_STEP_MS = 6000;
 
 // Full sequence timeline, so nothing overlaps: base pass/fail confetti is the
@@ -44,7 +51,11 @@ interface Particle {
   selector: 'app-quiz-result',
   templateUrl: './quiz-result.component.html',
   styleUrl: './quiz-result.component.scss',
-  imports: [CommonModule, QuizProgressComponent, LevelUpModalComponent, BadgeEarnedCardComponent],
+  imports: [
+    CommonModule, RouterLink, QuizProgressComponent, LevelUpModalComponent, BadgeEarnedCardComponent,
+    CertificateUnlockModalComponent, XpStreakWidgetComponent, BadgeProgressTeaserComponent,
+    LeaderboardRankTeaserComponent, NextBestActionCardComponent,
+  ],
   animations: [zoomInOutAnimation],
 })
 export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy {
@@ -57,6 +68,30 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
   // color enriched by the parent from MasterService's catalog) — feeds the
   // hero section between the score card and the result breakdown.
   @Input() heroSubject: any = null;
+
+  // "Keep the momentum going" widgets — all optional, all gated in the
+  // template so a null/empty value just hides that widget rather than
+  // showing a broken/empty state.
+  @Input() badges: MyBadgesResponse | null = null;
+  @Input() leaderboardTeaser: LeaderboardResponse | null = null;
+  @Input() tryNextSubjects: any[] = [];
+  @Input() nextCertificationTrack: NextTrackNudge | null = null;
+  @Input() nextSubjectTrack: NextTrackNudge | null = null;
+
+  // Derived directly from newlyEarned (this exact submission's fresh totals)
+  // rather than round-tripping through the sessionStorage cache — always in
+  // sync with what's actually on screen. Null on a revisited/deep-linked old
+  // result (newlyEarned is only ever populated on the live post-quiz nav),
+  // in which case xp-streak-widget's own empty state covers it.
+  get xpStreakStats(): CachedGamificationStats | null {
+    if (this.newlyEarned?.totalPoints == null || !this.newlyEarned?.level) return null;
+    return {
+      totalPoints: this.newlyEarned.totalPoints,
+      level: this.newlyEarned.level,
+      streak: this.newlyEarned.streak ?? null,
+      cachedAt: new Date().toISOString(),
+    };
+  }
 
   @ViewChild('celebCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -220,9 +255,29 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
       return;
     }
 
-    const isBigMoment = this.activeCelebration.type === 'levelUp' || this.activeCelebration.type === 'certificate';
+    if (this.activeCelebration.type === 'certificate') {
+      // The grandest moment in the whole sequence — same "must acknowledge"
+      // rule as badges (no auto-timer; certificate-unlock-modal has no
+      // backdrop-dismiss either, only its own large CTA), plus a bigger,
+      // longer, multi-wave burst than anything else fires.
+      this.spawnCertificateBurst();
+      return;
+    }
+
+    const isBigMoment = this.activeCelebration.type === 'levelUp';
     this.spawnBurst(isBigMoment ? 140 : 60, isBigMoment);
     this.celebrationAutoTimer = setTimeout(() => this.dismissCelebration(), CELEBRATION_STEP_MS);
+  }
+
+  private spawnCertificateBurst(): void {
+    const waveCount = 3;
+    const waveGapMs = 400;
+    for (let i = 0; i < waveCount; i++) {
+      const timer = setTimeout(() => {
+        this.spawnBurst(i === 0 ? 200 : 100, i === 0, GOLD_PALETTE);
+      }, i * waveGapMs);
+      this.sequenceTimers.push(timer);
+    }
   }
 
   dismissCelebration(): void {
