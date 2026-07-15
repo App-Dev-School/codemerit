@@ -14,6 +14,11 @@
 
     <div class="subj-card" (click)="switchSubject(subject?.slug)">
 
+      <!-- Enrolled — pinned top-right of the whole card -->
+      @if (subject?.isSubscribed) {
+        <span class="subj-enrolled-badge">Enrolled</span>
+      }
+
       <!-- Icon area -->
       <div class="subj-card__icon-wrap" [style.background]="getSubjectColor(subject) + '18'">
         @if (subject?.image) {
@@ -34,12 +39,7 @@
 
       <!-- Info -->
       <div class="subj-card__info">
-        <div class="subj-card__title-row">
-          <h3 class="subj-card__title">{{ subject.title }}</h3>
-          @if (subject?.isSubscribed) {
-            <span class="subj-enrolled-badge">Enrolled</span>
-          }
-        </div>
+        <h3 class="subj-card__title">{{ subject.title }}</h3>
         <p class="subj-card__desc">{{ subject.description }}</p>
       </div>
 

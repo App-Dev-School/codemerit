@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, User } from '@core';
+import { UserService } from '@core/service/user.service';
 
 export interface OnboardStep {
   icon: string;
@@ -29,6 +30,8 @@ export class LearnerWelcomeCardComponent implements OnInit {
   authData!: User;
   isVisitor = true;
   currentStep = 0;
+  generatingAssessment = false;
+  assessmentError = '';
 
   readonly steps: OnboardStep[] = [
     {
@@ -48,22 +51,22 @@ export class LearnerWelcomeCardComponent implements OnInit {
     },
     {
       icon: 'assignment',
-      label: 'Assessment',
+      label: 'Initial Assessment',
       subtitle: 'Validate your skills',
-      ctaTitle: 'Complete your skill assessment',
-      ctaDesc: 'Take structured evaluations across your chosen domains to benchmark your expertise with industry standards.',
-      ctaBtn: 'Start Assessment',
+      ctaTitle: 'Generate your initial assessment',
+      ctaDesc: 'We’ll generate a baseline assessment from your chosen job role to benchmark your expertise with industry standards.',
+      ctaBtn: 'Generate Assessment',
       bgClass:     'bg-amber-50     dark:bg-amber-500/10',
       borderClass: 'border-amber-200 dark:border-amber-500/30',
       textClass:   'text-amber-600  dark:text-amber-400',
       pingClass:   'bg-amber-300/50 dark:bg-amber-500/25',
       ringClass:   'border-amber-500 shadow-amber-200 dark:shadow-amber-500/20',
       btnClass:    'bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-500/25',
-      route: '/interview-panel/beta999',
+      route: '',
     },
     {
       icon: 'videocam',
-      label: 'Live Interview',
+      label: 'Interviews',
       subtitle: 'Attend live session',
       ctaTitle: 'Join your live technical session',
       ctaDesc: 'Get matched with expert interviewers for a live technical assessment, real-time feedback, and scoring.',
@@ -78,7 +81,7 @@ export class LearnerWelcomeCardComponent implements OnInit {
     },
     {
       icon: 'workspace_premium',
-      label: 'Recognition',
+      label: 'Recognition & Certificates',
       subtitle: 'Earn your certificate',
       ctaTitle: 'Receive your verified certification',
       ctaDesc: 'Earn digital certificates and merit badges recognised by top employers and shared across your profile.',
@@ -96,6 +99,7 @@ export class LearnerWelcomeCardComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
@@ -121,6 +125,30 @@ export class LearnerWelcomeCardComponent implements OnInit {
   }
 
   handleCTA() {
+    if (this.currentStep === 1) {
+      this.generateInitialAssessment();
+      return;
+    }
     this.router.navigate([this.activeStep.route]);
+  }
+
+  generateInitialAssessment() {
+    if (this.generatingAssessment) return;
+    this.generatingAssessment = true;
+    this.assessmentError = '';
+    this.userService.generateInitialAssessment().subscribe({
+      next: (quiz: any) => {
+        this.generatingAssessment = false;
+        if (quiz?.slug) {
+          this.router.navigate(['/quiz/take', quiz.slug]);
+        } else {
+          this.assessmentError = 'Could not generate your assessment. Please try again.';
+        }
+      },
+      error: (error) => {
+        this.generatingAssessment = false;
+        this.assessmentError = error?.error?.message || 'Could not generate your assessment. Please try again.';
+      },
+    });
   }
 }

@@ -82,8 +82,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   // Consecutive-correct streak — drives the combo chip and escalates the
   // confetti theme (see celebrationTheme). Resets on any wrong answer/timeout.
   comboCount = 0;
-  showSpeedBonus = false;
-  speedBonusLabel = '';
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
   @ViewChild('celebs') celebrationOverlay?: CelebrationOverlayComponent;
@@ -223,6 +221,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       if (this.questionTimeLeft <= 0) {
         clearInterval(this.questionTimerInterval);
         this.registerAnswerOutcome(false);
+        // Guard against onSlidePrev/onSlideNext restarting this timer on an
+        // already-answered question (e.g. user navigates back then away
+        // again without interacting) — don't clobber the real timeTaken
+        // recorded when it was first answered.
+        if (question.timeTaken == null) {
+          question.timeTaken = this.computeTimeTaken(question);
+        }
         if (this.quizConfig.mode === 'Default') {
           this.onSlideNext();
         } else {
@@ -233,6 +238,15 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         }
       }
     }, 1000);
+  }
+
+  // Elapsed seconds on `question`, derived from the same per-second
+  // countdown the timer UI already runs on (questionTimeLeft), clamped to
+  // the question's own time budget rather than introducing a separate
+  // wall-clock measurement that could drift from what the user sees ticking.
+  private computeTimeTaken(question: QuizQuestion): number {
+    const allowed = question.timeAllowed || 30;
+    return Math.max(0, Math.min(allowed, allowed - this.questionTimeLeft));
   }
 
   optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
@@ -248,6 +262,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.onSelectionPhase = true;
     question.selectedOption = choice;
     question.hasAnswered = true;
+    question.timeTaken = this.computeTimeTaken(question);
 
     const isCorrect = question.options.some(
       (opt: any) => opt.id === question.selectedOption && opt.correct === true
@@ -270,9 +285,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     }
 
     this.registerAnswerOutcome(isCorrect);
-    if (isCorrect) {
+    // Particle burst is a deliberate "you got it right, pause and enjoy it"
+    // moment — only makes sense in Interactive mode, which pauses for
+    // feedback anyway. Default mode auto-advances in ~1.2-1.6s, too fast to
+    // register a burst as anything but visual noise.
+    if (isCorrect && this.quizConfig.mode === 'Interactive') {
       this.triggerCelebration($event, (question as any).marks);
-      this.showSpeedAppreciation(question);
     }
 
     if (this.quizConfig.mode === 'Interactive') {
@@ -346,7 +364,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
     } else {
       if (this.quizConfig.enableAudio) {
-        this.speech.speak("Well Done! You have completed the assessment. Submitting your results now.");
+        this.speech.speak("Thank you for taking this assessment.");
       }
       this.completeQuiz();
     }
@@ -554,24 +572,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.comboCount = isCorrect ? this.comboCount + 1 : 0;
   }
 
-  // A quick, distinct appreciation toast for answering well under the time
-  // limit — separate from the marks-based confetti burst, so speed itself
-  // feels rewarded, not just correctness.
-  private showSpeedAppreciation(question: QuizQuestion): void {
-    const allowed = question.timeAllowed || 0;
-    if (!allowed) return;
-    const remainingRatio = this.questionTimeLeft / allowed;
-
-    let label = '';
-    if (remainingRatio >= 0.7) label = '⚡ Lightning Fast!';
-    else if (remainingRatio >= 0.4) label = '🚀 Quick!';
-    if (!label) return;
-
-    this.speedBonusLabel = label;
-    this.showSpeedBonus = true;
-    setTimeout(() => { this.showSpeedBonus = false; }, 1400);
-  }
-
   getQuestionLevel(level: number): string {
     switch (level) {
       case 1: return 'Easy';
@@ -583,9 +583,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   getLevelClass(level: number): string {
     switch (level) {
-      case 1: return 'col-indigo';
-      case 2: return 'col-purple';
-      case 3: return 'bg-brown';
+      // Named for what they mean, not a color, and deliberately not
+      // "bg-brown" — that collided with a global .bg-brown utility
+      // (src/assets/scss/ui/_card.scss) which set black text, unreadable
+      // against a brown pill.
+      case 1: return 'level-easy';
+      case 2: return 'level-medium';
+      case 3: return 'level-hard';
       default: return '';
     }
   }

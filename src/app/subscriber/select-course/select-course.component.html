@@ -1,65 +1,10 @@
-@if (showContent) {
-
-  <!-- ── Fullscreen overlay ─────────────────────────────────────────── -->
-  <div class="select-overlay" [@overlayFade] (click)="onCancel()">
-
-    <!-- Loading state -->
-    @if (isLoading) {
-      <div class="select-loading" (click)="$event.stopPropagation()">
-        <img src="assets/images/icons/loading.gif" class="w-12 mx-auto">
-        <p class="mt-3 text-sm font-medium text-slate-300">Loading Job Roles…</p>
-      </div>
-    }
-
-    <!-- Content panel -->
-    @if (!isLoading) {
-      <div class="select-panel" [@panelSlide] (click)="$event.stopPropagation()">
-
-        <!-- Panel header -->
-        <div class="select-panel__header">
-          <div>
-            <h2 class="select-panel__title">Choose your Job Role</h2>
-            <p class="select-panel__subtitle">
-              Select a role to personalise your learning path and unlock relevant assessments.
-            </p>
-          </div>
-
-          <div class="select-panel__controls">
-            <!-- Search -->
-            <div class="select-search">
-              <svg class="select-search__icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <input class="select-search__input"
-                     type="text"
-                     placeholder="Search job roles…"
-                     [(ngModel)]="searchQuery"
-                     (click)="$event.stopPropagation()">
-              @if (searchQuery) {
-                <button class="select-search__clear" (click)="searchQuery = ''; $event.stopPropagation()">
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-              }
-            </div>
-
-            <!-- Close -->
-            <button class="select-close" (click)="onCancel()" aria-label="Close">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Course picker -->
-        <div class="select-panel__body">
-          <app-course-picker
-            [minimal]="true"
-            [currentCourses]="userJobRoles"
-            [searchQuery]="searchQuery"
-            [actionMode]="actionMode"
-            (subjectSelected)="onCourseChange($event)">
-          </app-course-picker>
-        </div>
-
-      </div>
-    }
-  </div>
-
-}
+<app-course-picker
+  [open]="open"
+  [minimal]="true"
+  [currentCourses]="userJobRoles"
+  [actionMode]="actionMode"
+  title="Choose your Job Role"
+  subtitle="Select a role to personalise your learning path and unlock relevant assessments."
+  (subjectSelected)="onCourseChange($event)"
+  (closed)="onCancel()">
+</app-course-picker>

@@ -8,11 +8,6 @@
                             [maxParticles]="0" [controlsEnabled]="false" [autoDisableMs]="0">
   </app-celebration-overlay>
 
-  <!-- Speed appreciation toast — separate from the confetti, rewards fast answers specifically -->
-  @if (showSpeedBonus) {
-    <div class="tq-speed-toast" [@popPulse]="speedBonusLabel">{{ speedBonusLabel }}</div>
-  }
-
   <!-- ═══ LOADING ══════════════════════════════════════════════════════════ -->
   @if (loading) {
     <div class="tq-loading">

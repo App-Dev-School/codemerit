@@ -144,23 +144,36 @@
           </div>
           <h3 class="text-sm font-bold text-cm-text-primary leading-snug">{{ activeStep.ctaTitle }}</h3>
           <p class="text-xs text-cm-text-secondary mt-1 leading-relaxed">{{ activeStep.ctaDesc }}</p>
+          @if (currentStep === 1 && assessmentError) {
+            <p class="text-xs text-red-600 dark:text-red-400 mt-1.5">{{ assessmentError }}</p>
+          }
         </div>
 
         <!-- CTA (desktop) -->
-        <button (click)="handleCTA()"
+        <button (click)="handleCTA()" [disabled]="currentStep === 1 && generatingAssessment"
                 [class]="'hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white '
-                         + 'transition-colors duration-150 flex-shrink-0 ' + activeStep.btnClass">
-          {{ activeStep.ctaBtn }}
-          <i class="material-icons-outlined select-none" style="font-size:14px">arrow_forward</i>
+                         + 'transition-colors duration-150 flex-shrink-0 disabled:opacity-60 disabled:cursor-not-allowed ' + activeStep.btnClass">
+          @if (currentStep === 1 && generatingAssessment) {
+            <i class="material-icons-outlined select-none animate-spin" style="font-size:14px">progress_activity</i>
+            Generating…
+          } @else {
+            {{ activeStep.ctaBtn }}
+            <i class="material-icons-outlined select-none" style="font-size:14px">arrow_forward</i>
+          }
         </button>
       </div>
 
       <!-- CTA (mobile) -->
-      <button (click)="handleCTA()"
+      <button (click)="handleCTA()" [disabled]="currentStep === 1 && generatingAssessment"
               [class]="'sm:hidden mt-3 w-full flex items-center justify-center gap-1.5 px-4 py-2.5 '
-                       + 'rounded-lg text-xs font-bold text-white transition-colors duration-150 ' + activeStep.btnClass">
-        {{ activeStep.ctaBtn }}
-        <i class="material-icons-outlined select-none" style="font-size:14px">arrow_forward</i>
+                       + 'rounded-lg text-xs font-bold text-white transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed ' + activeStep.btnClass">
+        @if (currentStep === 1 && generatingAssessment) {
+          <i class="material-icons-outlined select-none animate-spin" style="font-size:14px">progress_activity</i>
+          Generating…
+        } @else {
+          {{ activeStep.ctaBtn }}
+          <i class="material-icons-outlined select-none" style="font-size:14px">arrow_forward</i>
+        }
       </button>
     </div>
   </div>

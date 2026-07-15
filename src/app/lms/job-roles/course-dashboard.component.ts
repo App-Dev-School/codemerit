@@ -11,7 +11,6 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation } from '@shared/animations';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
-import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SetDesignationBottomSheetComponent } from './confirm-course-enroll.component';
 import { CertificateModel } from '@shared/components/certificate/certificate.model';
 import { certificateModels } from '../../pages/welcome/welcome.component';
@@ -304,40 +303,6 @@ export class CourseDashboardComponent implements OnInit {
 
   viewProfile() {
     this.router.navigate(['/users/profile']);
-  }
-
-  openCourseLauncher(action: 'default' | 'custom', data?: any) {
-    console.log("CourseDash openDialog", action, data);
-    let varDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      varDirection = 'rtl';
-    } else {
-      varDirection = 'ltr';
-    }
-    const dialogRef = this.dialog.open(CoursePickerComponent, {
-      width: '100vw',
-      height: '100vh',
-      maxWidth: '100vw',
-      panelClass: 'full-screen-dialog',
-      data: { topicItem: data, action },
-      direction: varDirection,
-      autoFocus: false,
-      disableClose: false
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log("CoursePicker close result", result);
-        const action = 'add';
-        this.onCourseChange(result);
-        // this.showNotification(
-        //   action === 'add' ? 'snackbar-success' : 'black',
-        //   `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
-        //   'bottom',
-        //   'center'
-        // );
-      }
-    });
   }
 
   //implement for subjects

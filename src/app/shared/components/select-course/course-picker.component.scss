@@ -1,3 +1,222 @@
+/* ── Fullscreen overlay ────────────────────────────────── */
+
+.cp-overlay {
+  position: fixed;
+  inset: 0;
+  /* Must clear the app's sidebar overlay (z-index: 99999 in _leftsidebaroverlay.scss) */
+  z-index: 100000;
+  background: rgba(2, 6, 23, 0.6);
+  overflow: hidden;
+
+  /* Plain CSS transition (not Angular's [@trigger] API — see course-picker.component.ts).
+     Exit timing lives on the base selector, enter timing on --shown — the class being
+     toggled TO governs which duration/easing applies to that transition (CSS transitions
+     spec), so entry and exit can run at different speeds even sharing one property. */
+  opacity: 0;
+  transition: opacity 260ms ease;                 /* exit */
+  &--shown {
+    opacity: 1;
+    transition: opacity 320ms ease;                /* enter */
+  }
+}
+
+/* Fullscreen panel — slides in/out from the left, covers the whole viewport */
+.cp-panel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+
+  transform: translateX(-100%);
+  /* Exit — must stay in sync with CoursePickerComponent.EXIT_MS (340ms) so the
+     component doesn't tear the DOM down before this finishes playing. */
+  transition: transform 340ms cubic-bezier(0.6, 0, 0.9, 0.1);
+  &--shown {
+    transform: translateX(0);
+    /* Enter — slower and gentler than the exit for a deliberate, smooth glide in. */
+    transition: transform 460ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  :host-context(.dark) & {
+    background: #0f172a;
+  }
+}
+
+
+/* ── Header ─────────────────────────────────────────── */
+
+.cp-panel__header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  padding: 1.75rem 4.5rem 1.5rem 2rem; /* right padding clears the pinned close button */
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+
+  :host-context(.dark) & {
+    border-color: #1e293b;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  }
+}
+
+.cp-panel__titlewrap {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.cp-panel__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  margin: 0 0 3px;
+  :host-context(.dark) & { color: #f8fafc; }
+}
+
+.cp-panel__subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  :host-context(.dark) & { color: #94a3b8; }
+}
+
+/* Search — inline next to the title on desktop, its own full-width row on mobile */
+.cp-panel__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 1 320px;
+  width: 320px;
+  align-self: center;
+}
+
+.cp-panel__search-icon {
+  position: absolute;
+  left: 12px;
+  width: 17px;
+  height: 17px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.cp-panel__search-input {
+  width: 100%;
+  padding: 0.65rem 2.5rem 0.65rem 2.5rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  :host-context(.dark) & {
+    border-color: #334155;
+    background: #1e293b;
+    color: #f1f5f9;
+    &::placeholder { color: #475569; }
+  }
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+  }
+
+  &::placeholder { color: #94a3b8; }
+}
+
+.cp-panel__search-clear {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 4px;
+
+  &:hover { color: #0f172a; :host-context(.dark) & { color: #f1f5f9; } }
+}
+
+/* Close — absolutely pinned so title/subtitle length and search never push it around */
+.cp-panel__close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+
+  :host-context(.dark) & { border-color: #334155; color: #94a3b8; background: #0f172a; }
+
+  &:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    :host-context(.dark) & { background: #1e293b; color: #f1f5f9; }
+  }
+}
+
+.cp-panel__body {
+  flex: 1;
+  padding: 1.75rem 2rem 2rem;
+  background: #f8fafc;
+  :host-context(.dark) & { background: #020617; }
+}
+
+@media (max-width: 640px) {
+  .cp-panel__header {
+    flex-direction: column;
+    flex-wrap: nowrap; /* column + wrap would push the search row into a second side-by-side column */
+    align-items: stretch;
+    padding: 1.25rem 1.25rem 1.1rem;
+    gap: 0.9rem;
+  }
+  /* Only the title row needs to dodge the pinned close button — the search
+     row below it should stay edge-to-edge with the header's own padding. */
+  .cp-panel__titlewrap { flex-basis: auto; min-width: 0; padding-right: 2.75rem; }
+  .cp-panel__body { padding: 1.25rem; }
+
+  .cp-panel__search {
+    flex-basis: 100%;
+    width: 100%;
+    align-self: stretch;
+  }
+  .cp-panel__search-input {
+    padding: 0.85rem 2.75rem 0.85rem 2.75rem;
+    font-size: 16px; /* prevents iOS auto-zoom on focus */
+    border-radius: 12px;
+  }
+  .cp-panel__search-icon { left: 14px; }
+  .cp-panel__search-clear { right: 10px; }
+
+  .cp-panel__close {
+    top: 1rem;
+    right: 1rem;
+    width: 34px;
+    height: 34px;
+  }
+}
+
+
 /* ── Loading ────────────────────────────────────────── */
 
 .cp-loading {
@@ -28,49 +247,48 @@
 }
 
 
-/* ── Dialog wrapper ─────────────────────────────────── */
-
-.cp-dialog-wrap {
-  padding: 1rem;
-}
-
-
-/* ── Job role grid ──────────────────────────────────── */
+/* ── Job role grid — compact 2-up from phone up ──────── */
 
 .cp-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 
-  @media (min-width: 640px)  { grid-template-columns: repeat(2, 1fr); }
-  @media (min-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
-  @media (min-width: 1280px) { grid-template-columns: repeat(4, 1fr); }
+  @media (min-width: 768px)  { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media (min-width: 1024px) { grid-template-columns: repeat(4, 1fr); }
+  @media (min-width: 1400px) { grid-template-columns: repeat(5, 1fr); }
 }
 
 
-/* ── Card ───────────────────────────────────────────── */
+/* ── Card — sharp, shadowed, compact ─────────────────── */
 
 .cp-card {
-  border-radius: 14px;
-  overflow: hidden;
+  position: relative;
+  border-radius: 10px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
+  padding: 0.9rem;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.18s ease, transform 0.18s ease;
-  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  gap: 0.55rem;
+  box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 3px 8px rgba(15,23,42,.06);
+  transition: box-shadow 0.16s ease, transform 0.16s ease, border-color 0.16s ease;
 
   :host-context(.dark) & {
     background: #0f172a;
     border-color: #1e293b;
-    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 3px 8px rgba(0,0,0,.25);
   }
 
   &:hover {
-    box-shadow: 0 8px 24px rgba(99,102,241,.12), 0 2px 8px rgba(0,0,0,.08);
+    box-shadow: 0 2px 4px rgba(15,23,42,.06), 0 10px 24px rgba(15,23,42,.10);
     transform: translateY(-2px);
+    border-color: #c7d2fe;
+
     :host-context(.dark) & {
-      box-shadow: 0 8px 24px rgba(99,102,241,.18), 0 2px 8px rgba(0,0,0,.3);
+      box-shadow: 0 2px 4px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.35);
+      border-color: #312e81;
     }
   }
 
@@ -80,77 +298,52 @@
   }
 }
 
-/* Accent top bar — per accent color */
-.cp-card__bar {
-  height: 3px;
-  flex-shrink: 0;
-
-  &--indigo  { background: linear-gradient(90deg, #6366f1, #818cf8); }
-  &--violet  { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
-  &--emerald { background: linear-gradient(90deg, #059669, #34d399); }
-  &--sky     { background: linear-gradient(90deg, #0284c7, #38bdf8); }
-  &--rose    { background: linear-gradient(90deg, #e11d48, #fb7185); }
-  &--amber   { background: linear-gradient(90deg, #d97706, #fbbf24); }
-  &--teal    { background: linear-gradient(90deg, #0d9488, #2dd4bf); }
-}
-
-.cp-card__body {
-  flex: 1;
-  padding: 1rem 1rem 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-
-/* ── Role header ────────────────────────────────────── */
-
-.cp-role-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-}
-
-.cp-role-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-top: 5px;
-  flex-shrink: 0;
-
-  &--indigo  { background: #6366f1; box-shadow: 0 0 6px rgba(99,102,241,.5); }
-  &--violet  { background: #7c3aed; box-shadow: 0 0 6px rgba(124,58,237,.5); }
-  &--emerald { background: #059669; box-shadow: 0 0 6px rgba(5,150,105,.5); }
-  &--sky     { background: #0284c7; box-shadow: 0 0 6px rgba(2,132,199,.5); }
-  &--rose    { background: #e11d48; box-shadow: 0 0 6px rgba(225,29,72,.5); }
-  &--amber   { background: #d97706; box-shadow: 0 0 6px rgba(217,119,6,.5); }
-  &--teal    { background: #0d9488; box-shadow: 0 0 6px rgba(13,148,136,.5); }
-}
-
-.cp-role-head__text { flex: 1; min-width: 0; }
-
-.cp-enrolled-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
+/* Pinned top-right, clear of the icon/title below it */
+.cp-enrolled-badge {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  font-size: 9px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: #e0e7ff;
+  letter-spacing: 0.1em;
   color: #3730a3;
-  margin-bottom: 4px;
-  :host-context(.dark) & { background: rgba(99,102,241,.15); color: #a5b4fc; }
+  background: #e0e7ff;
+  padding: 3px 9px;
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  z-index: 1;
+
+  :host-context(.dark) & { background: rgba(99,102,241,.18); color: #a5b4fc; }
 }
 
-.cp-enrolled-chip__icon {
-  font-size: 11px !important;
-  width: 11px !important;
-  height: 11px !important;
-  line-height: 11px !important;
+
+/* ── Icon ───────────────────────────────────────────── */
+
+.cp-card__icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
+
+.cp-card__icon-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.cp-card__icon-initials {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+
+/* ── Info ───────────────────────────────────────────── */
 
 .cp-role-title {
   font-size: 14px;
@@ -158,12 +351,9 @@
   line-height: 1.35;
   letter-spacing: -0.01em;
   color: #0f172a;
-  margin: 0;
+  margin: 0 0 3px;
   :host-context(.dark) & { color: #f1f5f9; }
 }
-
-
-/* ── Description ────────────────────────────────────── */
 
 .cp-description {
   font-size: 12px;
@@ -171,192 +361,69 @@
   color: #64748b;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   :host-context(.dark) & { color: #94a3b8; }
 }
 
-
-/* ── Subject chips ──────────────────────────────────── */
-
-.cp-subjects {
+.cp-meta {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.cp-subjects__label {
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #94a3b8;
-
-  &--rec { color: #10b981; :host-context(.dark) & { color: #34d399; } }
-  &--opt { color: #f59e0b; :host-context(.dark) & { color: #fbbf24; } }
-}
-
-.cp-subject-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.cp-subject-chip {
-  display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-
-  &--core, &--mandatory {
-    background: #ede9fe;
-    color: #5b21b6;
-    border: 1px solid #ddd6fe;
-    :host-context(.dark) & {
-      background: rgba(99,102,241,.12);
-      color: #c4b5fd;
-      border-color: rgba(99,102,241,.25);
-    }
-  }
-
-  &--recommended {
-    background: #d1fae5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
-    :host-context(.dark) & {
-      background: rgba(16,185,129,.12);
-      color: #6ee7b7;
-      border-color: rgba(16,185,129,.25);
-    }
-  }
-
-  &--optional {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
-    :host-context(.dark) & {
-      background: rgba(245,158,11,.1);
-      color: #fcd34d;
-      border-color: rgba(245,158,11,.2);
-    }
-  }
+  font-size: 12px;
+  font-weight: 400;
+  color: #94a3b8;
+  margin: 5px 0 0;
 }
 
-.cp-subject-chip__img {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  object-fit: cover;
+.cp-meta__icon {
+  width: 13px;
+  height: 13px;
   flex-shrink: 0;
 }
 
 
-/* ── Progress bars ──────────────────────────────────── */
+/* ── Compact stat row (enrolled) ─────────────────────── */
 
-.cp-progress-group {
+.cp-stat-row {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 4px;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
   border-top: 1px solid #e2e8f0;
   :host-context(.dark) & { border-color: #1e293b; }
 }
 
-.cp-progress__row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.cp-progress__label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #94a3b8;
-}
-
-.cp-progress__val {
+.cp-stat {
   font-size: 11px;
-  font-weight: 700;
-  color: #22c55e;
-  font-variant-numeric: tabular-nums;
-}
+  font-weight: 400;
+  color: #94a3b8;
 
-.cp-progress__track {
-  height: 5px;
-  border-radius: 999px;
-  background: #e2e8f0;
-  overflow: hidden;
-  :host-context(.dark) & { background: #1e293b; }
-}
-
-.cp-progress__fill {
-  height: 100%;
-  border-radius: 999px;
-  transition: width 0.6s ease;
-
-  &--score    { background: linear-gradient(90deg, #6366f1, #818cf8); }
-  &--coverage { background: linear-gradient(90deg, #22c55e, #34d399); }
+  b {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0f172a;
+    font-variant-numeric: tabular-nums;
+    :host-context(.dark) & { color: #f1f5f9; }
+  }
 }
 
 
-/* ── Card footer ────────────────────────────────────── */
+/* ── Action ─────────────────────────────────────────── */
 
-.cp-card__footer {
-  padding: 0 1rem 1rem;
-}
-
-.cp-action-btn {
+.cp-card__action {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 0.55rem 1rem;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1.5px solid #6366f1;
-  background: transparent;
-  color: #6366f1;
-  transition: background 0.15s ease, color 0.15s ease;
-
-  :host-context(.dark) & {
-    border-color: #818cf8;
-    color: #818cf8;
-  }
-
-  &:hover {
-    background: #6366f1;
-    color: #ffffff;
-    :host-context(.dark) & { background: #6366f1; color: #ffffff; }
-  }
-
-  &--enrolled {
-    background: #6366f1;
-    color: #ffffff;
-    border-color: #6366f1;
-
-    &:hover {
-      background: #4f46e5;
-      border-color: #4f46e5;
-    }
-  }
+  gap: 3px;
+  align-self: flex-end;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: -2px;
 }
 
-.cp-action-btn__icon {
-  font-size: 16px !important;
-  width: 16px !important;
-  height: 16px !important;
-  line-height: 16px !important;
+.cp-card__action-icon {
+  width: 13px;
+  height: 13px;
 }
 
 
@@ -380,4 +447,28 @@
 .cp-empty__text {
   font-size: 14px;
   color: #94a3b8;
+}
+
+
+/* ── Compact sizing on phones ─────────────────────────── */
+
+@media (max-width: 640px) {
+  .cp-card { padding: 0.7rem; gap: 0.45rem; border-radius: 9px; }
+
+  .cp-card__icon-wrap { width: 36px; height: 36px; border-radius: 9px; }
+  .cp-card__icon-img { width: 20px; height: 20px; }
+  .cp-card__icon-initials { font-size: 12px; }
+
+  .cp-role-title { font-size: 13px; }
+  .cp-description { font-size: 11.5px; -webkit-line-clamp: 2; }
+  .cp-meta { font-size: 11px; }
+
+  .cp-enrolled-badge { top: 0.55rem; right: 0.55rem; font-size: 8px; padding: 2px 7px; }
+
+  .cp-stat-row { gap: 0.5rem; padding-top: 0.4rem; }
+  .cp-stat { font-size: 10px; }
+  .cp-stat b { font-size: 11.5px; }
+
+  .cp-card__action { font-size: 11px; }
+  .cp-card__action-icon { width: 12px; height: 12px; }
 }

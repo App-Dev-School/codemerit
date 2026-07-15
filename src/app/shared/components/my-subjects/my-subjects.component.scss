@@ -6,6 +6,15 @@
   gap: 0.875rem;
 }
 
+/* Two-up grid on phones — auto-fill's 200px minimum collapses to a single
+   column on typical phone widths, which wastes horizontal space. */
+@media (max-width: 640px) {
+  .subj-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+  }
+}
+
 
 /* ── Subject card ───────────────────────────────────── */
 
@@ -98,36 +107,33 @@
 
 .subj-card__info { flex: 1; }
 
-.subj-card__title-row {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-
 .subj-card__title {
   font-size: 14px;
   font-weight: 700;
   color: #0f172a;
-  margin: 0;
+  margin: 0 0 4px;
   line-height: 1.3;
   :host-context(.dark) & { color: #f1f5f9; }
 }
 
+/* Pinned top-right of the card, clear of the icon/title below it */
 .subj-enrolled-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #15803d;
   background: #dcfce7;
-  padding: 1px 6px;
+  padding: 4px 10px;
   border-radius: 999px;
-  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  z-index: 1;
 
   :host-context(.dark) & {
-    background: rgba(34,197,94,.12);
+    background: rgba(34,197,94,.16);
     color: #4ade80;
   }
 }
@@ -229,4 +235,38 @@
   font-size: 14px;
   color: #94a3b8;
   margin: 0;
+}
+
+
+/* ── Two-up card sizing on phones ───────────────────── */
+
+@media (max-width: 640px) {
+  .subj-card {
+    padding: 0.75rem;
+    gap: 0.5rem;
+    border-radius: 12px;
+  }
+
+  .subj-card__icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .subj-card__icon-img { width: 24px; height: 24px; }
+  .subj-card__icon-initials { font-size: 13px; }
+
+  .subj-card__title { font-size: 12.5px; line-height: 1.25; }
+
+  .subj-enrolled-badge { top: 0.6rem; right: 0.6rem; font-size: 8px; padding: 3px 8px; }
+
+  .subj-card__desc { font-size: 11px; }
+
+  .subj-card__progress { padding-top: 0.4rem; }
+  .subj-progress-label { font-size: 8px; }
+  .subj-progress-val { font-size: 10px; }
+
+  /* Hover-reveal affordance is meaningless on touch and the space is worth
+     reclaiming at this card size. */
+  .subj-card__arrow { display: none; }
 }

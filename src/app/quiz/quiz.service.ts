@@ -324,17 +324,6 @@ getSubjectsTopics(): Observable<any> {
 
     const unanswered = total - correct - wrong;
     const score = ((correct / total) * 100).toFixed(2);
-    let analytics: QuizResult = {
-      quizId,
-      userId: this.authService.currentUserValue.id,
-      total,
-      correct,
-      wrong,
-      unanswered,
-      timeSpent: 0,
-      score: Number(score),
-      dateAttempted: new Date().toISOString()
-    };
 
     const attempts = questions.map(q => {
       const correctOption = q.options.find(option => option.correct === true);
@@ -344,11 +333,26 @@ getSubjectsTopics(): Observable<any> {
         answer: correctOption ? correctOption.option : null,
         isCorrect: (q.selectedOption && q.selectedOption === correctOption.id) ?? false,
         isSkipped: q.isSkipped || false,
-        timeTaken: q.timeAllowed || 0,
+        // Actual seconds spent (set by take-quiz's startQuestionTimer/
+        // optionSelected) — was previously q.timeAllowed, the per-question
+        // time *budget*, not what the user actually took.
+        timeTaken: q.timeTaken ?? 0,
         hintUsed: q.hintUsed || false,
         answerSeen: q.answerSeen || false,
       };
     });
+
+    let analytics: QuizResult = {
+      quizId,
+      userId: this.authService.currentUserValue.id,
+      total,
+      correct,
+      wrong,
+      unanswered,
+      timeSpent: attempts.reduce((sum, a) => sum + a.timeTaken, 0),
+      score: Number(score),
+      dateAttempted: new Date().toISOString()
+    };
     analytics['attempts'] = attempts;
 
     console.log('Quiz Result => ', analytics);

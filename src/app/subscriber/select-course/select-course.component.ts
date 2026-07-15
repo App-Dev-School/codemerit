@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import {
   ActivatedRoute,
@@ -9,7 +8,6 @@ import {
   Router,
 } from '@angular/router';
 import { AuthService } from '@core';
-import { animate, style, transition, trigger } from '@angular/animations';
 import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SetDesignationBottomSheetComponent } from 'src/app/lms/job-roles/confirm-course-enroll.component';
 import { Subscription } from 'rxjs';
@@ -18,37 +16,17 @@ import { Subscription } from 'rxjs';
   selector: 'app-select-course',
   templateUrl: './select-course.component.html',
   styleUrls: ['./select-course.component.scss'],
-  animations: [
-    trigger('overlayFade', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('220ms ease', style({ opacity: 1 })),
-      ]),
-      transition(':leave', [
-        animate('200ms ease', style({ opacity: 0 })),
-      ]),
-    ]),
-    trigger('panelSlide', [
-      transition(':enter', [
-        style({ transform: 'translateX(100%)' }),
-        animate('300ms cubic-bezier(0.22,1,0.36,1)', style({ transform: 'translateX(0)' })),
-      ]),
-      transition(':leave', [
-        animate('250ms cubic-bezier(0.4,0,1,1)', style({ transform: 'translateX(100%)' })),
-      ]),
-    ]),
-  ],
   imports: [
-    FormsModule,
     CoursePickerComponent,
   ],
 })
 export class SelectCourseComponent implements OnInit, OnDestroy {
   @Input() actionMode: 'view' | 'enroll' | 'skill-rating' = 'view';
-  showContent = true;
+
+  /** Drives the picker's own slide-in/out — false just before we navigate away
+      so its :leave animation plays instead of the route swap cutting it off. */
+  open = true;
   subject = '';
-  searchQuery = '';
-  isLoading = false;
   userJobRoles: number[] = [];
   private subscriptions = new Subscription();
 
@@ -75,9 +53,9 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationStart) {
           const stayingHere = event.url.startsWith('/select-job-role');
-          if (!stayingHere) this.showContent = false;
+          if (!stayingHere) this.open = false;
         } else if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
-          if (event.url.startsWith('/select-job-role')) this.showContent = true;
+          if (event.url.startsWith('/select-job-role')) this.open = true;
         }
       }),
     );
@@ -99,8 +77,9 @@ export class SelectCourseComponent implements OnInit, OnDestroy {
       : [];
   }
 
-  onCourseChange(subject: string) {
-    this.subject = subject ?? '';
+  onCourseChange(job: any) {
+    this.subject = job?.slug ?? '';
+    if (!this.subject) return;
     if (this.actionMode === 'skill-rating') {
       this.router.navigate(['/assessment/skill-rating', this.subject]);
     } else {
