@@ -25,10 +25,10 @@
     <div class="p-5 space-y-3">
       @if (nextCertificationTrack) {
         <p class="text-xs text-cm-text-secondary leading-relaxed">
-          You're <span class="font-bold text-cm-text-primary">{{ nextCertificationTrack.progressPercent }}%</span>
+          You're <span class=" text-cm-text-primary">{{ nextCertificationTrack.progressPercent }}%</span>
           of the way to <span class="font-bold text-cm-text-primary">{{ nextCertificationTrack.title }}</span>
           @if (nextSubjectTrack) {
-            — continue with <span class="font-bold text-cm-text-primary">{{ nextSubjectTrack.title }}</span>.
+            — continue with <span class="text-cm-text-primary">{{ nextSubjectTrack.title }}</span>.
           } @else {
             .
           }

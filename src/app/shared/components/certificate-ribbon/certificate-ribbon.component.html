@@ -1,23 +1,36 @@
-<div class="cr-overlay" (click)="onDismiss()">
-  <div class="cr-card" [@bounceIn] (click)="$event.stopPropagation()">
-    <button type="button" class="cr-card__close" (click)="onDismiss()" aria-label="Close">&times;</button>
+@if (variant === 'modal') {
+  <div class="cr-overlay" (click)="onDismiss()">
+    <div class="cr-card" [@bounceIn] (click)="$event.stopPropagation()">
+      <button type="button" class="cr-card__close" (click)="onDismiss()" aria-label="Close">&times;</button>
 
-    <div class="cr-card__ribbon">🎖️</div>
-    <span class="cr-card__eyebrow">Certified</span>
-    <h3 class="cr-card__title">{{ trackTitle || 'Certification' }}</h3>
+      <div class="cr-card__ribbon">🎖️</div>
+      <span class="cr-card__eyebrow">Certified</span>
+      <h3 class="cr-card__title">{{ trackTitle || 'Certification' }}</h3>
 
-    <div class="cr-card__details">
-      <div class="cr-card__row">
-        <span class="cr-card__label">Certificate No.</span>
-        <span class="cr-card__value">{{ certificate?.certificateNumber }}</span>
+      <div class="cr-card__details">
+        <div class="cr-card__row">
+          <span class="cr-card__label">Certificate No.</span>
+          <span class="cr-card__value">{{ certificate?.certificateNumber }}</span>
+        </div>
+        <div class="cr-card__row">
+          <span class="cr-card__label">Issued</span>
+          <span class="cr-card__value">{{ certificate?.issuedAt | date:'MMM d, y' }}</span>
+        </div>
       </div>
-      <div class="cr-card__row">
-        <span class="cr-card__label">Issued</span>
-        <span class="cr-card__value">{{ certificate?.issuedAt | date:'MMM d, y' }}</span>
-      </div>
+
+      <!-- pdfUrl is always null today — no download link, just an honest note. -->
+      <p class="cr-card__note">PDF download will be available soon.</p>
     </div>
-
-    <!-- pdfUrl is always null today — no download link, just an honest note. -->
-    <p class="cr-card__note">PDF download will be available soon.</p>
   </div>
-</div>
+} @else {
+  <div class="cr-inline">
+    <div class="cr-inline__ribbon">🎖️</div>
+    <div class="cr-inline__body">
+      <span class="cr-inline__eyebrow">Certified</span>
+      <h4 class="cr-inline__title">{{ trackTitle || 'Certification' }}</h4>
+      <p class="cr-inline__meta">
+        {{ certificate?.certificateNumber }} · Issued {{ certificate?.issuedAt | date:'MMM d, y' }}
+      </p>
+    </div>
+  </div>
+}

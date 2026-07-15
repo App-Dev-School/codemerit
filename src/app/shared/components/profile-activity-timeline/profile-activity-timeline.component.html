@@ -1,0 +1,23 @@
+@if (activities.length) {
+  <div class="divide-y divide-cm-border">
+    @for (activity of activities; track activity.id) {
+      <div class="flex items-start gap-3 py-3">
+        <span class="w-9 h-9 rounded-xl bg-cm-surface-raised flex items-center justify-center text-base shrink-0">
+          {{ iconFor(activity) }}
+        </span>
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-bold text-cm-text-primary">{{ activity.title }}</p>
+          <p class="text-xs text-cm-text-secondary mt-0.5">{{ activity.message }}</p>
+        </div>
+        <span class="text-[10px] text-cm-text-muted shrink-0 whitespace-nowrap">
+          {{ activity.createdAt | date:'MMM d, h:mm a' }}
+        </span>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="py-8 text-center">
+    <span class="text-2xl block mb-2">🔔</span>
+    <p class="text-xs text-cm-text-muted">No activity yet — take a quiz to get started.</p>
+  </div>
+}

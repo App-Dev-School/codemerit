@@ -122,11 +122,11 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     if (this.userName) {
       if (navigator.onLine) {
         this.authService.getFullProfile(this.userName, this.authData.token).subscribe(
-          (data: any) => {
+          (data) => {
             console.log("NgViewUser Dummy API", data);
             this.loading = false;
-            if (!data.error) {
-              this.userDetail = data.data;
+            if (data) {
+              this.userDetail = data;
               this.authForm.patchValue({
                 firstName: this.userDetail.firstName,
                 lastName: this.userDetail.lastName,
@@ -135,16 +135,11 @@ export class CreateUserComponent implements OnInit, OnDestroy {
                 city: this.userDetail.city,
                 country: this.userDetail.country,
                 designation: this.userDetail.designation,
-                linkedinUrl: this.userDetail.profile.linkedinUrl
+                linkedinUrl: this.userDetail.profile?.linkedinUrl
               });
               console.log("NgEditUser userDetail", this.userDetail);
-              if (this.userDetail == null || this.userDetail == undefined) {
-                // this.noDataView = true;
-                //this authService.redirectToErrorPage();
-              }
             } else {
               //this.noDataView = true;
-              this.loading = false;
               console.log("NgEditUser Dummy API Failure", data);
             }
           },

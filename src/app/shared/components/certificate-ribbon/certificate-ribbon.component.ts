@@ -12,6 +12,9 @@ import { bounceInAnimation } from '@shared/animations';
   animations: [bounceInAnimation],
 })
 export class CertificateRibbonComponent {
+  // 'modal' = original fixed fullscreen overlay (dashboard "View Certificate"
+  // click). 'card' = inline, for a list/grid of certificates (profile page).
+  @Input() variant: 'modal' | 'card' = 'modal';
   @Input() certificate!: MyCertificate;
   @Input() trackTitle = '';
   @Output() dismiss = new EventEmitter<void>();

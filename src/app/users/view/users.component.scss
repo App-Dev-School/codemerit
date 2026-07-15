@@ -35,3 +35,16 @@
 .skill-card {
   animation: cardFadeUp 0.45s ease-out both;
 }
+
+// ── Scrollable tab strip, no visible scrollbar ───────────────────────────────
+// Still fully scrollable via touch swipe / trackpad — just no native scrollbar
+// track, which on mobile/tablet was rendering as a visible bar that collided
+// with the content immediately below it.
+.tab-strip-scroll {
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // old Edge/IE
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari/new Edge
+  }
+}
