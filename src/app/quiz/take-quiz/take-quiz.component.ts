@@ -79,9 +79,29 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   scheduledAutoNext: any;
   private celebrationWaveTimers: any[] = [];
 
+  // Floating "+N" that rises off the tapped option on a correct answer.
+  pointPops: { id: number; x: number; y: number; text: string }[] = [];
+  private pointPopSeq = 0;
+  private pointPopTimers: any[] = [];
+
   // Consecutive-correct streak — drives the combo chip and escalates the
   // confetti theme (see celebrationTheme). Resets on any wrong answer/timeout.
   comboCount = 0;
+
+  // One entry per resolved question (correct/wrong/timeout), oldest first —
+  // backs the mid-quiz session summary strip (every SESSION_SUMMARY_INTERVAL
+  // questions) without needing separate running counters that could drift.
+  private answerLog: boolean[] = [];
+  private readonly SESSION_SUMMARY_INTERVAL = 5;
+  private sessionSummaryTimer: any;
+  sessionSummary: { show: boolean; correct: number; total: number; percent: number; recent: boolean[]; streak: number } = {
+    show: false,
+    correct: 0,
+    total: 0,
+    percent: 0,
+    recent: [],
+    streak: 0,
+  };
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
   @ViewChild('celebs') celebrationOverlay?: CelebrationOverlayComponent;
@@ -92,6 +112,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   questionTimerInterval: any;
   feedbackTimerInterval: any;
   allowOptionClick = false;
+  private readonly MAX_FEEDBACK_SECS = 30;
 
   feedback: FeedbackState = {
     show: false,
@@ -123,8 +144,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.questionTimerInterval) clearInterval(this.questionTimerInterval);
     if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
     if (this.scheduledAutoNext) clearTimeout(this.scheduledAutoNext);
+    this.speech.stop();
     this.celebrationWaveTimers.forEach(t => clearTimeout(t));
     this.celebrationWaveTimers = [];
+    this.pointPopTimers.forEach(t => clearTimeout(t));
+    this.pointPopTimers = [];
+    if (this.sessionSummaryTimer) clearTimeout(this.sessionSummaryTimer);
     this.subscriptions.forEach(sub => {
       if (sub && typeof sub.unsubscribe === 'function') sub.unsubscribe();
     });
@@ -149,6 +174,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   private loadQuiz(): void {
     this.comboCount = 0;
+    this.answerLog = [];
     const quizSub = this.quizService.getQuiz(this.quizSlug).subscribe(data => {
       this.quiz = data;
       this.questions = (data.questions || []).map((q: any) => ({
@@ -235,6 +261,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           question.hasAnswered = true;
           this.onSelectionPhase = true;
           this.showFeedback(false, true, question);
+          if (this.quizConfig.enableAudio) {
+            try {
+              this.speech.speak(this.buildWrongSpeechText("Time's up.", question), { profile: 'calm' });
+            } catch (error) {
+              console.log('Speech synthesis error:', error);
+            }
+          }
         }
       }
     }, 1000);
@@ -264,6 +297,17 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     question.hasAnswered = true;
     question.timeTaken = this.computeTimeTaken(question);
 
+    // The question is locked in — stop this question's countdown right here.
+    // Left running, it keeps ticking behind the feedback panel and can hit 0
+    // while the user is still reading it, firing the timeout branch below
+    // (registerAnswerOutcome(false)) and silently wiping the combo streak
+    // even though the answer was correct. The feedback panel has its own
+    // independent auto-advance countdown (feedbackTimerInterval), so nothing
+    // needs this timer to resume — it's done for good once answered.
+    // (Not nulling the field: startQuestionTimer()'s guard relies on it
+    // still being truthy to play the between-question click cue.)
+    if (this.questionTimerInterval) clearInterval(this.questionTimerInterval);
+
     const isCorrect = question.options.some(
       (opt: any) => opt.id === question.selectedOption && opt.correct === true
     );
@@ -272,10 +316,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       // Speech alternative: speak a short verdict, not the raw options array.
       // Only safe in Interactive mode — Default mode auto-advances in 1.2-1.6s,
       // too fast for an utterance to finish before the next cancel() cuts it off.
+      // Answer text is only spoken when showAnswers is on, mirroring the
+      // visual feedback panel — audio shouldn't leak an answer the UI hides.
       try {
         if (this.quizConfig.mode === 'Interactive') {
           this.speech.speak(
-            isCorrect ? 'Correct!' : `Oh Incorrect. ${question.answer}`,
+            isCorrect ? 'Correct!' : this.buildWrongSpeechText('Oh Incorrect.', question),
             { profile: isCorrect ? 'cheerful' : 'calm' }
           );
         }
@@ -291,6 +337,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     // register a burst as anything but visual noise.
     if (isCorrect && this.quizConfig.mode === 'Interactive') {
       this.triggerCelebration($event, (question as any).marks);
+      // Streak of 3+ correct in a row earns a clap layered under the confetti —
+      // a single correct answer already gets speech + burst, so the clap is
+      // reserved for "you're on a roll", matching the same threshold where
+      // celebrationTheme escalates to 'cyber_sparks'.
+      if (this.comboCount >= 3 && this.quizConfig.enableAudio) {
+        this.quizHelper.playSound('clap');
+      }
     }
 
     if (this.quizConfig.mode === 'Interactive') {
@@ -305,12 +358,30 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     }, isCorrect ? 1600 : 1200);
   }
 
+  // Answer text is only appended when Display Answer is on — audio shouldn't
+  // leak an answer the feedback panel itself is hiding.
+  private buildWrongSpeechText(prefix: string, question: QuizQuestion): string {
+    return (this.quizConfig.showAnswers && question.answer)
+      ? `${prefix} ${question.answer}`
+      : prefix;
+  }
+
   private showFeedback(isCorrect: boolean, isTimeout: boolean, question: QuizQuestion): void {
     if (this.feedback.show) return;
     if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
 
-    // Correct: 3s (they already know). Wrong/timeout: 12s to read the answer.
-    const secs = isCorrect ? 3 : 12;
+    // Correct: 3s (they already know). Wrong/timeout: 12s baseline reading time,
+    // stretched to cover the spoken answer when audio + Display Answer are both
+    // on — otherwise the progress bar (and the auto-advance it drives) cuts the
+    // utterance off mid-sentence. Capped so an unusually long answer can't
+    // stall the quiz indefinitely.
+    let secs = isCorrect ? 3 : 12;
+    if (!isCorrect && this.quizConfig.enableAudio && this.quizConfig.showAnswers && question.answer) {
+      const prefix = isTimeout ? "Time's up." : 'Oh Incorrect.';
+      const spokenText = this.buildWrongSpeechText(prefix, question);
+      const estimatedSecs = this.speech.estimateSeconds(spokenText, 0.9) + 1; // 'calm' profile rate + trailing buffer
+      secs = Math.min(this.MAX_FEEDBACK_SECS, Math.max(secs, Math.ceil(estimatedSecs)));
+    }
     this.feedback = {
       show: true,
       isCorrect,
@@ -355,6 +426,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.warningActive = false;
     if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
     this.feedback.show = false;
+    // Cut off any utterance still reading out the previous question's
+    // verdict/answer — otherwise a long "Oh Incorrect, the answer is ..."
+    // keeps talking over the next question once the feedback panel's
+    // auto-advance timer moves the slide on before speech finishes.
+    this.speech.stop();
 
     if (this.currentQuestionId < this.questions.length - 1) {
       this.swiperEx.nativeElement.swiper.slideNext();
@@ -373,6 +449,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   onSlidePrev(): void {
     this.warningActive = false;
+    this.speech.stop();
     if (this.currentQuestionId > 0) {
       this.swiperEx.nativeElement.swiper.slidePrev();
       this.updateCurrentIndex();
@@ -539,14 +616,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       const rect = (event.target as HTMLElement).getBoundingClientRect();
       const x = event.clientX;
       const y = event.clientY - rect.height / 2;
-      const m = marks || 1;
+      const m = marks+5 || 1;
 
       this.celebrationWaveTimers.forEach(t => clearTimeout(t));
       this.celebrationWaveTimers = [];
 
-      const waveCount = Math.min(5, Math.ceil(m / 2));       // 1 mark -> 1 wave, 10 marks -> 5 waves
-      const waveIntensity = Math.min(60, 20 + m * 4);         // particles per wave
-      const waveGapMs = 350;
+      const waveCount = Math.min(8, Math.ceil(m / 1.5));      // 1 mark -> 1 wave, 10 marks -> 7-8 waves
+      const waveIntensity = Math.min(90, 30 + m * 6);         // particles per wave
+      const waveGapMs = 380;
 
       for (let i = 0; i < waveCount; i++) {
         const timer = setTimeout(() => {
@@ -554,9 +631,23 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         }, i * waveGapMs);
         this.celebrationWaveTimers.push(timer);
       }
+
+      // Same origin as the burst — a direct "+N" cue rising off the tapped
+      // option itself, distinct from the marks total that only shows up
+      // inside the feedback panel a beat later.
+      this.spawnPointPop(x, y, m);
     } catch (error) {
       console.log('triggerCelebration error', error);
     }
+  }
+
+  private spawnPointPop(x: number, y: number, marks: number): void {
+    const id = ++this.pointPopSeq;
+    this.pointPops = [...this.pointPops, { id, x, y, text: String(marks) }];
+    const timer = setTimeout(() => {
+      this.pointPops = this.pointPops.filter(p => p.id !== id);
+    }, 1100);
+    this.pointPopTimers.push(timer);
   }
 
   // "How big" a burst is comes from question marks (triggerCelebration above).
@@ -570,6 +661,37 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   private registerAnswerOutcome(isCorrect: boolean): void {
     this.comboCount = isCorrect ? this.comboCount + 1 : 0;
+    this.answerLog.push(isCorrect);
+    this.maybeShowSessionSummary();
+  }
+
+  // Non-blocking "how am I doing" toast every SESSION_SUMMARY_INTERVAL
+  // questions — purely informational, doesn't touch the timer or advance
+  // flow, and auto-dismisses on its own. Skipped on the quiz's final
+  // question since the results page already gives a full wrap-up there.
+  private maybeShowSessionSummary(): void {
+    const answered = this.answerLog.length;
+    if (answered === 0 || answered % this.SESSION_SUMMARY_INTERVAL !== 0) return;
+    if (answered >= this.questions.length) return;
+
+    const correct = this.answerLog.filter(Boolean).length;
+    if (this.sessionSummaryTimer) clearTimeout(this.sessionSummaryTimer);
+    this.sessionSummary = {
+      show: true,
+      correct,
+      total: answered,
+      percent: Math.round((correct / answered) * 100),
+      recent: this.answerLog.slice(-this.SESSION_SUMMARY_INTERVAL),
+      streak: this.comboCount,
+    };
+    this.sessionSummaryTimer = setTimeout(() => {
+      this.sessionSummary.show = false;
+    }, 3500);
+  }
+
+  dismissSessionSummary(): void {
+    if (this.sessionSummaryTimer) clearTimeout(this.sessionSummaryTimer);
+    this.sessionSummary.show = false;
   }
 
   getQuestionLevel(level: number): string {

@@ -175,6 +175,13 @@
       </button>
     </div>
 
+    <!-- Result phrase — typed verdict, persists after typing finishes -->
+    @if (resultPhrase) {
+    <p class="mt-5 mb-1 text-base sm:text-lg font-bold text-cm-text-primary text-center leading-snug px-2">
+      {{ resultPhrase }}@if (!phraseDone) {<span class="result-phrase-cursor text-cm-brand">|</span>}
+    </p>
+    }
+
   </div>
 </div>
 

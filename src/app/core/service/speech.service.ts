@@ -79,6 +79,16 @@ export class SpeechService {
     return this.synth.getVoices();
   }
 
+  /**
+   * Rough spoken-duration estimate in seconds, before it's spoken (word count ÷ speaking rate).
+   * Real synthesis timing varies by voice/engine
+   */
+  estimateSeconds(text: string, rate: number = 1): number {
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    const wordsPerMinuteAtRate1 = 150;
+    return (words / (wordsPerMinuteAtRate1 * (rate || 1))) * 60;
+  }
+
   setVoice(voice: SpeechSynthesisVoice | null) {
     this.preferredVoice = voice;
   }

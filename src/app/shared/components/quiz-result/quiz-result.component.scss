@@ -1,3 +1,14 @@
+/* ── Typewriter cursor blink ─────────────────────────────────────────── */
+.result-phrase-cursor {
+  display: inline-block;
+  margin-left: 1px;
+  animation: cursor-blink 0.75s step-start infinite;
+}
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* ── Gamification celebration sequence ──────────────────────────────── */
 
 .xp-pill {

@@ -1,4 +1,13 @@
 <div class="quiz-result-container">
+  <!-- Fixed full-viewport wrapper — the overlay itself is position:absolute,
+       so it needs a positioned ancestor that stays pinned regardless of how
+       far this page (badges/leaderboard/etc.) scrolls. -->
+  <div class="fixed inset-0 pointer-events-none z-[1002]">
+    <app-celebration-overlay #resultCelebs [enabled]="true" [theme]="celebrationTheme"
+                              [maxParticles]="0" [controlsEnabled]="false" [autoDisableMs]="0">
+    </app-celebration-overlay>
+  </div>
+
   <div class="content-block">
     @if (loading) {
     <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000]"></div>
@@ -17,6 +26,7 @@
     <app-quiz-result [result]="quizResult" [newlyEarned]="newlyEarned" [heroSubject]="heroSubject"
       [badges]="badges" [leaderboardTeaser]="leaderboardTeaser" [tryNextSubjects]="tryNextSubjects"
       [nextCertificationTrack]="nextCertificationTrack" [nextSubjectTrack]="nextSubjectTrack"
+      [resultPhrase]="resultPhraseTyped" [phraseDone]="phraseDone"
       (onShareResult)="onShareResult()" (onContinue)="onContinue()"></app-quiz-result>
     }
   </div>

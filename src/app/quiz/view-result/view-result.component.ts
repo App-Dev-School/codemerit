@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizQuestion } from '@core/models/quiz-question';
@@ -10,6 +10,7 @@ import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { SpeechService } from '@core/service/speech.service';
+import { CelebrationOverlayComponent } from '@shared/components/celebration-overlay/celebration-overlay.component';
 import { QuizResultComponent } from '@shared/components/quiz-result/quiz-result.component';
 import { ShareBottomSheetComponent } from '@shared/components/share-bottom-sheet/share-bottom-sheet.component';
 import { environment } from 'src/environments/environment';
@@ -31,9 +32,9 @@ type ResultTier =
 const RESULT_PHRASES: Record<ResultTier, string[]> = {
   perfect: [
     "Perfect score, {{name}}! Every single question, nailed.",
-    "Flawless! You just aced this one — a clean 100 percent, {{name}}.",
+    "Flawless! A clean 100 percent, {{name}}.",
     "That's a perfect run, {{name}} — nothing left on the table.",
-    "Incredible work, {{name}}. A clean sweep at {{score}} percent.",
+    "Incredible work, {{name}}. You got {{score}} percent.",
   ],
   excellent: [
     "Excellent work, {{name}}! You scored {{score}} percent.",
@@ -80,10 +81,11 @@ const RESULT_PHRASES: Record<ResultTier, string[]> = {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
-    QuizResultComponent
+    QuizResultComponent,
+    CelebrationOverlayComponent
   ]
 })
-export class ViewResultComponent implements OnInit {
+export class ViewResultComponent implements OnInit, OnDestroy {
   //may not be required
   quiz!: Quiz;
   loading = true;
@@ -107,6 +109,18 @@ export class ViewResultComponent implements OnInit {
   nextCertificationTrack: NextTrackNudge | null = null;
   nextSubjectTrack: NextTrackNudge | null = null;
 
+  @ViewChild('resultCelebs') celebrationOverlay?: CelebrationOverlayComponent;
+  private celebrationTimers: any[] = [];
+
+  // Typed-out verdict phrase — same text createResultEffect() speaks, so
+  // it's readable even with audio off. Shown as a full-screen centered
+  // overlay the moment the result loads, ahead of the score card and the
+  // subject-hero ad widget underneath, then clears itself out of the way.
+  resultPhraseTyped = '';
+  phraseDone = false;
+  showPhraseOverlay = false;
+  private typingTimer: any;
+
   constructor(private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
@@ -122,6 +136,15 @@ export class ViewResultComponent implements OnInit {
 
   ngOnInit(): void {
     this.takeRouteParams();
+  }
+
+  ngOnDestroy(): void {
+    this.celebrationTimers.forEach(t => clearTimeout(t));
+    this.celebrationTimers = [];
+    if (this.typingTimer) clearInterval(this.typingTimer);
+    // Otherwise a long result phrase keeps talking after the user has
+    // already navigated off this page (e.g. onContinue()/back button).
+    this.speechService.stop();
   }
 
   takeRouteParams() {
@@ -145,17 +168,13 @@ export class ViewResultComponent implements OnInit {
     this.loading = true;
     this.quizService.getQuizResult(this.quizResultCode)
       .subscribe(data => {
-        console.log("loadQuizResult API #####", data);
-        setTimeout(() => {
-          this.quizResult = data;
-          this.resolveHeroSubject();
-          this.resolveTryNextSubjects();
-          this.loadingText = '';
-          this.loading = false;
-        }, 3000);
-        setTimeout(() => {
-          this.createResultEffect();
-        }, 4000);
+        this.quizResult = data;
+        this.resolveHeroSubject();
+        this.resolveTryNextSubjects();
+        this.loadingText = '';
+        this.loading = false;
+        // Small settle delay so the result card has rendered before effects fire.
+        setTimeout(() => this.createResultEffect(), 400);
       });
     this.loadMomentumWidgets();
   }
@@ -231,11 +250,89 @@ export class ViewResultComponent implements OnInit {
   }
 
   createResultEffect(): void {
-    this.snackService.display('snackbar-dark', 'Thank you for taking the quiz!', 'bottom', 'center');
-    if (!this.quizResult || !this.quizService.getQuizConfig().enableAudio) return;
+    //Use other noti instead
+    // this.snackService.display('snackbar-dark', 'Thank you for taking the quiz!', 'bottom', 'center');
+    if (!this.quizResult) return;
 
     const { tier, passed } = this.resolveResultOutcome(this.quizResult);
-    this.speechService.speak(this.pickPhrase(tier), { profile: passed ? 'cheerful' : 'calm' });
+    // Picked once and reused for both speech and the typed display below —
+    // pickPhrase() picks randomly from a pool, so calling it twice could
+    // speak one phrase while typing out a different one.
+    const phrase = this.pickPhrase(tier);
+    if (this.quizService.getQuizConfig().enableAudio) {
+      this.speechService.speak(phrase, { profile: passed ? 'cheerful' : 'calm' });
+    }
+    this.startTypingPhrase(phrase);
+    this.triggerScoreCelebration(Number(this.quizResult.score ?? 0));
+  }
+
+  // Typewriter reveal of the same verdict phrase that's spoken — always
+  // shown, not just when audio is off, so there's one consistent place to
+  // read it either way. Runs inside a full-screen overlay (see template)
+  // rather than inline, so it's the first thing seen, not something buried
+  // at the bottom of the page under the whole breakdown section.
+  private startTypingPhrase(text: string): void {
+    if (this.typingTimer) clearInterval(this.typingTimer);
+    this.resultPhraseTyped = '';
+    this.phraseDone = false;
+    this.showPhraseOverlay = true;
+    let i = 0;
+    this.typingTimer = setInterval(() => {
+      i++;
+      this.resultPhraseTyped = text.slice(0, i);
+      if (i >= text.length) {
+        clearInterval(this.typingTimer);
+        this.typingTimer = null;
+        this.phraseDone = true;
+      }
+    }, 28);
+  }
+
+  dismissPhraseOverlay(): void {
+    if (this.typingTimer) clearInterval(this.typingTimer);
+    this.typingTimer = null;
+    this.resultPhraseTyped = '';
+    this.phraseDone = false;
+    this.showPhraseOverlay = false;
+  }
+
+  // Confetti scaled to how well they did — a perfect run gets the longest,
+  // densest celebration; a middling score still gets a solid one (sqrt
+  // easing keeps mid-range scores from feeling shortchanged); only a weak
+  // score tapers off toward a brief, restrained flourish.
+  private triggerScoreCelebration(score: number): void {
+    this.celebrationTimers.forEach(t => clearTimeout(t));
+    this.celebrationTimers = [];
+
+    const clamped = Math.max(0, Math.min(100, score));
+    const t = Math.sqrt(clamped / 100);
+
+    const waveCount = Math.round(this.lerp(2, 14, t));       // 100% -> 14 waves, 50% -> ~10, low scores -> 2
+    const waveGapMs = Math.round(this.lerp(250, 500, t));    // higher score = slower, more sustained cadence
+    const waveIntensity = Math.round(this.lerp(20, 100, t)); // particles per wave
+
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight * 0.35;
+
+    for (let i = 0; i < waveCount; i++) {
+      const timer = setTimeout(() => {
+        this.celebrationOverlay?.triggerBurst(cx, cy, waveIntensity);
+      }, i * waveGapMs);
+      this.celebrationTimers.push(timer);
+    }
+  }
+
+  private lerp(min: number, max: number, t: number): number {
+    return min + (max - min) * t;
+  }
+
+  // Theme escalates with score, same convention as take-quiz's combo-driven
+  // celebrationTheme — a perfect/near-perfect score earns the busiest theme.
+  get celebrationTheme(): 'golden_star' | 'cyber_sparks' | 'classic_confetti' {
+    const score = Number(this.quizResult?.score ?? 0);
+    if (score >= 90) return 'classic_confetti';
+    if (score >= 60) return 'cyber_sparks';
+    return 'golden_star';
   }
 
   // Same pass/fail convention as quiz-result.component.ts's isPassed/passMarks
@@ -298,10 +395,7 @@ export class ViewResultComponent implements OnInit {
     try {
       if (this.quizResult && this.quizResult.subjects) {
         const firstSubjectSlug = this.quizResult.subjects[0]?.slug;
-        const firstSubjectName = this.quizResult.subjects[0]?.title;
-        this.router.navigate(['/dashboard/learn', firstSubjectSlug]).then(() => {
-          this.snackService.display('snackbar-dark', 'Taking back to ' + firstSubjectName+' dashboard.', 'bottom', 'center');
-        });
+        this.router.navigate(['/dashboard/learn', firstSubjectSlug]);
       }
     } catch (error) {
       this.router.navigate(['/dashboard']);

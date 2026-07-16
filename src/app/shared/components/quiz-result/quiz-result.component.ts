@@ -63,6 +63,8 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
   @Output() onShareResult = new EventEmitter<string>();
   @Output() onContinue    = new EventEmitter<string>();
 
+  @Input() resultPhrase: string = '';
+  @Input() phraseDone: boolean = false;
   @Input() newlyEarned: NewlyEarned | null = null;
   // Subject the quiz belongs to (id/slug/title, optionally image/description/
   // color enriched by the parent from MasterService's catalog) — feeds the

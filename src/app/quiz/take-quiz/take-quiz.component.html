@@ -8,6 +8,49 @@
                             [maxParticles]="0" [controlsEnabled]="false" [autoDisableMs]="0">
   </app-celebration-overlay>
 
+  <!-- Floating "+N" points rising off the tapped option on a correct answer —
+       fixed/viewport-positioned (same clientX/clientY the burst uses), so it
+       tracks the click regardless of scroll inside the active slide. -->
+  @for (pop of pointPops; track pop.id) {
+    <div class="tq-point-pop" [style.left.px]="pop.x" [style.top.px]="pop.y">+{{ pop.text }}</div>
+  }
+
+  <!-- Mid-quiz "how am I doing" toast — every 5 questions, purely informational.
+       Floats above the shell without touching the timer/swiper/footer, and
+       auto-dismisses on its own so it never blocks answering the next question. -->
+  @if (sessionSummary.show) {
+    <div class="tq-session-summary" role="status">
+      <div class="tq-session-summary__ring">
+        <svg viewBox="0 0 44 44" class="tq-session-summary__svg">
+          <circle cx="22" cy="22" r="18" stroke-width="4" class="tq-session-summary__track"/>
+          <circle cx="22" cy="22" r="18" stroke-width="4"
+                  stroke-dasharray="113.1"
+                  stroke-linecap="round"
+                  class="tq-session-summary__arc"
+                  transform="rotate(-90 22 22)"
+                  [attr.stroke-dashoffset]="113.1 * (1 - sessionSummary.percent / 100)"/>
+        </svg>
+        <span class="tq-session-summary__pct">{{ sessionSummary.percent }}%</span>
+      </div>
+
+      <div class="tq-session-summary__body">
+        <span class="tq-session-summary__headline">{{ sessionSummary.correct }}/{{ sessionSummary.total }} correct so far</span>
+        <div class="tq-session-summary__dots">
+          @for (ok of sessionSummary.recent; track $index) {
+            <span class="tq-session-summary__dot" [class.tq-session-summary__dot--ok]="ok" [class.tq-session-summary__dot--bad]="!ok"></span>
+          }
+        </div>
+        @if (sessionSummary.streak >= 3) {
+          <span class="tq-session-summary__streak">🔥 {{ sessionSummary.streak }} in a row</span>
+        }
+      </div>
+
+      <button class="tq-session-summary__close" (click)="dismissSessionSummary()" aria-label="Dismiss">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  }
+
   <!-- ═══ LOADING ══════════════════════════════════════════════════════════ -->
   @if (loading) {
     <div class="tq-loading">
