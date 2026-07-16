@@ -2,6 +2,37 @@
 <canvas #celebCanvas style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 
 <!-- ══════════════════════════════════════════════
+  GAMIFICATION CELEBRATION SEQUENCE
+══════════════════════════════════════════════ -->
+@if (showXpPill && newlyEarned?.xpAwarded) {
+  <div class="xp-pill" [@zoomInOut]>+{{ newlyEarned?.xpAwarded }} XP</div>
+}
+
+@if (activeCelebration?.type === 'levelUp' && newlyEarned?.level) {
+  <app-level-up-modal [level]="newlyEarned!.level" (dismiss)="dismissCelebration()"></app-level-up-modal>
+}
+
+@if (activeBadge) {
+  <app-badge-earned-card variant="reveal" [badge]="activeBadge!" (dismiss)="dismissCelebration()"></app-badge-earned-card>
+}
+
+@if (activeCelebration?.type === 'streak') {
+  <div class="streak-overlay" (click)="dismissCelebration()">
+    <div class="streak-card" [@zoomInOut] (click)="$event.stopPropagation()">
+      <div class="streak-card__icon">🔥</div>
+      <h3 class="streak-card__title">{{ newlyEarned?.streak?.milestoneHit }}-Day Streak!</h3>
+      <p class="streak-card__sub">You've practiced {{ newlyEarned?.streak?.current }} days in a row. Keep it up!</p>
+      <button type="button" class="streak-card__cta" (click)="dismissCelebration()">Continue</button>
+    </div>
+  </div>
+}
+
+@if (activeCertificate) {
+  <app-certificate-unlock-modal [certificate]="activeCertificate" (dismiss)="dismissCelebration()">
+  </app-certificate-unlock-modal>
+}
+
+<!-- ══════════════════════════════════════════════
   SCORE CARD
 ══════════════════════════════════════════════ -->
 <div class="result-hero">
@@ -49,10 +80,17 @@
           <div>
             <span class="result-status-badge"
                   [ngClass]="isPassed ? 'result-status-badge--pass' : 'result-status-badge--fail'">
+              <!-- Text glyph, not inline SVG — html2canvas/dom-to-image both have
+                   known, unreliable positioning of inline SVG inside flex
+                   containers, which was misaligning this icon against the
+                   status text in captured images even though it looks fine
+                   live. A text glyph goes through the same canvas text
+                   rendering path as the label next to it, so there's nothing
+                   left to independently misposition. -->
               @if (isPassed) {
-                <svg class="result-status-badge__icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5l-4.5-4.5 1.41-1.41L10 13.67l7.09-7.09L18.5 8l-8.5 8.5z"/></svg>
+                <span class="result-status-badge__icon">✓</span>
               } @else {
-                <svg class="result-status-badge__icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                <span class="result-status-badge__icon">✕</span>
               }
               {{ statusLabel }}
             </span>
@@ -118,28 +156,60 @@
         </svg>
         Share Result
       </button>
-      <button type="button" (click)="downloadReport()"
+      <button type="button" (click)="downloadReport()" [disabled]="downloading"
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-               border border-cm-brand text-cm-brand hover:bg-cm-brand/5 active:scale-95 transition-all">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-        </svg>
-        Download
-      </button>
-      @if (result?.quiz?.id) {
-        <button type="button" (click)="doOnContinue()"
-          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                 bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z"/>
+               border border-cm-brand text-cm-brand hover:bg-cm-brand/5 active:scale-95 transition-all
+               disabled:opacity-60 disabled:cursor-wait disabled:active:scale-100">
+        @if (downloading) {
+          <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
-          Continue
-        </button>
-      }
+          Preparing…
+        } @else {
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Download
+        }
+      </button>
     </div>
 
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════
+  SUBJECT HERO — advertises the subject this quiz belongs to, carries the
+  "Continue" action that used to live in the CTA row above.
+══════════════════════════════════════════════ -->
+@if (result?.quiz?.id) {
+  <div class="subject-hero-wrap">
+    <div class="subject-hero"
+         [style.background]="heroSubject?.color
+           ? 'linear-gradient(120deg,' + heroSubject.color + '26, transparent 70%)'
+           : null">
+      @if (heroSubject?.image) {
+        <img [src]="heroSubject.image" [alt]="heroSubject.title" class="subject-hero__img">
+      } @else {
+        <div class="subject-hero__img subject-hero__img--placeholder">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+      }
+      <div class="subject-hero__body">
+        <p class="subject-hero__eyebrow">Up next</p>
+        <h3 class="subject-hero__title">
+          {{ heroSubject?.title ? heroSubject.title : 'Ready for what\'s next?' }}
+        </h3>
+        @if (heroSubject?.description) {
+          <p class="subject-hero__desc">{{ heroSubject.description }}</p>
+        }
+      </div>
+      <button type="button" class="subject-hero__cta" (click)="doOnContinue()">
+        Continue <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+}
 
 <!-- ══════════════════════════════════════════════
   WIDGET ZONE
@@ -220,37 +290,86 @@
 
     </div>
 
-    <!-- Topics sidebar -->
-    @if (result?.topics && result?.topics?.length > 0) {
-      <aside class="topics-panel">
-        <div class="topics-panel__head">
-          <span class="topics-panel__title">Covered Topics</span>
-          <span class="topics-panel__count">{{ result.topics.length }}</span>
-        </div>
-        <div class="topics-panel__body">
-          @for (topic of result.topics; track topic.id) {
-            <div class="topic-row">
-              <div class="topic-row__meta">
-                <span class="topic-row__name">{{ topic.title }}</span>
-                <span class="topic-row__pct"
-                      [style.color]="(+topic.coverage || 0) >= 70 ? '#22c55e'
-                        : (+topic.coverage || 0) >= 40 ? '#f59e0b' : '#ef4444'">
-                  {{ topic.coverage != null ? topic.coverage + '%' : '—' }}
-                </span>
-              </div>
-              <div class="topic-bar">
-                <div class="topic-bar__fill"
-                     [style.width]="(+topic.coverage || 0) + '%'"
-                     [style.background]="(+topic.coverage || 0) >= 70
-                       ? 'linear-gradient(90deg,#22c55e,#34d399)'
-                       : (+topic.coverage || 0) >= 40
-                         ? 'linear-gradient(90deg,#f59e0b,#fbbf24)'
-                         : 'linear-gradient(90deg,#ef4444,#f97316)'">
-                </div>
-              </div>
+    <!-- Sidebar rail — sticky column: momentum widgets + try-next + nudge,
+         stacked full-width, sitting above Covered Topics in the same sticky
+         column (rather than as separate full-width sections on their own). -->
+    @if (xpStreakStats || badges || leaderboardTeaser || tryNextSubjects?.length
+         || nextCertificationTrack || nextSubjectTrack
+         || (result?.topics && result?.topics?.length > 0)) {
+      <aside class="side-rail">
+
+        @if (xpStreakStats) {
+          <app-xp-streak-widget class="block" [stats]="xpStreakStats"></app-xp-streak-widget>
+        }
+        @if (badges) {
+          <app-badge-progress-teaser class="block"
+            [earned]="badges.earned" [locked]="badges.locked">
+          </app-badge-progress-teaser>
+        }
+        @if (leaderboardTeaser) {
+          <app-leaderboard-rank-teaser class="block"
+            [userRank]="leaderboardTeaser.userRank" [period]="leaderboardTeaser.period"
+            [topEntries]="leaderboardTeaser.leaderboard">
+          </app-leaderboard-rank-teaser>
+        }
+
+        @if (tryNextSubjects?.length) {
+          <div class="try-next-block">
+            <h3 class="side-rail__heading">Try This Next</h3>
+            <div class="try-next-row">
+              @for (subject of tryNextSubjects; track subject.id) {
+                <a [routerLink]="['/dashboard/learn', subject.slug]" class="try-next-card">
+                  <img [src]="subject.image || 'assets/images/tech/placeholder.png'" [alt]="subject.title" class="try-next-card__img">
+                  <span class="try-next-card__title">{{ subject.title }}</span>
+                  <span class="try-next-card__cta">Start <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+              }
             </div>
-          }
-        </div>
+          </div>
+        }
+
+        @if (nextCertificationTrack || nextSubjectTrack) {
+          <app-next-best-action-card class="block"
+            [nextCertificationTrack]="nextCertificationTrack"
+            [nextSubjectTrack]="nextSubjectTrack"
+            (continueClick)="doOnContinue()">
+          </app-next-best-action-card>
+        }
+
+        <!-- Covered topics -->
+        @if (result?.topics && result?.topics?.length > 0) {
+          <div class="topics-panel">
+            <div class="topics-panel__head">
+              <span class="topics-panel__title">Covered Topics</span>
+              <span class="topics-panel__count">{{ result.topics.length }}</span>
+            </div>
+            <div class="topics-panel__body">
+              @for (topic of result.topics; track topic.id) {
+                <div class="topic-row">
+                  <div class="topic-row__meta">
+                    <span class="topic-row__name">{{ topic.title }}</span>
+                    <span class="topic-row__pct"
+                          [style.color]="(+topic.coverage || 0) >= 70 ? '#22c55e'
+                            : (+topic.coverage || 0) >= 40 ? '#f59e0b' : '#ef4444'">
+                      {{ topic.coverage != null ? topic.coverage + '%' : '—' }}
+                    </span>
+                  </div>
+                  <div class="topic-bar">
+                    <div class="topic-bar__fill"
+                         [style.width]="(+topic.coverage || 0) + '%'"
+                         [style.background]="(+topic.coverage || 0) >= 70
+                           ? 'linear-gradient(90deg,#22c55e,#34d399)'
+                           : (+topic.coverage || 0) >= 40
+                             ? 'linear-gradient(90deg,#f59e0b,#fbbf24)'
+                             : 'linear-gradient(90deg,#ef4444,#f97316)'">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
       </aside>
     }
 

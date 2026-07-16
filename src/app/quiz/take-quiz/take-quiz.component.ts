@@ -3,14 +3,16 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, V
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { QuizEntity } from '@core/models/dtos/GenerateQuizDto';
+import { QuizEntity, SubmitQuizResponse } from '@core/models/dtos/GenerateQuizDto';
 import { QuizQuestion } from '@core/models/quiz-question';
+import { NewlyEarned } from '@core/models/gamification.model';
 import { User } from '@core/models/user';
 import { AuthService } from '@core/service/auth.service';
 import { UtilsService } from '@core/service/utils.service';
-import { CelebrationComponent } from '@shared/components/celebration/celebration.component';
+import { CelebrationOverlayComponent } from '@shared/components/celebration-overlay/celebration-overlay.component';
 import { LoginFormComponent } from '@shared/components/login-form/login-form.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
+import { popPulseAnimation } from '@shared/animations';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
@@ -34,11 +36,12 @@ interface FeedbackState {
   templateUrl: './take-quiz.component.html',
   styleUrls: ['./take-quiz.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  animations: [popPulseAnimation],
   imports: [
     CommonModule,
     NgClass,
     NgScrollbar,
-    CelebrationComponent,
+    CelebrationOverlayComponent,
   ],
 })
 export class TakeQuizComponent implements OnInit, AfterViewInit {
@@ -60,6 +63,11 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showAgreement = false;
   agreementAccepted = false;
 
+  // Shown after agreement is accepted, before the first question timer
+  // starts — a 3-2-1-Go beat so the first question doesn't just snap in.
+  showCountdown = false;
+  countdownValue = 3;
+
   warningActive = false;
   hintActive = false;
   answerActive = false;
@@ -69,9 +77,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   showWarningToast = false;
   userData: User;
   scheduledAutoNext: any;
-  celebrationTrigger: { x: number; y: number } | null = null;
+  private celebrationWaveTimers: any[] = [];
+
+  // Consecutive-correct streak — drives the combo chip and escalates the
+  // confetti theme (see celebrationTheme). Resets on any wrong answer/timeout.
+  comboCount = 0;
 
   @ViewChild('swiperEx') swiperEx!: ElementRef<{ swiper: Swiper }>;
+  @ViewChild('celebs') celebrationOverlay?: CelebrationOverlayComponent;
   displayingAuthDialog = false;
   quizConfig: QuizConfig;
 
@@ -110,6 +123,8 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.questionTimerInterval) clearInterval(this.questionTimerInterval);
     if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
     if (this.scheduledAutoNext) clearTimeout(this.scheduledAutoNext);
+    this.celebrationWaveTimers.forEach(t => clearTimeout(t));
+    this.celebrationWaveTimers = [];
     this.subscriptions.forEach(sub => {
       if (sub && typeof sub.unsubscribe === 'function') sub.unsubscribe();
     });
@@ -133,6 +148,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {}
 
   private loadQuiz(): void {
+    this.comboCount = 0;
     const quizSub = this.quizService.getQuiz(this.quizSlug).subscribe(data => {
       this.quiz = data;
       this.questions = (data.questions || []).map((q: any) => ({
@@ -162,8 +178,28 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   acceptAgreement(): void {
     if (!this.agreementAccepted || !this.questions.length) return;
     this.showAgreement = false;
-    this.startQuestionTimer(this.questions[0]);
-    this.disableOptionClickTemporarily();
+    this.runCountdown();
+  }
+
+  private runCountdown(): void {
+    this.showCountdown = true;
+    this.countdownValue = 3;
+    if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
+    const tick = () => {
+      if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
+      this.countdownValue--;
+      if (this.countdownValue > 0) {
+        this.scheduledAutoNext = setTimeout(tick, 800);
+        return;
+      }
+      // Brief "Go!" beat (countdownValue === 0) before the first question reveals.
+      this.scheduledAutoNext = setTimeout(() => {
+        this.showCountdown = false;
+        this.startQuestionTimer(this.questions[0]);
+        this.disableOptionClickTemporarily();
+      }, 700);
+    };
+    this.scheduledAutoNext = setTimeout(tick, 800);
   }
 
   startQuestionTimer(question: QuizQuestion): void {
@@ -184,6 +220,14 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
       if (this.questionTimeLeft <= 0) {
         clearInterval(this.questionTimerInterval);
+        this.registerAnswerOutcome(false);
+        // Guard against onSlidePrev/onSlideNext restarting this timer on an
+        // already-answered question (e.g. user navigates back then away
+        // again without interacting) — don't clobber the real timeTaken
+        // recorded when it was first answered.
+        if (question.timeTaken == null) {
+          question.timeTaken = this.computeTimeTaken(question);
+        }
         if (this.quizConfig.mode === 'Default') {
           this.onSlideNext();
         } else {
@@ -194,6 +238,15 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
         }
       }
     }, 1000);
+  }
+
+  // Elapsed seconds on `question`, derived from the same per-second
+  // countdown the timer UI already runs on (questionTimeLeft), clamped to
+  // the question's own time budget rather than introducing a separate
+  // wall-clock measurement that could drift from what the user sees ticking.
+  private computeTimeTaken(question: QuizQuestion): number {
+    const allowed = question.timeAllowed || 30;
+    return Math.max(0, Math.min(allowed, allowed - this.questionTimeLeft));
   }
 
   optionSelected($event: MouseEvent, choice: number, question: QuizQuestion): void {
@@ -209,6 +262,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.onSelectionPhase = true;
     question.selectedOption = choice;
     question.hasAnswered = true;
+    question.timeTaken = this.computeTimeTaken(question);
 
     const isCorrect = question.options.some(
       (opt: any) => opt.id === question.selectedOption && opt.correct === true
@@ -230,8 +284,16 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }
     }
 
+    this.registerAnswerOutcome(isCorrect);
+    // Particle burst is a deliberate "you got it right, pause and enjoy it"
+    // moment — only makes sense in Interactive mode, which pauses for
+    // feedback anyway. Default mode auto-advances in ~1.2-1.6s, too fast to
+    // register a burst as anything but visual noise.
+    if (isCorrect && this.quizConfig.mode === 'Interactive') {
+      this.triggerCelebration($event, (question as any).marks);
+    }
+
     if (this.quizConfig.mode === 'Interactive') {
-      if (isCorrect) this.triggerCelebration($event);
       this.showFeedback(isCorrect, false, question);
       return;
     }
@@ -302,7 +364,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
     } else {
       if (this.quizConfig.enableAudio) {
-        this.speech.speak("Well Done! You have completed the assessment. Submitting your results now.");
+        this.speech.speak("Thank you for taking this assessment.");
       }
       this.completeQuiz();
     }
@@ -393,16 +455,24 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.loadingText = 'Submitting Quiz';
     const analytics = this.quizService.processAndSaveResults(this.questions, this.quiz.id);
     const sub = this.quizService.submitQuiz(analytics).subscribe(
-      (data: any) => {
-        this.quizResult = data.data;
+      (response: SubmitQuizResponse) => {
+        this.quizResult = response.data;
+        const newlyEarned = response.data.newlyEarned ?? null;
         const completeTimeout = setTimeout(() => {
           this.completed = true;
-          this.navigateToResult(this.quizResult.resultCode);
+          this.navigateToResult(this.quizResult.resultCode, newlyEarned);
         }, 3000);
         this.scheduledAutoNext = completeTimeout;
       },
       (error: any) => {
-        this.showNotification('snackbar-danger', error, 'bottom', 'center');
+        this.loading = false;
+        if (error?.status === 403) {
+          const message = error?.error?.message || "You've used all your attempts for this quiz.";
+          this.showNotification('snackbar-danger', message, 'bottom', 'center');
+        } else {
+          const message = error?.error?.message || error?.message || 'Something went wrong submitting your quiz. Please try again.';
+          this.showNotification('snackbar-danger', message, 'bottom', 'center');
+        }
       },
     );
     this.subscriptions.push(sub);
@@ -453,24 +523,53 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     });
   }
 
-  navigateToResult(resultCode: string): void {
-    this.router.navigate(['quiz/result', resultCode], { replaceUrl: true });
+  navigateToResult(resultCode: string, newlyEarned: NewlyEarned | null = null): void {
+    this.router.navigate(['quiz/result', resultCode], {
+      replaceUrl: true,
+      state: { newlyEarned },
+    });
   }
 
-  triggerCelebration(event: MouseEvent): void {
+  // Every correct answer gets a burst. Higher-mark questions don't just get
+  // denser particles, they get a longer celebration — a handful of waves
+  // staggered over time, not one bigger instant blast, so a high-value
+  // question actually *feels* longer, not just busier.
+  triggerCelebration(event: MouseEvent, marks: number): void {
     try {
       const rect = (event.target as HTMLElement).getBoundingClientRect();
-      this.celebrationTrigger = {
-        x: event.clientX,
-        y: event.clientY - rect.height / 2,
-      };
+      const x = event.clientX;
+      const y = event.clientY - rect.height / 2;
+      const m = marks || 1;
+
+      this.celebrationWaveTimers.forEach(t => clearTimeout(t));
+      this.celebrationWaveTimers = [];
+
+      const waveCount = Math.min(5, Math.ceil(m / 2));       // 1 mark -> 1 wave, 10 marks -> 5 waves
+      const waveIntensity = Math.min(60, 20 + m * 4);         // particles per wave
+      const waveGapMs = 350;
+
+      for (let i = 0; i < waveCount; i++) {
+        const timer = setTimeout(() => {
+          this.celebrationOverlay?.triggerBurst(x, y, waveIntensity);
+        }, i * waveGapMs);
+        this.celebrationWaveTimers.push(timer);
+      }
     } catch (error) {
       console.log('triggerCelebration error', error);
     }
   }
 
-  onCelebrationFinished(): void {
-    console.log('🎉 Celebration animation completed!');
+  // "How big" a burst is comes from question marks (triggerCelebration above).
+  // "What flavor" it is comes from the current streak — the confetti escalates
+  // in style, not just size, as the user gets hot.
+  get celebrationTheme(): 'golden_star' | 'cyber_sparks' | 'classic_confetti' {
+    if (this.comboCount >= 5) return 'classic_confetti';
+    if (this.comboCount >= 3) return 'cyber_sparks';
+    return 'golden_star';
+  }
+
+  private registerAnswerOutcome(isCorrect: boolean): void {
+    this.comboCount = isCorrect ? this.comboCount + 1 : 0;
   }
 
   getQuestionLevel(level: number): string {
@@ -484,9 +583,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
 
   getLevelClass(level: number): string {
     switch (level) {
-      case 1: return 'col-indigo';
-      case 2: return 'col-purple';
-      case 3: return 'bg-brown';
+      // Named for what they mean, not a color, and deliberately not
+      // "bg-brown" — that collided with a global .bg-brown utility
+      // (src/assets/scss/ui/_card.scss) which set black text, unreadable
+      // against a brown pill.
+      case 1: return 'level-easy';
+      case 2: return 'level-medium';
+      case 3: return 'level-hard';
       default: return '';
     }
   }

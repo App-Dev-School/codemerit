@@ -35,7 +35,7 @@ export class CelebrationOverlayComponent implements AfterViewInit, OnDestroy, On
   localGlow = this.glow;
   localScale = this.scale;
 
-  constructor(private host: ElementRef, private ngZone: NgZone) {}
+  constructor(private ngZone: NgZone) {}
 
   ngAfterViewInit(): void {
     const canvas = this.canvasRef.nativeElement;
@@ -48,9 +48,13 @@ export class CelebrationOverlayComponent implements AfterViewInit, OnDestroy, On
       this.renderLoop();
     });
 
-    // responsive sizing
+    // responsive sizing — observe the actual rendered wrap element, not the
+    // component host tag itself. The host has no CSS of its own and its only
+    // content (.celebration-wrap) is position:absolute (out of flow), so an
+    // unstyled host always measures 0x0 — silently falling back to a fixed
+    // 300x200 canvas buffer that doesn't match the CSS-rendered size at all.
     this.resizeObserver = new ResizeObserver(() => this.resizeCanvas());
-    this.resizeObserver.observe(this.host.nativeElement);
+    this.resizeObserver.observe(this.canvasRef.nativeElement.parentElement!);
 
     // keep local UI values in sync with inputs
     this.syncLocalFromInputs();
@@ -74,7 +78,7 @@ export class CelebrationOverlayComponent implements AfterViewInit, OnDestroy, On
 
   private resizeCanvas() {
     const canvas = this.canvasRef.nativeElement;
-    const rect = this.host.nativeElement.getBoundingClientRect();
+    const rect = canvas.parentElement!.getBoundingClientRect();
     canvas.width = rect.width || 300;
     canvas.height = rect.height || 200;
   }
@@ -255,11 +259,11 @@ export class CelebrationOverlayComponent implements AfterViewInit, OnDestroy, On
   }
 
   // expose a burst trigger
-  public triggerBurst(clientX?: number, clientY?: number) {
+  public triggerBurst(clientX?: number, clientY?: number, count = 45) {
     const rect = this.canvasRef.nativeElement.getBoundingClientRect();
     const x = clientX !== undefined ? clientX - rect.left : this.canvasRef.nativeElement.width / 2;
     const y = clientY !== undefined ? clientY - rect.top : this.canvasRef.nativeElement.height / 2;
-    for (let i = 0; i < 45; i++) {
+    for (let i = 0; i < count; i++) {
       this.particles.push(this.ParticleFactory(x, y, true));
     }
   }

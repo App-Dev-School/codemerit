@@ -2,16 +2,13 @@
 import { Component, Input } from '@angular/core';
 
 interface MeritList {
-  id: number;
+  userId: number;
   name: string;
   designationName?: string;
   username: string;
   image?: string;
-  rank?: number;
-  score: number;
-  avgAccuracy?: number;
-  totalAttempt?: number;
-  totalCorrect?: number;
+  rank: number;
+  masteryCount: number;
 }
 
 @Component({

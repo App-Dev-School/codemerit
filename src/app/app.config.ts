@@ -10,7 +10,6 @@ import {
   MAT_DATE_LOCALE
 } from '@angular/material/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
 import { DirectionService } from '@core';
 import { ErrorInterceptor } from '@core/interceptor/error.interceptor';
@@ -56,6 +55,5 @@ export const appConfig: ApplicationConfig = {
       useClass: ErrorInterceptor,
       multi: true,
     },
-    provideAnimationsAsync(),
   ],
 };

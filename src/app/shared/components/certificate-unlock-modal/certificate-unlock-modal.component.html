@@ -1,0 +1,24 @@
+<!-- No backdrop click handler on purpose — see component comment. -->
+<div class="cum-overlay">
+  <div class="cum-card" [@bounceIn]>
+    <div class="cum-card__glow"></div>
+    <div class="cum-card__ring">
+      <div class="cum-card__seal">🎓</div>
+    </div>
+
+    <span class="cum-card__eyebrow">Certificate Unlocked</span>
+    <h2 class="cum-card__title">{{ certificate?.title || 'New Certification' }}</h2>
+
+    @if (certificate?.certificateNumber) {
+      <p class="cum-card__number">Certificate No. {{ certificate?.certificateNumber }}</p>
+    }
+
+    <p class="cum-card__sub">
+      You've completed everything required for this certification track — a real achievement, well earned.
+    </p>
+
+    <button type="button" class="cum-card__cta" (click)="onDismiss()">
+      Awesome! Continue <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </div>
+</div>

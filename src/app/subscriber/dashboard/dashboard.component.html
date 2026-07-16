@@ -429,6 +429,13 @@
             (startLearning)="onCertStartLearning($event)"
             (viewCertificate)="onCertViewCertificate($event)">
           </app-certification-tracks>
+          @if (viewingCertificate) {
+            <app-certificate-ribbon
+              [certificate]="viewingCertificate.certificate"
+              [trackTitle]="viewingCertificate.trackTitle"
+              (dismiss)="closeCertificateRibbon()">
+            </app-certificate-ribbon>
+          }
         </div>
 
         <!-- Footer -->

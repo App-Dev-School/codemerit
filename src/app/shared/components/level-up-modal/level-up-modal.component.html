@@ -1,0 +1,10 @@
+<div class="lu-overlay" (click)="onDismiss()">
+  <div class="lu-card" [@bounceIn] (click)="$event.stopPropagation()">
+    <div class="lu-card__glow"></div>
+    <span class="lu-card__eyebrow">Level Up!</span>
+    <div class="lu-card__level">{{ level?.level }}</div>
+    <h3 class="lu-card__title">{{ level?.title }}</h3>
+    <p class="lu-card__sub">You've reached a new level. Keep going!</p>
+    <button type="button" class="lu-card__cta" (click)="onDismiss()">Continue</button>
+  </div>
+</div>

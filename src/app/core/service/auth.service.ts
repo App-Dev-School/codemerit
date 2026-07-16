@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, map, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, throwError } from 'rxjs';
 //import { User } from '../models/user';
 import { Role } from '@core/models/role';
 import { Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { HttpService } from './http.service';
 import { environment } from 'src/environments/environment';
 import { User } from '@core/models/user';
 import { UserJobRole } from '@core/models/userJobRole.model';
+import { UserProfileResponse } from '@core/models/user-profile.model';
 
 @Injectable({
   providedIn: 'root',
@@ -164,18 +165,37 @@ export class AuthService {
     this.router.navigate(["/dashboard"]);
   }
 
-  getFullProfile(user_name: any, api_key: any): Observable<any> {
+  getFullProfile(user_name: any, api_key: any): Observable<UserProfileResponse | null> {
     const url = 'apis/users/profile/' + user_name;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + " via Token " + api_key);
     }
-    return this.httpService.get(url, api_key);
+    return this.httpService.get(url, api_key).pipe(
+      map((res: { error: boolean; message: string; data: UserProfileResponse }) => !res.error ? res.data : null),
+      catchError((err) => {
+        console.error('getFullProfile Failed', err);
+        return of(null);
+      }),
+    );
   }
 
   updateUserAccount(api_key: any, user_name: any, postData: any): Observable<any> {
     const url = 'apis/users/update?userId=' + user_name;
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
+    }
+    return this.httpService.put(url, postData, api_key);
+  }
+
+  // NOTE: this endpoint does not exist on the backend yet (verified — no
+  // password-change route found anywhere in the API). Wired ahead of time so
+  // the frontend is ready the moment it does; until then this will 404. URL
+  // follows the existing apis/users/* naming convention used by updateUserAccount.
+  changePassword(api_key: any, currentPassword: string, newPassword: string): Observable<any> {
+    const url = 'apis/users/changePassword';
+    const postData = { currentPassword, newPassword };
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " via Token " + api_key);
     }
     return this.httpService.put(url, postData, api_key);
   }

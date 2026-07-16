@@ -151,11 +151,11 @@ export class WelcomeComponent implements OnInit {
   private jobRoleSubjectsCache: { [jobRoleId: number]: any[] } = {};
 
   meritList = [
-    { id: 1, name: 'Vishal Kumar',  username: 'vishal',  designationName: 'Angular Architect', score: 96, avgAccuracy: 92, image: 'assets/images/users/user.jpg' },
-    { id: 2, name: 'Priya Sharma',  username: 'priya',   designationName: 'Frontend Dev',      score: 91, avgAccuracy: 88 },
-    { id: 3, name: 'Arjun Patel',   username: 'arjun',   designationName: 'Full Stack Dev',    score: 87, avgAccuracy: 84 },
-    { id: 4, name: 'Golda Maria',   username: 'golda',   designationName: 'Intern',            score: 82, avgAccuracy: 79 },
-    { id: 5, name: 'Taylor Star',   username: 'taylor',  designationName: 'Contributor',       score: 75, avgAccuracy: 71 },
+    { userId: 1, name: 'Vishal Kumar',  username: 'vishal',  designationName: 'Angular Architect', masteryCount: 96, rank: 1, image: 'assets/images/users/user.jpg' },
+    { userId: 2, name: 'Priya Sharma',  username: 'priya',   designationName: 'Frontend Dev',      masteryCount: 91, rank: 2 },
+    { userId: 3, name: 'Arjun Patel',   username: 'arjun',   designationName: 'Full Stack Dev',    masteryCount: 87, rank: 3 },
+    { userId: 4, name: 'Golda Maria',   username: 'golda',   designationName: 'Intern',            masteryCount: 82, rank: 4 },
+    { userId: 5, name: 'Taylor Star',   username: 'taylor',  designationName: 'Contributor',       masteryCount: 75, rank: 5 },
   ];
 
   skillRatings: SkillRating[] = [

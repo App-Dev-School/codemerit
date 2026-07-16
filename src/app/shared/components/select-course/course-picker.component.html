@@ -1,168 +1,112 @@
-<!-- Loading -->
-@if (isLoading) {
-  <div class="cp-loading">
-    <div class="cp-spinner"></div>
-    <p class="cp-loading__text">Loading job roles…</p>
-  </div>
-}
+@if (rendered) {
 
-<!-- Grid -->
-@if (!isLoading) {
-  <div [class]="mode === 'dialog' ? 'cp-dialog-wrap' : ''" >
-    <div class="cp-grid">
-      @for (job of filteredCourses; track job.id) {
+  <!-- ── Fullscreen overlay ─────────────────────────────────────────── -->
+  <div class="cp-overlay" [class.cp-overlay--shown]="shown" (click)="close()">
+    <div class="cp-panel" [class.cp-panel--shown]="shown" (click)="$event.stopPropagation()">
 
-        <div class="cp-card" [class.cp-card--enrolled]="isEnrolled(job)">
+      <!-- Panel header -->
+      <div class="cp-panel__header">
 
-          <!-- Accent bar -->
-          <div class="cp-card__bar cp-card__bar--{{ getRoleAccent(job.id) }}"></div>
+        <!-- Close — pinned top-right, never reflows with title/search -->
+        <button class="cp-panel__close" (click)="close()" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
 
-          <!-- Card body -->
-          <div class="cp-card__body">
+        <div class="cp-panel__titlewrap">
+          <h2 class="cp-panel__title">{{ title }}</h2>
+          <p class="cp-panel__subtitle">{{ subtitle }}</p>
+        </div>
 
-            <!-- Role header -->
-            <div class="cp-role-head">
-              <div class="cp-role-dot cp-role-dot--{{ getRoleAccent(job.id) }}"></div>
-              <div class="cp-role-head__text">
-                @if (isEnrolled(job)) {
-                  <span class="cp-enrolled-chip">
-                    <svg class="cp-enrolled-chip__icon w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    Current Role
-                  </span>
-                }
-                <h3 class="cp-role-title">{{ job.title }}</h3>
-              </div>
-            </div>
-
-            <!-- Description -->
-            <p class="cp-description">{{ job.description }}</p>
-
-            <!-- Subjects -->
-            @if (job.subjects?.length) {
-              @let groups = getSubjectGroups(job.subjects);
-
-              <!-- When no type grouping: show flat list -->
-              @if (!groups.recommended.length && !groups.optional.length) {
-                <div class="cp-subjects">
-                  <span class="cp-subjects__label">Subjects</span>
-                  <div class="cp-subject-list">
-                    @for (subj of groups.mandatory; track subj.id) {
-                      <span class="cp-subject-chip cp-subject-chip--core" [title]="subj.title">
-                        @if (subj.image) {
-                          <img [src]="subj.image" [alt]="subj.title" class="cp-subject-chip__img">
-                        }
-                        {{ subj.title }}
-                      </span>
-                    }
-                  </div>
-                </div>
-              }
-
-              <!-- With type grouping: three sections -->
-              @if (groups.mandatory.length && (groups.recommended.length || groups.optional.length)) {
-                <div class="cp-subjects">
-                  <span class="cp-subjects__label">Mandatory</span>
-                  <div class="cp-subject-list">
-                    @for (subj of groups.mandatory; track subj.id) {
-                      <span class="cp-subject-chip cp-subject-chip--mandatory" [title]="subj.title">
-                        @if (subj.image) {
-                          <img [src]="subj.image" [alt]="subj.title" class="cp-subject-chip__img">
-                        }
-                        {{ subj.title }}
-                      </span>
-                    }
-                  </div>
-                </div>
-              }
-              @if (groups.recommended.length) {
-                <div class="cp-subjects">
-                  <span class="cp-subjects__label cp-subjects__label--rec">Recommended</span>
-                  <div class="cp-subject-list">
-                    @for (subj of groups.recommended; track subj.id) {
-                      <span class="cp-subject-chip cp-subject-chip--recommended" [title]="subj.title">
-                        @if (subj.image) {
-                          <img [src]="subj.image" [alt]="subj.title" class="cp-subject-chip__img">
-                        }
-                        {{ subj.title }}
-                      </span>
-                    }
-                  </div>
-                </div>
-              }
-              @if (groups.optional.length) {
-                <div class="cp-subjects">
-                  <span class="cp-subjects__label cp-subjects__label--opt">Optional</span>
-                  <div class="cp-subject-list">
-                    @for (subj of groups.optional; track subj.id) {
-                      <span class="cp-subject-chip cp-subject-chip--optional" [title]="subj.title">
-                        @if (subj.image) {
-                          <img [src]="subj.image" [alt]="subj.title" class="cp-subject-chip__img">
-                        }
-                        {{ subj.title }}
-                      </span>
-                    }
-                  </div>
-                </div>
-              }
-            }
-
-            <!-- Progress bars (enrolled roles only) -->
-            @if (isEnrolled(job) && job.coverage > 0) {
-              <div class="cp-progress-group">
-                <div class="cp-progress">
-                  <div class="cp-progress__row">
-                    <span class="cp-progress__label">Score</span>
-                    <span class="cp-progress__val">{{ job.score }}%</span>
-                  </div>
-                  <div class="cp-progress__track">
-                    <div class="cp-progress__fill cp-progress__fill--score"
-                         [style.width]="job.score + '%'"></div>
-                  </div>
-                </div>
-                <div class="cp-progress">
-                  <div class="cp-progress__row">
-                    <span class="cp-progress__label">Coverage</span>
-                    <span class="cp-progress__val">{{ job.coverage }}%</span>
-                  </div>
-                  <div class="cp-progress__track">
-                    <div class="cp-progress__fill cp-progress__fill--coverage"
-                         [style.width]="job.coverage + '%'"></div>
-                  </div>
-                </div>
-              </div>
-            }
-
-          </div>
-
-          <!-- Card footer -->
-          @if (minimal) {
-            <div class="cp-card__footer">
-              <button class="cp-action-btn"
-                      [class.cp-action-btn--enrolled]="isEnrolled(job)"
-                      (click)="switchJobRole(job)">
-                @if (isEnrolled(job)) {
-                  <svg class="cp-action-btn__icon w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                } @else if (actionMode === 'skill-rating') {
-                  <svg class="cp-action-btn__icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                } @else {
-                  <svg class="cp-action-btn__icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                }
-                {{ isEnrolled(job) ? 'Continue' : getActionLabel() }}
-              </button>
-            </div>
+        <!-- Search -->
+        <div class="cp-panel__search">
+          <svg class="cp-panel__search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input class="cp-panel__search-input"
+                 type="text"
+                 placeholder="Search job roles…"
+                 [(ngModel)]="searchQuery"
+                 (click)="$event.stopPropagation()">
+          @if (searchQuery) {
+            <button class="cp-panel__search-clear" (click)="clearSearch($event)">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
           }
-
         </div>
-      }
+      </div>
 
-      <!-- Empty state -->
-      @if (!courses.length) {
-        <div class="cp-empty">
-          <svg class="cp-empty__icon w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-          <p class="cp-empty__text">No job roles available at the moment.</p>
-        </div>
-      }
+      <!-- Panel body -->
+      <div class="cp-panel__body">
 
+        @if (isLoading) {
+          <div class="cp-loading">
+            <div class="cp-spinner"></div>
+            <p class="cp-loading__text">Loading job roles…</p>
+          </div>
+        }
+
+        @if (!isLoading) {
+          <div class="cp-grid">
+            @for (job of filteredCourses; track job.id) {
+
+              <div class="cp-card" [class.cp-card--enrolled]="isEnrolled(job)" (click)="switchJobRole(job)">
+
+                @if (isEnrolled(job)) {
+                  <span class="cp-enrolled-badge">Current</span>
+                }
+
+                <!-- Icon -->
+                <div class="cp-card__icon-wrap" [style.background]="getRoleColor(job) + '18'">
+                  @if (job.image) {
+                    <img [src]="job.image" [alt]="job.title" class="cp-card__icon-img">
+                  } @else {
+                    <span class="cp-card__icon-initials" [style.color]="getRoleColor(job)">
+                      {{ getInitials(job.title) }}
+                    </span>
+                  }
+                </div>
+
+                <!-- Info -->
+                <div class="cp-card__info">
+                  <h3 class="cp-role-title">{{ job.title }}</h3>
+                  <p class="cp-description">{{ job.description }}</p>
+                  @if (job.subjects?.length) {
+                    <p class="cp-meta">
+                      <svg class="cp-meta__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                      {{ job.subjects.length }} subject{{ job.subjects.length === 1 ? '' : 's' }}
+                    </p>
+                  }
+                </div>
+
+                <!-- Compact stat row (enrolled roles only) -->
+                @if (isEnrolled(job) && job.coverage > 0) {
+                  <div class="cp-stat-row">
+                    <span class="cp-stat"><b>{{ job.score }}%</b> Score</span>
+                    <span class="cp-stat"><b>{{ job.coverage }}%</b> Coverage</span>
+                  </div>
+                }
+
+                <!-- Action -->
+                @if (minimal) {
+                  <div class="cp-card__action" [style.color]="getRoleColor(job)">
+                    {{ isEnrolled(job) ? 'Continue' : getActionLabel() }}
+                    <svg class="cp-card__action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                  </div>
+                }
+
+              </div>
+            }
+
+            <!-- Empty state -->
+            @if (!courses.length) {
+              <div class="cp-empty">
+                <svg class="cp-empty__icon w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+                <p class="cp-empty__text">No job roles available at the moment.</p>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
     </div>
   </div>
+
 }

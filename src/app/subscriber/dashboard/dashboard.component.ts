@@ -11,6 +11,8 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
 import { CertificationTracksComponent } from '@shared/components/certification-tracks/certification-tracks.component';
+import { CertificateRibbonComponent } from '@shared/components/certificate-ribbon/certificate-ribbon.component';
+import { MyCertificate } from '@core/models/gamification.model';
 import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
@@ -36,6 +38,7 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
     GoalPathComponent,
     SubjectTracksBoardComponent,
     CertificationTracksComponent,
+    CertificateRibbonComponent,
   ]
 })
 export class DashboardComponent implements OnInit {
@@ -49,6 +52,7 @@ export class DashboardComponent implements OnInit {
   currentSubject: any;
   subjectTopics$: Observable<any>;
   nextAction: string = 'Assess Your Skills';
+  viewingCertificate: { certificate: MyCertificate; trackTitle: string } | null = null;
   achievements = [
     {
       name: 'Redux Star',
@@ -398,7 +402,15 @@ export class DashboardComponent implements OnInit {
   }
 
   onCertViewCertificate(cert: CertificationTrack) {
-    this.snackService.display('snackbar-dark', 'Certificate viewing is coming soon.', 'bottom', 'center');
+    if (cert.myCertificate) {
+      this.viewingCertificate = { certificate: cert.myCertificate, trackTitle: cert.title };
+    } else {
+      this.snackService.display('snackbar-dark', 'Certificate is still processing.', 'bottom', 'center');
+    }
+  }
+
+  closeCertificateRibbon(): void {
+    this.viewingCertificate = null;
   }
 
    onScheduleMockInt() {

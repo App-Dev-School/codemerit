@@ -4,6 +4,7 @@ import { QuestionAttempt } from "./question-attempts"
 import { QuestionType } from "./question-type"
 import { QuizQuestion } from "./quiz-question"
 import { QuizSettings } from "./quiz-settings"
+import { NewlyEarned } from "./gamification.model"
 
 //proposed structure. Not in use.
 export interface Quiz {
@@ -53,6 +54,9 @@ export interface Quiz {
       quizType: string
     },
      topics?: QuizResultTopic[];
+     // Only ever present on the immediate POST /apis/quiz/submit response —
+     // GET /apis/quiz/result/:code never returns this.
+     newlyEarned?: NewlyEarned | null;
   }
 
   export interface QuizResultTopic{

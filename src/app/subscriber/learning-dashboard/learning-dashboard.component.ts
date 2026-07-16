@@ -10,8 +10,11 @@ import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation } from '@shared/animations';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
-import { CoursePickerComponent } from '@shared/components/select-course/course-picker.component';
 import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-card/subject-tracker-card.component';
+import { BadgeGridComponent } from '@shared/components/badge-grid/badge-grid.component';
+import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-streak-widget.component';
+import { NextBestActionCardComponent } from '@shared/components/next-best-action-card/next-best-action-card.component';
+import { CachedGamificationStats, GAMIFICATION_STATS_CACHE_KEY, LeaderboardPeriod, LeaderboardResponse, MyBadgesResponse, NextTrackNudge } from '@core/models/gamification.model';
 import { QuizService } from 'src/app/quiz/quiz.service';
 
 @Component({
@@ -20,7 +23,10 @@ import { QuizService } from 'src/app/quiz/quiz.service';
   styleUrls: ['./learning-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
-    SubjectTrackerCardComponent
+    SubjectTrackerCardComponent,
+    BadgeGridComponent,
+    XpStreakWidgetComponent,
+    NextBestActionCardComponent,
   ]
 })
 export class LearningDashboardComponent implements OnInit {
@@ -48,6 +54,19 @@ export class LearningDashboardComponent implements OnInit {
   //For displaying test data
   debugDisplay = false;
   roleMenuOpen = false;
+
+  activeTab: 'overview' | 'badges' | 'leaderboard' = 'overview';
+  badges: MyBadgesResponse | null = null;
+  badgesLoading = false;
+  private badgesFetched = false;
+  xpStreakStats: CachedGamificationStats | null = null;
+  nextCertificationTrack: NextTrackNudge | null = null;
+  nextSubjectTrack: NextTrackNudge | null = null;
+
+  leaderboardPeriod: LeaderboardPeriod = 'all-time';
+  leaderboard: LeaderboardResponse | null = null;
+  leaderboardLoading = false;
+  readonly leaderboardPeriods: LeaderboardPeriod[] = ['all-time', 'weekly', 'monthly'];
   constructor(private master: MasterService,
     private route: ActivatedRoute,
     private router: Router,
@@ -80,6 +99,14 @@ export class LearningDashboardComponent implements OnInit {
       }
     });
     this.takeRouteParams();
+    this.loadCachedGamificationStats();
+    // Lets other pages (e.g. the quiz-result widgets) deep-link straight to a
+    // specific tab, e.g. /dashboard?tab=badges — falls back to 'overview' for
+    // any missing/unrecognized value.
+    const requestedTab = this.route.snapshot.queryParamMap.get('tab');
+    if (requestedTab === 'badges' || requestedTab === 'leaderboard') {
+      this.setActiveTab(requestedTab);
+    }
     // setTimeout(() => {
     //   this.loading = false;
     // }, 3333);
@@ -181,6 +208,10 @@ export class LearningDashboardComponent implements OnInit {
             this.courseData = subjects;
             this.attemptedSubjects = subjects.filter(item => item.attempted && item.attempted > 0);
             this.otherSubjects = subjects.filter(item => !(item.attempted && item.attempted > 0));
+            // Only populated when authenticated — null for both means every
+            // certification track for this role is already achieved.
+            this.nextCertificationTrack = data?.nextCertificationTrack ?? null;
+            this.nextSubjectTrack = data?.nextSubjectTrack ?? null;
 
             setTimeout(() => {
               this.loading = false;
@@ -276,40 +307,6 @@ export class LearningDashboardComponent implements OnInit {
     this.router.navigate(['/users/profile']);
   }
 
-  openCourseLauncher(action: 'default' | 'custom', data?: any) {
-    console.log("CourseDash openDialog", action, data);
-    let varDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      varDirection = 'rtl';
-    } else {
-      varDirection = 'ltr';
-    }
-    const dialogRef = this.dialog.open(CoursePickerComponent, {
-      width: '100vw',
-      height: '100vh',
-      maxWidth: '100vw',
-      panelClass: 'full-screen-dialog',
-      data: { topicItem: data, action },
-      direction: varDirection,
-      autoFocus: false,
-      disableClose: false
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log("CoursePicker close result", result);
-        const action = 'add';
-        this.onCourseChange(result);
-        // this.showNotification(
-        //   action === 'add' ? 'snackbar-success' : 'black',
-        //   `Record ${action === 'add' ? 'Add' : 'Edit'} Successfully.`,
-        //   'bottom',
-        //   'center'
-        // );
-      }
-    });
-  }
-
   //implement for subjects
   launchSubjectExplorer(subject: any) {
     console.log("View Path clicked:", subject);
@@ -320,6 +317,65 @@ export class LearningDashboardComponent implements OnInit {
   assessSkills(): void {
     if (this.course) {
       this.router.navigate(['/assessment/skill-rating', this.course]);
+    }
+  }
+
+  // The API gives us a subjectTrack id/title/progress, not a routable subject
+  // slug — rather than guess a possibly-wrong deep link, scroll the learner
+  // down to their subject list, where the card already lives (switching tabs
+  // is a no-op here since the card only renders on the Overview tab).
+  onNudgeContinue(): void {
+    document.getElementById('subjects-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  setActiveTab(tab: 'overview' | 'badges' | 'leaderboard'): void {
+    this.activeTab = tab;
+    if (tab === 'badges' && !this.badgesFetched) {
+      this.loadBadges();
+    }
+    if (tab === 'leaderboard' && !this.leaderboard) {
+      this.loadLeaderboard();
+    }
+  }
+
+  private loadBadges(): void {
+    this.badgesLoading = true;
+    this.badgesFetched = true;
+    this.master.fetchMyBadges().subscribe((res) => {
+      this.badges = res;
+      this.badgesLoading = false;
+    });
+  }
+
+  get userInVisibleLeaderboard(): boolean {
+    const rank = this.leaderboard?.userRank;
+    if (!rank || !this.leaderboard?.leaderboard) return false;
+    return this.leaderboard.leaderboard.some((entry) => entry.rank === rank);
+  }
+
+  setLeaderboardPeriod(period: LeaderboardPeriod): void {
+    if (period === this.leaderboardPeriod) return;
+    this.leaderboardPeriod = period;
+    this.loadLeaderboard();
+  }
+
+  private loadLeaderboard(): void {
+    this.leaderboardLoading = true;
+    this.master.fetchLeaderboard(this.leaderboardPeriod).subscribe((res) => {
+      this.leaderboard = res;
+      this.leaderboardLoading = false;
+    });
+  }
+
+  // Reads the last-known XP/level/streak cached by quiz-result.component.ts right
+  // after a quiz submit — see GAMIFICATION_STATS_CACHE_KEY doc comment for why
+  // there's no live endpoint for this yet.
+  private loadCachedGamificationStats(): void {
+    try {
+      const raw = sessionStorage.getItem(GAMIFICATION_STATS_CACHE_KEY);
+      this.xpStreakStats = raw ? JSON.parse(raw) : null;
+    } catch {
+      this.xpStreakStats = null;
     }
   }
 

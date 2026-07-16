@@ -23,21 +23,53 @@ export class ShareService {
     }
   }
 
-  /** Share a DOM element as an image */
-  async shareCardAsImage(elementId: string, title: string, text: string, url: string) {
+  // Tried dom-to-image-more here (SVG <foreignObject> + the browser's own
+  // rasterizer) expecting better fidelity than html2canvas's from-scratch CSS
+  // reimplementation — it made things worse (visible white rectangles at
+  // rounded corners: foreignObject serialization is known to not reliably
+  // clip border-radius+overflow:hidden, and it also struggles with nested
+  // Angular child components like <app-quiz-progress>'s SVG donut). Reverted
+  // to html2canvas, keeping the one fix that's genuinely engine-agnostic:
+  // waiting for `document.fonts.ready` before capturing, since capturing
+  // before a web font finishes downloading silently falls back to a system
+  // font with different metrics — that was likely the real cause of the
+  // original text-clipping/misalignment complaints, not the engine itself.
+  private async captureElementAsPng(elementId: string): Promise<string | null> {
     const element = document.getElementById(elementId);
     if (!element) {
       console.warn(`Element with id '${elementId}' not found`);
-      return;
+      return null;
     }
+    if (document.fonts?.ready) {
+      try { await document.fonts.ready; } catch { /* non-critical, proceed anyway */ }
+    }
+    const canvas = await html2canvas(element, {
+      backgroundColor: null,
+      useCORS: true,
+      scale: window.devicePixelRatio || 1,
+    });
+    return canvas.toDataURL('image/png');
+  }
+
+  /** Capture a DOM element and trigger a direct file download — no share-sheet,
+   *  used by dedicated "Download" buttons as opposed to the share flow. */
+  async downloadCardAsImage(elementId: string, filename = 'quiz-result.png'): Promise<boolean> {
+    const dataUrl = await this.captureElementAsPng(elementId);
+    if (!dataUrl) return false;
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = filename;
+    link.click();
+    return true;
+  }
+
+  /** Share a DOM element as an image */
+  async shareCardAsImage(elementId: string, title: string, text: string, url: string) {
+    const dataUrl = await this.captureElementAsPng(elementId);
+    if (!dataUrl) return;
     text = '<b>'+title+'</b>'+text+'\n'+url;
-    const canvas = await html2canvas(element);
-    const blob = await new Promise<Blob | null>(resolve =>
-      canvas.toBlob(b => resolve(b), 'image/png')
-    );
 
-    if (!blob) return;
-
+    const blob = await (await fetch(dataUrl)).blob();
     const file = new File([blob], 'quiz-result.png', { type: 'image/png' });
 
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -54,7 +86,7 @@ export class ShareService {
     } else {
       // fallback: download image
       const link = document.createElement('a');
-      link.href = canvas.toDataURL('image/png');
+      link.href = dataUrl;
       link.download = 'quiz-result.png';
       link.click();
     }
@@ -75,6 +107,9 @@ async shareCardWithLink(elementId: string, text: string, quizUrl: string) {
   const element = document.getElementById(elementId);
   if (!element) return;
 
+  if (document.fonts?.ready) {
+    try { await document.fonts.ready; } catch { /* non-critical, proceed anyway */ }
+  }
   const blob = await domtoimage.toBlob(element);
   const img = await createImageBitmap(blob);
 

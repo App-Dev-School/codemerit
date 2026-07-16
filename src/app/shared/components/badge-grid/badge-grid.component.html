@@ -1,0 +1,22 @@
+@if (loading) {
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+    @for (i of [1,2,3,4,5,6,7]; track i) {
+      <div class="animate-pulse rounded-2xl bg-cm-surface-raised border border-cm-border h-36"></div>
+    }
+  </div>
+} @else {
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+    @for (badge of earned; track badge.code) {
+      <app-badge-earned-card variant="tile" [badge]="badge" [locked]="false"></app-badge-earned-card>
+    }
+    @for (badge of locked; track badge.code) {
+      <app-badge-earned-card variant="tile" [badge]="badge" [locked]="true"></app-badge-earned-card>
+    }
+  </div>
+  @if (!earned.length && !locked.length) {
+    <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
+      <i class="fa-solid fa-award text-cm-text-muted text-2xl mb-3 block"></i>
+      <p class="text-sm text-cm-text-muted">No badges available right now.</p>
+    </div>
+  }
+}

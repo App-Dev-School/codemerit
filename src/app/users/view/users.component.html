@@ -1,6 +1,6 @@
 <section class="content">
   <div class="content-block">
-    <div class="pr-[25px] pb-12 pt-4">
+    <div class="pb-12 pt-4">
 
       <!-- ══ LOADING STATE ══════════════════════════════════════════════════ -->
       @if (loading) {
@@ -29,8 +29,6 @@
             <div class="absolute inset-0 opacity-[0.03] dark:opacity-0"
                  style="background-image: radial-gradient(circle, #6366f1 1px, transparent 1px);
                         background-size: 22px 22px"></div>
-            <div class="absolute top-0 left-0 right-0 h-[3px]
-                        bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400"></div>
 
             <div class="relative px-6 pt-7 pb-6">
               <div class="flex flex-col lg:flex-row lg:items-center gap-6">
@@ -40,7 +38,7 @@
                     <div class="absolute -inset-[3px] rounded-2xl
                                 bg-gradient-to-br from-indigo-400 via-violet-500 to-cyan-400
                                 opacity-25 dark:opacity-50 blur-[5px]"></div>
-                    <img src="assets/images/users/user.jpg" alt="Avatar"
+                    <img [src]="userDetail.image || 'assets/images/users/user.jpg'" alt="Avatar"
                          class="relative w-[72px] h-[72px] rounded-2xl object-cover shadow-xl">
                     <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full
                                  bg-emerald-500 border-2 border-white dark:border-slate-900 z-10"></span>
@@ -50,15 +48,44 @@
                     <div class="flex flex-wrap items-center gap-2 mb-1.5">
                       <h1 class="text-[22px] font-black tracking-tight leading-tight
                                  text-slate-900 dark:text-white">
-                        {{ userDetail.firstName + " " + userDetail.lastName }}
+                        {{ userDetail.firstName }} {{ userDetail.lastName }}
                       </h1>
-                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
-                                   text-[10px] font-bold uppercase tracking-wider
-                                   bg-indigo-100 border border-indigo-200 text-indigo-700
-                                   dark:bg-indigo-500/20 dark:border-indigo-500/30 dark:text-indigo-300">
-                        <i class="fa-solid fa-briefcase text-[8px]"></i>
-                        {{ userDetail.designation }}
-                      </span>
+                      @if (userDetail.designation) {
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                     text-[10px] font-bold uppercase tracking-wider
+                                     bg-indigo-100 border border-indigo-200 text-indigo-700
+                                     dark:bg-indigo-500/20 dark:border-indigo-500/30 dark:text-indigo-300">
+                          <i class="fa-solid fa-briefcase text-[8px]"></i>
+                          {{ userDetail.designation }}
+                        </span>
+                      }
+                      @if (userDetail.gamification?.level) {
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                     text-[10px] font-bold uppercase tracking-wider
+                                     bg-amber-100 border border-amber-200 text-amber-700
+                                     dark:bg-amber-500/20 dark:border-amber-500/30 dark:text-amber-300">
+                          <i class="fa-solid fa-star text-[8px]"></i>
+                          Level {{ userDetail.gamification.level.level }} · {{ userDetail.gamification.level.title }}
+                        </span>
+                      }
+                      @if (userDetail.role && userDetail.role !== 'User') {
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                     text-[10px] font-bold uppercase tracking-wider
+                                     bg-violet-100 border border-violet-200 text-violet-700
+                                     dark:bg-violet-500/20 dark:border-violet-500/30 dark:text-violet-300">
+                          <i class="fa-solid fa-shield text-[8px]"></i>
+                          {{ userDetail.role }}
+                        </span>
+                      }
+                      @if (canEditProfile && userDetail.accountStatus && userDetail.accountStatus !== 'ACTIVE') {
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                     text-[10px] font-bold uppercase tracking-wider
+                                     bg-rose-100 border border-rose-200 text-rose-700
+                                     dark:bg-rose-500/20 dark:border-rose-500/30 dark:text-rose-300">
+                          <i class="fa-solid fa-triangle-exclamation text-[8px]"></i>
+                          {{ userDetail.accountStatus }}
+                        </span>
+                      }
                     </div>
                     <div class="flex flex-wrap gap-2 mt-3">
                       @if (userDetail.city || userDetail.country) {
@@ -66,10 +93,10 @@
                                      bg-white/80 border border-slate-200 text-slate-600
                                      dark:bg-white/5 dark:border-white/10 dark:text-slate-300 backdrop-blur-sm">
                           <i class="fa-solid fa-location-dot text-[9px] text-slate-400"></i>
-                          {{ userDetail.city }} {{ userDetail.country }}
+                          {{ userDetail.city }}{{ userDetail.city && userDetail.country ? ', ' : '' }}{{ userDetail.country }}
                         </span>
                       }
-                      @if (selfView) {
+                      @if (canViewPrivateInfo) {
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium
                                      bg-white/80 border border-slate-200 text-slate-600
                                      dark:bg-white/5 dark:border-white/10 dark:text-slate-300 backdrop-blur-sm">
@@ -77,19 +104,21 @@
                           {{ userDetail.email }}
                         </span>
                       }
-                      @if (selfView && userDetail.mobile) {
+                      @if (canViewPrivateInfo && userDetail.mobile) {
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium
                                      bg-emerald-50 border border-emerald-200 text-emerald-700
                                      dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-300">
-                          <i class="fa-solid fa-phone text-[9px]"></i> Verified
+                          <i class="fa-solid fa-phone text-[9px]"></i> {{ userDetail.mobile }}
                         </span>
                       }
-                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium
-                                   bg-white/80 border border-slate-200 text-slate-600
-                                   dark:bg-white/5 dark:border-white/10 dark:text-slate-300 backdrop-blur-sm">
-                        <i class="fa-solid fa-id-badge text-[9px] text-slate-400"></i>
-                        CDMR00-{{ userDetail.id }}
-                      </span>
+                      @if (canViewPrivateInfo) {
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium
+                                     bg-white/80 border border-slate-200 text-slate-600
+                                     dark:bg-white/5 dark:border-white/10 dark:text-slate-300 backdrop-blur-sm">
+                          <i class="fa-solid fa-id-badge text-[9px] text-slate-400"></i>
+                          CDMR00-{{ userDetail.id }}
+                        </span>
+                      }
                     </div>
                   </div>
                 </div>
@@ -146,15 +175,15 @@
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
-                @for (subject of mySubjects.slice(0, 7); track subject.id) {
-                  <img [src]="subject.image" [alt]="subject.title" [title]="subject.title"
+                @for (subject of (userDetail.courseStats ?? []).slice(0, 7); track subject.id) {
+                  <img [src]="subject.image || 'assets/images/tech/placeholder.png'" [alt]="subject.title" [title]="subject.title"
                        class="w-6 h-6 rounded-md object-contain bg-white border border-slate-200 dark:border-white/10 p-0.5">
                 }
-                @if (mySubjects.length > 7) {
+                @if ((userDetail.courseStats?.length ?? 0) > 7) {
                   <span class="inline-flex items-center justify-center w-6 h-6 rounded-md
                                text-[9px] font-bold
                                bg-cm-surface-raised border border-cm-border text-cm-text-muted">
-                    +{{ mySubjects.length - 7 }}
+                    +{{ userDetail.courseStats.length - 7 }}
                   </span>
                 }
               </div>
@@ -163,493 +192,619 @@
           <!-- /Hero Card -->
 
 
-          <!-- ══ KPI STRIP ═════════════════════════════════════════════════ -->
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl
-                        bg-cm-surface border border-cm-border shadow-sm
-                        hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/30
-                        transition-all duration-200">
-              <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-book-open text-indigo-600 dark:text-indigo-400 text-sm"></i>
-              </div>
-              <div>
-                <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ mySubjects.length }}</div>
-                <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Subjects Enrolled</div>
-              </div>
-            </div>
-            <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl
-                        bg-cm-surface border border-cm-border shadow-sm
-                        hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-500/30
-                        transition-all duration-200">
-              <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-gamepad text-emerald-600 dark:text-emerald-400 text-sm"></i>
-              </div>
-              <div>
-                <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.profile?.totalQuizSessions ?? 0 }}</div>
-                <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Quiz Sessions</div>
-              </div>
-            </div>
-            <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl
-                        bg-cm-surface border border-cm-border shadow-sm
-                        hover:shadow-md hover:border-violet-200 dark:hover:border-violet-500/30
-                        transition-all duration-200">
-              <div class="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-user-tie text-violet-600 dark:text-violet-400 text-sm"></i>
-              </div>
-              <div>
-                <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.profile?.smeAssessments ?? 0 }}</div>
-                <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">SME Assessments</div>
-              </div>
-            </div>
-            <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl
-                        bg-cm-surface border border-cm-border shadow-sm
-                        hover:shadow-md hover:border-amber-200 dark:hover:border-amber-500/30
-                        transition-all duration-200">
-              <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-star text-amber-600 dark:text-amber-400 text-sm"></i>
-              </div>
-              <div>
-                <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.profile?.overallScore ?? '--' }}</div>
-                <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Overall Score</div>
-              </div>
-            </div>
+          <!-- ══ TAB STRIP ═══════════════════════════════════════════════════ -->
+          <div class="tab-strip-scroll flex items-center gap-1 p-1 rounded-xl bg-cm-surface-raised border border-cm-border overflow-x-auto">
+            @for (tab of primaryTabs; track tab.id) {
+              <button type="button" (click)="setActiveTab(tab.id)"
+                class="px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all"
+                [class.bg-cm-brand]="activeTab === tab.id"
+                [class.text-white]="activeTab === tab.id"
+                [class.text-cm-text-secondary]="activeTab !== tab.id">
+                {{ tab.label }}
+              </button>
+            }
+            @if (visiblePermissions.length > 0) {
+              <button type="button" (click)="setActiveTab('permissions')"
+                class="px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all"
+                [class.bg-cm-brand]="activeTab === 'permissions'"
+                [class.text-white]="activeTab === 'permissions'"
+                [class.text-cm-text-secondary]="activeTab !== 'permissions'">
+                Permissions
+              </button>
+            }
+            @if (selfView) {
+              <button type="button" (click)="setActiveTab('settings')"
+                class="px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all"
+                [class.bg-cm-brand]="activeTab === 'settings'"
+                [class.text-white]="activeTab === 'settings'"
+                [class.text-cm-text-secondary]="activeTab !== 'settings'">
+                Settings
+              </button>
+            }
           </div>
-          <!-- /KPI Strip -->
 
 
-          <!-- ══ SKILLS & PROGRESS — FULL WIDTH ════════════════════════════ -->
-          <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-none">
+          <!-- ══════════════════════════════════════════════════════════════
+            OVERVIEW TAB
+          ══════════════════════════════════════════════════════════════ -->
+          @if (activeTab === 'overview') {
+            <div class="space-y-5">
 
-            <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted
-                        flex items-center justify-between gap-3">
-              <div>
-                <div class="text-sm font-bold text-cm-text-primary">Skills &amp; Progress</div>
-                <div class="text-[11px] text-cm-text-secondary mt-0.5">
-                  {{ profileSubjects.length }} subjects · self-assessment scores
+              @if (xpStreakStats) {
+                <app-xp-streak-widget class="block" [stats]="xpStreakStats"></app-xp-streak-widget>
+              }
+
+              <!-- KPI strip -->
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl
+                            bg-cm-surface border border-cm-border shadow-sm">
+                  <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-book-open text-indigo-600 dark:text-indigo-400 text-sm"></i>
+                  </div>
+                  <div>
+                    <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.courseStats?.length ?? 0 }}</div>
+                    <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Subjects</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl
+                            bg-cm-surface border border-cm-border shadow-sm">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-gamepad text-emerald-600 dark:text-emerald-400 text-sm"></i>
+                  </div>
+                  <div>
+                    <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.quizzes?.summary?.totalTaken ?? 0 }}</div>
+                    <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Quizzes Taken</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl
+                            bg-cm-surface border border-cm-border shadow-sm">
+                  <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-trophy text-amber-600 dark:text-amber-400 text-sm"></i>
+                  </div>
+                  <div>
+                    <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.badges?.length ?? 0 }}</div>
+                    <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Badges Earned</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl
+                            bg-cm-surface border border-cm-border shadow-sm">
+                  <div class="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-bolt text-violet-600 dark:text-violet-400 text-sm"></i>
+                  </div>
+                  <div>
+                    <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.points ?? 0 }}</div>
+                    <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Total XP</div>
+                  </div>
                 </div>
               </div>
-              <span class="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1
-                           rounded-lg font-semibold
-                           bg-indigo-500/10 border border-indigo-500/25
-                           text-indigo-700 dark:text-indigo-300 shrink-0">
-                <i class="fa-solid fa-chart-line text-[9px]"></i> Self Assessment
-              </span>
-            </div>
 
-            <div class="p-4">
-              @if (profileSubjects.length > 0) {
-                <!-- flex-wrap + min-w avoids viewport-breakpoint issues with sidebar layouts -->
-                <div style="display:flex; flex-wrap:wrap; gap:12px;">
-                  @for (subject of profileSubjects; track subject.id ?? subject.title; let i = $index) {
+              <div class="grid md:grid-cols-2 gap-5 items-start">
 
-                    <!-- Horizontal card: ring left · info+bars right -->
-                    <div class="skill-card"
-                         style="display:flex; align-items:center; gap:14px;
-                                min-width:260px; flex:1 1 260px;
-                                padding:14px; border-radius:14px;
-                                border:1px solid var(--cm-border);
-                                background:var(--cm-surface-muted);
-                                transition:box-shadow .2s, border-color .2s;"
-                         [style.animation-delay]="(i * 60) + 'ms'">
-
-                      <!-- Left: animated ring -->
-                      <div style="position:relative; width:76px; height:76px; flex-shrink:0;">
-
-                        <div [style]="'position:absolute; inset:14px; border-radius:50%; filter:blur(12px); opacity:.6; background:'
-                                     + (subject.score >= 75 ? 'rgba(99,102,241,.25)'
-                                       : subject.score >= 45 ? 'rgba(245,158,11,.25)' : 'rgba(244,63,94,.2)')">
-                        </div>
-
-                        <svg style="position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg);"
-                             viewBox="0 0 76 76">
-                          <circle cx="38" cy="38" r="30" fill="none" stroke-width="5"
-                                  style="stroke:var(--cm-border)"/>
-                          <circle cx="38" cy="38" r="30" fill="none" stroke-width="5"
-                                  stroke-linecap="round"
-                                  [attr.stroke]="subject.score >= 75 ? '#6366f1'
-                                               : subject.score >= 45 ? '#f59e0b' : '#f43f5e'"
-                                  [attr.stroke-dasharray]="'188.5 188.5'"
-                                  class="ring-anim"
-                                  [style.--ring-end]="188.5 * (1 - subject.score / 100)">
-                          </circle>
-                        </svg>
-
-                        <div style="position:absolute; inset:0; display:flex; flex-direction:column;
-                                    align-items:center; justify-content:center;">
-                          <span [style]="'font-size:18px; font-weight:900; line-height:1; font-variant-numeric:tabular-nums; color:'
-                                        + (subject.score >= 75 ? '#4338ca'
-                                          : subject.score >= 45 ? '#b45309' : '#e11d48')">
-                            {{ subject.score }}
-                          </span>
-                          <span style="font-size:9px; font-weight:600; color:var(--cm-text-muted); margin-top:1px;">%</span>
-                        </div>
+                <!-- About -->
+                <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                  <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                    <div class="text-sm font-bold text-cm-text-primary">About</div>
+                  </div>
+                  <div class="p-5 space-y-4">
+                    @if (userDetail.profile?.about) {
+                      <div>
+                        <div class="text-[10px] font-semibold text-cm-text-muted uppercase tracking-widest mb-1.5">Bio</div>
+                        <p class="text-xs text-cm-text-secondary leading-relaxed">{{ userDetail.profile.about }}</p>
                       </div>
-
-                      <!-- Right: identity + bars -->
-                      <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
-
-                        <!-- Title row -->
-                        <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
-                          <div style="display:flex; align-items:center; gap:7px; min-width:0;">
-                            <img [src]="subject.image || 'assets/images/tech/placeholder.png'"
-                                 [alt]="subject.title"
-                                 style="width:22px; height:22px; border-radius:6px; object-fit:contain;
-                                        background:#fff; border:1px solid var(--cm-border); padding:2px; flex-shrink:0;">
-                            <span style="font-size:13px; font-weight:700; color:var(--cm-text-primary);
-                                         white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                              {{ subject.title }}
-                            </span>
+                      <div class="border-t border-cm-border"></div>
+                    }
+                    <div class="space-y-3">
+                      @if (canViewPrivateInfo) {
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-envelope text-cm-text-muted text-xs"></i>
                           </div>
-                          <span [style]="'font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:2px 6px; border-radius:4px; white-space:nowrap; flex-shrink:0; border:1px solid; '
-                                        + (subject.score >= 75
-                                            ? 'background:rgba(99,102,241,.1); border-color:rgba(99,102,241,.25); color:#4338ca;'
-                                            : subject.score >= 45
-                                              ? 'background:rgba(245,158,11,.1); border-color:rgba(245,158,11,.25); color:#b45309;'
-                                              : 'background:var(--cm-surface-raised); border-color:var(--cm-border); color:var(--cm-text-muted);')">
-                            {{ subject.score >= 75 ? 'Advanced' : subject.score >= 45 ? 'Int.' : 'Beginner' }}
-                          </span>
+                          <div class="min-w-0">
+                            <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">Email</div>
+                            <div class="text-xs text-cm-text-secondary font-medium truncate">{{ userDetail.email }}</div>
+                          </div>
                         </div>
-
-                        <!-- Bars -->
-                        <div style="display:flex; flex-direction:column; gap:5px;">
-
-                          <div>
-                            <div style="display:flex; justify-content:space-between; align-items:center;
-                                        font-size:10px; margin-bottom:3px;">
-                              <span style="color:var(--cm-text-muted); font-weight:600; display:flex; align-items:center; gap:4px;">
-                                <i class="fa-solid fa-circle-half-stroke" style="color:#6366f1; font-size:8px;"></i>Score
-                              </span>
-                              <span style="color:var(--cm-text-secondary); font-weight:700; font-variant-numeric:tabular-nums;">{{ subject.score }}%</span>
-                            </div>
-                            <div style="height:5px; background:var(--cm-surface-raised); border-radius:99px; overflow:hidden;">
-                              <div class="bar-anim" [style.width.%]="subject.score"
-                                   style="height:100%; border-radius:99px;
-                                          background:linear-gradient(90deg,#6366f1,#8b5cf6);">
-                              </div>
-                            </div>
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-phone text-cm-text-muted text-xs"></i>
                           </div>
-
-                          <div>
-                            <div style="display:flex; justify-content:space-between; align-items:center;
-                                        font-size:10px; margin-bottom:3px;">
-                              <span style="color:var(--cm-text-muted); font-weight:600; display:flex; align-items:center; gap:4px;">
-                                <i class="fa-solid fa-bullseye" style="color:#10b981; font-size:8px;"></i>Accuracy
-                              </span>
-                              <span style="color:var(--cm-text-secondary); font-weight:700; font-variant-numeric:tabular-nums;">{{ subject.avgAccuracy }}%</span>
-                            </div>
-                            <div style="height:5px; background:var(--cm-surface-raised); border-radius:99px; overflow:hidden;">
-                              <div class="bar-anim bar-anim-d1" [style.width.%]="subject.avgAccuracy"
-                                   style="height:100%; border-radius:99px;
-                                          background:linear-gradient(90deg,#10b981,#06b6d4);">
-                              </div>
-                            </div>
+                          <div class="min-w-0">
+                            <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">Phone</div>
+                            <div class="text-xs text-cm-text-secondary font-medium">{{ userDetail.mobile ?? 'NA' }}</div>
                           </div>
-
-                          <div>
-                            <div style="display:flex; justify-content:space-between; align-items:center;
-                                        font-size:10px; margin-bottom:3px;">
-                              <span style="color:var(--cm-text-muted); font-weight:600; display:flex; align-items:center; gap:4px;">
-                                <i class="fa-solid fa-layer-group" style="color:#f59e0b; font-size:8px;"></i>Coverage
-                              </span>
-                              <span style="color:var(--cm-text-secondary); font-weight:700; font-variant-numeric:tabular-nums;">{{ subject.coverage }}%</span>
-                            </div>
-                            <div style="height:5px; background:var(--cm-surface-raised); border-radius:99px; overflow:hidden;">
-                              <div class="bar-anim bar-anim-d2" [style.width.%]="subject.coverage"
-                                   style="height:100%; border-radius:99px;
-                                          background:linear-gradient(90deg,#f59e0b,#f97316);">
-                              </div>
-                            </div>
+                        </div>
+                      }
+                      @if (userDetail.profile?.linkedinUrl) {
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
+                            <i class="fa-brands fa-linkedin text-cm-text-muted text-xs"></i>
                           </div>
-
+                          <div class="min-w-0">
+                            <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">LinkedIn</div>
+                            <div class="text-xs text-cm-text-secondary font-medium truncate">{{ userDetail.profile.linkedinUrl }}</div>
+                          </div>
+                        </div>
+                      }
+                      <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
+                          <i class="fa-solid fa-calendar text-cm-text-muted text-xs"></i>
+                        </div>
+                        <div class="min-w-0">
+                          <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">Member Since</div>
+                          <div class="text-xs text-cm-text-secondary font-medium">{{ userDetail.createdAt | date: 'MM/dd/yyyy' }}</div>
                         </div>
                       </div>
                     </div>
-
-                  }
-                </div>
-              } @else {
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;
-                            padding:48px 0; gap:12px; text-align:center;">
-                  <div style="width:48px; height:48px; border-radius:14px;
-                              background:var(--cm-surface-raised); border:1px solid var(--cm-border);
-                              display:flex; align-items:center; justify-content:center;">
-                    <i class="fa-solid fa-book" style="color:var(--cm-text-muted); font-size:18px;"></i>
                   </div>
-                  <p style="font-size:14px; font-weight:600; color:var(--cm-text-muted); margin:0;">No skills data yet</p>
-                  <p style="font-size:12px; color:var(--cm-text-muted); max-width:220px; line-height:1.5; margin:0;">
-                    Complete self-rating to see your skill progress here.
-                  </p>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                  <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                    <div class="text-sm font-bold text-cm-text-primary">Recent Activity</div>
+                  </div>
+                  <div class="px-5">
+                    <app-profile-activity-timeline [activities]="(userDetail.activities ?? []).slice(0, 5)"></app-profile-activity-timeline>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Book SME Assessment CTA -->
+              @if (selfView) {
+                <div class="relative rounded-2xl overflow-hidden
+                            border border-indigo-200 dark:border-indigo-500/30 shadow-sm"
+                     style="box-shadow: 0 4px 20px rgba(99,102,241,.10)">
+                  <div class="absolute inset-0
+                              bg-gradient-to-br from-indigo-50 via-violet-50/50 to-cyan-50/30
+                              dark:from-indigo-950/60 dark:via-slate-900 dark:to-slate-900"></div>
+                  <div class="absolute top-0 left-0 right-0 h-[3px]
+                              bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400"></div>
+                  <div class="relative px-5 py-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                      <div class="flex items-start gap-4 flex-1">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center shrink-0">
+                          <i class="fa-solid fa-calendar-plus text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <div>
+                          <div class="text-sm font-bold text-cm-text-primary">Book SME Assessment</div>
+                          <div class="text-xs text-cm-text-secondary mt-0.5 leading-relaxed">
+                            Schedule a live technical interview with a Subject Matter Expert to get certified.
+                          </div>
+                        </div>
+                      </div>
+                      <button class="flex items-center justify-center gap-2 shrink-0
+                                     px-4 py-2.5 rounded-xl text-sm font-bold
+                                     transition-all duration-150
+                                     bg-gradient-to-r from-indigo-600 to-violet-600
+                                     hover:from-indigo-500 hover:to-violet-500
+                                     text-white shadow-md shadow-indigo-500/25">
+                        <i class="fa-solid fa-calendar-plus text-sm"></i>
+                        Request Assessment
+                      </button>
+                    </div>
+                  </div>
                 </div>
               }
             </div>
-          </div>
-          <!-- /Skills & Progress -->
+          }
 
 
-          <!-- ══ ABOUT + BOOK ASSESSMENT (2-col) ══════════════════════════ -->
-          <div class="grid md:grid-cols-2 gap-5 items-start">
+          <!-- ══════════════════════════════════════════════════════════════
+            SUBJECTS TAB
+          ══════════════════════════════════════════════════════════════ -->
+          @if (activeTab === 'subjects') {
+            <div class="space-y-7">
 
-            <!-- About Card -->
-            <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-none">
-              <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
-                <div class="text-sm font-bold text-cm-text-primary">About</div>
-              </div>
-              <div class="p-5 space-y-4">
-                @if (userDetail.profile?.about) {
-                  <div>
-                    <div class="text-[10px] font-semibold text-cm-text-muted uppercase tracking-widest mb-1.5">Bio</div>
-                    <p class="text-xs text-cm-text-secondary leading-relaxed">{{ userDetail.profile?.about }}</p>
+              <div>
+                <h3 class="text-sm font-bold text-cm-text-primary mb-3">In Progress ({{ inProgressSubjects.length }})</h3>
+                @if (inProgressSubjects.length > 0) {
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @for (subject of inProgressSubjects; track subject.id) {
+                      <div>
+                        <app-subject-performance-card class="block" [subject]="subjectCardData(subject)"></app-subject-performance-card>
+                        @if (subject.journeyAttempts) {
+                          <p class="text-[10px] text-cm-text-muted mt-1.5 px-1">
+                            Lifetime journey: {{ subject.journeyAccuracy ?? 0 }}% accuracy across {{ subject.journeyAttempts }} attempts
+                            (current score reflects your latest attempt on each question, not this history)
+                          </p>
+                        }
+                      </div>
+                    }
                   </div>
-                  <div class="border-t border-cm-border"></div>
+                } @else {
+                  <div class="py-8 text-center rounded-2xl border border-dashed border-cm-border">
+                    <p class="text-sm text-cm-text-muted">No subjects in progress yet.</p>
+                  </div>
                 }
-                <div class="space-y-3">
-                  @if (selfView) {
-                    <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-envelope text-cm-text-muted text-xs"></i>
-                      </div>
-                      <div class="min-w-0">
-                        <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">Email</div>
-                        <div class="text-xs text-cm-text-secondary font-medium truncate">{{ userDetail.email }}</div>
-                      </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-phone text-cm-text-muted text-xs"></i>
-                      </div>
-                      <div class="min-w-0">
-                        <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">Phone</div>
-                        <div class="text-xs text-cm-text-secondary font-medium">{{ userDetail.mobile ?? 'NA' }}</div>
-                      </div>
-                    </div>
-                  }
-                  @if (userDetail.profile?.linkedinUrl) {
-                    <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
-                        <i class="fa-brands fa-linkedin text-cm-text-muted text-xs"></i>
-                      </div>
-                      <div class="min-w-0">
-                        <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">LinkedIn</div>
-                        <div class="text-xs text-cm-text-secondary font-medium truncate">{{ userDetail.profile?.linkedinUrl }}</div>
-                      </div>
-                    </div>
-                  }
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
-                      <i class="fa-solid fa-fingerprint text-cm-text-muted text-xs"></i>
-                    </div>
-                    <div class="min-w-0">
-                      <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">User ID</div>
-                      <div class="text-xs text-cm-brand-text font-bold font-mono">CDMR00-{{ userDetail.id }}</div>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center shrink-0">
-                      <i class="fa-solid fa-calendar text-cm-text-muted text-xs"></i>
-                    </div>
-                    <div class="min-w-0">
-                      <div class="text-[10px] text-cm-text-muted font-semibold uppercase tracking-wider">Member Since</div>
-                      <div class="text-xs text-cm-text-secondary font-medium">{{ userDetail.createdAt | date: 'MM/dd/yyyy' }}</div>
-                    </div>
+              </div>
+
+              @if (subscribedSubjects.length > 0) {
+                <div>
+                  <h3 class="text-sm font-bold text-cm-text-primary mb-3">Subscribed, Not Started ({{ subscribedSubjects.length }})</h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @for (subject of subscribedSubjects; track subject.id) {
+                      <app-subject-performance-card class="block" [subject]="subjectCardData(subject)"></app-subject-performance-card>
+                    }
                   </div>
                 </div>
-              </div>
-            </div>
+              }
 
-            <!-- Book SME Assessment CTA -->
-            @if (selfView) {
-              <div class="relative rounded-2xl overflow-hidden
-                          border border-indigo-200 dark:border-indigo-500/30 shadow-sm"
-                   style="box-shadow: 0 4px 20px rgba(99,102,241,.10)">
-                <div class="absolute inset-0
-                            bg-gradient-to-br from-indigo-50 via-violet-50/50 to-cyan-50/30
-                            dark:from-indigo-950/60 dark:via-slate-900 dark:to-slate-900"></div>
-                <div class="absolute top-0 left-0 right-0 h-[3px]
-                            bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400"></div>
-                <div class="relative px-5 py-5">
-                  <div class="flex items-start gap-4 mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center shrink-0">
-                      <i class="fa-solid fa-calendar-plus text-indigo-600 dark:text-indigo-400"></i>
+              @if (exploreSubjects.length > 0) {
+                <div>
+                  <h3 class="text-sm font-bold text-cm-text-primary mb-3">Explore More ({{ exploreSubjects.length }})</h3>
+                  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    @for (subject of exploreSubjects; track subject.id) {
+                      <button type="button" (click)="selfView && onEnrollSubject(subject)"
+                        class="flex flex-col items-center gap-2 p-3.5 rounded-2xl border border-cm-border bg-cm-surface
+                               hover:border-cm-brand/40 hover:bg-cm-surface-hover active:scale-[0.97]
+                               transition-all duration-150 text-center">
+                        <img [src]="subject.image || 'assets/images/tech/placeholder.png'"
+                             class="w-10 h-10 rounded-xl object-contain border border-cm-border bg-cm-surface-raised p-1"
+                             [alt]="subject.title">
+                        <span class="text-xs font-bold text-cm-text-primary leading-snug line-clamp-2">{{ subject.title }}</span>
+                        @if (selfView) {
+                          <span class="text-[10px] text-cm-brand-text font-semibold">+ Enroll</span>
+                        }
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+
+            </div>
+          }
+
+
+          <!-- ══════════════════════════════════════════════════════════════
+            QUIZZES TAB
+          ══════════════════════════════════════════════════════════════ -->
+          @if (activeTab === 'quizzes') {
+            <div class="space-y-5">
+
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="flex flex-col sm:flex-row">
+                  <div class="flex items-center gap-4 px-6 py-5 flex-1 sm:border-r border-cm-border">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-trophy text-emerald-600 dark:text-emerald-400 text-sm"></i>
                     </div>
                     <div>
-                      <div class="text-sm font-bold text-cm-text-primary">Book SME Assessment</div>
-                      <div class="text-xs text-cm-text-secondary mt-0.5 leading-relaxed">
-                        Schedule a live technical interview with a Subject Matter Expert to get certified.
-                      </div>
+                      <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.quizzes?.summary?.avgScore ?? 0 }}%</div>
+                      <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Avg. Score</div>
                     </div>
                   </div>
-                  <div class="space-y-2 mb-4">
-                    <div class="flex items-center gap-2 text-xs text-cm-text-secondary">
-                      <i class="fa-solid fa-circle-check text-emerald-500 text-[10px] shrink-0"></i>
-                      Live technical evaluation with an industry SME
+                  <div class="flex items-center gap-4 px-6 py-5 flex-1 border-t sm:border-t-0 sm:border-r border-cm-border">
+                    <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-list-check text-sky-600 dark:text-sky-400 text-sm"></i>
                     </div>
-                    <div class="flex items-center gap-2 text-xs text-cm-text-secondary">
-                      <i class="fa-solid fa-circle-check text-emerald-500 text-[10px] shrink-0"></i>
-                      Structured scoring across 4 key dimensions
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-cm-text-secondary">
-                      <i class="fa-solid fa-circle-check text-emerald-500 text-[10px] shrink-0"></i>
-                      Detailed report with hire / no-hire verdict
+                    <div>
+                      <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.quizzes?.summary?.totalTaken ?? 0 }}</div>
+                      <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Quizzes Taken</div>
                     </div>
                   </div>
-                  <button class="w-full flex items-center justify-center gap-2
-                                 px-4 py-2.5 rounded-xl text-sm font-bold
-                                 transition-all duration-150
-                                 bg-gradient-to-r from-indigo-600 to-violet-600
-                                 hover:from-indigo-500 hover:to-violet-500
-                                 text-white shadow-md shadow-indigo-500/25">
-                    <i class="fa-solid fa-calendar-plus text-sm"></i>
-                    Request Assessment
-                  </button>
+                  <div class="flex items-center gap-4 px-6 py-5 flex-1 border-t sm:border-t-0 sm:border-r border-cm-border">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-check text-emerald-600 dark:text-emerald-400 text-sm"></i>
+                    </div>
+                    <div>
+                      <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.quizzes?.summary?.totalCorrect ?? 0 }}</div>
+                      <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Correct</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-4 px-6 py-5 flex-1 border-t sm:border-t-0 border-cm-border">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-xmark text-rose-600 dark:text-rose-400 text-sm"></i>
+                    </div>
+                    <div>
+                      <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.quizzes?.summary?.totalWrong ?? 0 }}</div>
+                      <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Wrong</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            } @else {
-              <!-- Achievements placeholder for other users' profiles -->
-              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-none">
+
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
                 <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
-                  <div class="text-sm font-bold text-cm-text-primary">Achievements</div>
+                  <div class="text-sm font-bold text-cm-text-primary">Recent Quizzes</div>
                 </div>
-                <div class="flex flex-col items-center justify-center py-12 gap-3 text-center px-5">
-                  <div class="w-12 h-12 rounded-2xl bg-cm-surface-raised border border-cm-border flex items-center justify-center">
-                    <i class="fa-solid fa-trophy text-cm-text-muted text-lg"></i>
+                @if (userDetail.quizzes?.recent?.length > 0) {
+                  <div class="divide-y divide-cm-border">
+                    @for (attempt of userDetail.quizzes.recent; track attempt.id) {
+                      <a [routerLink]="['/quiz/result', attempt.resultCode]"
+                         class="flex items-center gap-3 px-5 py-3 hover:bg-cm-surface-hover transition-colors">
+                        <div class="min-w-0 flex-1">
+                          <p class="text-xs font-bold text-cm-text-primary truncate">{{ attempt.quiz?.title }}</p>
+                          <p class="text-[10px] text-cm-text-muted mt-0.5">
+                            {{ attempt.correct }}/{{ attempt.total }} correct · {{ attempt.createdAt | date:'MMM d, y, h:mm a' }}
+                          </p>
+                        </div>
+                        <span class="text-sm font-black tabular-nums shrink-0"
+                              [class.text-emerald-500]="attempt.score >= 60" [class.text-rose-500]="attempt.score < 60">
+                          {{ attempt.score }}%
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-cm-text-muted text-xs shrink-0"></i>
+                      </a>
+                    }
                   </div>
-                  <p class="text-sm text-cm-text-muted font-medium">No achievements yet</p>
-                </div>
+                } @else {
+                  <div class="py-10 text-center">
+                    <p class="text-sm text-cm-text-muted">No quizzes taken yet.</p>
+                  </div>
+                }
               </div>
-            }
 
-          </div>
-          <!-- /About + Book Assessment -->
+            </div>
+          }
 
 
-          <!-- ══ SELF QUIZ SUMMARY ══════════════════════════════════════════ -->
-          <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-none">
-            <div class="px-6 py-4 border-b border-cm-border bg-cm-surface-muted
-                        flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <!-- ══════════════════════════════════════════════════════════════
+            BADGES & CERTIFICATES TAB
+          ══════════════════════════════════════════════════════════════ -->
+          @if (activeTab === 'badges') {
+            <div class="space-y-7">
               <div>
-                <div class="text-sm font-bold text-cm-text-primary">Self Quiz Summary</div>
-                <div class="text-[11px] text-cm-text-secondary mt-0.5">Performance across practice quiz sessions</div>
+                <h3 class="text-sm font-bold text-cm-text-primary mb-3">Badges</h3>
+                <app-badge-grid
+                  [earned]="badges?.earned ?? []"
+                  [locked]="badges?.locked ?? []"
+                  [loading]="badgesLoading">
+                </app-badge-grid>
               </div>
-              <span class="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg font-semibold shrink-0
-                           bg-emerald-500/10 border border-emerald-500/25 text-emerald-700 dark:text-emerald-300">
-                <i class="fa-solid fa-gamepad text-[9px]"></i> Practice Mode
-              </span>
-            </div>
-            <div class="flex flex-col sm:flex-row">
-              <div class="flex items-center gap-4 px-6 py-5 flex-1 sm:border-r border-cm-border">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                  <i class="fa-solid fa-trophy text-emerald-600 dark:text-emerald-400 text-sm"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.profile?.quizAvgScore ?? '--' }}%</div>
-                  <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Avg. Score</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-4 px-6 py-5 flex-1 border-t sm:border-t-0 sm:border-r border-cm-border">
-                <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
-                  <i class="fa-solid fa-bolt text-sky-600 dark:text-sky-400 text-sm"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.profile?.quizAccuracy ?? '--' }}%</div>
-                  <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Accuracy</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-4 px-6 py-5 flex-1 border-t sm:border-t-0 border-cm-border">
-                <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
-                  <i class="fa-solid fa-fire text-rose-600 dark:text-rose-400 text-sm"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ userDetail.profile?.quizStreak ?? 0 }}</div>
-                  <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Day Streak</div>
-                </div>
-              </div>
-            </div>
-          </div>
 
-
-          <!-- ══ SME ASSESSMENT SCORES ══════════════════════════════════════ -->
-          <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-none">
-            <div class="px-6 py-4 border-b border-cm-border bg-cm-surface-muted
-                        flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <div class="text-sm font-bold text-cm-text-primary">SME Assessment Scores</div>
-                <div class="text-[11px] text-cm-text-secondary mt-0.5">Scores from expert-led technical evaluations</div>
-              </div>
-              <span class="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg font-semibold shrink-0
-                           bg-violet-500/10 border border-violet-500/25 text-violet-700 dark:text-violet-300">
-                <i class="fa-solid fa-user-tie text-[9px]"></i> Expert Evaluated
-              </span>
-            </div>
-            <div class="flex flex-col sm:flex-row">
-              <div class="flex items-center gap-4 px-6 py-5 flex-1 sm:border-r border-cm-border">
-                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                  <i class="fa-solid fa-code text-indigo-600 dark:text-indigo-400 text-sm"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">
-                    {{ userDetail.profile?.smeFundamental ?? '--' }}<span class="text-sm text-cm-text-muted font-medium">/10</span>
+                <h3 class="text-sm font-bold text-cm-text-primary mb-3">Certificates</h3>
+                @if (userDetail.certificates?.length > 0) {
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @for (cert of userDetail.certificates; track cert.certificateNumber) {
+                      <app-certificate-ribbon variant="card" [certificate]="cert"></app-certificate-ribbon>
+                    }
                   </div>
-                  <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Fundamentals</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-4 px-6 py-5 flex-1 border-t sm:border-t-0 sm:border-r border-cm-border">
-                <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-                  <i class="fa-solid fa-cubes-stacked text-amber-600 dark:text-amber-400 text-sm"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">
-                    {{ userDetail.profile?.smeCoding ?? '--' }}<span class="text-sm text-cm-text-muted font-medium">/10</span>
+                } @else {
+                  <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
+                    <i class="fa-solid fa-award text-cm-text-muted text-2xl mb-3 block"></i>
+                    <p class="text-sm text-cm-text-muted">No certificates yet.</p>
+                    <p class="text-xs text-cm-text-muted mt-1 opacity-70">Complete a certification track to earn one.</p>
                   </div>
-                  <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Coding</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-4 px-6 py-5 flex-1 border-t sm:border-t-0 sm:border-r border-cm-border">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                  <i class="fa-solid fa-brain text-emerald-600 dark:text-emerald-400 text-sm"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">
-                    {{ userDetail.profile?.smeProblem ?? '--' }}<span class="text-sm text-cm-text-muted font-medium">/10</span>
-                  </div>
-                  <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Problem Solving</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-4 px-6 py-5 flex-1 border-t sm:border-t-0 border-cm-border">
-                <div class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center shrink-0">
-                  <i class="fa-solid fa-comments text-pink-600 dark:text-pink-400 text-sm"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">
-                    {{ userDetail.profile?.smeComm ?? '--' }}<span class="text-sm text-cm-text-muted font-medium">/10</span>
-                  </div>
-                  <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Communication</div>
-                </div>
+                }
               </div>
             </div>
-          </div>
+          }
+
+
+          <!-- ══════════════════════════════════════════════════════════════
+            ASSESSMENTS TAB
+          ══════════════════════════════════════════════════════════════ -->
+          @if (activeTab === 'assessments') {
+            <div class="grid md:grid-cols-2 gap-5">
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="text-sm font-bold text-cm-text-primary">Self Assessments</div>
+                </div>
+                @if (userDetail.self_assessments?.summary?.totalSessions > 0) {
+                  <div class="p-5 flex items-center gap-6">
+                    <div>
+                      <div class="text-2xl font-black text-cm-text-primary">{{ userDetail.self_assessments.summary.totalSessions }}</div>
+                      <div class="text-[11px] text-cm-text-secondary">Sessions</div>
+                    </div>
+                    <div>
+                      <div class="text-2xl font-black text-cm-text-primary">{{ userDetail.self_assessments.summary.avgRating }}</div>
+                      <div class="text-[11px] text-cm-text-secondary">Avg. Rating</div>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="py-10 text-center">
+                    <p class="text-sm text-cm-text-muted">No self assessments yet.</p>
+                  </div>
+                }
+              </div>
+
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="text-sm font-bold text-cm-text-primary">External / SME Assessments</div>
+                </div>
+                @if (userDetail.external_assessments?.summary?.totalSessions > 0) {
+                  <div class="p-5 flex items-center gap-6">
+                    <div>
+                      <div class="text-2xl font-black text-cm-text-primary">{{ userDetail.external_assessments.summary.totalSessions }}</div>
+                      <div class="text-[11px] text-cm-text-secondary">Sessions</div>
+                    </div>
+                    <div>
+                      <div class="text-2xl font-black text-cm-text-primary">{{ userDetail.external_assessments.summary.avgRating }}</div>
+                      <div class="text-[11px] text-cm-text-secondary">Avg. Rating</div>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="py-10 text-center">
+                    <p class="text-sm text-cm-text-muted">No SME assessments yet.</p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+
+          <!-- ══════════════════════════════════════════════════════════════
+            PERMISSIONS TAB
+          ══════════════════════════════════════════════════════════════ -->
+          @if (activeTab === 'permissions' && visiblePermissions.length > 0) {
+            <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+              <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                <div class="text-sm font-bold text-cm-text-primary">Permissions</div>
+              </div>
+              <div class="divide-y divide-cm-border">
+                @for (perm of visiblePermissions; track perm.id) {
+                  <div class="flex items-center justify-between gap-3 px-5 py-3">
+                    <div class="min-w-0">
+                      <p class="text-xs font-bold text-cm-text-primary">{{ perm.permissionName }}</p>
+                      @if (perm.resourceType || perm.resourceName) {
+                        <p class="text-[10px] text-cm-text-muted mt-0.5">{{ perm.resourceType }} · {{ perm.resourceName }}</p>
+                      }
+                    </div>
+                    <span class="text-[10px] text-cm-text-muted shrink-0">{{ perm.grantedAt | date:'MMM d, y' }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+
+          <!-- ══════════════════════════════════════════════════════════════
+            SETTINGS TAB
+          ══════════════════════════════════════════════════════════════ -->
+          @if (activeTab === 'settings' && selfView) {
+            <div class="space-y-5">
+
+              <!-- Theme -->
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="text-sm font-bold text-cm-text-primary">Theme</div>
+                  <div class="text-[11px] text-cm-text-secondary mt-0.5">
+                    "Automatic" switches to dark in the evening (6pm–6am) and light during the day.
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="flex items-center gap-1 p-1 rounded-xl bg-cm-surface-raised border border-cm-border w-fit">
+                    <button type="button" (click)="setThemeMode('light')"
+                      class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all"
+                      [class.bg-cm-brand]="themeService.mode() === 'light'"
+                      [class.text-white]="themeService.mode() === 'light'"
+                      [class.text-cm-text-secondary]="themeService.mode() !== 'light'">
+                      <i class="fa-solid fa-sun"></i> Light
+                    </button>
+                    <button type="button" (click)="setThemeMode('dark')"
+                      class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all"
+                      [class.bg-cm-brand]="themeService.mode() === 'dark'"
+                      [class.text-white]="themeService.mode() === 'dark'"
+                      [class.text-cm-text-secondary]="themeService.mode() !== 'dark'">
+                      <i class="fa-solid fa-moon"></i> Dark
+                    </button>
+                    <button type="button" (click)="setThemeMode('auto')"
+                      class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all"
+                      [class.bg-cm-brand]="themeService.mode() === 'auto'"
+                      [class.text-white]="themeService.mode() === 'auto'"
+                      [class.text-cm-text-secondary]="themeService.mode() !== 'auto'">
+                      <i class="fa-solid fa-circle-half-stroke"></i> Automatic
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Change Password -->
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="text-sm font-bold text-cm-text-primary">Change Password</div>
+                  <div class="text-[11px] text-cm-text-secondary mt-0.5">
+                    This feature is being finalized on our end — submissions may not go through yet.
+                  </div>
+                </div>
+                <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPasswordChange()" class="p-5 space-y-4 max-w-sm">
+
+                  <div>
+                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Current Password</label>
+                    <div class="relative">
+                      <input formControlName="currentPassword" [type]="passwordHideCurrent ? 'password' : 'text'" placeholder="••••••"
+                        class="w-full pl-3 pr-10 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                               text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                               focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+                      <button type="button" (click)="passwordHideCurrent = !passwordHideCurrent"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-cm-text-muted hover:text-cm-text-primary transition-colors">
+                        <i [class]="passwordHideCurrent ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-xs"></i>
+                      </button>
+                    </div>
+                    @if (passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.hasError('required')) {
+                      <p class="text-xs text-cm-danger-text mt-1">Current password is required</p>
+                    }
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">New Password</label>
+                    <div class="relative">
+                      <input formControlName="newPassword" [type]="passwordHideNew ? 'password' : 'text'" placeholder="••••••"
+                        class="w-full pl-3 pr-10 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                               text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                               focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+                      <button type="button" (click)="passwordHideNew = !passwordHideNew"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-cm-text-muted hover:text-cm-text-primary transition-colors">
+                        <i [class]="passwordHideNew ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-xs"></i>
+                      </button>
+                    </div>
+                    @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('required')) {
+                      <p class="text-xs text-cm-danger-text mt-1">New password is required</p>
+                    } @else if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')) {
+                      <p class="text-xs text-cm-danger-text mt-1">Must be at least 6 characters</p>
+                    }
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Confirm New Password</label>
+                    <input formControlName="confirmPassword" [type]="passwordHideNew ? 'password' : 'text'" placeholder="••••••"
+                      class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                             text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                             focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+                    @if (passwordMismatch) {
+                      <p class="text-xs text-cm-danger-text mt-1">Passwords do not match</p>
+                    }
+                  </div>
+
+                  <button type="submit" [disabled]="passwordSaving"
+                    class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+                           bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all
+                           disabled:opacity-60 disabled:cursor-wait">
+                    @if (passwordSaving) {
+                      <i class="fa-solid fa-spinner fa-spin"></i> Updating…
+                    } @else {
+                      Update Password
+                    }
+                  </button>
+                </form>
+              </div>
+
+              <!-- Email Preferences -->
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="text-sm font-bold text-cm-text-primary">Email Preferences</div>
+                  <div class="text-[11px] text-cm-text-secondary mt-0.5">
+                    Saved on this device for now — account-wide sync is coming soon.
+                  </div>
+                </div>
+                <div class="divide-y divide-cm-border">
+                  @for (pref of emailPreferences; track pref.key) {
+                    <div class="flex items-center justify-between gap-4 px-5 py-3.5">
+                      <div class="min-w-0">
+                        <p class="text-xs font-bold text-cm-text-primary">{{ pref.label }}</p>
+                        <p class="text-[11px] text-cm-text-muted mt-0.5">{{ pref.description }}</p>
+                      </div>
+                      <button type="button" role="switch" [attr.aria-checked]="pref.enabled"
+                        (click)="toggleEmailPreference(pref)"
+                        class="relative shrink-0 w-10 h-6 rounded-full transition-colors"
+                        [class.bg-cm-brand]="pref.enabled"
+                        [class.bg-cm-surface-raised]="!pref.enabled">
+                        <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                              [class.translate-x-[18px]]="pref.enabled"
+                              [class.translate-x-0.5]="!pref.enabled"></span>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+
+            </div>
+          }
 
 
           <!-- ══ FOOTER ════════════════════════════════════════════════════ -->
-          <div class="flex flex-col sm:flex-row items-start sm:items-center
-                      justify-between gap-4 pt-4 border-t border-cm-border">
-            <div class="flex items-center gap-2.5 text-xs text-cm-text-secondary">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
-                           bg-cm-surface border border-cm-border text-[11px] font-bold
-                           text-cm-text-primary shadow-sm">
-                <i class="fa-solid fa-shield-check text-indigo-500 text-[10px]"></i>
-                CodeMerit
-              </span>
-              <span>Profile · CDMR00-{{ userDetail.id }}</span>
-            </div>
-            @if (selfView) {
-              <button class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition
+          @if (canEditProfile) {
+            <div class="flex items-center justify-between gap-4 pt-4 border-t border-cm-border">
+              <span class="text-xs text-cm-text-secondary">Profile · CDMR00-{{ userDetail.id }}</span>
+              <button (click)="goToEditProfile()"
+                      class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition
                              bg-gradient-to-r from-indigo-600 to-violet-600
                              hover:from-indigo-500 hover:to-violet-500
                              text-white shadow-md shadow-indigo-500/25">
                 <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit Profile
               </button>
-            }
-          </div>
+            </div>
+          }
 
         </div>
       }

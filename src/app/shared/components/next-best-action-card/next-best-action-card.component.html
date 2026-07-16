@@ -1,0 +1,54 @@
+<div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+            shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+  @if (allCaughtUp) {
+    <div class="p-5 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20
+                  flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm font-bold text-cm-text-primary">All certifications achieved</p>
+        <p class="text-[11px] text-cm-text-muted mt-0.5">You've completed every certification track available right now.</p>
+      </div>
+    </div>
+  } @else {
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-cm-border">
+      <div class="w-9 h-9 rounded-xl bg-cm-brand-dim border border-cm-brand/20
+                  flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-flag-checkered text-cm-brand text-sm"></i>
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm font-bold text-cm-text-primary">Next Best Action</p>
+        <p class="text-[11px] text-cm-text-muted mt-0.5">Keep your momentum going</p>
+      </div>
+    </div>
+    <div class="p-5 space-y-3">
+      @if (nextCertificationTrack) {
+        <p class="text-xs text-cm-text-secondary leading-relaxed">
+          You're <span class=" text-cm-text-primary">{{ nextCertificationTrack.progressPercent }}%</span>
+          of the way to <span class="font-bold text-cm-text-primary">{{ nextCertificationTrack.title }}</span>
+          @if (nextSubjectTrack) {
+            — continue with <span class="text-cm-text-primary">{{ nextSubjectTrack.title }}</span>.
+          } @else {
+            .
+          }
+        </p>
+        <div class="h-1.5 w-full rounded-full bg-cm-surface-raised overflow-hidden">
+          <div class="h-full rounded-full bg-cm-brand transition-all duration-700"
+               [style.width]="nextCertificationTrack.progressPercent + '%'"></div>
+        </div>
+      } @else if (nextSubjectTrack) {
+        <p class="text-xs text-cm-text-secondary leading-relaxed">
+          Continue with <span class="font-bold text-cm-text-primary">{{ nextSubjectTrack.title }}</span>
+          ({{ nextSubjectTrack.progressPercent }}% complete).
+        </p>
+      }
+      <button type="button" (click)="onContinue()"
+        class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl
+               text-xs font-semibold text-white bg-cm-brand hover:opacity-90
+               active:scale-[0.98] transition-all duration-150">
+        Continue
+      </button>
+    </div>
+  }
+</div>

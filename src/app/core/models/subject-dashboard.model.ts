@@ -1,3 +1,5 @@
+import { MyCertificate } from './gamification.model';
+
 export interface SubjectTrackTopic {
   id: number;
   title: string;
@@ -66,7 +68,7 @@ export interface CertificationTrack {
   jobRole: CertificationTrackJobRole;
   totalSubjectTracks: number;
   subjectTracks: CertTrackSubjectSummary[];
-  myCertificate: any | null;
+  myCertificate: MyCertificate | null;
 }
 
 // Intentionally loose ([key: string]: any) — the many legacy fields already
