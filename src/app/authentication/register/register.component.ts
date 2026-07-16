@@ -1,11 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
+import { environment } from 'src/environments/environment';
+
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
 
 @Component({
   selector: 'app-register',
@@ -14,7 +21,7 @@ import { ParticleCanvasComponent } from '@shared/components/particle-canvas/part
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
 
   currentStep = 1;
   readonly totalSteps = 3;
@@ -45,6 +52,8 @@ export class RegisterComponent implements OnInit {
   };
 
   availableTracks: any[] = [];
+  private linkedInPopup: Window | null = null;
+  private readonly socialMessageHandler = (event: MessageEvent) => this.handleSocialMessage(event);
 
   constructor(
     private fb: FormBuilder,
@@ -66,6 +75,11 @@ export class RegisterComponent implements OnInit {
       lastName:        ['', Validators.maxLength(20)],
       email:           ['', [Validators.required, Validators.email]],
     });
+    window.addEventListener('message', this.socialMessageHandler);
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('message', this.socialMessageHandler);
   }
 
   // ─── Computed helpers ──────────────────────────────────────────
@@ -155,12 +169,209 @@ export class RegisterComponent implements OnInit {
   }
 
   // ─── Account connect (Step 3) ───────────────────────────────────
-  // TODO: wire up real Google/LinkedIn OAuth once backend endpoints exist.
-  // Once wired, a successful connect should populate firstName/lastName/
-  // email from the provider and call onSubmit() directly.
 
   connectWith(provider: 'Google' | 'LinkedIn') {
-    this.snackbar.display('snackbar-info', `${provider} sign-in is coming soon. Please check back shortly.`, 'bottom', 'center');
+    if (provider === 'Google') {
+      this.openGoogleLogin();
+      return;
+    }
+
+    this.openLinkedinPopup();
+  }
+
+  private openGoogleLogin() {
+    const clientId = environment.socialAuth?.googleClientId;
+    if (!clientId) {
+      this.failSocialLogin('Google login is not configured yet.');
+      return;
+    }
+
+    this.loading = true;
+    this.loadGoogleSdk()
+      .then(() => {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: (response: any) => this.handleGoogleCredential(response?.credential),
+        });
+        window.google.accounts.id.prompt((notification: any) => {
+          if (notification?.isNotDisplayed?.() || notification?.isSkippedMoment?.()) {
+            this.loading = false;
+          }
+        });
+      })
+      .catch(() => this.failSocialLogin('Unable to load Google login. Please try again.'));
+  }
+
+  private loadGoogleSdk(): Promise<void> {
+    if (window.google?.accounts?.id) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector<HTMLScriptElement>('script[src="https://accounts.google.com/gsi/client"]');
+      if (existing) {
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener('error', () => reject(), { once: true });
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject();
+      document.head.appendChild(script);
+    });
+  }
+
+  private handleGoogleCredential(idToken: string) {
+    if (!idToken) {
+      this.failSocialLogin('Google did not return a login token.');
+      return;
+    }
+
+    this.authService.completeGoogleSocialLogin({ idToken }).subscribe({
+      next: (res) => this.finishSocialLogin(res, 'google'),
+      error: () => this.failSocialLogin('Unable to complete Google login. Please try again.'),
+    });
+  }
+
+  private openLinkedinPopup() {
+    const clientId = environment.socialAuth?.linkedinClientId;
+    if (!clientId) {
+      this.failSocialLogin('LinkedIn login is not configured yet.');
+      return;
+    }
+
+    const redirectUri = this.socialRedirectUri;
+    const state = this.createSocialState();
+    const scope = encodeURIComponent(environment.socialAuth?.linkedinScope || 'openid profile email');
+    const params = [
+      `response_type=code`,
+      `client_id=${encodeURIComponent(clientId)}`,
+      `redirect_uri=${encodeURIComponent(redirectUri)}`,
+      `state=${encodeURIComponent(state)}`,
+      `scope=${scope}`,
+    ].join('&');
+    const url = `https://www.linkedin.com/oauth/v2/authorization?${params}`;
+    const width = 560;
+    const height = 680;
+    const left = Math.max(0, window.screenX + (window.outerWidth - width) / 2);
+    const top = Math.max(0, window.screenY + (window.outerHeight - height) / 2);
+
+    this.loading = true;
+    this.linkedInPopup = window.open(
+      url,
+      'linkedin-login',
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+
+    if (!this.linkedInPopup) {
+      this.failSocialLogin('Please allow popups to continue with LinkedIn.');
+    }
+  }
+
+  private handleSocialMessage(event: MessageEvent) {
+    if (event.origin !== window.location.origin || event.data?.type !== 'SOCIAL_AUTH_CALLBACK') {
+      return;
+    }
+
+    if (event.data.status !== 'success' || !event.data.code) {
+      this.failSocialLogin('LinkedIn sign-in was cancelled or failed.');
+      return;
+    }
+
+    this.authService.completeLinkedinSocialLogin({
+      code: event.data.code,
+      redirectUri: this.socialRedirectUri,
+    }).subscribe({
+      next: (res) => this.finishSocialLogin(res, 'linkedin'),
+      error: () => this.failSocialLogin('Unable to complete LinkedIn login. Please try again.'),
+    });
+  }
+
+  private finishSocialLogin(res: any, provider: 'google' | 'linkedin') {
+    const userData = res?.data ?? res?.user;
+    if (userData?.id) {
+      this.authService.setLocalData(userData);
+      this.loading = false;
+      this.snackbar.display('snackbar-success', 'Account connected successfully.', 'bottom', 'center');
+      this.routeAfterSocialLogin();
+      return;
+    }
+
+    const socialToken = res?.socialToken ?? res?.data?.socialToken;
+    if (!socialToken) {
+      this.failSocialLogin('Unable to verify your social account. Please try again.');
+      return;
+    }
+
+    this.authService.completeSocialRegistration({
+      socialToken,
+      provider,
+      onboarding: this.buildOnboardingPayload(),
+    }).subscribe({
+      next: (completeRes) => {
+        const completeUser = completeRes?.data ?? completeRes?.user ?? completeRes;
+        if (completeUser?.id) {
+          this.authService.setLocalData(completeUser);
+          this.loading = false;
+          this.snackbar.display('snackbar-success', 'Account connected successfully.', 'bottom', 'center');
+          this.routeAfterSocialLogin();
+          return;
+        }
+        this.failSocialLogin('Unable to create your account. Please try again.');
+      },
+      error: () => this.failSocialLogin('Unable to create your account. Please try again.'),
+    });
+  }
+
+  private routeAfterSocialLogin() {
+    this.authService.getUserJobRoles()?.length > 0
+      ? this.router.navigate(['/dashboard'])
+      : this.router.navigate(['/select-job-role']);
+  }
+
+  private buildOnboardingPayload() {
+    const v = this.form.getRawValue();
+    const selectedRole = this.jobRoles.find((role: any) => Number(role.id) === Number(v.techArea));
+    const selectedTrack = this.availableTracks.find((track: any) => Number(track.id) === Number(v.track));
+
+    return {
+      firstName: v.firstName,
+      lastName: v.lastName || '',
+      email: v.email,
+      mobile: null,
+      city: null,
+      country: 'India',
+      about: v.achievement || '',
+      techArea: selectedRole?.title || v.techArea,
+      techRoleId: v.techArea,
+      certificationTrackId: v.track,
+      track: selectedTrack?.title || '',
+      dreamRole: v.dreamRole,
+      masteryLevel: v.masteryLevel,
+      yearsExperience: v.yearsExperience,
+      achievement: v.achievement,
+      flow: 'Registration',
+    };
+  }
+
+  private get socialRedirectUri(): string {
+    return `${window.location.origin}/authentication/social-callback`;
+  }
+
+  private createSocialState(): string {
+    const values = new Uint32Array(4);
+    window.crypto.getRandomValues(values);
+    return Array.from(values).map((value) => value.toString(16)).join('');
+  }
+
+  private failSocialLogin(message: string) {
+    this.loading = false;
+    this.snackbar.display('snackbar-danger', message, 'bottom', 'center');
+    this.router.navigate(['/authentication/social-failed']);
   }
 
   // ─── Submit (manual fallback) ────────────────────────────────────

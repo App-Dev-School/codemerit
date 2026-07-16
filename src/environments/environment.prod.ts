@@ -4,6 +4,11 @@ export const environment = {
   appUrl: "https://codemerit.in",
   apiUrl: "https://apis.codemerit.in/",
   uploadsUrl: "https://apis.appdevops.in/uploads/",
+  socialAuth: {
+    googleClientId: "",
+    linkedinClientId: "",
+    linkedinScope: "openid profile email",
+  },
   stripe: {
     publicKey: 'pk_test_LHMHo4FCtltdVijsCnSjiN87897a33WfAw',
   }
