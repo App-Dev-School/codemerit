@@ -1,0 +1,13 @@
+<div class="social-callback-page">
+  <div class="callback-panel">
+    @if (loading) {
+      <div class="spinner" aria-hidden="true"></div>
+      <h1>Connecting your account</h1>
+      <p>Please wait while we finish your registration.</p>
+    } @else if (error) {
+      <h1>Connection failed</h1>
+      <p>{{ error }}</p>
+      <a routerLink="/authentication/register" class="retry-link">Back to registration</a>
+    }
+  </div>
+</div>

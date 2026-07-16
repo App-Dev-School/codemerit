@@ -6,8 +6,14 @@ export const environment = {
   appUrl: "https://appdevops.in",
   apiUrl: "http://localhost:3000/",
   //apiUrl: "https://apis.appdevops.in/",
+  // apiUrl: "https://apis.appdevops.in/",
   //apiUrl: "https://apis.codemerit.in/",
   uploadsUrl: "http://apis.appdevops.in/uploads/",
+  socialAuth: {
+    googleClientId: "174700708212-jflrk7a5qkn3lp942l35n5ejjid47rfk.apps.googleusercontent.com",
+    linkedinClientId: "773s5mapgmocnl",
+    linkedinScope: "openid profile email",
+  },
   stripe: {
     publicKey: 'pk_test_LHMHo4FCtltdVijsCnSjiN8X00Qa33WfAw',
   }

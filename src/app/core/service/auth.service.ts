@@ -112,6 +112,39 @@ export class AuthService {
     return this.httpService.postWithParams(url, postData, httpOptions);
   }
 
+  completeSocialRegistration(postData: any): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    const url = 'auth/social/complete-registration';
+    if (AuthConstants.DEV_MODE) {
+      console.log("Hiting " + url + " with => " + JSON.stringify(postData));
+    }
+    return this.httpService.postWithParams(url, postData, httpOptions);
+  }
+
+  completeGoogleSocialLogin(postData: any): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    const url = 'auth/google/callback';
+    return this.httpService.postWithParams(url, postData, httpOptions);
+  }
+
+  completeLinkedinSocialLogin(postData: any): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    const url = 'auth/linkedin/callback';
+    return this.httpService.postWithParams(url, postData, httpOptions);
+  }
+
   verifyAccount(postData: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
