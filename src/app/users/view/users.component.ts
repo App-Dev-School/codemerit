@@ -1,5 +1,7 @@
-import { DatePipe, DOCUMENT } from '@angular/common';
+import { DatePipe, DecimalPipe, DOCUMENT } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { Component, Inject, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,6 +11,7 @@ import { AuthService, User } from '@core';
 import { Role } from '@core/models/role';
 import { MasterService } from '@core/service/master.service';
 import { ThemeMode, ThemeService } from '@core/service/theme.service';
+import { SpeechProfile, SpeechService } from '@core/service/speech.service';
 import { MyBadgesResponse } from '@core/models/gamification.model';
 import { ProfileCourseStat, UserProfileResponse } from '@core/models/user-profile.model';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
@@ -26,7 +29,16 @@ interface EmailPreference {
   enabled: boolean;
 }
 
-const EMAIL_PREFS_STORAGE_KEY = 'cm_email_preferences';
+interface VoiceSettings {
+  voiceURI: string;
+  rate: number;
+  pitch: number;
+  volume: number;
+  profile: SpeechProfile;
+}
+
+const EMAIL_PREFS_STORAGE_KEY  = 'cm_email_preferences';
+const VOICE_SETTINGS_STORAGE_KEY = 'cm_voice_settings';
 
 // Cross-field validator — matches the login-form's password rules (required,
 // minLength 6) but this codebase has no existing confirm-password pattern to
@@ -43,6 +55,7 @@ function passwordsMatchValidator(group: FormGroup): ValidationErrors | null {
   styleUrls: ['./users.component.scss'],
   imports: [
     DatePipe,
+    DecimalPipe,
     RouterLink,
     ReactiveFormsModule,
     SubjectPerformanceCardComponent,
@@ -75,8 +88,16 @@ export default class UserComponent implements OnInit {
   // ── Settings tab ────────────────────────────────────────────────────────
   passwordForm: FormGroup;
   passwordHideCurrent = true;
-  passwordHideNew = true;
-  passwordSaving = false;
+  passwordHideNew     = true;
+  passwordSaving      = false;
+  showChangePasswordModal = false;
+
+  // ── Voice & Audio settings ───────────────────────────────────────────────
+  availableVoices: SpeechSynthesisVoice[] = [];
+  voiceSettings: VoiceSettings = { voiceURI: '', rate: 1.0, pitch: 1.0, volume: 1.0, profile: 'neutral' };
+
+  // ── Email preferences ────────────────────────────────────────────────────
+  emailPrefSaving = false;
 
   emailPreferences: EmailPreference[] = [
     { key: 'productUpdates', label: 'Product Updates & Announcements', description: 'New features, subjects, and job roles as they launch.', enabled: true },
@@ -92,6 +113,7 @@ export default class UserComponent implements OnInit {
     private master: MasterService,
     private fb: FormBuilder,
     public themeService: ThemeService,
+    private speechSrv: SpeechService,
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
     public dialog: MatDialog,
@@ -107,6 +129,8 @@ export default class UserComponent implements OnInit {
     this.authData = this.authService.currentUserValue;
     this.takeRouteParams();
     this.loadEmailPreferences();
+    this.loadVoiceSettings();
+    this.loadVoices();
   }
 
   takeRouteParams() {
@@ -264,22 +288,96 @@ export default class UserComponent implements OnInit {
     }
     this.passwordSaving = true;
     const { currentPassword, newPassword } = this.passwordForm.value;
-    this.authService.changePassword(this.authData.token, currentPassword, newPassword).subscribe({
+    // changeUserPassword() hits the established `users/creds/update` endpoint.
+    this.authService.changeUserPassword(this.authData.token, { currentPassword, newPassword }).subscribe({
       next: (res) => {
         this.passwordSaving = false;
         if (res && !res.error) {
           this.showNotification('snackbar-success', 'Password updated successfully.', 'bottom', 'center');
           this.passwordForm.reset();
+          this.showChangePasswordModal = false;
         } else {
-          this.showNotification('snackbar-danger', res?.message || 'Could not update password.', 'bottom', 'center');
+          this.showNotification('snackbar-danger', res?.message || 'Incorrect current password or server error.', 'bottom', 'center');
         }
       },
-      error: () => {
+      error: (err: HttpErrorResponse) => {
         this.passwordSaving = false;
-        // Expected until the backend endpoint exists — see changePassword()'s comment in auth.service.ts.
-        this.showNotification('snackbar-danger', 'Password change is not available yet. Please try again later.', 'bottom', 'center');
+        const msg = err.status === 400
+          ? 'Incorrect current password.'
+          : err.status === 0
+          ? 'Network error — please check your connection.'
+          : 'Could not update password. Please try again.';
+        this.showNotification('snackbar-danger', msg, 'bottom', 'center');
       },
     });
+  }
+
+  // ── Settings: Voice & Audio ─────────────────────────────────────────────
+  private loadVoices(): void {
+    const populate = () => {
+      this.availableVoices = this.speechSrv.getVoices()
+        .filter(v => v.lang.toLowerCase().startsWith('en'))
+        .sort((a, b) => (b.localService ? 1 : 0) - (a.localService ? 1 : 0));
+      if (!this.voiceSettings.voiceURI && this.availableVoices.length > 0) {
+        this.voiceSettings.voiceURI = this.availableVoices[0].voiceURI;
+      }
+    };
+    if (window.speechSynthesis.getVoices().length > 0) {
+      populate();
+    } else {
+      window.speechSynthesis.addEventListener('voiceschanged', populate, { once: true });
+    }
+  }
+
+  onVoiceChange(event: Event): void {
+    this.voiceSettings.voiceURI = (event.target as HTMLSelectElement).value;
+  }
+
+  onRateChange(event: Event): void {
+    this.voiceSettings.rate = +(event.target as HTMLInputElement).value;
+  }
+
+  onPitchChange(event: Event): void {
+    this.voiceSettings.pitch = +(event.target as HTMLInputElement).value;
+  }
+
+  onVolumeChange(event: Event): void {
+    this.voiceSettings.volume = +(event.target as HTMLInputElement).value;
+  }
+
+  applyVoiceProfile(profile: SpeechProfile): void {
+    const presets: Record<SpeechProfile, { rate: number; pitch: number; volume: number }> = {
+      neutral:  { rate: 1.0,  pitch: 1.0,  volume: 1.0 },
+      cheerful: { rate: 1.05, pitch: 1.15, volume: 1.0 },
+      calm:     { rate: 0.9,  pitch: 0.95, volume: 0.9 },
+    };
+    const p = presets[profile];
+    this.voiceSettings = { ...this.voiceSettings, profile, rate: p.rate, pitch: p.pitch, volume: p.volume };
+  }
+
+  testVoice(): void {
+    const voice = this.availableVoices.find(v => v.voiceURI === this.voiceSettings.voiceURI) ?? null;
+    this.speechSrv.speak('Hello! This is a preview of your selected voice and audio settings on CodeMerit.', {
+      rate: this.voiceSettings.rate,
+      pitch: this.voiceSettings.pitch,
+      volume: this.voiceSettings.volume,
+      voice,
+    });
+  }
+
+  saveVoiceSettings(): void {
+    localStorage.setItem(VOICE_SETTINGS_STORAGE_KEY, JSON.stringify(this.voiceSettings));
+    const voice = this.availableVoices.find(v => v.voiceURI === this.voiceSettings.voiceURI) ?? null;
+    this.speechSrv.setVoice(voice);
+    this.showNotification('snackbar-success', 'Voice preferences saved.', 'bottom', 'center');
+  }
+
+  private loadVoiceSettings(): void {
+    try {
+      const raw = localStorage.getItem(VOICE_SETTINGS_STORAGE_KEY);
+      if (!raw) return;
+      this.voiceSettings = { ...this.voiceSettings, ...JSON.parse(raw) };
+    } catch { /* ignore malformed data */ }
   }
 
   // ── Settings: Email Preferences ─────────────────────────────────────────
@@ -302,6 +400,23 @@ export default class UserComponent implements OnInit {
 
   toggleEmailPreference(pref: EmailPreference): void {
     pref.enabled = !pref.enabled;
+    this.persistEmailPrefsLocally();
+  }
+
+  saveEmailPreferences(): void {
+    if (this.emailPrefSaving) return;
+    this.emailPrefSaving = true;
+    this.persistEmailPrefsLocally();
+    // No backend endpoint yet — simulated network call. Swap `of(true).pipe(delay(900))`
+    // for a real HTTP call (e.g. authService.saveNotificationPrefs(...)) when the
+    // endpoint is ready.
+    of(true).pipe(delay(900)).subscribe(() => {
+      this.emailPrefSaving = false;
+      this.showNotification('snackbar-success', 'Email preferences saved.', 'bottom', 'center');
+    });
+  }
+
+  private persistEmailPrefsLocally(): void {
     const toSave: Record<string, boolean> = {};
     this.emailPreferences.forEach((p) => { toSave[p.key] = p.enabled; });
     localStorage.setItem(EMAIL_PREFS_STORAGE_KEY, JSON.stringify(toSave));

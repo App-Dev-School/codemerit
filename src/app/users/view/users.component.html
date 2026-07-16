@@ -657,9 +657,9 @@
               <!-- Theme -->
               <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
                 <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
-                  <div class="text-sm font-bold text-cm-text-primary">Theme</div>
+                  <div class="text-sm font-bold text-cm-text-primary">Appearance</div>
                   <div class="text-[11px] text-cm-text-secondary mt-0.5">
-                    "Automatic" switches to dark in the evening (6pm–6am) and light during the day.
+                    "Automatic" switches to dark in the evening (6 pm–6 am) and light during the day.
                   </div>
                 </div>
                 <div class="p-5">
@@ -689,82 +689,160 @@
                 </div>
               </div>
 
-              <!-- Change Password -->
+              <!-- Change Password — compact row -->
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <button type="button" (click)="showChangePasswordModal = true; passwordForm.reset()"
+                  class="w-full flex items-center gap-4 px-5 py-4 hover:bg-cm-surface-hover transition-colors text-left">
+                  <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20
+                               flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-lock text-amber-600 dark:text-amber-400 text-sm"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm font-bold text-cm-text-primary">Change Password</div>
+                    <div class="text-[11px] text-cm-text-secondary mt-0.5">
+                      Update your account password securely.
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-cm-text-muted text-xs shrink-0"></i>
+                </button>
+              </div>
+
+              <!-- Voice & Audio -->
               <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
                 <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
-                  <div class="text-sm font-bold text-cm-text-primary">Change Password</div>
-                  <div class="text-[11px] text-cm-text-secondary mt-0.5">
-                    This feature is being finalized on our end — submissions may not go through yet.
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-violet-500/10 border border-violet-500/20
+                                 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-volume-high text-violet-600 dark:text-violet-400 text-xs"></i>
+                    </div>
+                    <div>
+                      <div class="text-sm font-bold text-cm-text-primary">Voice &amp; Audio</div>
+                      <div class="text-[11px] text-cm-text-secondary mt-0.5">
+                        Customize how CodeMerit reads content aloud to you.
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPasswordChange()" class="p-5 space-y-4 max-w-sm">
+                <div class="p-5 space-y-6">
 
+                  <!-- Tone Preset -->
                   <div>
-                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Current Password</label>
-                    <div class="relative">
-                      <input formControlName="currentPassword" [type]="passwordHideCurrent ? 'password' : 'text'" placeholder="••••••"
-                        class="w-full pl-3 pr-10 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
-                               text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
-                               focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
-                      <button type="button" (click)="passwordHideCurrent = !passwordHideCurrent"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-cm-text-muted hover:text-cm-text-primary transition-colors">
-                        <i [class]="passwordHideCurrent ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-xs"></i>
-                      </button>
+                    <p class="text-[10px] font-semibold uppercase tracking-widest text-cm-text-muted mb-2">Tone Preset</p>
+                    <div class="flex items-center gap-2">
+                      @for (preset of ([{id:'neutral',label:'Neutral',icon:'fa-minus'},{id:'cheerful',label:'Cheerful',icon:'fa-face-smile'},{id:'calm',label:'Calm',icon:'fa-leaf'}]); track preset.id) {
+                        <button type="button" (click)="applyVoiceProfile($any(preset.id))"
+                          class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold border transition-all"
+                          [class.bg-cm-brand]="voiceSettings.profile === preset.id"
+                          [class.border-cm-brand]="voiceSettings.profile === preset.id"
+                          [class.text-white]="voiceSettings.profile === preset.id"
+                          [class.bg-cm-surface-raised]="voiceSettings.profile !== preset.id"
+                          [class.border-cm-border]="voiceSettings.profile !== preset.id"
+                          [class.text-cm-text-secondary]="voiceSettings.profile !== preset.id">
+                          <i [class]="'fa-solid ' + preset.icon + ' text-[10px]'"></i>
+                          {{ preset.label }}
+                        </button>
+                      }
                     </div>
-                    @if (passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.hasError('required')) {
-                      <p class="text-xs text-cm-danger-text mt-1">Current password is required</p>
-                    }
                   </div>
 
+                  <!-- Voice selection -->
                   <div>
-                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">New Password</label>
-                    <div class="relative">
-                      <input formControlName="newPassword" [type]="passwordHideNew ? 'password' : 'text'" placeholder="••••••"
-                        class="w-full pl-3 pr-10 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
-                               text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                    <p class="text-[10px] font-semibold uppercase tracking-widest text-cm-text-muted mb-2">Voice</p>
+                    @if (availableVoices.length > 0) {
+                      <select [value]="voiceSettings.voiceURI" (change)="onVoiceChange($event)"
+                        class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                               text-sm text-cm-text-primary outline-none
                                focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
-                      <button type="button" (click)="passwordHideNew = !passwordHideNew"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-cm-text-muted hover:text-cm-text-primary transition-colors">
-                        <i [class]="passwordHideNew ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-xs"></i>
-                      </button>
-                    </div>
-                    @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('required')) {
-                      <p class="text-xs text-cm-danger-text mt-1">New password is required</p>
-                    } @else if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')) {
-                      <p class="text-xs text-cm-danger-text mt-1">Must be at least 6 characters</p>
-                    }
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Confirm New Password</label>
-                    <input formControlName="confirmPassword" [type]="passwordHideNew ? 'password' : 'text'" placeholder="••••••"
-                      class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
-                             text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
-                             focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
-                    @if (passwordMismatch) {
-                      <p class="text-xs text-cm-danger-text mt-1">Passwords do not match</p>
-                    }
-                  </div>
-
-                  <button type="submit" [disabled]="passwordSaving"
-                    class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                           bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all
-                           disabled:opacity-60 disabled:cursor-wait">
-                    @if (passwordSaving) {
-                      <i class="fa-solid fa-spinner fa-spin"></i> Updating…
+                        @for (v of availableVoices; track v.voiceURI) {
+                          <option [value]="v.voiceURI">{{ v.name }}{{ v.localService ? '' : ' (online)' }}</option>
+                        }
+                      </select>
                     } @else {
-                      Update Password
+                      <p class="text-xs text-cm-text-muted italic">No English voices found on this device.</p>
                     }
-                  </button>
-                </form>
+                  </div>
+
+                  <!-- Sliders -->
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+                    <!-- Rate -->
+                    <div>
+                      <div class="flex items-center justify-between mb-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-cm-text-muted">Speed</p>
+                        <span class="text-xs font-black text-cm-brand tabular-nums">{{ voiceSettings.rate | number:'1.1-1' }}×</span>
+                      </div>
+                      <input type="range" min="0.5" max="2" step="0.05"
+                             [value]="voiceSettings.rate" (input)="onRateChange($event)"
+                             class="w-full h-1.5 rounded-full accent-indigo-500 cursor-pointer">
+                      <div class="flex justify-between mt-1">
+                        <span class="text-[9px] text-cm-text-muted">Slow</span>
+                        <span class="text-[9px] text-cm-text-muted">Fast</span>
+                      </div>
+                    </div>
+
+                    <!-- Pitch -->
+                    <div>
+                      <div class="flex items-center justify-between mb-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-cm-text-muted">Pitch</p>
+                        <span class="text-xs font-black text-cm-brand tabular-nums">{{ voiceSettings.pitch | number:'1.1-1' }}</span>
+                      </div>
+                      <input type="range" min="0.5" max="2" step="0.05"
+                             [value]="voiceSettings.pitch" (input)="onPitchChange($event)"
+                             class="w-full h-1.5 rounded-full accent-indigo-500 cursor-pointer">
+                      <div class="flex justify-between mt-1">
+                        <span class="text-[9px] text-cm-text-muted">Low</span>
+                        <span class="text-[9px] text-cm-text-muted">High</span>
+                      </div>
+                    </div>
+
+                    <!-- Volume -->
+                    <div>
+                      <div class="flex items-center justify-between mb-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-cm-text-muted">Volume</p>
+                        <span class="text-xs font-black text-cm-brand tabular-nums">{{ (voiceSettings.volume * 100) | number:'1.0-0' }}%</span>
+                      </div>
+                      <input type="range" min="0.1" max="1" step="0.05"
+                             [value]="voiceSettings.volume" (input)="onVolumeChange($event)"
+                             class="w-full h-1.5 rounded-full accent-indigo-500 cursor-pointer">
+                      <div class="flex justify-between mt-1">
+                        <span class="text-[9px] text-cm-text-muted">Quiet</span>
+                        <span class="text-[9px] text-cm-text-muted">Loud</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="flex items-center gap-3 pt-1 border-t border-cm-border">
+                    <button type="button" (click)="testVoice()"
+                      class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold
+                             border border-cm-border bg-cm-surface-raised text-cm-text-primary
+                             hover:border-cm-brand/40 hover:bg-cm-surface-hover transition-all">
+                      <i class="fa-solid fa-play text-cm-brand"></i> Preview Voice
+                    </button>
+                    <button type="button" (click)="saveVoiceSettings()"
+                      class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold
+                             bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
+                      <i class="fa-solid fa-floppy-disk"></i> Save Settings
+                    </button>
+                  </div>
+
+                </div>
               </div>
 
               <!-- Email Preferences -->
               <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
                 <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
-                  <div class="text-sm font-bold text-cm-text-primary">Email Preferences</div>
-                  <div class="text-[11px] text-cm-text-secondary mt-0.5">
-                    Saved on this device for now — account-wide sync is coming soon.
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20
+                                 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-bell text-sky-600 dark:text-sky-400 text-xs"></i>
+                    </div>
+                    <div>
+                      <div class="text-sm font-bold text-cm-text-primary">Email Preferences</div>
+                      <div class="text-[11px] text-cm-text-secondary mt-0.5">
+                        Choose what CodeMerit sends to your inbox.
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="divide-y divide-cm-border">
@@ -776,18 +854,133 @@
                       </div>
                       <button type="button" role="switch" [attr.aria-checked]="pref.enabled"
                         (click)="toggleEmailPreference(pref)"
-                        class="relative shrink-0 w-10 h-6 rounded-full transition-colors"
+                        class="relative shrink-0 w-10 h-6 rounded-full transition-colors duration-200"
                         [class.bg-cm-brand]="pref.enabled"
                         [class.bg-cm-surface-raised]="!pref.enabled">
-                        <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
-                              [class.translate-x-[18px]]="pref.enabled"
+                        <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200"
+                              [class.translate-x-4]="pref.enabled"
                               [class.translate-x-0.5]="!pref.enabled"></span>
                       </button>
                     </div>
                   }
                 </div>
+                <div class="px-5 py-4 border-t border-cm-border bg-cm-surface-muted
+                            flex items-center justify-between gap-4">
+                  <p class="text-[11px] text-cm-text-muted">
+                    Saved locally · syncs to your account when you click Save.
+                  </p>
+                  <button type="button" (click)="saveEmailPreferences()" [disabled]="emailPrefSaving"
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold
+                           bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all
+                           disabled:opacity-60 disabled:cursor-wait shrink-0">
+                    @if (emailPrefSaving) {
+                      <i class="fa-solid fa-spinner fa-spin"></i> Saving…
+                    } @else {
+                      <i class="fa-solid fa-floppy-disk"></i> Save Preferences
+                    }
+                  </button>
+                </div>
               </div>
 
+            </div>
+          }
+
+          <!-- ── Change Password Modal ──────────────────────────────────────── -->
+          @if (showChangePasswordModal) {
+            <div class="fixed inset-0 z-[900] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+                 (click)="showChangePasswordModal = false">
+              <div class="relative w-full max-w-sm bg-cm-surface rounded-2xl shadow-2xl border border-cm-border overflow-hidden"
+                   (click)="$event.stopPropagation()">
+
+                <!-- Modal header -->
+                <div class="flex items-center justify-between px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20
+                                 flex items-center justify-center">
+                      <i class="fa-solid fa-lock text-amber-600 dark:text-amber-400 text-xs"></i>
+                    </div>
+                    <span class="text-sm font-bold text-cm-text-primary">Change Password</span>
+                  </div>
+                  <button type="button" (click)="showChangePasswordModal = false"
+                    class="w-7 h-7 rounded-lg flex items-center justify-center
+                           text-cm-text-muted hover:text-cm-text-primary hover:bg-cm-surface-raised transition-all">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                  </button>
+                </div>
+
+                <!-- Modal body -->
+                <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPasswordChange()" class="p-5 space-y-4">
+
+                  <div>
+                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Current Password</label>
+                    <div class="relative">
+                      <input formControlName="currentPassword" [type]="passwordHideCurrent ? 'password' : 'text'"
+                        placeholder="••••••"
+                        class="w-full pl-3 pr-10 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                               text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                               focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+                      <button type="button" (click)="passwordHideCurrent = !passwordHideCurrent"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-cm-text-muted hover:text-cm-text-primary transition-colors">
+                        <i [class]="passwordHideCurrent ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-xs"></i>
+                      </button>
+                    </div>
+                    @if (passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.hasError('required')) {
+                      <p class="text-xs text-rose-500 mt-1">Current password is required</p>
+                    }
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">New Password</label>
+                    <div class="relative">
+                      <input formControlName="newPassword" [type]="passwordHideNew ? 'password' : 'text'"
+                        placeholder="Min 6 characters"
+                        class="w-full pl-3 pr-10 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                               text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                               focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+                      <button type="button" (click)="passwordHideNew = !passwordHideNew"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-cm-text-muted hover:text-cm-text-primary transition-colors">
+                        <i [class]="passwordHideNew ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-xs"></i>
+                      </button>
+                    </div>
+                    @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('required')) {
+                      <p class="text-xs text-rose-500 mt-1">New password is required</p>
+                    } @else if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')) {
+                      <p class="text-xs text-rose-500 mt-1">Must be at least 6 characters</p>
+                    }
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Confirm New Password</label>
+                    <input formControlName="confirmPassword" [type]="passwordHideNew ? 'password' : 'text'"
+                      placeholder="Repeat new password"
+                      class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                             text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                             focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+                    @if (passwordMismatch) {
+                      <p class="text-xs text-rose-500 mt-1">Passwords do not match</p>
+                    }
+                  </div>
+
+                  <div class="flex items-center gap-3 pt-1">
+                    <button type="button" (click)="showChangePasswordModal = false"
+                      class="flex-1 py-2.5 rounded-xl text-xs font-bold border border-cm-border
+                             bg-cm-surface-raised text-cm-text-secondary hover:bg-cm-surface-hover transition-all">
+                      Cancel
+                    </button>
+                    <button type="submit" [disabled]="passwordSaving"
+                      class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold
+                             bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all
+                             disabled:opacity-60 disabled:cursor-wait">
+                      @if (passwordSaving) {
+                        <i class="fa-solid fa-spinner fa-spin"></i> Updating…
+                      } @else {
+                        Update Password
+                      }
+                    </button>
+                  </div>
+
+                </form>
+              </div>
             </div>
           }
 
