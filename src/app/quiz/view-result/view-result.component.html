@@ -1,12 +1,7 @@
 <div class="quiz-result-container">
-  <!-- Fixed full-viewport wrapper — the overlay itself is position:absolute,
-       so it needs a positioned ancestor that stays pinned regardless of how
-       far this page (badges/leaderboard/etc.) scrolls. -->
-  <div class="fixed inset-0 pointer-events-none z-[1002]">
-    <app-celebration-overlay #resultCelebs [enabled]="true" [theme]="celebrationTheme"
-                              [maxParticles]="0" [controlsEnabled]="false" [autoDisableMs]="0">
-    </app-celebration-overlay>
-  </div>
+  <!-- Celebration confetti lives in app-quiz-result's own canvas (#celebCanvas) —
+       it's pass-gated and already drives the XP/level-up/badge/streak sequence,
+       so there's a single celebration system, not a second one layered on top. -->
 
   <div class="content-block">
     @if (loading) {
