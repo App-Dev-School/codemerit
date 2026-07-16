@@ -360,7 +360,14 @@
   transform: translateX(2px);
 }
 
-/* ── Score card section ─────────────────────────────── */
+/* ── Score card section ─────────────────────────────────────────────
+   Treated as a certificate, not a dashboard stat card: a fine double-
+   hairline frame with engraved corner marks (replacing the old single
+   gradient accent bar), the score as a central medallion, pass/fail as a
+   seal rather than a pill. Colors stay hardcoded (not var(--cm-*)) to
+   match the rest of this file's established pattern for the one element
+   in the app that gets rasterized — a fixed, self-contained palette here
+   is one less unknown for html2canvas. */
 
 .result-hero {
   padding: 1.5rem 1rem 1rem;
@@ -372,43 +379,68 @@
 }
 
 .result-card {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 32px rgba(99,102,241,.12), 0 1px 8px rgba(0,0,0,.06);
+  border-radius: 22px;
+  padding: 3px;
   background: #ffffff;
+  box-shadow: 0 4px 32px rgba(99,102,241,.12), 0 1px 8px rgba(0,0,0,.06);
 
   :host-context(.dark) & {
-    background: #0f172a;
-    border-color: #1e293b;
+    background: linear-gradient(165deg, #141a26 0%, #0f172a 62%);
     box-shadow: 0 4px 32px rgba(99,102,241,.18), 0 1px 8px rgba(0,0,0,.25);
   }
 }
 
-.result-card__bar {
-  height: 3px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4);
+.result-card__frame {
+  position: relative;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+
+  :host-context(.dark) & { border-color: rgba(255,255,255,.14); }
 }
 
+.result-card__inner {
+  position: relative;
+  border-radius: 16px;
+  border: 1px solid #eef0f4;
+  padding: 1.75rem 1.75rem 1.5rem;
+
+  :host-context(.dark) & { border-color: rgba(255,255,255,.07); }
+
+  @media (max-width: 480px) {
+    padding: 1.25rem 1.1rem 1.1rem;
+  }
+}
+
+/* Engraved corner marks — the certificate cue that replaces the old
+   single-strip accent bar. */
+.result-card__corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(201,162,39,.55);
+}
+.result-card__corner--tl { top: 10px; left: 10px; border-width: 1.5px 0 0 1.5px; }
+.result-card__corner--tr { top: 10px; right: 10px; border-width: 1.5px 1.5px 0 0; }
+.result-card__corner--bl { bottom: 10px; left: 10px; border-width: 0 0 1.5px 1.5px; }
+.result-card__corner--br { bottom: 10px; right: 10px; border-width: 0 1.5px 1.5px 0; }
+
+/* Header */
 .result-card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.625rem 1.25rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: 1.15rem;
   border-bottom: 1px solid #e2e8f0;
 
   :host-context(.dark) & { border-color: #1e293b; }
 }
 
-.result-card__meta {
-  font-size: 10px;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.08em;
-  color: #94a3b8;
-}
+.result-card__brand { display: flex; align-items: center; }
 
 .result-card__logo {
-  height: 24px;
+  height: 22px;
   width: auto;
 
   &--dark {
@@ -418,45 +450,51 @@
   :host-context(.dark) &--light { display: none; }
 }
 
-/* Two-column body */
-.result-card__body {
-  display: flex;
-  flex-direction: column;
+.result-card__meta { text-align: right; }
 
-  @media (min-width: 560px) {
-    flex-direction: row;
-  }
+.result-card__meta-code {
+  display: block;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.08em;
+  color: #c9a227;
 }
 
-.result-col {
-  padding: 1.5rem 1.25rem;
+.result-card__meta-date {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Certificate opening line */
+.result-grant-line {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: #6366f1;
+  margin: 0 0 0.6rem;
+
+  :host-context(.dark) & { color: #a5b4fc; }
+}
+
+/* Identity + seal row */
+.result-identity-row {
   display: flex;
-  flex-direction: column;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 1.1rem;
+  flex-wrap: wrap;
 }
 
-.result-col--identity {
-  @media (min-width: 560px) {
-    width: 44%;
-    border-right: 1px solid #e2e8f0;
-    :host-context(.dark) & { border-color: #1e293b; }
-  }
-  @media (max-width: 559px) {
-    border-bottom: 1px solid #e2e8f0;
-    :host-context(.dark) & { border-color: #1e293b; }
-  }
-}
-
-.result-col--score {
-  flex: 1;
-}
-
-/* User row */
-.result-user {
+.result-identity {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
+  min-width: 0;
 }
 
 .result-avatar-wrap {
@@ -467,8 +505,8 @@
     content: '';
     position: absolute;
     inset: -2px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
+    border-radius: 14px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #c9a227);
     opacity: 0.35;
     filter: blur(4px);
     z-index: 0;
@@ -477,9 +515,9 @@
 
 .result-avatar {
   position: relative;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   object-fit: cover;
   box-shadow: 0 2px 8px rgba(0,0,0,.15);
   z-index: 1;
@@ -491,11 +529,12 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: #94a3b8;
-  margin: 0 0 2px;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .result-user__name {
-  font-size: 15px;
+  font-size: 17px;
   // 800, not 900 — Inter is only loaded at weights up to 800 (see index.html's
   // Google Fonts link), so 900 forced the browser into synthetic/faux bold.
   // That synthetic rendering is what was actually breaking html2canvas AND
@@ -504,125 +543,193 @@
   // always this unloaded weight, not either library).
   font-weight: 800;
   letter-spacing: -0.02em;
-  line-height: 1.3;
-  margin: 0;
-  padding-bottom: 2px;
+  // Generous line-height + no overflow clipping — see the HTML comment.
+  // Wrapping instead of truncating means there's no fixed-height box for a
+  // metrics mismatch to clip into.
+  line-height: 1.6;
+  margin: 2px 0 0;
   color: #0f172a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
 
   :host-context(.dark) & { color: #f8fafc; }
 }
 
-/* Quiz chip */
-.result-quiz-chip {
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  padding: 0.5rem 0.75rem;
-
-  :host-context(.dark) & {
-    border-color: #1e293b;
-    background: #1e293b;
-  }
-}
-
-.result-quiz-chip__label {
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.result-user__course {
+  font-size: 12px;
+  font-weight: 500;
   color: #94a3b8;
-  margin: 0 0 2px;
+  margin: 1px 0 0;
 }
 
-.result-quiz-chip__title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #0f172a;
-  margin: 0;
-  line-height: 1.3;
-
-  :host-context(.dark) & { color: #f1f5f9; }
-}
-
-/* Pass/fail badge */
-.result-status-badge {
+/* Seal, not a pill — icon and label are each their own explicitly-styled
+   span (see HTML comment: no anonymous text run left for html2canvas to
+   mismeasure against the icon span). */
+.result-seal {
   display: inline-flex;
   align-items: center;
-  // Matches .result-status-badge__icon's forced 1rem height below, so the
-  // icon and text are literally the same box height. html2canvas/dom-to-
-  // image-more don't reliably compute flexbox cross-axis centering — with
-  // matching heights there's nothing left to misalign, regardless of how
-  // faithfully each renderer implements align-items.
-  line-height: 1rem;
-  gap: 0.35rem;
-  padding: 0.35rem 0.75rem;
+  gap: 0.5rem;
+  padding: 0.3rem 0.8rem 0.3rem 0.35rem;
   border-radius: 999px;
-  font-size: 13px;
-  font-weight: 700;
   border: 1px solid transparent;
+  flex-shrink: 0;
 
   &--pass {
     background: #f0fdf4;
-    color: #15803d;
     border-color: #bbf7d0;
-    :host-context(.dark) & { background: rgba(34,197,94,.1); color: #4ade80; border-color: rgba(34,197,94,.25); }
+    :host-context(.dark) & { background: rgba(34,197,94,.1); border-color: rgba(34,197,94,.25); }
   }
 
   &--fail {
     background: #fef2f2;
-    color: #b91c1c;
     border-color: #fecaca;
-    :host-context(.dark) & { background: rgba(239,68,68,.1); color: #f87171; border-color: rgba(239,68,68,.25); }
+    :host-context(.dark) & { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.25); }
   }
 }
 
-.result-status-badge__icon {
+.result-seal__dot {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  font-size: 0.85rem;
-  line-height: 1rem;
-  flex-shrink: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+
+  .result-seal--pass & { background: #22c55e; color: #052e1a; }
+  .result-seal--fail & { background: #ef4444; color: #2a0b09; }
 }
 
-.result-remarks {
-  margin: 0.5rem 0 0;
-  font-size: 11px;
-  color: #94a3b8;
+.result-seal__label {
+  display: inline-flex;
+  align-items: center;
+  height: 1.4rem;
+  line-height: 1.4rem;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+
+  .result-seal--pass & { color: #15803d; :host-context(.dark) & { color: #4ade80; } }
+  .result-seal--fail & { color: #b91c1c; :host-context(.dark) & { color: #f87171; } }
+}
+
+/* Feedback block — a certificate remark, not a generic muted caption */
+.result-feedback {
+  margin-bottom: 1.1rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+
+  :host-context(.dark) & {
+    background: #1a2233;
+    border-color: #263041;
+  }
+}
+
+.result-feedback__label {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: #c9a227;
+  margin: 0 0 4px;
+}
+
+.result-feedback__text {
+  font-size: 12.5px;
   font-style: italic;
-  line-height: 1.5;
+  line-height: 1.55;
+  color: #475569;
+  margin: 0;
+
+  :host-context(.dark) & { color: #cbd5e1; }
 }
 
-/* Score donut */
-.result-donut {
+/* Score medallion + breakdown — the certificate's centerpiece, not a
+   small donut off in a corner. */
+.result-score-stage {
   display: flex;
-  justify-content: center;
-  margin: -0.25rem 0;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.15rem 0 1.25rem;
+  margin-bottom: 1.1rem;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+
+  :host-context(.dark) & { border-color: #1e293b; }
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+  }
 }
 
-/* Stats grid */
-.result-stats {
+.result-score-ring {
+  position: relative;
+  width: 116px;
+  height: 116px;
+  flex-shrink: 0;
+
+  @media (max-width: 480px) {
+    width: 92px;
+    height: 92px;
+  }
+}
+
+.result-score-ring__svg { width: 100%; height: 100%; }
+
+.result-score-ring__track {
+  stroke: #e2e8f0;
+  fill: none;
+  :host-context(.dark) & { stroke: #1e293b; }
+}
+
+.result-score-ring__fill {
+  stroke: #6366f1;
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.7s ease;
+}
+
+.result-score-ring__num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-score-ring__val {
+  font-size: 30px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #0f172a;
+  :host-context(.dark) & { color: #f8fafc; }
+}
+
+.result-score-ring__sign {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  margin-top: 3px;
+}
+
+.result-score-breakdown {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: 8px;
+  min-width: 0;
 }
 
 .result-stat {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 0.6rem 0.25rem;
-  border-radius: 8px;
-  background: #f1f5f9;
-  :host-context(.dark) & { background: #1e293b; }
-
-  &--correct { background: #f0fdf4; :host-context(.dark) & { background: rgba(34,197,94,.1); } }
-  &--wrong   { background: #fef2f2; :host-context(.dark) & { background: rgba(239,68,68,.1); } }
+  gap: 2px;
 }
 
 .result-stat__val {
@@ -640,39 +747,44 @@
 }
 
 .result-stat__key {
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #94a3b8;
-  margin-top: 3px;
 }
 
-/* Accuracy bar */
-.result-accuracy__row {
+/* Bars — Accuracy + Time Efficiency */
+.result-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.result-bar-row__top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
-.result-accuracy__label {
-  font-size: 9px;
+.result-bar-row__label {
+  font-size: 9.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #94a3b8;
 }
 
-.result-accuracy__pct {
-  font-size: 11px;
+.result-bar-row__pct {
+  font-size: 11.5px;
   font-weight: 700;
   color: #0f172a;
   font-variant-numeric: tabular-nums;
   :host-context(.dark) & { color: #f1f5f9; }
 }
 
-.result-accuracy__track {
+.result-bar-track {
   height: 6px;
   border-radius: 999px;
   background: #e2e8f0;
@@ -680,13 +792,14 @@
   :host-context(.dark) & { background: #1e293b; }
 }
 
-.result-accuracy__fill {
+.result-bar-fill {
   height: 100%;
   border-radius: 999px;
   transition: width 0.7s ease;
 
   &--pass { background: linear-gradient(90deg, #22c55e, #34d399); }
   &--fail { background: linear-gradient(90deg, #ef4444, #f97316); }
+  &--time { background: linear-gradient(90deg, #6366f1, #06b6d4); }
 }
 
 /* CTAs */

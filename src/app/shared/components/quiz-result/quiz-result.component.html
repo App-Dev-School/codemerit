@@ -38,108 +38,140 @@
 <div class="result-hero">
   <div class="result-card-wrap">
 
-    <!-- Shareable / downloadable area -->
+    <!-- Shareable / downloadable area — a certificate, not a dashboard stat
+         card: fine hairline frame + corner marks instead of a single accent
+         bar, the score as a central medallion, pass/fail as a seal. -->
     <div id="quizResultCard" class="result-card">
+      <div class="result-card__frame">
+        <div class="result-card__inner">
+          <span class="result-card__corner result-card__corner--tl"></span>
+          <span class="result-card__corner result-card__corner--tr"></span>
+          <span class="result-card__corner result-card__corner--bl"></span>
+          <span class="result-card__corner result-card__corner--br"></span>
 
-      <!-- Brand bar -->
-      <div class="result-card__bar"></div>
-
-      <!-- Certificate header -->
-      <div class="result-card__header">
-        <span class="result-card__meta">CMA{{ result?.resultCode }}</span>
-        <img src="/assets/images/logo.png" alt="CodeMerit" class="result-card__logo result-card__logo--light">
-        <img src="/assets/images/logo-dark.png" alt="CodeMerit" class="result-card__logo result-card__logo--dark">
-        <span class="result-card__meta">{{ result?.createdAt | date:'dd/MM/yyyy' }}</span>
-      </div>
-
-      <!-- Two-column body -->
-      <div class="result-card__body">
-
-        <!-- LEFT: identity -->
-        <div class="result-col result-col--identity">
-
-          <div class="result-user">
-            <div class="result-avatar-wrap">
-              <img src="/assets/images/users/user.jpg" alt="avatar" class="result-avatar">
+          <!-- Header -->
+          <div class="result-card__header">
+            <div class="result-card__brand">
+              <img src="/assets/images/logo.png" alt="CodeMerit" class="result-card__logo result-card__logo--light">
+              <img src="/assets/images/logo-dark.png" alt="CodeMerit" class="result-card__logo result-card__logo--dark">
             </div>
-            <div class="result-user__info">
-              <p class="result-user__label">Candidate</p>
-              <h2 class="result-user__name">
-                {{ result?.user?.firstName }} {{ result?.user?.lastName }}
-              </h2>
+            <div class="result-card__meta">
+              <span class="result-card__meta-code">CMA{{ result?.resultCode }}</span>
+              <span class="result-card__meta-date">{{ result?.createdAt | date:'d MMM y' }}</span>
             </div>
           </div>
 
-          <div class="result-quiz-chip">
-            <p class="result-quiz-chip__label">Assessment</p>
-            <p class="result-quiz-chip__title">
-              {{ result?.quiz?.title ?? 'CodeMerit Assessment' }}
-            </p>
-          </div>
+          <p class="result-grant-line">This report certifies the assessment result for</p>
 
-          <div>
-            <span class="result-status-badge"
-                  [ngClass]="isPassed ? 'result-status-badge--pass' : 'result-status-badge--fail'">
-              <!-- Text glyph, not inline SVG — html2canvas/dom-to-image both have
-                   known, unreliable positioning of inline SVG inside flex
-                   containers, which was misaligning this icon against the
-                   status text in captured images even though it looks fine
-                   live. A text glyph goes through the same canvas text
-                   rendering path as the label next to it, so there's nothing
-                   left to independently misposition. -->
-              @if (isPassed) {
-                <span class="result-status-badge__icon">✓</span>
-              } @else {
-                <span class="result-status-badge__icon">✕</span>
-              }
-              {{ statusLabel }}
-            </span>
-            @if (result?.remarks) {
-              <p class="result-remarks">{{ result.remarks }}</p>
-            }
-          </div>
-
-        </div>
-
-        <!-- RIGHT: score + stats -->
-        <div class="result-col result-col--score">
-
-          <div class="result-donut">
-            <app-quiz-progress [score]="result?.score ?? 0"></app-quiz-progress>
-          </div>
-
-          <div class="result-stats">
-            <div class="result-stat">
-              <span class="result-stat__val">{{ result?.total }}</span>
-              <span class="result-stat__key">Total</span>
-            </div>
-            <div class="result-stat">
-              <span class="result-stat__val">{{ (result?.correct ?? 0) + (result?.wrong ?? 0) }}</span>
-              <span class="result-stat__key">Done</span>
-            </div>
-            <div class="result-stat result-stat--correct">
-              <span class="result-stat__val">{{ result?.correct }}</span>
-              <span class="result-stat__key">Correct</span>
-            </div>
-            <div class="result-stat result-stat--wrong">
-              <span class="result-stat__val">{{ result?.wrong }}</span>
-              <span class="result-stat__key">Wrong</span>
-            </div>
-          </div>
-
-          <div class="result-accuracy">
-            <div class="result-accuracy__row">
-              <span class="result-accuracy__label">Accuracy</span>
-              <span class="result-accuracy__pct">
-                {{ ((result?.correct ?? 0) / (((result?.correct ?? 0) + (result?.wrong ?? 0)) || 1) * 100) | number:'1.0-0' }}%
+          <!-- Identity + seal -->
+          <div class="result-identity-row">
+            <div class="result-identity">
+              <span class="result-avatar-wrap">
+                <img src="/assets/images/users/user.jpg" alt="avatar" class="result-avatar">
               </span>
-            </div>
-            <div class="result-accuracy__track">
-              <div class="result-accuracy__fill"
-                   [ngClass]="isPassed ? 'result-accuracy__fill--pass' : 'result-accuracy__fill--fail'"
-                   [style.width]="(result?.score ?? 0) + '%'">
+              <div class="result-user__info">
+                <p class="result-user__label">Candidate</p>
+                <!-- No overflow:hidden/ellipsis/nowrap here on purpose — that
+                     combination is what was clipping descenders (g/y/p/j) at
+                     the bottom in the captured image: html2canvas re-measures
+                     text with its own metrics, and any tiny discrepancy from
+                     the live browser gets hard-clipped by overflow:hidden.
+                     Letting the name wrap instead of truncating is safe for a
+                     two-word name and removes the clipping edge entirely. -->
+                <h2 class="result-user__name">
+                  {{ result?.user?.firstName }} {{ result?.user?.lastName }}
+                </h2>
+                <p class="result-user__course">{{ result?.quiz?.title ?? 'CodeMerit Assessment' }}</p>
               </div>
             </div>
+
+            <!-- Seal, not a pill — icon and label are each their own
+                 explicitly-styled span with matching line-height/height.
+                 Previously the label was a bare text node next to a styled
+                 icon span inside a flex row, so html2canvas had to
+                 synthesize a box for that anonymous run itself, and its
+                 metrics estimate didn't match the icon span's, sinking the
+                 label below the icon in the captured image. No anonymous
+                 run left now, so there's nothing left for it to mismeasure. -->
+            <span class="result-seal" [ngClass]="isPassed ? 'result-seal--pass' : 'result-seal--fail'">
+              <span class="result-seal__dot">{{ isPassed ? '✓' : '✕' }}</span>
+              <span class="result-seal__label">{{ statusLabel }}</span>
+            </span>
+          </div>
+
+          @if (result?.remarks) {
+            <div class="result-feedback">
+              <p class="result-feedback__label">Feedback</p>
+              <p class="result-feedback__text">{{ result.remarks }}</p>
+            </div>
+          }
+
+          <!-- Score medallion + breakdown -->
+          <div class="result-score-stage">
+            <div class="result-score-ring">
+              <svg viewBox="0 0 130 130" class="result-score-ring__svg">
+                <circle class="result-score-ring__track" cx="65" cy="65" r="56" stroke-width="10"/>
+                <circle class="result-score-ring__fill" cx="65" cy="65" r="56" stroke-width="10"
+                        [attr.stroke-dasharray]="scoreRingCircumference"
+                        [attr.stroke-dashoffset]="scoreRingOffset"
+                        transform="rotate(-90 65 65)"/>
+              </svg>
+              <div class="result-score-ring__num">
+                <span class="result-score-ring__val">{{ result?.score ?? 0 | number:'1.0-0' }}</span>
+                <span class="result-score-ring__sign">Score</span>
+              </div>
+            </div>
+
+            <div class="result-score-breakdown">
+              <div class="result-stat">
+                <span class="result-stat__val">{{ result?.total }}</span>
+                <span class="result-stat__key">Total</span>
+              </div>
+              <div class="result-stat">
+                <span class="result-stat__val">{{ (result?.correct ?? 0) + (result?.wrong ?? 0) }}</span>
+                <span class="result-stat__key">Done</span>
+              </div>
+              <div class="result-stat result-stat--correct">
+                <span class="result-stat__val">{{ result?.correct }}</span>
+                <span class="result-stat__key">Correct</span>
+              </div>
+              <div class="result-stat result-stat--wrong">
+                <span class="result-stat__val">{{ result?.wrong }}</span>
+                <span class="result-stat__key">Wrong</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bars -->
+          <div class="result-bars">
+            <div class="result-bar-row">
+              <div class="result-bar-row__top">
+                <span class="result-bar-row__label">Accuracy</span>
+                <span class="result-bar-row__pct">
+                  {{ ((result?.correct ?? 0) / (((result?.correct ?? 0) + (result?.wrong ?? 0)) || 1) * 100) | number:'1.0-0' }}%
+                </span>
+              </div>
+              <div class="result-bar-track">
+                <div class="result-bar-fill"
+                     [ngClass]="isPassed ? 'result-bar-fill--pass' : 'result-bar-fill--fail'"
+                     [style.width]="(result?.score ?? 0) + '%'">
+                </div>
+              </div>
+            </div>
+
+            @if (timeEfficiencyPct !== null) {
+              <div class="result-bar-row">
+                <div class="result-bar-row__top">
+                  <span class="result-bar-row__label">Time Efficiency</span>
+                  <span class="result-bar-row__pct">{{ timeEfficiencyPct }}%</span>
+                </div>
+                <div class="result-bar-track">
+                  <div class="result-bar-fill result-bar-fill--time"
+                       [style.width]="timeEfficiencyPct + '%'">
+                  </div>
+                </div>
+              </div>
+            }
           </div>
 
         </div>

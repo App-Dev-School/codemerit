@@ -13,7 +13,6 @@ import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-
 import { BadgeProgressTeaserComponent } from '@shared/components/badge-progress-teaser/badge-progress-teaser.component';
 import { LeaderboardRankTeaserComponent } from '@shared/components/leaderboard-rank-teaser/leaderboard-rank-teaser.component';
 import { NextBestActionCardComponent } from '@shared/components/next-best-action-card/next-best-action-card.component';
-import { QuizProgressComponent } from '../quiz-progress/quiz-progress.component';
 
 type CelebrationStep =
   | { type: 'levelUp' }
@@ -52,7 +51,7 @@ interface Particle {
   templateUrl: './quiz-result.component.html',
   styleUrl: './quiz-result.component.scss',
   imports: [
-    CommonModule, RouterLink, QuizProgressComponent, LevelUpModalComponent, BadgeEarnedCardComponent,
+    CommonModule, RouterLink, LevelUpModalComponent, BadgeEarnedCardComponent,
     CertificateUnlockModalComponent, XpStreakWidgetComponent, BadgeProgressTeaserComponent,
     LeaderboardRankTeaserComponent, NextBestActionCardComponent,
   ],
@@ -145,6 +144,44 @@ export class QuizResultComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
   get isPassed(): boolean { return Number(this.result?.score ?? 0) >= this.passMarks; }
   get statusLabel(): string { return this.isPassed ? 'Passed' : 'Failed'; }
+
+  // % of the allotted time NOT used — higher means they finished with time
+  // to spare. QuizResult only guarantees `timeSpent` (seconds actually
+  // used); there's no typed "total time allotted" field, so this reaches
+  // for a few plausible backend field names (same defensive pattern as
+  // passMarks above) before falling back to a 30s/question budget, matching
+  // take-quiz.component.ts's own default per-question time allowance.
+  get timeEfficiencyPct(): number | null {
+    const total = Number(this.result?.total ?? 0);
+    const timeSpent = Number(this.result?.timeSpent ?? NaN);
+    if (!total || Number.isNaN(timeSpent)) return null;
+
+    const allotted = Number(
+      (this.result as any)?.totalTimeAllowed ??
+      (this.result as any)?.timeAllowed ??
+      (this.result?.quiz as any)?.settings?.duration ??
+      (this.result?.quiz as any)?.settings?.totalTime ??
+      total * 30
+    );
+    if (!allotted) return null;
+    return Math.max(0, Math.min(100, Math.round(100 - (timeSpent / allotted) * 100)));
+  }
+
+  // Plain inline SVG ring — replaces the old <app-quiz-progress> (ApexCharts
+  // radialBar). That component was already flagged in share.service.ts as a
+  // known source of capture distortion: a third-party chart mounts its SVG
+  // asynchronously and repositions its percentage label with a manual
+  // offsetY pixel hack, both of which a from-scratch renderer like
+  // html2canvas has no reliable way to replicate. A static SVG circle with
+  // stroke-dasharray/dashoffset needs none of that — it's already the same
+  // technique take-quiz's own countdown ring uses successfully.
+  readonly scoreRingRadius = 56;
+  readonly scoreRingCircumference = 2 * Math.PI * this.scoreRingRadius;
+
+  get scoreRingOffset(): number {
+    const score = Math.max(0, Math.min(100, Number(this.result?.score ?? 0)));
+    return this.scoreRingCircumference * (1 - score / 100);
+  }
 
   get reviewQuestions(): any[] {
     if (this.result) {
