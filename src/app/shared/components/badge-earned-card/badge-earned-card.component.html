@@ -29,5 +29,8 @@
         <span class="bec-tile__date">{{ badge?.earnedAt | date:'MMM d, y' }}</span>
       }
     </div>
+    @if (sourceLabel) {
+      <span class="bec-tile__source">{{ sourceLabel }}</span>
+    }
   </div>
 }

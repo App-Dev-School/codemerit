@@ -57,6 +57,9 @@ export interface NewlyEarned {
   certificatesEarned: EarnedCertificate[];
 }
 
+export type BadgeScopeType = 'Global' | 'Subject' | 'JobRole';
+export type BadgeSource = 'System' | 'Manual' | 'Interview';
+
 export interface Badge {
   code: string;
   name: string;
@@ -64,6 +67,10 @@ export interface Badge {
   iconUrl: string;
   points: number;
   earnedAt: string | null;
+  scopeType: BadgeScopeType;
+  scopeId: number | null;
+  // Only present on `earned` entries from /my-badges — always null on `locked` ones.
+  source: BadgeSource | null;
 }
 
 export interface MyBadgesResponse {

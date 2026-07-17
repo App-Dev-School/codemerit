@@ -593,10 +593,19 @@
   width: 1.4rem;
   height: 1.4rem;
   border-radius: 50%;
-  font-size: 0.75rem;
+  flex-shrink: 0;
 
   .result-seal--pass & { background: #22c55e; color: #052e1a; }
   .result-seal--fail & { background: #ef4444; color: #2a0b09; }
+
+  // Inline SVGs are replaced elements with a default baseline gap of a
+  // few px below them (the same quirk that shows up under inline <img>
+  // tags) — display:block removes it so the flex centering above is the
+  // only thing positioning the icon, nothing left for a UA-default gap
+  // to nudge it off-center by.
+  svg {
+    display: block;
+  }
 }
 
 .result-seal__label {

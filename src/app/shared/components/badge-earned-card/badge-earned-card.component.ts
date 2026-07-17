@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { BadgeSource } from '@core/models/gamification.model';
 import { bounceInAnimation } from '@shared/animations';
 
 export interface BadgeCardData {
@@ -8,6 +9,8 @@ export interface BadgeCardData {
   description?: string;
   points?: number;
   earnedAt?: string | null;
+  // Cosmetic only — drives the "Awarded by an interviewer" vs "Earned automatically" tag.
+  source?: BadgeSource | null;
 }
 
 @Component({
@@ -27,5 +30,10 @@ export class BadgeEarnedCardComponent {
 
   onDismiss(): void {
     this.dismiss.emit();
+  }
+
+  get sourceLabel(): string | null {
+    if (this.locked || !this.badge?.source) return null;
+    return this.badge.source === 'System' ? 'Earned automatically' : 'Awarded by an interviewer';
   }
 }

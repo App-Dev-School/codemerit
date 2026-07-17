@@ -86,15 +86,30 @@
             </div>
 
             <!-- Seal, not a pill — icon and label are each their own
-                 explicitly-styled span with matching line-height/height.
-                 Previously the label was a bare text node next to a styled
-                 icon span inside a flex row, so html2canvas had to
-                 synthesize a box for that anonymous run itself, and its
-                 metrics estimate didn't match the icon span's, sinking the
-                 label below the icon in the captured image. No anonymous
-                 run left now, so there's nothing left for it to mismeasure. -->
+                 explicitly-styled span with matching line-height/height, so
+                 there's no anonymous text run for html2canvas to mismeasure.
+                 The icon is a small self-drawn inline SVG path, not a
+                 Unicode ✓/✕ (inconsistent glyph metrics across fonts) and
+                 not a Font Awesome icon either — icon fonts render their
+                 glyph via a ::before pseudo-element with a private-use-area
+                 codepoint, and html2canvas's handling of generated
+                 pseudo-element content + PUA glyphs is a well-documented
+                 weak spot, arguably less reliable than plain text. A raw
+                 SVG path with explicit width/height has no font, no
+                 pseudo-element, and no external CDN dependency for
+                 html2canvas to get wrong. -->
             <span class="result-seal" [ngClass]="isPassed ? 'result-seal--pass' : 'result-seal--fail'">
-              <span class="result-seal__dot">{{ isPassed ? '✓' : '✕' }}</span>
+              <span class="result-seal__dot">
+                @if (isPassed) {
+                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                    <path d="M1 4L3.8 6.8L9 1.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                } @else {
+                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true">
+                    <path d="M1 1L8 8M8 1L1 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                }
+              </span>
               <span class="result-seal__label">{{ statusLabel }}</span>
             </span>
           </div>

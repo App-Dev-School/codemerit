@@ -5,14 +5,19 @@
     }
   </div>
 } @else {
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-    @for (badge of earned; track badge.code) {
-      <app-badge-earned-card variant="tile" [badge]="badge" [locked]="false"></app-badge-earned-card>
-    }
-    @for (badge of locked; track badge.code) {
-      <app-badge-earned-card variant="tile" [badge]="badge" [locked]="true"></app-badge-earned-card>
-    }
-  </div>
+  @for (section of sections; track section.key) {
+    <div class="mb-6">
+      <h4 class="text-xs font-bold uppercase tracking-wider text-cm-text-muted mb-3">{{ section.title }}</h4>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        @for (badge of section.earned; track badge.code) {
+          <app-badge-earned-card variant="tile" [badge]="badge" [locked]="false"></app-badge-earned-card>
+        }
+        @for (badge of section.locked; track badge.code) {
+          <app-badge-earned-card variant="tile" [badge]="badge" [locked]="true"></app-badge-earned-card>
+        }
+      </div>
+    </div>
+  }
   @if (!earned.length && !locked.length) {
     <div class="py-10 text-center rounded-2xl border border-dashed border-cm-border">
       <i class="fa-solid fa-award text-cm-text-muted text-2xl mb-3 block"></i>

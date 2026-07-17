@@ -1,5 +1,5 @@
 import { CommonModule, NgClass } from '@angular/common';
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,7 +44,7 @@ interface FeedbackState {
     CelebrationOverlayComponent,
   ],
 })
-export class TakeQuizComponent implements OnInit, AfterViewInit {
+export class TakeQuizComponent implements OnInit {
   private subscriptions: any[] = [];
   private destroyed = false;
 
@@ -112,6 +112,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   questionTimerInterval: any;
   feedbackTimerInterval: any;
   allowOptionClick = false;
+  private optionClickTimer: any;
   private readonly MAX_FEEDBACK_SECS = 30;
 
   feedback: FeedbackState = {
@@ -144,6 +145,7 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     if (this.questionTimerInterval) clearInterval(this.questionTimerInterval);
     if (this.feedbackTimerInterval) clearInterval(this.feedbackTimerInterval);
     if (this.scheduledAutoNext) clearTimeout(this.scheduledAutoNext);
+    if (this.optionClickTimer) clearTimeout(this.optionClickTimer);
     this.speech.stop();
     this.celebrationWaveTimers.forEach(t => clearTimeout(t));
     this.celebrationWaveTimers = [];
@@ -162,15 +164,12 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.userData = this.authService.currentUserValue;
     this.quizSlug = this.route.snapshot.paramMap.get('qcode');
     this.quizConfig = this.quizService.getQuizConfig();
-    console.log('QuizPlayer Loaded QuizConfig', this.quizConfig);
     if (this.quizSlug) {
       this.loadQuiz();
     } else {
       this.authService.redirectToErrorPage();
     }
   }
-
-  ngAfterViewInit(): void {}
 
   private loadQuiz(): void {
     this.comboCount = 0;
@@ -185,7 +184,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       }));
       this.currentQuestion = this.questions[this.currentQuestionId];
       this.quizDuration = this.questions.reduce((sum, q) => sum + (q.timeAllowed || 0), 0);
-      console.log('QuizPlayer Questions Loaded', this.questions);
       // Question timer/swiper don't start here anymore — they wait for acceptAgreement(),
       // so the countdown can't burn down while the user is still reading the terms.
       const loadingTimeout = setTimeout(() => {
@@ -460,8 +458,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   private disableOptionClickTemporarily(): void {
+    // Cancel any still-pending unlock from a previous question — without this,
+    // rapid prev/next navigation could let an earlier timer fire after we've
+    // already moved on, prematurely lifting the read-first lockout on the
+    // question the user actually landed on.
+    if (this.optionClickTimer) clearTimeout(this.optionClickTimer);
     this.allowOptionClick = false;
-    setTimeout(() => { this.allowOptionClick = true; }, 3000);
+    this.optionClickTimer = setTimeout(() => { this.allowOptionClick = true; }, 3000);
   }
 
   showHint(): void {
@@ -494,25 +497,13 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     this.answerActive = false;
   }
 
-  onTick(event: any): void {
-    if (event.minutes === 1 && event.seconds === 0) {
-      this.showWarningToast = true;
-      setTimeout(() => {
-        this.warningActive = true;
-        this.showWarningToast = false;
-      }, 3000);
-    }
-  }
-
   onTimerComplete(): void {
     this.warningActive = false;
     this.showWarningToast = false;
     if (this.quizConfig.enableAudio) this.quizHelper.playSound('click');
-    console.log('Quiz Timed Out!', this.questions);
   }
 
   private completeQuiz(): void {
-    console.log('Quiz complete!', this.questions);
     this.submitQuiz();
   }
 
@@ -522,7 +513,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
   }
 
   submitQuiz(): void {
-    console.log('QuizPlayer submitQuiz() with user', this.authService.currentUserValue);
     clearInterval(this.questionTimerInterval);
     if (!(this.authService.currentUserValue && this.authService.currentUserValue.email)) {
       if (!this.displayingAuthDialog) this.quickRegister();
@@ -573,7 +563,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
       disableClose: true,
     });
     const sub = dialogRef.afterClosed().subscribe((result: any) => {
-      console.log('Take Quiz QuickAuth Complete', result);
       this.displayingAuthDialog = false;
       if (result?.id) {
         this.showNotification(
@@ -583,7 +572,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
           'center',
         );
         if (!this.quizResult) {
-          console.log('Submitted again', this.authService.currentUserValue);
           this.submitQuiz();
         }
       }
@@ -730,7 +718,6 @@ export class TakeQuizComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
         this.quizConfig = this.quizService.getQuizConfig();
-        console.log('QuizPlayer QuizConfig updated', this.quizConfig);
       }
     });
   }
