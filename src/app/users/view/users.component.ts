@@ -17,6 +17,7 @@ import { ProfileCourseStat, UserProfileResponse } from '@core/models/user-profil
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-streak-widget.component';
 import { BadgeGridComponent } from '@shared/components/badge-grid/badge-grid.component';
+import { BadgeEarnedCardComponent } from '@shared/components/badge-earned-card/badge-earned-card.component';
 import { CertificateRibbonComponent } from '@shared/components/certificate-ribbon/certificate-ribbon.component';
 import { ProfileActivityTimelineComponent } from '@shared/components/profile-activity-timeline/profile-activity-timeline.component';
 
@@ -61,6 +62,7 @@ function passwordsMatchValidator(group: FormGroup): ValidationErrors | null {
     SubjectPerformanceCardComponent,
     XpStreakWidgetComponent,
     BadgeGridComponent,
+    BadgeEarnedCardComponent,
     CertificateRibbonComponent,
     ProfileActivityTimelineComponent,
   ],

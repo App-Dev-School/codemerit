@@ -1,4 +1,4 @@
-import { LevelInfo, StreakInfo } from './gamification.model';
+import { LevelInfo, ScopedBadgeEntry, StreakInfo } from './gamification.model';
 
 export interface UserProfileBio {
   id?: number;
@@ -148,7 +148,14 @@ export interface UserProfileResponse {
   self_assessments: ProfileAssessmentBlock;
   external_assessments: ProfileAssessmentBlock;
   certificates: ProfileCertificate[];
+  // Earned-only, every scope mixed together (subject/topic/jobrole/global badges this user has
+  // earned) — for the profile-owner's Badge & Certificates tab, use `master.fetchMyBadges()` instead
+  // (full earned+locked collection). `globalBadges` below is additive, not a replacement of this.
   badges: ProfileBadge[];
+  // The 7 original platform-wide (Global-scope) badges, unlock-tagged and sortOrder-ordered —
+  // these never appear in subjectDashboard/programDetails' embedded `badges` (wrong scope
+  // entirely), so this is their one home. A lighter widget than the full badge grid.
+  globalBadges: ScopedBadgeEntry[];
   activities: ProfileActivity[];
   gamification: ProfileGamification;
   // api_usage intentionally omitted — internal/diagnostic, not rendered.

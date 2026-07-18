@@ -1,0 +1,153 @@
+<section class="content">
+  <div class="content-block">
+
+    <div class="block-header">
+      <app-breadcrumb [title]="'Grant Badge'" [items]="['Badges']" [active_item]="'Grant Badge'"></app-breadcrumb>
+    </div>
+
+    <div class="rounded-2xl border border-cm-border bg-cm-surface shadow-sm p-4 sm:p-5 mt-2" style="max-width:560px">
+
+      <div class="mb-5">
+        <h2 class="text-base font-bold text-cm-text-primary">Grant a Badge</h2>
+        <p class="text-xs text-cm-text-muted mt-0.5">
+          Manually award one of the 40 grantable badges to a learner. The original 7 system badges
+          (First Steps, Perfect Score, etc.) are earned automatically only and won't appear here.
+        </p>
+      </div>
+
+      @if (lastResult) {
+      <div class="rounded-xl px-4 py-3 mb-5 flex items-start justify-between gap-3"
+           [class]="lastResult.alreadyEarned
+             ? 'bg-cm-surface-muted border border-cm-border'
+             : 'bg-cm-success-dim border border-cm-success/20'">
+        <p class="text-sm" [class]="lastResult.alreadyEarned ? 'text-cm-text-secondary' : 'text-cm-success-text'">
+          @if (lastResult.alreadyEarned) {
+            {{ lastResult.userName }} already had <strong>"{{ lastResult.badgeName }}"</strong> — note updated.
+          } @else {
+            🏆 <strong>"{{ lastResult.badgeName }}"</strong> granted to {{ lastResult.userName }}!
+          }
+        </p>
+        <button type="button" (click)="dismissLastResult()"
+          class="shrink-0 text-cm-text-muted hover:text-cm-text-primary transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      }
+
+      <form [formGroup]="grantForm" (ngSubmit)="submit()">
+
+        <!-- User select -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Grant To</label>
+          <mat-form-field class="w-full" appearance="outline">
+            <mat-select formControlName="userId" placeholder="Select a user">
+              @for (user of users; track user.id) {
+              <mat-option [value]="user.id">{{ user.firstName }} {{ user.lastName }} ({{ user.email }})</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Current badges for the selected user — lets the admin see what they already have
+             before granting another. Scoped to match whatever scope filter is selected below. -->
+        @if (grantForm.get('userId')?.value) {
+        <div class="mb-4 rounded-xl border border-cm-border bg-cm-surface-muted p-3.5">
+          <p class="text-xs font-semibold text-cm-text-secondary mb-2.5">Current Badges</p>
+          @if (userBadgesLoading) {
+          <p class="text-xs text-cm-text-muted">Loading…</p>
+          } @else if ((userBadges?.earned?.length ?? 0) === 0 && (userBadges?.locked?.length ?? 0) === 0) {
+          <p class="text-xs text-cm-text-muted">No badges in this scope yet.</p>
+          } @else {
+          <div class="max-h-56 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            @for (badge of userBadges?.earned; track badge.code) {
+            <app-badge-earned-card variant="tile" [badge]="badge" [locked]="false"></app-badge-earned-card>
+            }
+            @for (badge of userBadges?.locked; track badge.code) {
+            <app-badge-earned-card variant="tile" [badge]="badge" [locked]="true"></app-badge-earned-card>
+            }
+          </div>
+          }
+        </div>
+        }
+
+        <!-- Scope type -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Scope (optional filter)</label>
+          <mat-form-field class="w-full" appearance="outline">
+            <mat-select formControlName="scopeType" placeholder="Any scope">
+              <mat-option [value]="''">Any scope</mat-option>
+              @for (s of scopeTypes; track s.value) {
+              <mat-option [value]="s.value">{{ s.title }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Resource autocomplete -->
+        @if (showResourcePicker) {
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">
+            {{ grantForm.get('scopeType')?.value }}
+          </label>
+          <input
+            type="text"
+            [formControl]="resourceSearchCtrl"
+            [matAutocomplete]="auto"
+            placeholder="Search…"
+            autocomplete="off"
+            (focus)="filterResources(resourceSearchCtrl.value)"
+            [disabled]="!resources || resources.length === 0"
+            class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                   text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                   focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors
+                   disabled:opacity-50 disabled:cursor-not-allowed">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayResource"
+                            (optionSelected)="onResourceSelected($event)">
+            @for (r of filteredResources; track r.id) {
+            <mat-option [value]="r">{{ r.title }}</mat-option>
+            }
+          </mat-autocomplete>
+        </div>
+        }
+
+        <!-- Badge select -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Badge</label>
+          <mat-form-field class="w-full" appearance="outline">
+            <mat-select formControlName="badgeId" [placeholder]="catalogLoading ? 'Loading…' : 'Select a badge'">
+              @for (b of catalog; track b.id) {
+              <mat-option [value]="b.id">{{ b.name }} ({{ b.points }} pts)</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (!catalogLoading && catalog.length === 0) {
+          <p class="text-xs text-cm-text-muted mt-1.5">No manually grantable badges match this scope.</p>
+          }
+        </div>
+
+        <!-- Note -->
+        <div class="mb-5">
+          <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Note (optional)</label>
+          <textarea formControlName="note" rows="2" maxlength="255" placeholder="Why this badge is being granted…"
+            class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                   text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                   focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors resize-none"></textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3 pt-1">
+          <button type="submit" [disabled]="!grantForm.valid || submitting"
+            class="inline-flex items-center px-5 py-2.5 rounded-xl bg-cm-brand text-white text-sm font-semibold
+                   hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+            {{ submitting ? 'Granting…' : 'Grant Badge' }}
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</section>

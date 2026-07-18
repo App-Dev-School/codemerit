@@ -9,5 +9,10 @@ export const ADMIN_ROUTE: Route[] = [
     path: 'permissions',
     loadChildren: () =>
       import('./permissions-dashboard/permissions.routes').then((m) => m.PERMISSIONS_ROUTE),
+  },
+  {
+    path: 'badges',
+    loadChildren: () =>
+      import('./badge-grants/badge-grants.routes').then((m) => m.BADGE_GRANTS_ROUTE),
   }
 ];

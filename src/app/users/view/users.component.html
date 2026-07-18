@@ -350,6 +350,24 @@
 
               </div>
 
+              <!-- Platform Achievements — the 7 original Global-scope badges (unlike everything
+                   else, they're not tied to any subject/job role, so this profile is their one
+                   home rather than the subject/job-role dashboards). -->
+              @if (userDetail.globalBadges?.length > 0) {
+                <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                  <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                    <div class="text-sm font-bold text-cm-text-primary">Platform Achievements</div>
+                  </div>
+                  <div class="p-5">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                      @for (badge of userDetail.globalBadges; track badge.code) {
+                        <app-badge-earned-card variant="tile" [badge]="badge" [locked]="!badge.unlocked"></app-badge-earned-card>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+
               <!-- Book SME Assessment CTA -->
               @if (selfView) {
                 <div class="relative rounded-2xl overflow-hidden

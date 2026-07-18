@@ -351,11 +351,6 @@ export class WelcomeComponent implements OnInit {
     }
   }
 
-  onCurriculumLaunchQuiz(subject: any): void {
-    // Subject dashboard already offers quiz launch — route there for now.
-    this.onCurriculumExploreSubject(subject);
-  }
-
   get pendingLessonsCount(): number {
     return this.engagements.length - this.startedLessonIds.length;
   }

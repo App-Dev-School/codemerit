@@ -227,6 +227,18 @@
         <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised">{{endorsements.length}}</span>
         }
       </button>
+      <button type="button" (click)="setDetailTab('badges')"
+        class="inline-flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-bold whitespace-nowrap
+               border-b-2 -mb-px transition-colors"
+        [class.border-cm-brand]="detailTab === 'badges'"
+        [class.text-cm-brand]="detailTab === 'badges'"
+        [class.border-transparent]="detailTab !== 'badges'"
+        [class.text-cm-text-muted]="detailTab !== 'badges'">
+        <i class="fa-solid fa-award text-[11px]"></i> Badges
+        @if(totalSubjectBadgesCount > 0){
+        <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised">{{totalSubjectBadgesCount}}</span>
+        }
+      </button>
       <button type="button" (click)="setDetailTab('overview')"
         class="inline-flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-bold whitespace-nowrap
                border-b-2 -mb-px transition-colors"
@@ -246,9 +258,42 @@
     <div class="min-w-0">
 
       @if(courseData?.length > 0){
+
+      <!-- Quick Quiz banner — job-role-level quiz launcher. Previously a per-subject
+           "Quick Quiz" button lived in the roadmap panel's own footer, but that footer
+           had no room to fit it alongside "Explore Subject" once the layout tightened.
+           Moved here instead: one persistent CTA above the roadmap that isn't tied to
+           whichever subject happens to be selected. Reuses startQuickQuiz() (already
+           built for the Overview tab's tile) rather than duplicating its
+           "pick a target subject" logic. -->
+      <div class="flex items-center justify-between gap-4 flex-wrap px-5 py-4 mb-5 rounded-2xl
+                  border border-cm-border-strong bg-cm-surface
+                  shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20
+                      flex items-center justify-center shrink-0">
+            <svg class="w-[18px] h-[18px] text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-bold text-cm-text-primary">Quick Quiz</p>
+            <p class="text-xs text-cm-text-muted mt-0.5">
+              @if(totalQuestions > 0){ {{totalQuestions}} questions ready across this role }
+              @else{ Tailored to your progress }
+            </p>
+          </div>
+        </div>
+        <button type="button" (click)="startQuickQuiz()"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-bold shrink-0
+                 bg-violet-500 text-white hover:bg-violet-600 active:scale-[0.97] transition-all shadow-sm">
+          Start Quiz
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
       <app-job-curriculum
         [subjects]="courseData"
-        (launchQuiz)="openQuizLauncher($event)"
         (exploreSubject)="launchSubjectExplorer($event)">
       </app-job-curriculum>
 
@@ -398,6 +443,43 @@
         </div>
         }
       }
+
+    <!-- Badges — grouped per subject (badges live on each subject, not on the job role itself;
+         no badge in the catalog is JobRole-scoped, so they're kept per-subject rather than
+         merged into one flat list). -->
+    @if(detailTab === 'badges'){
+      @if(subjectBadgeGroups.length > 0){
+      <div class="space-y-5">
+        @for(group of subjectBadgeGroups; track group.subject.id){
+        <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
+                    dark:shadow-none">
+          <div class="flex items-center gap-3 px-5 py-4 border-b border-cm-border">
+            <img [src]="group.subject.image ?? 'assets/images/tech/placeholder.png'"
+                 class="w-6 h-6 rounded-lg object-cover border border-cm-border shrink-0"
+                 [alt]="group.subject.title">
+            <span class="text-[12.5px] font-bold text-cm-text-primary">{{group.subject.title}}</span>
+            <span class="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised text-cm-text-muted">{{group.badges.length}}</span>
+          </div>
+          <div class="p-5">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              @for(badge of group.badges; track badge.code){
+              <app-badge-earned-card variant="tile" [badge]="badge" [locked]="!badge.unlocked"></app-badge-earned-card>
+              }
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+      }@else{
+      <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+                  shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
+                  dark:shadow-none px-5 py-14 flex flex-col items-center gap-2 text-center">
+        <i class="fa-solid fa-award text-cm-text-muted text-2xl"></i>
+        <p class="text-[12px] text-cm-text-muted">No badges defined for this job role's subjects yet.</p>
+      </div>
+      }
+    }
 
     <!-- Overview — Top Learners / Select a Subject / Quick Quiz -->
     @if(detailTab === 'overview'){

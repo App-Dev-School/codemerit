@@ -20,6 +20,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { CertTrackComponent } from '@shared/components/cert-track/cert-track.component';
 import { JobCurriculumComponent } from '@shared/components/job-curriculum/job-curriculum.component';
 import { JourneyLocatorComponent } from '@shared/components/journey-locator/journey-locator.component';
+import { BadgeEarnedCardComponent } from '@shared/components/badge-earned-card/badge-earned-card.component';
+import { ScopedBadgeEntry } from '@core/models/gamification.model';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -33,7 +35,8 @@ import { JourneyLocatorComponent } from '@shared/components/journey-locator/jour
     MatIconModule,
     CertTrackComponent,
     JobCurriculumComponent,
-    JourneyLocatorComponent
+    JourneyLocatorComponent,
+    BadgeEarnedCardComponent
   ]
 })
 export class CourseDashboardComponent implements OnInit {
@@ -48,9 +51,15 @@ export class CourseDashboardComponent implements OnInit {
   courseData: any[];
   showSubjectAction = false;
   certificateModels: CertificateModel[] = [];
+  // JobRole-scoped badges embedded directly on programDetails — always [] today, since no badge
+  // in the catalog is scoped to a JobRole (all 40 non-original badges are Subject/Topic-scoped).
+  // Forward-compatible plumbing, not a current data source — don't build UI around this having
+  // content. The real per-role badge data lives on each subject in `courseData` instead, see
+  // `subjectBadgeGroups` below.
+  courseBadges: ScopedBadgeEntry[] = [];
 
   // Master tab bar above the Curriculum Roadmap — controls which single section renders below it.
-  detailTab: 'curriculum' | 'certifications' | 'endorsements' | 'overview' = 'curriculum';
+  detailTab: 'curriculum' | 'certifications' | 'endorsements' | 'badges' | 'overview' = 'curriculum';
   meritList: any[] = [];
   userRank: number | null = null;
 
@@ -147,8 +156,27 @@ export class CourseDashboardComponent implements OnInit {
     return this.courseData.reduce((sum: number, s: any) => sum + (s.subjectTracks?.length ?? 0), 0);
   }
 
-  setDetailTab(tab: 'curriculum' | 'certifications' | 'endorsements' | 'overview'): void {
+  setDetailTab(tab: 'curriculum' | 'certifications' | 'endorsements' | 'badges' | 'overview'): void {
     this.detailTab = tab;
+  }
+
+  // programDetails' badges are already sortOrder-ordered by the backend (easiest first) —
+  // don't re-sort client-side.
+  get sortedCourseBadges(): ScopedBadgeEntry[] {
+    return this.courseBadges;
+  }
+
+  // Each subject in courseData carries its own `.badges` (ScopedBadgeEntry[], already
+  // sortOrder-sorted, always an array — [] for a subject with none defined). Grouped per subject
+  // on purpose, not merged into one flat list, so a subject's badges stay tied to that subject.
+  get subjectBadgeGroups(): { subject: any; badges: ScopedBadgeEntry[] }[] {
+    return (this.courseData ?? [])
+      .filter((s: any) => (s.badges?.length ?? 0) > 0)
+      .map((s: any) => ({ subject: s, badges: s.badges }));
+  }
+
+  get totalSubjectBadgesCount(): number {
+    return (this.courseData ?? []).reduce((sum: number, s: any) => sum + (s.badges?.length ?? 0), 0);
   }
 
   // Weighted-equal average coverage across subjects — used by the compact "enrolled" hero.
@@ -205,6 +233,7 @@ export class CourseDashboardComponent implements OnInit {
         if (!Array.isArray(data)) {
           this.meritList = data?.meritList ?? [];
           this.userRank = data?.userRank ?? null;
+          this.courseBadges = data?.badges ?? [];
         }
 
         if (this.courseData?.length > 0) {

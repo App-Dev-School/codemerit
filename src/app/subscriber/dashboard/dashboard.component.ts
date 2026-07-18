@@ -12,11 +12,11 @@ import { SnackbarService } from '@core/service/snackbar.service';
 import { fadeInAnimation, slideInOutAnimation } from '@shared/animations';
 import { CertificationTracksComponent } from '@shared/components/certification-tracks/certification-tracks.component';
 import { CertificateRibbonComponent } from '@shared/components/certificate-ribbon/certificate-ribbon.component';
-import { MyCertificate } from '@core/models/gamification.model';
+import { MyCertificate, ScopedBadgeEntry } from '@core/models/gamification.model';
 import { GoalPathComponent } from '@shared/components/goal-path/goal-path.component';
 import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/merit-list-widget.component';
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
-import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
+import { BadgeEarnedCardComponent } from '@shared/components/badge-earned-card/badge-earned-card.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { SubjectTracksBoardComponent } from '@shared/components/subject-tracks-board/subject-tracks-board.component';
 import { Observable, of } from 'rxjs';
@@ -32,7 +32,7 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
     RouterLink,
     TopicsListComponent,
     MeritListWidgetComponent,
-    RecentCommentsComponent,
+    BadgeEarnedCardComponent,
     SubjectPerformanceCardComponent,
     SkillRatingWidgetComponent,
     GoalPathComponent,
@@ -53,44 +53,6 @@ export class DashboardComponent implements OnInit {
   subjectTopics$: Observable<any>;
   nextAction: string = 'Assess Your Skills';
   viewingCertificate: { certificate: MyCertificate; trackTitle: string } | null = null;
-  achievements = [
-    {
-      name: 'Redux Star',
-      message: 'You earned the Redux Star badge.',
-      timestamp: '7 hours ago',
-      imgSrc: 'assets/images/icons/badges/genius.png',
-      colorClass: 'col-green',
-    },
-    {
-      name: 'UpSkillr',
-      message: 'Vallentina earned the UpSkillr badge for completeting JavaScript Assessment.',
-      timestamp: '3 days ago',
-      imgSrc: 'assets/images/icons/badges/upskillr.png',
-      colorClass: 'color-primary col-indigo',
-    },
-    {
-      name: 'Problem Solver',
-      message: 'You earned the Problem Solver badge for Frontend Mock Interview.',
-      timestamp: 'Yesterday',
-      imgSrc: 'assets/images/icons/badges/solver.png',
-      colorClass: 'color-info col-orange',
-      noBorder: true,
-    },
-    {
-      name: 'JavaScript Basic Aware',
-      message: 'You earned the JavaScript Basic Aware badge.',
-      timestamp: '1 hour ago',
-      imgSrc: 'assets/images/icons/badges/genius.png',
-      colorClass: 'color-primary col-red',
-    },
-    {
-      name: 'Verified',
-      message: 'Congrats! You are now a Verified member.',
-      timestamp: '1 hour ago',
-      imgSrc: 'assets/images/icons/badges/verified.png',
-      colorClass: 'color-primary col-red',
-    }
-  ];
 
   constructor(private master: MasterService,
     private route: ActivatedRoute,
@@ -315,6 +277,16 @@ export class DashboardComponent implements OnInit {
 
   get subjectSkillRatings(): any[] {
     return this.subjectData?.skillRatings ?? [];
+  }
+
+  // subjectDashboard embeds every badge scoped to this subject, each tagged `unlocked` and
+  // already sortOrder-ordered by the backend (easiest first) — don't re-sort client-side.
+  get subjectBadges(): ScopedBadgeEntry[] {
+    return this.subjectData?.badges ?? [];
+  }
+
+  get earnedSubjectBadgeCount(): number {
+    return (this.subjectData?.badges ?? []).filter((b: ScopedBadgeEntry) => b.unlocked).length;
   }
 
   fetchDashboardData() {

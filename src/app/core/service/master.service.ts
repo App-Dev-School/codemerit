@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
 import { HttpService } from './http.service';
 import { AdminDashboardResponse } from 'src/app/admin/dtos/admin-dashboard.model';
 import { LmsDashboardResponse } from 'src/app/lms/dtos/lms-dashboard.model';
-import { LeaderboardPeriod, LeaderboardResponse, MyBadgesResponse } from '@core/models/gamification.model';
+import { BadgeCatalogEntry, BadgeScopeType, GrantBadgeRequest, GrantBadgeResponse, LeaderboardPeriod, LeaderboardResponse, MyBadgesResponse } from '@core/models/gamification.model';
 
 export interface MasterData {
   subjects: any[];
@@ -223,10 +223,20 @@ export class MasterService {
       );
   }
 
-  fetchMyBadges(): Observable<MyBadgesResponse> {
+  // `userId` fetches that user's badges instead of the caller's own — e.g. so the Admin "Grant
+  // Badge" picker can preview a learner's current badges before granting one. Backend gates this:
+  // Admins can pass any userId in any scope; a non-admin caller also needs scopeType (+scopeId
+  // unless Global) matching a Badge:Grant permission they hold, else a 403 falls back to empty
+  // here same as any other error.
+  fetchMyBadges(filters?: { userId?: number; scopeType?: BadgeScopeType; scopeId?: number }): Observable<MyBadgesResponse> {
     const fallback: MyBadgesResponse = { earned: [], locked: [] };
+    const params = new URLSearchParams();
+    if (filters?.userId != null) params.set('userId', String(filters.userId));
+    if (filters?.scopeType) params.set('scopeType', filters.scopeType);
+    if (filters?.scopeId != null) params.set('scopeId', String(filters.scopeId));
+    const qs = params.toString();
     return this.httpService
-      .get('apis/achievements/my-badges', this.authService.currentUserValue?.token)
+      .get('apis/achievements/my-badges' + (qs ? '?' + qs : ''), this.authService.currentUserValue?.token)
       .pipe(
         map((res: { error: boolean; message: string; data: MyBadgesResponse }) => !res.error ? res.data : fallback),
         catchError((err) => {
@@ -234,6 +244,34 @@ export class MasterService {
           return of(fallback);
         }),
       );
+  }
+
+  // Admin/grantor picker — filters mirror the backend catalog endpoint's query params.
+  fetchBadgeCatalog(filters?: { scopeType?: BadgeScopeType; scopeId?: number; isManuallyGrantable?: boolean }): Observable<BadgeCatalogEntry[]> {
+    const params = new URLSearchParams();
+    if (filters?.scopeType) params.set('scopeType', filters.scopeType);
+    if (filters?.scopeId != null) params.set('scopeId', String(filters.scopeId));
+    if (filters?.isManuallyGrantable != null) params.set('isManuallyGrantable', String(filters.isManuallyGrantable));
+    const qs = params.toString();
+    return this.httpService
+      .get('apis/achievements/badges' + (qs ? '?' + qs : ''), this.authService.currentUserValue?.token)
+      .pipe(
+        map((res: { error: boolean; message: string; data: BadgeCatalogEntry[] }) => !res.error ? res.data : []),
+        catchError((err) => {
+          console.error('fetchBadgeCatalog Failed', err);
+          return of([]);
+        }),
+      );
+  }
+
+  // No catchError swallow here — the caller needs to branch on 403 (expected, out-of-scope
+  // grantor) vs 400/404 (real error), so the raw error must reach the component.
+  grantBadge(payload: GrantBadgeRequest): Observable<GrantBadgeResponse> {
+    return this.httpService.postData<GrantBadgeResponse>(
+      'apis/achievements/badges/grant',
+      payload,
+      this.authService.currentUserValue?.token,
+    );
   }
 
   enrollSubjects(subjectIds: number[]): Observable<any> {

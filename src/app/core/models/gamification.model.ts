@@ -57,7 +57,7 @@ export interface NewlyEarned {
   certificatesEarned: EarnedCertificate[];
 }
 
-export type BadgeScopeType = 'Global' | 'Subject' | 'JobRole';
+export type BadgeScopeType = 'Global' | 'Subject' | 'JobRole' | 'Topic';
 export type BadgeSource = 'System' | 'Manual' | 'Interview';
 
 export interface Badge {
@@ -69,6 +69,9 @@ export interface Badge {
   earnedAt: string | null;
   scopeType: BadgeScopeType;
   scopeId: number | null;
+  // Display order within this badge's own scope (lower = easier, shown first). Every badge list
+  // the API returns is already sorted by it — don't re-sort client-side.
+  sortOrder: number;
   // Only present on `earned` entries from /my-badges — always null on `locked` ones.
   source: BadgeSource | null;
 }
@@ -76,6 +79,60 @@ export interface Badge {
 export interface MyBadgesResponse {
   earned: Badge[];
   locked: Badge[];
+}
+
+// The `badges` field embedded in subjectDashboard/programDetails responses — same fields as
+// Badge, flattened into one list with an `unlocked` flag instead of split earned/locked, since
+// these dashboards show one subject/job-role's badges at a time.
+export interface ScopedBadgeEntry extends Badge {
+  unlocked: boolean;
+}
+
+export type BadgeAwardMethod = 'System' | 'Manual';
+
+export interface BadgeRule {
+  id: number;
+  badgeId: number;
+  metric: 'SubjectCorrectCoverage' | 'TopicCorrectCoverage';
+  threshold: number;
+  difficultyLevel: 1 | 2 | 3 | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// The admin/grantor catalog entry from GET apis/achievements/badges — richer than `Badge`
+// (my-badges/embedded shapes), includes the fields needed to build a grant picker.
+export interface BadgeCatalogEntry {
+  id: number;
+  code: string;
+  name: string;
+  description: string;
+  content: string;
+  iconUrl: string;
+  points: number;
+  scopeType: BadgeScopeType;
+  scopeId: number | null;
+  awardMethod: BadgeAwardMethod;
+  // The authoritative gate for POST .../badges/grant — awardMethod is a display hint only.
+  isManuallyGrantable: boolean;
+  isPublished: boolean;
+  // Display order within this badge's own scope (lower = easier, shown first).
+  sortOrder: number;
+  rule: BadgeRule | null;
+  createdAt: string;
+}
+
+export interface GrantBadgeRequest {
+  userId: number;
+  badgeId: number;
+  note?: string;
+}
+
+export interface GrantBadgeResponse {
+  code: string;
+  name: string;
+  earnedAt: string;
+  alreadyEarned: boolean;
 }
 
 export interface LeaderboardEntry {
