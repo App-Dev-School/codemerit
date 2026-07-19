@@ -1,5 +1,15 @@
 <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
             shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+  <div class="flex items-center gap-3 px-5 py-4 border-b border-cm-border">
+    <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20
+                flex items-center justify-center shrink-0">
+      <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
+    </div>
+    <div class="min-w-0">
+      <p class="text-sm font-bold text-cm-text-primary">Your Progress</p>
+      <p class="text-[11px] text-cm-text-muted mt-0.5">XP, level &amp; streak</p>
+    </div>
+  </div>
   @if (stats && progress) {
     <div class="p-5 space-y-4">
       <div class="flex items-center justify-between">

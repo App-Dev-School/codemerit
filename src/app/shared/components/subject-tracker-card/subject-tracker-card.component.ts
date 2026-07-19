@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CourseProgressComponent } from '../course-progress/course-progress.component';
-import { User } from '@core/models/user';
 
 @Component({
   selector: 'app-subject-tracker-card',
@@ -14,7 +13,6 @@ import { User } from '@core/models/user';
 })
 export class SubjectTrackerCardComponent {
   @Input() item: any;
-  @Input() user: User;
   @Input() profileMode = false;
   @Output() launchSubjectExplorer = new EventEmitter<any>();
   @Output() takeQuiz = new EventEmitter<any>();

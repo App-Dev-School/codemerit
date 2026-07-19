@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 import { Direction } from '@angular/cdk/bidi';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,6 +24,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
   styleUrls: ['./learning-dashboard.component.scss'],
   animations: [fadeInAnimation],
   imports: [
+    DatePipe,
     SubjectTrackerCardComponent,
     BadgeGridComponent,
     XpStreakWidgetComponent,
@@ -102,11 +104,16 @@ export class LearningDashboardComponent implements OnInit {
     this.loadCachedGamificationStats();
     // Lets other pages (e.g. the quiz-result widgets) deep-link straight to a
     // specific tab, e.g. /dashboard?tab=badges — falls back to 'overview' for
-    // any missing/unrecognized value.
-    const requestedTab = this.route.snapshot.queryParamMap.get('tab');
-    if (requestedTab === 'badges' || requestedTab === 'leaderboard') {
-      this.setActiveTab(requestedTab);
-    }
+    // any missing/unrecognized value. Subscribed (not just a snapshot read) so
+    // links to this same tab param from widgets already on this page (e.g. the
+    // xp-streak-widget's "View My Progress") also switch tabs — same-route
+    // navigations reuse this component instance and never re-run ngOnInit.
+    this.route.queryParamMap.subscribe((params) => {
+      const requestedTab = params.get('tab');
+      if (requestedTab === 'badges' || requestedTab === 'leaderboard') {
+        this.setActiveTab(requestedTab);
+      }
+    });
     // setTimeout(() => {
     //   this.loading = false;
     // }, 3333);
@@ -232,6 +239,20 @@ export class LearningDashboardComponent implements OnInit {
     if (!this.courseData?.length) return 0;
     const sum = this.courseData.reduce((acc, s) => acc + (s.coverage || 0), 0);
     return Math.round(sum / this.courseData.length);
+  }
+
+  private readonly JUMP_BACK_IN_LIMIT = 3;
+
+  // Subjects closest to completion surface first (most motivating), fully-covered
+  // subjects are excluded (nothing left to "resume"). Deliberately still shows even
+  // when it overlaps with the full "In Progress" grid below — quick top-of-page
+  // access regardless of how many subjects the learner is tracking.
+  get jumpBackInSubjects(): any[] {
+    return (this.attemptedSubjects ?? [])
+      .filter((s) => (s.coverage ?? 0) < 100)
+      .slice()
+      .sort((a, b) => (b.coverage ?? 0) - (a.coverage ?? 0) || (b.attempted ?? 0) - (a.attempted ?? 0))
+      .slice(0, this.JUMP_BACK_IN_LIMIT);
   }
 
   get overallAccuracy(): number {

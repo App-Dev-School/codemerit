@@ -59,7 +59,12 @@ export class CourseDashboardComponent implements OnInit {
   courseBadges: ScopedBadgeEntry[] = [];
 
   // Master tab bar above the Curriculum Roadmap — controls which single section renders below it.
-  detailTab: 'curriculum' | 'certifications' | 'endorsements' | 'badges' | 'overview' = 'curriculum';
+  // Order matters here (mirrors the tab bar's left-to-right order): Overview (orientation/pitch)
+  // first, then the substantial Curriculum "how", then what-you-earn (Certifications/Badges),
+  // Endorsements last as trust-reinforcement rather than a discovery tool. Default is 'overview'
+  // as a pre-enrollment-check fallback — filterCourse() overrides it once courseItem is known,
+  // before the tab bar ever renders (see the `!loading && courseItem` gate in the template).
+  detailTab: 'overview' | 'curriculum' | 'certifications' | 'badges' | 'endorsements' = 'overview';
   meritList: any[] = [];
   userRank: number | null = null;
 
@@ -120,6 +125,10 @@ export class CourseDashboardComponent implements OnInit {
   filterCourse(allJobRoles: any) {
     this.courseItem = allJobRoles.find(role => role.slug === this.course);
     console.log(this.pageTitle, "filterCourse > @CourseItem", this.courseItem);
+    // Adaptive landing tab: enrolled learners land on Curriculum to pick up where they left
+    // off; everyone else (anonymous or logged-in-but-not-enrolled) lands on Overview, the
+    // orientation/pitch tab. Runs before the tab bar ever renders (loading gate in the template).
+    this.detailTab = this.isJobEnrolled(this.userData?.id, this.courseItem?.id) ? 'curriculum' : 'overview';
     this.fetchCourseData();
   }
 
@@ -156,7 +165,18 @@ export class CourseDashboardComponent implements OnInit {
     return this.courseData.reduce((sum: number, s: any) => sum + (s.subjectTracks?.length ?? 0), 0);
   }
 
-  setDetailTab(tab: 'curriculum' | 'certifications' | 'endorsements' | 'badges' | 'overview'): void {
+  // A subject counts as "done" once every one of its own subjectTracks is complete —
+  // same rule JobCurriculumComponent uses internally (isSubjectComplete), duplicated
+  // here as a one-liner rather than exposing that component's private helper.
+  get completedSubjectsCount(): number {
+    if (!this.courseData?.length) return 0;
+    return this.courseData.filter((s: any) => {
+      const tracks: any[] = s.subjectTracks ?? [];
+      return tracks.length > 0 && tracks.every((t: any) => t.isCompleted);
+    }).length;
+  }
+
+  setDetailTab(tab: 'overview' | 'curriculum' | 'certifications' | 'badges' | 'endorsements'): void {
     this.detailTab = tab;
   }
 
@@ -193,26 +213,15 @@ export class CourseDashboardComponent implements OnInit {
 
   // Aggregated across every subject in this job role — relocated here from
   // JobCurriculumComponent, which now only ever renders curriculum content.
-  // `endorsements` isn't a confirmed API field yet, so subjects without it fall
-  // back to the same sample data as before; swap this out once the backend sends it.
+  // `endorsements` isn't a confirmed API field yet — real data only, no mock fallback
+  // (the dummy sample data was removed; the Endorsements tab shows its empty state until
+  // the backend actually sends this field).
   get endorsements(): any[] {
     if (!this.courseData?.length) return [];
     return this.courseData.reduce((all: any[], subject: any) => {
-      const list = subject?.endorsements !== undefined ? subject.endorsements : this.mockEndorsements(subject);
+      const list = subject?.endorsements ?? [];
       return all.concat(list.map((e: any) => ({ ...e, subjectTitle: subject.title })));
     }, []);
-  }
-
-  private mockEndorsements(subject: any): any[] {
-    const title = subject?.title || 'this subject';
-    return [
-      {
-        id: `${subject?.id}-e1`, raterName: 'Kunal Anand', raterTitle: 'Senior Architect · CodeMerit',
-        raterAvatar: '', rating: 4.5, grade: 'Excellent', ratingType: 'INTERVIEW',
-        notes: `Demonstrated a strong working knowledge of ${title}, with clear and structured answers throughout the technical round.`,
-        interviewDate: 'Interviewed May 2026',
-      },
-    ];
   }
 
   requestEndorsement(): void {

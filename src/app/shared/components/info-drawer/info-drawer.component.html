@@ -1,0 +1,30 @@
+<!-- backdrop -->
+<div class="fixed inset-0 bg-black/40 z-[1000] transition-opacity duration-300"
+     [class.opacity-0]="!open"
+     [class.pointer-events-none]="!open"
+     (click)="onClose()"></div>
+
+<!-- panel -->
+<div class="fixed inset-y-0 right-0 w-full max-w-sm bg-cm-surface border-l border-cm-border z-[1001]
+            flex flex-col shadow-2xl transition-transform duration-300 ease-out"
+     [class.translate-x-full]="!open">
+
+  <div class="px-5 py-4 flex items-center justify-between shrink-0" [ngClass]="headerGradientClass">
+    <div>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-white/80 mb-0.5">{{ eyebrow }}</p>
+      <h3 class="text-base font-black text-white">{{ title }}</h3>
+    </div>
+    <button type="button" (click)="onClose()"
+      class="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150
+             bg-white/20 hover:bg-white/30 text-white">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5 space-y-6">
+    <ng-content></ng-content>
+  </div>
+
+</div>

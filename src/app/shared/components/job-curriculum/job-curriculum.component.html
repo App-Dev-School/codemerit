@@ -13,17 +13,85 @@
       </span>
       }
     </div>
-    @if(subjects?.length){
-    <span class="shrink-0 text-[10px] font-bold px-3 py-1.5 rounded-full border"
-          [class]="getOverallProgress() > 0 ? 'bg-green-500/10 border-green-500/20' : ''"
-          [class.text-green-500]="getOverallProgress() > 0"
-          [class.bg-cm-surface-raised]="getOverallProgress() === 0"
-          [class.border-cm-border]="getOverallProgress() === 0"
-          [class.text-cm-text-muted]="getOverallProgress() === 0">
-      {{getOverallProgress()}}% Complete
-    </span>
-    }
+    <div class="flex items-center gap-2 shrink-0">
+      <!-- One shared explanation of what Score/Accuracy/Coverage/Mastery Level/etc. all
+           mean, instead of a tooltip on every single metric across this widget. -->
+      <button type="button" (click)="openScoringGuide()" title="Understand your scores"
+        class="w-7 h-7 rounded-lg bg-cm-surface-raised border border-cm-border flex items-center justify-center
+               text-cm-text-muted hover:text-cm-brand hover:border-cm-brand/30 transition-all">
+        <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">help_outline</mat-icon>
+      </button>
+      @if(subjects?.length){
+      <span class="text-[10px] font-bold px-3 py-1.5 rounded-full border"
+            [class]="getOverallProgress() > 0 ? 'bg-green-500/10 border-green-500/20' : ''"
+            [class.text-green-500]="getOverallProgress() > 0"
+            [class.bg-cm-surface-raised]="getOverallProgress() === 0"
+            [class.border-cm-border]="getOverallProgress() === 0"
+            [class.text-cm-text-muted]="getOverallProgress() === 0">
+        {{getOverallProgress()}}% Complete
+      </span>
+      }
+    </div>
   </div>
+
+  <app-info-drawer [open]="showScoringGuide" eyebrow="Widget Guide" title="Understanding Your Scores"
+    headerGradientClass="bg-gradient-to-r from-cm-brand to-violet-600" (closed)="closeScoringGuide()">
+
+    <div>
+      <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Score</p>
+      <p class="text-sm text-cm-text-secondary leading-relaxed">
+        Your overall performance number — a weighted average across every question you've
+        attempted, factoring in correctness. Not shown until you've attempted at least one
+        question in that subject/track/topic.
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Accuracy</p>
+      <p class="text-sm text-cm-text-secondary leading-relaxed">
+        The percentage of attempted questions you answered correctly. Score and Accuracy answer
+        different questions: Score also weighs how much you've attempted, Accuracy only cares
+        about your hit rate on what you actually tried.
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Coverage / Journey Completed</p>
+      <p class="text-sm text-cm-text-secondary leading-relaxed">
+        How much of the available content you've engaged with — topics attempted at least once,
+        tracks and subjects proportionally. This tracks breadth, not correctness, so it's normal
+        to have high coverage with a modest score, or the reverse.
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Mastery Level</p>
+      <p class="text-sm text-cm-text-secondary leading-relaxed">
+        Beginner, Intermediate, Advanced, or Expert — a stage reflecting how far you've
+        progressed, not a grade like Score. It only advances with consistent, demonstrated
+        performance, so a "Beginner" tag just means you're early on, not that you did poorly.
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Easy / Medium / Hard</p>
+      <p class="text-sm text-cm-text-secondary leading-relaxed">
+        A breakdown of your attempted/correct counts by question difficulty, shown only for
+        tiers you've actually attempted — useful for seeing whether you're stronger on
+        fundamentals or advanced material.
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs font-bold uppercase tracking-wide text-cm-text-muted mb-2">Mandatory / Recommended / Optional</p>
+      <p class="text-sm text-cm-text-secondary leading-relaxed">
+        How subjects are prioritized for this job role. Mandatory subjects are core to the role,
+        Recommended subjects round out your skills, and Optional subjects are supplementary —
+        a good default order to work through if you're not sure where to start.
+      </p>
+    </div>
+
+  </app-info-drawer>
 
   @if(subjects?.length > 0){
 
@@ -31,83 +99,102 @@
   <!-- items-stretch (default) so the shorter column's card grows to match the taller one -->
   <div class="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-5">
 
-    <!-- ═══ LEFT — vertical flow diagram of stages ═══════════════════════ -->
+    <!-- ═══ LEFT — vertical flow diagram of stages, grouped by Mandatory/Recommended/
+         Optional so learners can tell at a glance what's required vs nice-to-have ═══ -->
     <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
                 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
                 dark:shadow-none p-4">
-      @for(subject of subjects; track subject.id; let si = $index; let last = $last){
-      <button type="button" (click)="selectSubject(si)"
+      @for(group of groupedSubjects; track group.key; let gi = $index){
+
+      <!-- Group header — separates clusters clearly instead of one undifferentiated list -->
+      <div class="flex items-center gap-2 px-0.5" [class.mt-5]="gi > 0" [class.mb-3]="true">
+        <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0"
+              [ngClass]="{
+                'bg-red-500/10 text-red-500': group.key === 'MANDATORY',
+                'bg-sky-500/10 text-sky-500': group.key === 'RECOMMENDED',
+                'bg-cm-surface-raised text-cm-text-muted': group.key === 'OPTIONAL' || group.key === 'OTHER'
+              }">
+          {{group.label}}
+        </span>
+        <span class="text-[10px] text-cm-text-muted">{{group.items.length}}</span>
+        <span class="flex-1 h-px bg-cm-border"></span>
+      </div>
+
+      @for(item of group.items; track item.subject.id; let ilast = $last){
+      <button type="button" (click)="selectSubject(item.index)"
         class="w-full flex items-stretch gap-3 text-left group
                appearance-none bg-transparent border-0 p-0 m-0 outline-none
                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cm-brand/40 rounded-xl">
 
-        <!-- Node + connector — fill communicates completion only, ring communicates selection -->
+        <!-- Node + connector — the subject's own thumbnail replaces the old ordinal number
+             (an image is already available per subject, so a plain "1/2/3" was redundant).
+             Ring still communicates selection; a green check badge overlays the thumbnail
+             on completion instead of replacing it, so the image stays visible either way. -->
         <div class="flex flex-col items-center shrink-0">
-          <div class="relative w-9 h-9 rounded-full border-2 flex items-center justify-center
-                      text-[11px] font-black shrink-0 transition-all duration-300 z-10"
-               [class]="selectedIdx === si ? 'ring-4 ring-cm-brand/20 scale-110' : ''"
-               [class.bg-green-500]="isSubjectComplete(subject)"
-               [class.border-green-500]="isSubjectComplete(subject)"
-               [class.bg-cm-brand]="!isSubjectComplete(subject) && selectedIdx === si"
-               [class.border-cm-brand]="!isSubjectComplete(subject) && selectedIdx === si"
-               [class.bg-cm-surface]="!isSubjectComplete(subject) && selectedIdx !== si"
-               [class.border-cm-border-strong]="!isSubjectComplete(subject) && selectedIdx !== si"
-               [class.text-white]="isSubjectComplete(subject) || selectedIdx === si"
-               [class.text-cm-text-muted]="!isSubjectComplete(subject) && selectedIdx !== si">
-            @if(isSubjectComplete(subject)){
-            <mat-icon class="text-white" style="font-size:15px;width:15px;height:15px;line-height:15px">check</mat-icon>
-            }@else{ {{si + 1}} }
+          <div class="relative w-9 h-9 rounded-full border-2 shrink-0 overflow-hidden transition-all duration-300 z-10"
+               [class]="selectedIdx === item.index ? 'ring-4 ring-cm-brand/20 scale-110' : ''"
+               [class.border-green-500]="isSubjectComplete(item.subject)"
+               [class.border-cm-brand]="!isSubjectComplete(item.subject) && selectedIdx === item.index"
+               [class.border-cm-border-strong]="!isSubjectComplete(item.subject) && selectedIdx !== item.index">
+            @if(item.subject.image){
+            <img [src]="item.subject.image" [alt]="item.subject.title" class="w-full h-full object-cover">
+            }@else{
+            <div class="w-full h-full flex items-center justify-center bg-cm-surface-raised">
+              <mat-icon class="text-cm-text-muted" style="font-size:16px;width:16px;height:16px;line-height:16px">menu_book</mat-icon>
+            </div>
+            }
+            @if(isSubjectComplete(item.subject)){
+            <span class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-green-500
+                         border-2 border-cm-surface flex items-center justify-center">
+              <mat-icon class="text-white" style="font-size:9px;width:9px;height:9px;line-height:9px">check</mat-icon>
+            </span>
+            }
           </div>
-          @if(!last){
+          @if(!ilast){
           <div class="w-0.5 flex-1 my-1 rounded-full transition-colors duration-300 min-h-[28px]"
-               [class.bg-green-500]="isSubjectComplete(subject)"
-               [class.bg-cm-brand]="!isSubjectComplete(subject) && isConnectorActive(si)"
-               [class.bg-cm-border]="!isSubjectComplete(subject) && !isConnectorActive(si)">
+               [class.bg-green-500]="isSubjectComplete(item.subject)"
+               [class.bg-cm-brand]="!isSubjectComplete(item.subject) && isConnectorActive(item.index)"
+               [class.bg-cm-border]="!isSubjectComplete(item.subject) && !isConnectorActive(item.index)">
           </div>
           }
         </div>
 
         <!-- Stage card -->
-        <div class="flex-1 min-w-0" [class.pb-3]="!last">
+        <div class="flex-1 min-w-0" [class.pb-3]="!ilast">
           <div class="rounded-xl border px-3.5 py-3 transition-all duration-200
                       hover:border-cm-border-strong"
-               [class.border-cm-brand]="selectedIdx === si"
-               [class.bg-cm-brand-dim]="selectedIdx === si"
-               [class.shadow-sm]="selectedIdx === si"
-               [class.border-cm-border]="selectedIdx !== si"
-               [class.bg-cm-surface]="selectedIdx !== si">
+               [class.border-cm-brand]="selectedIdx === item.index"
+               [class.bg-cm-brand-dim]="selectedIdx === item.index"
+               [class.shadow-sm]="selectedIdx === item.index"
+               [class.border-cm-border]="selectedIdx !== item.index"
+               [class.bg-cm-surface]="selectedIdx !== item.index">
 
-            <div class="flex items-center gap-1.5 mb-1.5">
-              <p class="flex-1 min-w-0 text-[12.5px] font-bold leading-snug truncate"
-                 [class.text-cm-brand]="selectedIdx === si"
-                 [class.text-cm-text-primary]="selectedIdx !== si">
-                {{subject.title}}
-              </p>
-              @if(subject.tag === 'MANDATORY'){
-              <span class="text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full
-                           border border-cm-border-strong text-cm-text-muted shrink-0">Req</span>
-              }
-            </div>
+            <p class="text-[12.5px] font-bold leading-snug truncate mb-1.5"
+               [class.text-cm-brand]="selectedIdx === item.index"
+               [class.text-cm-text-primary]="selectedIdx !== item.index">
+              {{item.subject.title}}
+            </p>
 
             <div class="flex items-center justify-between gap-2 text-[10px] text-cm-text-muted mb-1">
-              <span>{{getTotalTracks(subject)}} tracks</span>
+              <span>{{getTotalTracks(item.subject)}} tracks</span>
               <span class="font-bold"
-                    [class.text-green-500]="isSubjectComplete(subject)"
-                    [class.text-cm-text-secondary]="!isSubjectComplete(subject)">
-                {{getSubjectProgress(subject)}}%
+                    [class.text-green-500]="isSubjectComplete(item.subject)"
+                    [class.text-cm-text-secondary]="!isSubjectComplete(item.subject)">
+                {{getSubjectProgress(item.subject)}}%
               </span>
             </div>
             <div class="h-2 rounded-full bg-cm-surface-hover overflow-hidden">
               <div class="h-full rounded-full transition-[width] duration-1000 ease-out"
-                   [class.bg-green-500]="isSubjectComplete(subject)"
-                   [class.bg-cm-brand]="!isSubjectComplete(subject)"
-                   [appRevealProgress]="getSubjectProgress(subject)"></div>
+                   [class.bg-green-500]="isSubjectComplete(item.subject)"
+                   [class.bg-cm-brand]="!isSubjectComplete(item.subject)"
+                   [appRevealProgress]="getSubjectProgress(item.subject)"></div>
             </div>
 
           </div>
         </div>
 
       </button>
+      }
       }
     </div>
 
@@ -158,7 +245,10 @@
                  where it sat alongside volume metrics as just another card). Same
                  font size as the Subject Track level score for visual consistency.
                  The curriculum API doesn't send score on the subject itself, only on
-                 subjectTracks, so getSubjectScore() rolls it up from there. -->
+                 subjectTracks, so getSubjectScore() rolls it up from there. A raw "0%"
+                 here reads as a failure/broken state to anyone who simply hasn't started
+                 yet (visitor or fresh account) — swap in an invitation instead. -->
+            @if(hasActivity(sub)){
             @let subScore = getSubjectScore(sub);
             @let headScore = performanceMeta(subScore);
             <div class="shrink-0 text-right">
@@ -167,6 +257,13 @@
               </p>
               <p class="text-[8px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Score</p>
             </div>
+            }@else{
+            <button type="button" (click)="onExploreSubject(sub)"
+              class="shrink-0 text-right max-w-[120px] group appearance-none bg-transparent border-0 p-0 m-0 outline-none">
+              <p class="text-[11px] font-black text-cm-brand leading-snug group-hover:underline">Not started yet</p>
+              <p class="text-[8px] text-cm-text-muted mt-0.5 leading-snug">Practice to see your score here</p>
+            </button>
+            }
           </div>
 
           <!-- Journey Completed — full-width progress bar, same treatment as the
@@ -208,42 +305,56 @@
           @if(sub.numQuestions || sub.numTrivia || getSubjectAttempted(sub)){
           @let subAcc = getSubjectAccuracy(sub);
           @let accMeta = performanceMeta(subAcc);
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
 
-            <!-- Questions — fixed accent (a volume, not a performance signal) -->
-            <div class="flex items-center gap-2.5 rounded-xl border border-cm-border bg-cm-surface-raised px-3 py-2.5">
-              <div class="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center bg-sky-500/10">
+            <!-- Questions — fixed accent (a volume, not a performance signal). Icon hidden
+                 below sm: at 3-up on a narrow phone, icon+number+label together overflowed
+                 the column — text-only reads fine at that width and the icon isn't load-bearing. -->
+            <div class="flex items-center gap-2.5 rounded-xl border border-cm-border bg-cm-surface-raised px-2 sm:px-3 py-2.5 min-w-0">
+              <div class="hidden sm:flex w-8 h-8 rounded-lg shrink-0 items-center justify-center bg-sky-500/10">
                 <mat-icon class="text-sky-500" style="font-size:16px;width:16px;height:16px;line-height:16px">quiz</mat-icon>
               </div>
-              <div class="min-w-0">
-                <p class="text-[15px] font-black text-cm-text-primary tabular-nums leading-none">
+              <div class="min-w-0 text-center sm:text-left w-full">
+                <p class="text-[13px] sm:text-[15px] font-black text-cm-text-primary tabular-nums leading-none">
                   {{sub.numQuestions || sub.numTrivia || 0}}
                 </p>
-                <p class="text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Questions</p>
+                <p class="text-[8.5px] sm:text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold truncate">Questions</p>
               </div>
             </div>
 
+            @if(hasActivity(sub)){
             <!-- Attempted — fixed accent -->
-            <div class="flex items-center gap-2.5 rounded-xl border border-cm-border bg-cm-surface-raised px-3 py-2.5">
-              <div class="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center bg-violet-500/10">
+            <div class="flex items-center gap-2.5 rounded-xl border border-cm-border bg-cm-surface-raised px-2 sm:px-3 py-2.5 min-w-0">
+              <div class="hidden sm:flex w-8 h-8 rounded-lg shrink-0 items-center justify-center bg-violet-500/10">
                 <mat-icon class="text-violet-500" style="font-size:16px;width:16px;height:16px;line-height:16px">edit_note</mat-icon>
               </div>
-              <div class="min-w-0">
-                <p class="text-[15px] font-black text-cm-text-primary tabular-nums leading-none">{{getSubjectAttempted(sub)}}</p>
-                <p class="text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Attempted</p>
+              <div class="min-w-0 text-center sm:text-left w-full">
+                <p class="text-[13px] sm:text-[15px] font-black text-cm-text-primary tabular-nums leading-none">{{getSubjectAttempted(sub)}}</p>
+                <p class="text-[8.5px] sm:text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold truncate">Attempted</p>
               </div>
             </div>
 
             <!-- Accuracy — color reflects the value (green/amber/red), same status scale as gradeColor() -->
-            <div class="flex items-center gap-2.5 rounded-xl border border-cm-border bg-cm-surface-raised px-3 py-2.5">
-              <div class="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center" [style.backgroundColor]="accMeta.bg">
+            <div class="flex items-center gap-2.5 rounded-xl border border-cm-border bg-cm-surface-raised px-2 sm:px-3 py-2.5 min-w-0">
+              <div class="hidden sm:flex w-8 h-8 rounded-lg shrink-0 items-center justify-center" [style.backgroundColor]="accMeta.bg">
                 <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px" [style.color]="accMeta.color">track_changes</mat-icon>
               </div>
-              <div class="min-w-0">
-                <p class="text-[15px] font-black tabular-nums leading-none" [style.color]="accMeta.color">{{subAcc}}%</p>
-                <p class="text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold">Accuracy</p>
+              <div class="min-w-0 text-center sm:text-left w-full">
+                <p class="text-[13px] sm:text-[15px] font-black tabular-nums leading-none" [style.color]="accMeta.color">{{subAcc}}%</p>
+                <p class="text-[8.5px] sm:text-[9.5px] text-cm-text-muted mt-1 uppercase tracking-wide font-semibold truncate">Accuracy</p>
               </div>
             </div>
+            }@else{
+            <!-- Attempted+Accuracy are both meaninglessly zero with no activity yet — one
+                 inviting CTA instead of two empty-looking "0" cards. -->
+            <button type="button" (click)="onExploreSubject(sub)"
+              class="col-span-2 flex items-center justify-center gap-1.5 rounded-xl border border-dashed
+                     border-cm-brand/30 bg-cm-brand-dim px-3 py-2.5 appearance-none
+                     hover:border-cm-brand/50 transition-colors">
+              <span class="text-[11px] font-bold text-cm-brand">Practice to see your stats</span>
+              <mat-icon class="text-cm-brand" style="font-size:14px;width:14px;height:14px;line-height:14px">arrow_forward</mat-icon>
+            </button>
+            }
 
           </div>
           }
@@ -313,31 +424,43 @@
 
         @if(sub.subjectTracks?.length > 0){
         <div class="flex-1 divide-y divide-cm-border">
-          @for(track of visibleTracks(sub); track track.id || track.name; let ti = $index){
+          @for(track of visibleTracks(sub); track track.id || track.name; let ti = $index; let tlast = $last){
           <div class="px-5 py-3.5">
-          <div class="flex items-start gap-3.5">
+          <div class="flex items-stretch gap-3.5">
 
-            <!-- Status node -->
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0
-                        border transition-all"
-                 [class.bg-green-500]="track.isCompleted"     [class.border-green-500]="track.isCompleted"
-                 [class.text-white]="track.isCompleted"
-                 [class.bg-cm-brand-dim]="!track.isCompleted && (track.progressPercent || 0) > 0"
-                 [class.border-cm-brand]="!track.isCompleted && (track.progressPercent || 0) > 0"
-                 [class.text-cm-brand]="!track.isCompleted && (track.progressPercent || 0) > 0"
-                 [class.bg-cm-surface-raised]="!track.isCompleted && !(track.progressPercent > 0)"
-                 [class.border-cm-border]="!track.isCompleted && !(track.progressPercent > 0)"
-                 [class.text-cm-text-muted]="!track.isCompleted && !(track.progressPercent > 0)">
-              @if(track.isCompleted){
-              <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">check</mat-icon>
-              }@else{ {{ti + 1}} }
+            <!-- Step node + connector — same stepper language as the subject roadmap
+                 on the left (numbered node + vertical line); tracks don't have their
+                 own thumbnail image, so they keep the ordinal number. -->
+            <div class="flex flex-col items-center shrink-0">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0
+                          border transition-all z-10"
+                   [class.bg-green-500]="track.isCompleted"     [class.border-green-500]="track.isCompleted"
+                   [class.text-white]="track.isCompleted"
+                   [class.bg-cm-brand-dim]="!track.isCompleted && (track.progressPercent || 0) > 0"
+                   [class.border-cm-brand]="!track.isCompleted && (track.progressPercent || 0) > 0"
+                   [class.text-cm-brand]="!track.isCompleted && (track.progressPercent || 0) > 0"
+                   [class.bg-cm-surface-raised]="!track.isCompleted && !(track.progressPercent > 0)"
+                   [class.border-cm-border]="!track.isCompleted && !(track.progressPercent > 0)"
+                   [class.text-cm-text-muted]="!track.isCompleted && !(track.progressPercent > 0)">
+                @if(track.isCompleted){
+                <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">check</mat-icon>
+                }@else{ {{ti + 1}} }
+              </div>
+              @if(!tlast){
+              <div class="w-0.5 flex-1 my-1 rounded-full min-h-[20px]"
+                   [class.bg-green-500]="track.isCompleted"
+                   [class.bg-cm-border]="!track.isCompleted">
+              </div>
+              }
             </div>
 
             <!-- Info -->
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between gap-3 mb-1.5">
                 <div class="flex items-center gap-1.5 min-w-0">
-                  <p class="text-[12.5px] font-bold truncate"
+                  <!-- Subject Track name — the headline of this row, kept larger/heavier than
+                       the topic names nested below it so the hierarchy reads at a glance. -->
+                  <p class="text-[15px] font-black truncate"
                      [class.text-cm-text-secondary]="track.isCompleted"
                      [class.text-cm-text-primary]="!track.isCompleted">
                     {{track.title || track.name || ('Topic ' + (ti + 1))}}
@@ -449,7 +572,7 @@
                 @let tScore = performanceMeta(topic.score || 0);
                 @let tAcc = performanceMeta(topic.accuracy || 0);
                 @let tCov = performanceMeta(topic.coverage || 0);
-                <div class="rounded-xl border border-cm-border bg-cm-surface overflow-hidden
+                <div class="rounded-xl border border-cm-border bg-cm-surface
                             shadow-[0_1px_2px_rgba(0,0,0,0.05),0_3px_8px_rgba(0,0,0,0.07)] dark:shadow-none">
 
                   <!-- Header: status icon + title + attempted / not-started flag -->
@@ -464,8 +587,10 @@
                       }
                     </div> -->
                     <div class="min-w-0 flex-1">
+                      <!-- Topic name — sharp/non-bold on purpose, one visual step below the
+                           Subject Track name above it so the hierarchy stays clear. -->
                       <div class="flex items-center gap-1.5">
-                        <p class="text-[12px] font-bold text-cm-text-primary truncate" [title]="topic.title">{{topic.title}}</p>
+                        <p class="text-[12px] font-medium text-cm-text-primary truncate" [title]="topic.title">{{topic.title}}</p>
                         @if(topic.userLevel && topic.userLevel !== 'Not Started'){
                         @let topicLvl = userLevelMeta(topic.userLevel);
                         <span class="text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full shrink-0"
@@ -473,13 +598,40 @@
                           {{topic.userLevel}}
                         </span>
                         }
+                        <!-- What this topic covers — a tooltip rather than a permanent block of
+                             text, and only offered before there's real performance data to show
+                             instead (see the footer below), since Score/Accuracy/Coverage take
+                             priority once the topic has actually been attempted. -->
+                        @if((topic.attempted || 0) === 0 && (topic.description || topic.goal)){
+                        <span class="relative group shrink-0">
+                          <button type="button" tabindex="0"
+                            class="w-4 h-4 rounded-full flex items-center justify-center
+                                   bg-cm-surface-raised text-cm-text-muted hover:text-cm-brand transition-colors">
+                            <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">info</mat-icon>
+                          </button>
+                          <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 z-20 w-56
+                                      opacity-0 invisible group-hover:opacity-100 group-hover:visible
+                                      group-focus-within:opacity-100 group-focus-within:visible
+                                      transition-opacity duration-150 pointer-events-none
+                                      rounded-lg border border-cm-border bg-cm-surface shadow-lg p-2.5 text-left">
+                            @if(topic.description){
+                            <p class="text-[10px] text-cm-text-secondary leading-relaxed">{{topic.description}}</p>
+                            }
+                            @if(topic.goal){
+                            <p class="text-[9.5px] text-cm-text-muted leading-relaxed mt-1.5">
+                              <span class="font-semibold text-cm-text-secondary">Goal:</span> {{topic.goal}}
+                            </p>
+                            }
+                          </div>
+                        </span>
+                        }
                       </div>
                       @if(topic.numTrivia){
-                      <p class="text-[9px] text-cm-text-muted mt-0.5">{{topic.attempted || 0}}/{{topic.numTrivia}} attempted</p>
+                      <p class="text-[9px] font-normal text-cm-text-muted mt-0.5">{{topic.attempted || 0}}/{{topic.numTrivia}} attempted</p>
                       }
                     </div>
                     @if(!topic.isStarted){
-                    <span class="text-[8px] font-semibold text-cm-text-muted shrink-0">Not started</span>
+                    <span class="text-[8px] font-medium text-cm-text-muted shrink-0">Not started</span>
                     }
                   </div>
 
@@ -521,8 +673,12 @@
                   </div>
                   }
 
-                  <!-- Coverage footer -->
-                  <div class="px-3 py-2.5 border-t border-cm-border bg-cm-surface-muted">
+                  <!-- Coverage footer once there's real activity to show — description/goal
+                       (now covered by the header tooltip above) don't need to repeat here.
+                       Before there's activity, a "0% + empty bar" reads as broken to a learner
+                       who simply hasn't started, so a plain heads-up takes its place instead. -->
+                  @if((topic.attempted || 0) > 0){
+                  <div class="px-3 py-2.5 border-t border-cm-border bg-cm-surface-muted rounded-b-xl">
                     <div class="flex items-center justify-between mb-1.5">
                       <span class="text-[8px] font-semibold text-cm-text-muted">Coverage</span>
                       <span class="text-[10px] font-black tabular-nums" [style.color]="tCov.color">{{topic.coverage || 0}}%</span>
@@ -533,6 +689,15 @@
                            [style.width.%]="topic.coverage || 0"></div>
                     </div>
                   </div>
+                  }@else{
+                  <div class="px-3 py-2.5 border-t border-cm-border bg-cm-surface-muted rounded-b-xl">
+                    <p class="flex items-center gap-1 text-[9px] font-semibold text-cm-brand">
+                      <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">lock_open</mat-icon>
+                      @if(sub.isSubscribed){ Take a quiz to assess your knowledge here }
+                      @else{ Enroll to assess your knowledge in this topic }
+                    </p>
+                  </div>
+                  }
                 </div>
                 }
               </div>
@@ -573,14 +738,6 @@
           </p>
 
           <div class="flex items-center gap-2">
-            @if(sub.numTrivia > 0){
-            <button type="button" (click)="onLaunchQuiz(sub)"
-              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold
-                     border border-cm-border bg-cm-surface hover:bg-cm-surface-raised transition-all">
-              <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">quiz</mat-icon>
-              Quick Quiz
-            </button>
-            }
             <button type="button" (click)="onExploreSubject(sub)"
               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-bold
                      bg-cm-brand text-white hover:bg-indigo-700 active:scale-[0.97] transition-all shadow-sm">

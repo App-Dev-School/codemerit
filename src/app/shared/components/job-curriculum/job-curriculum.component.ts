@@ -2,15 +2,23 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RevealProgressDirective } from '@shared/directives/reveal-progress.directive';
+import { InfoDrawerComponent } from '@shared/components/info-drawer/info-drawer.component';
 
 @Component({
   selector: 'app-job-curriculum',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RevealProgressDirective],
+  imports: [CommonModule, MatIconModule, RevealProgressDirective, InfoDrawerComponent],
   templateUrl: './job-curriculum.component.html',
   styleUrls: ['./job-curriculum.component.scss']
 })
 export class JobCurriculumComponent {
+
+  // "Understanding Scores" drawer — one shared explanation of Score/Accuracy/Coverage/
+  // Mastery Level/difficulty tiers/subject priority, rather than a tooltip on every
+  // single metric across this data-dense widget.
+  showScoringGuide = false;
+  openScoringGuide(): void { this.showScoringGuide = true; }
+  closeScoringGuide(): void { this.showScoringGuide = false; }
 
   private _subjects: any[] = [];
 
@@ -21,7 +29,6 @@ export class JobCurriculumComponent {
   }
   get subjects(): any[] { return this._subjects; }
 
-  @Output() launchQuiz    = new EventEmitter<any>();
   @Output() exploreSubject = new EventEmitter<any>();
 
   selectedIdx = 0;
@@ -47,6 +54,30 @@ export class JobCurriculumComponent {
 
   isConnectorActive(idx: number): boolean {
     return this.selectedIdx === idx || this.selectedIdx === idx + 1;
+  }
+
+  // Left-panel grouping — Mandatory/Recommended/Optional come straight from the
+  // jobRoleSubjects join's own `tag` field (backend seed confirms only these 3 values
+  // plus the occasional untagged subject, bucketed here as "Other"). Each item keeps
+  // its original flat index into `_subjects` since selectedIdx/isConnectorActive/
+  // subjects[selectedIdx] elsewhere all assume that flat indexing.
+  private readonly tagOrder = ['MANDATORY', 'RECOMMENDED', 'OPTIONAL'];
+  private readonly tagLabels: Record<string, string> = {
+    MANDATORY: 'Mandatory',
+    RECOMMENDED: 'Recommended',
+    OPTIONAL: 'Optional',
+  };
+
+  get groupedSubjects(): { key: string; label: string; items: { subject: any; index: number }[] }[] {
+    const buckets = new Map<string, { subject: any; index: number }[]>();
+    this._subjects.forEach((subject, index) => {
+      const key = this.tagOrder.includes(subject?.tag) ? subject.tag : 'OTHER';
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key)!.push({ subject, index });
+    });
+    return [...this.tagOrder, 'OTHER']
+      .filter(key => buckets.has(key))
+      .map(key => ({ key, label: this.tagLabels[key] ?? 'Other Subjects', items: buckets.get(key)! }));
   }
 
   isSubjectComplete(subject: any): boolean {
@@ -103,6 +134,14 @@ export class JobCurriculumComponent {
     return (subject?.subjectTracks ?? []).reduce((s: number, t: any) => s + (t.attempted || 0), 0);
   }
 
+  // Drives the zero-activity content swap (headline score, stat row) — true for anyone with real
+  // attempts on this subject, false for a visitor or a fresh account that hasn't started yet.
+  // Deliberately keyed off actual activity, not auth/enrollment state, since a logged-in learner
+  // who hasn't touched this subject sees the same "nothing to show yet" reality as a visitor.
+  hasActivity(subject: any): boolean {
+    return this.getSubjectAttempted(subject) > 0;
+  }
+
   // Ordinal so subject-level userLevel can be derived as "weakest track" — a
   // subject isn't genuinely Advanced while one of its tracks is still Beginner.
   private levelRank(level: string): number {
@@ -132,7 +171,6 @@ export class JobCurriculumComponent {
     return Math.round((done / total) * 100);
   }
 
-  onLaunchQuiz(subject: any): void     { this.launchQuiz.emit(subject); }
   onExploreSubject(subject: any): void { this.exploreSubject.emit(subject); }
 
   topicMeta(topic: any): { icon: string; color: string; bg: string } {

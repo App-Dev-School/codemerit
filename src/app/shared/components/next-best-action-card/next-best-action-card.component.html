@@ -40,8 +40,12 @@
       } @else if (nextSubjectTrack) {
         <p class="text-xs text-cm-text-secondary leading-relaxed">
           Continue with <span class="font-bold text-cm-text-primary">{{ nextSubjectTrack.title }}</span>
-          ({{ nextSubjectTrack.progressPercent }}% complete).
+          (<span class="text-cm-text-primary">{{ nextSubjectTrack.progressPercent }}%</span> complete).
         </p>
+        <div class="h-1.5 w-full rounded-full bg-cm-surface-raised overflow-hidden">
+          <div class="h-full rounded-full bg-cm-brand transition-all duration-700"
+               [style.width]="nextSubjectTrack.progressPercent + '%'"></div>
+        </div>
       }
       <button type="button" (click)="onContinue()"
         class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl

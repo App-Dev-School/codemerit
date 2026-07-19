@@ -2,13 +2,12 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { CertificateModel } from '@shared/components/certificate/certificate.model';
-import { CertificateComponent } from '@shared/components/certificate/certificate.component';
 import { RevealProgressDirective } from '@shared/directives/reveal-progress.directive';
 
 @Component({
   selector: 'app-cert-track',
   standalone: true,
-  imports: [CommonModule, CertificateComponent, MatIconModule, RevealProgressDirective],
+  imports: [CommonModule, MatIconModule, RevealProgressDirective],
   templateUrl: './cert-track.component.html',
   styleUrls: ['./cert-track.component.scss']
 })
