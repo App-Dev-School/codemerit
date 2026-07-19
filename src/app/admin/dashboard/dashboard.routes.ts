@@ -13,7 +13,7 @@ export const DASHBOARD_ROUTE: Route[] = [
     component: MainComponent,
   },
   {
-    path: "main/:subject",
+    path: "main/:tab",
     component: MainComponent,
   },
   {

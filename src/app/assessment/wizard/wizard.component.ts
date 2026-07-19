@@ -64,8 +64,61 @@ export class WizardComponent implements OnInit {
       if (slug) {
         this.jobRoleSlug = slug;
         this.loadSubjectsForJobRole(slug);
+      } else {
+        this.resolveJobRoleForRating();
       }
     });
+  }
+
+  // No jobRoleSlug in the URL — figure out where to send the user instead of
+  // rendering an empty wizard:
+  //  1. An enrolled job role with no self-rating coverage yet -> straight into it.
+  //  2. Otherwise (nothing enrolled, or everything already has some rating) ->
+  //     the job-role picker, in skill-rating mode, so it lands back here with a slug.
+  private resolveJobRoleForRating(): void {
+    const enrolled = this.authService.getUserJobRoles();
+    if (!enrolled.length) {
+      this.goToJobRolePicker();
+      return;
+    }
+
+    const userId = this.authService.currentUserValue?.id;
+    if (!userId) {
+      this.goToJobRolePicker();
+      return;
+    }
+
+    this.authService.fetchSkillRatingSessions(userId).subscribe(sessions => {
+      // Every subject id this user has ever submitted a rating for, across every
+      // past session (sessions carry no jobRoleId, so this is the closest available
+      // signal — see fetchSkillRatingSessions()).
+      const ratedSubjectIds = new Set<number>(
+        sessions.reduce((ids: number[], s: any) => ids.concat(
+          (s.skillRatings ?? [])
+            .filter((r: any) => r.skillType === 'Subject')
+            .map((r: any) => r.skillId)
+        ), [])
+      );
+
+      const jobRoles = this.masterService.jobRoles ?? [];
+      const unrated = enrolled.find(ujr => {
+        const role = jobRoles.find((jr: any) => jr.id === ujr.jobRoleId);
+        const subjectIds: number[] = (role?.subjects ?? []).map((s: any) => s.id);
+        // "No SelfRating entry" -> none of this role's subjects have been rated at all.
+        return subjectIds.length > 0 && subjectIds.every(id => !ratedSubjectIds.has(id));
+      });
+
+      const unratedRole = unrated ? jobRoles.find((jr: any) => jr.id === unrated.jobRoleId) : null;
+      if (unratedRole?.slug) {
+        this.router.navigate(['/assessment/skill-rating', unratedRole.slug], { replaceUrl: true });
+      } else {
+        this.goToJobRolePicker();
+      }
+    });
+  }
+
+  private goToJobRolePicker(): void {
+    this.router.navigate(['/select-job-role'], { queryParams: { mode: 'skill-rating' }, replaceUrl: true });
   }
 
   private loadSubjectsForJobRole(slug: string): void {

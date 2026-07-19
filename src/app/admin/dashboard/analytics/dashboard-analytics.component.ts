@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MasterService } from '@core/service/master.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { CodeSnippetComponent } from '@shared/components/code-snippet/code-snippet.component';
 import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
 import { RecentActivityComponent } from '@shared/components/recent-activity/recent-activity.component';
 import { RecentCommentsComponent } from '@shared/components/recent-comments/recent-comments.component';
@@ -20,8 +19,7 @@ import { NgScrollbar } from 'ngx-scrollbar';
     SubjectCardWidgetComponent,
     RecentCommentsComponent,
     RecentActivityComponent,
-    MySubjectsComponent,
-    CodeSnippetComponent
+    MySubjectsComponent
   ],
 })
 export class AnalyticsDashboardComponent implements OnInit {

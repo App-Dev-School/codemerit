@@ -34,11 +34,6 @@
 
     <app-my-subjects></app-my-subjects>
 
-    <!-- Subject cards + code snippet -->
-    <div class="mb-4">
-      <app-code-snippet [code]="'test cde here'" [language]="'typescript'"></app-code-snippet>
-    </div>
-
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
       @for (subject of subjects; track subject.id) {
       <app-subject-card-widget

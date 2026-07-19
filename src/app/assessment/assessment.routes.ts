@@ -1,7 +1,7 @@
 import { Route } from "@angular/router";
 export const ASSESSMENT_ROUTE: Route[] = [
   {
-    path: "skill-rating/:jobRoleSlug",
+    path: "skill-rating/?:jobRoleSlug",
     loadComponent: () => import('./wizard/wizard.component').then(c => c.WizardComponent),
   },
   {

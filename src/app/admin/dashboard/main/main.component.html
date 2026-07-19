@@ -1,238 +1,91 @@
 <section class="content">
   <div class="content-block">
 
-    <!-- Module toggle + timeseries chart -->
-    @if (currentModule && timeframeData) {
-    <div class="rounded-2xl border border-cm-border bg-cm-surface p-4 mb-4">
-      <!-- Custom pill tabs -->
-      <div class="flex items-center gap-2 flex-wrap mb-4">
-        @for (mod of ['Users','Quizzes','Attempts','Questions']; track mod) {
-        <button type="button" (click)="onModuleChange({value: mod})"
-          [class]="currentModule === mod
-            ? 'px-4 py-1.5 rounded-full text-xs font-semibold bg-cm-brand text-white shadow-sm'
-            : 'px-4 py-1.5 rounded-full text-xs font-medium border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand transition-colors'">
-          {{ mod }}
-        </button>
-        }
+    @if (loading) {
+    <div class="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center">
+      <div class="z-[1001] rounded-2xl border border-cm-border bg-cm-surface px-6 py-4 text-sm font-medium text-cm-text-secondary">
+        Loading dashboard…
       </div>
-      @if (currentModule) {
-      <app-timeseries-chart [timeframe]="timeframeData"></app-timeseries-chart>
-      }
     </div>
     }
 
-    @if (dashboard) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-      <!-- Attempts card -->
-      @if (dashboard?.attempts) {
-      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 hover:bg-cm-surface-hover transition-colors">
-        <div class="text-center mb-4">
-          <p class="text-4xl font-black text-cm-text-primary">{{ (dashboard?.attempts?.total) ?? '0' }}</p>
-          <h4 class="text-xs font-bold text-blue-500 uppercase tracking-wide mt-1">Total Attempts</h4>
+    <!-- ═══════════════════════ ALWAYS-ON KPI STRIP ═══════════════════════ -->
+    <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 mb-4">
+      <h2 class="text-sm font-bold text-cm-text-primary mb-4">Overview</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        @for (tile of overviewTiles; track tile.label) {
+        <div class="rounded-xl border border-cm-border bg-cm-surface-raised p-3 text-center">
+          <p class="text-xl font-black text-cm-text-primary">{{ tile.value | number }}</p>
+          <p class="text-[10px] font-semibold text-cm-text-muted uppercase tracking-wide mt-0.5">{{ tile.label }}</p>
         </div>
-        <hr class="border-cm-border mb-3">
-        <div class="grid grid-cols-3 gap-2 mb-3">
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Correct</p>
-            <p class="text-base font-bold text-cm-success-text">{{ dashboard.attempts.totalCorrect }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Wrong</p>
-            <p class="text-base font-bold text-cm-danger-text">{{ dashboard.attempts.totalWrong }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Skipped</p>
-            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.attempts.totalSkipped }}</p>
-          </div>
-        </div>
-        <hr class="border-cm-border mb-3">
-        <p class="text-xs text-cm-text-muted text-center mb-4">
-          {{ dashboard.attempts.distinctUsers }} 🙋‍♂️ participants
-        </p>
-        <div class="flex gap-2">
-          <button (click)="viewAttempts()" type="button"
-            class="flex-1 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
-                   hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
-            View Report
-          </button>
-          <button (click)="manageLearning()" type="button"
-            class="flex-1 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
-                   hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
-            Manage
-          </button>
-        </div>
+        }
       </div>
-      }
+    </div>
 
-      <!-- Quizzes card -->
-      @if (dashboard?.quizzes) {
-      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 hover:bg-cm-surface-hover transition-colors">
-        <div class="text-center mb-4">
-          <p class="text-4xl font-black text-cm-text-primary">{{ dashboard.quizzes.playedQuizzes }}</p>
-          <h4 class="text-xs font-bold text-cm-success-text uppercase tracking-wide mt-1">Played Quizzes</h4>
-        </div>
-        <hr class="border-cm-border mb-3">
-        <div class="grid grid-cols-3 gap-2 mb-3">
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Created</p>
-            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.quizzes.total }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Plays</p>
-            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.quizzes.totalPlays }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Pending</p>
-            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.quizzes.totalInactive }}</p>
-          </div>
-        </div>
-        <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mb-3">
-          <div class="h-full bg-cm-brand rounded-full transition-all"
-               [style.width]="(dashboard.quizzes.avgScore | number:'1.0-0') + '%'"></div>
-        </div>
-        <p class="text-xs text-cm-text-muted text-center mb-4">
-          {{ dashboard.quizzes.avgScore | number:'1.0-0' }}% Avg. Score 🎯 &nbsp;·&nbsp;
-          {{ dashboard.quizzes.avgPlaysPerQuiz }} plays/quiz ⚡
-        </p>
-        <button (click)="goToQuizzes()" type="button"
-          class="w-full py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
-                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
-          View Quizzes
+    <!-- ═══════════════════════ TAB NAVIGATION ═══════════════════════ -->
+    <div class="border-b border-cm-border mb-4 overflow-x-auto">
+      <nav class="flex gap-1 min-w-max">
+        @for (tab of tabs; track tab.key) {
+        <button type="button" (click)="selectTab(tab.key)"
+          class="px-4 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-0 border-b-2 bg-transparent outline-none -mb-px"
+          [class.border-cm-brand]="activeTab === tab.key"
+          [class.border-transparent]="activeTab !== tab.key"
+          [class.text-cm-brand]="activeTab === tab.key"
+          [class.text-cm-text-secondary]="activeTab !== tab.key"
+          [class.hover:text-cm-text-primary]="activeTab !== tab.key">
+          {{ tab.label }}
+          @if (tab.key === 'people' && pendingUsersCount > 0) {
+          <span class="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-cm-warning-dim text-cm-warning-text">
+            {{ pendingUsersCount }}
+          </span>
+          }
+          @if (tab.key === 'content' && moderationQueueCount > 0) {
+          <span class="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-cm-warning-dim text-cm-warning-text">
+            {{ moderationQueueCount }}
+          </span>
+          }
         </button>
-      </div>
-      }
+        }
+      </nav>
+    </div>
 
-      <!-- Lessons card -->
-      @if (dashboard?.lessons) {
-      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 hover:bg-cm-surface-hover transition-colors">
-        <div class="text-center mb-4">
-          <p class="text-4xl font-black text-cm-text-primary">{{ dashboard.lessons.totalLessons }}</p>
-          <h4 class="text-xs font-bold text-cm-success-text uppercase tracking-wide mt-1">Total Lessons</h4>
-        </div>
-        <hr class="border-cm-border mb-3">
-        <div class="grid grid-cols-3 gap-2 mb-3">
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Views</p>
-            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.lessons.totalViews }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Pending</p>
-            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.lessons.totalPending }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Completed</p>
-            <p class="text-base font-bold text-cm-success-text">{{ dashboard.lessons.totalCompleted }}</p>
-          </div>
-        </div>
-        <hr class="border-cm-border mb-3">
-        <p class="text-xs text-cm-text-muted text-center mb-4">
-          {{ dashboard.lessons.totalViews }} views across lessons
-        </p>
-        <button (click)="goToLessons()" type="button"
-          class="w-full py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
-                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
-          View Lessons
-        </button>
-      </div>
-      }
+    @switch (activeTab) {
 
-      <!-- Questions card -->
-      @if (dashboard?.questions) {
-      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 hover:bg-cm-surface-hover transition-colors">
-        <div class="text-center mb-4">
-          <p class="text-4xl font-black text-cm-text-primary">{{ dashboard.questions.totalTriviaActive }}</p>
-          <h4 class="text-xs font-bold text-cm-success-text uppercase tracking-wide mt-1">Active Trivia</h4>
-        </div>
-        <hr class="border-cm-border mb-3">
-        <div class="grid grid-cols-3 gap-2 mb-3">
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Total</p>
-            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.questions.totalTrivia }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Pending</p>
-            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.questions.totalTriviaPending }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">General</p>
-            <p class="text-base font-bold text-cm-info-text">{{ dashboard.questions.totalGeneral }}</p>
-          </div>
-        </div>
-        <hr class="border-cm-border mb-3">
-        <p class="text-xs text-cm-text-muted text-center mb-4">
-          {{ dashboard.questions.totalGeneral }} 💡 from interviews
-        </p>
-        <div class="flex gap-2">
-          <button (click)="goToQuestionViewer()" type="button"
-            class="flex-1 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
-                   hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
-            Viewer
-          </button>
-          <button (click)="goToQuestions()" type="button"
-            class="flex-1 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
-                   hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
-            Manage
-          </button>
-        </div>
-      </div>
-      }
+    <!-- ═══════════════════════ PEOPLE ═══════════════════════ -->
+    @case ('people') {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-      <!-- Topics card -->
-      @if (dashboard?.topics) {
-      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 hover:bg-cm-surface-hover transition-colors">
-        <div class="text-center mb-4">
-          <p class="text-4xl font-black text-cm-text-primary">{{ dashboard.topics.totalActive }}</p>
-          <h4 class="text-xs font-bold text-cm-success-text uppercase tracking-wide mt-1">Active Topics</h4>
-        </div>
-        <hr class="border-cm-border mb-3">
-        <div class="grid grid-cols-3 gap-2 mb-4">
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Total</p>
-            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.topics.total }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Pending</p>
-            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.topics.totalPending }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Subjects</p>
-            <p class="text-base font-bold text-cm-brand">{{ dashboard.subjects.totalActive }}</p>
-          </div>
-        </div>
-        <button (click)="goToTopicManager()" type="button"
-          class="w-full py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
-                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
-          Manage Topics
-        </button>
-      </div>
-      }
+      <!-- User base -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">User Base</h3>
 
-      <!-- Users card -->
-      @if (dashboard?.users) {
-      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 hover:bg-cm-surface-hover transition-colors">
-        <div class="text-center mb-4">
-          <p class="text-4xl font-black text-cm-text-primary">{{ dashboard.users.totalActive }}</p>
-          <h4 class="text-xs font-bold text-cm-success-text uppercase tracking-wide mt-1">Active Users</h4>
-        </div>
-        <hr class="border-cm-border mb-3">
-        <div class="grid grid-cols-3 gap-2 mb-3">
+        <app-segmented-stat-bar [segments]="[
+          { label: 'Active', value: dashboard.people.users.active, colorClass: 'bg-cm-success' },
+          { label: 'Pending', value: dashboard.people.users.pending, colorClass: 'bg-cm-warning' },
+          { label: 'Blocked', value: dashboard.people.users.blocked, colorClass: 'bg-cm-danger' }
+        ]" [total]="dashboard.people.users.total"></app-segmented-stat-bar>
+
+        <hr class="border-cm-border my-4">
+        <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-2">By role</p>
+        <div class="grid grid-cols-4 gap-2 mb-4">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Admins</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.people.users.admins }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Mods</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.people.users.moderators }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Learners</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.people.users.learners }}</p>
+          </div>
           <div class="text-center">
             <p class="text-xs text-cm-text-muted mb-0.5">Designated</p>
-            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.users.totalWithDesignation }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Pending</p>
-            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.users.totalPending }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-xs text-cm-text-muted mb-0.5">Total</p>
-            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.users.total }}</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.people.users.withDesignation }}</p>
           </div>
         </div>
-        <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mb-4">
-          <div class="h-full bg-cm-success rounded-full" style="width:87%"></div>
-        </div>
+
         <div class="flex gap-2">
           <button (click)="addNewUser()" type="button"
             class="flex-1 py-2 rounded-xl bg-cm-brand text-white text-xs font-semibold
@@ -246,45 +99,573 @@
           </button>
         </div>
       </div>
-      }
 
-      <!-- User Countries card -->
+      <!-- Growth & Streaks -->
       <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
-        <h3 class="text-sm font-bold text-cm-text-primary mb-4">User Countries</h3>
-        <div class="space-y-3">
-          @for (country of [{name:'USA',pct:40,color:'bg-cm-warning'},{name:'Germany',pct:49,color:'bg-cm-danger'},{name:'France',pct:65,color:'bg-cm-brand'},{name:'India',pct:28,color:'bg-cm-success'}]; track country.name) {
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-xs text-cm-text-secondary">{{ country.name }}</span>
-              <span class="text-xs font-bold text-cm-text-muted">{{ country.pct }}%</span>
-            </div>
-            <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
-              <div class="h-full rounded-full transition-all" [class]="country.color" [style.width]="country.pct + '%'"></div>
-            </div>
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Growth &amp; Streaks</h3>
+        <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-2">Signups</p>
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Today</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.people.growth.newToday }}</p>
           </div>
-          }
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">This Week</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.people.growth.newThisWeek }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">This Month</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.people.growth.newThisMonth }}</p>
+          </div>
+        </div>
+        <hr class="border-cm-border mb-4">
+        <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-2">Streak health</p>
+        <div class="grid grid-cols-3 gap-2">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Active Streaks</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.people.streaks.usersWithActiveStreak }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Avg Streak</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.people.streaks.avgCurrentStreak | number:'1.0-1' }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Longest Ever</p>
+            <p class="text-base font-bold text-cm-brand-text">{{ dashboard.people.streaks.longestStreakEver }}</p>
+          </div>
         </div>
       </div>
 
-      <!-- Learner Groups card -->
+      <!-- Top learners -->
       <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
-        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Learner Groups</h3>
-        <div class="space-y-3">
-          @for (roleItem of initialRoles; track roleItem.value) {
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-xs text-cm-text-secondary">{{ roleItem.label }}</span>
-              <span class="text-xs font-bold text-cm-text-muted">40%</span>
-            </div>
-            <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden">
-              <div class="h-full bg-cm-brand rounded-full" style="width:40%"></div>
-            </div>
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Top Learners</h3>
+        <app-merit-list-widget [meritList]="topLearnersForWidget"></app-merit-list-widget>
+      </div>
+
+    </div>
+    }
+
+    <!-- ═══════════════════════ CONTENT STRUCTURE ═══════════════════════ -->
+    @case ('content') {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <!-- Programs -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h4 class="text-xs font-bold text-cm-text-muted uppercase tracking-wide mb-3">Programs</h4>
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Total</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.content.programs.total }}</p>
           </div>
-          }
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Published</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.content.programs.published }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Draft</p>
+            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.content.programs.draft }}</p>
+          </div>
+        </div>
+        <app-segmented-stat-bar [showLegend]="false" [total]="dashboard.content.programs.total" [segments]="[
+          { label: 'Published', value: dashboard.content.programs.published, colorClass: 'bg-cm-success' },
+          { label: 'Draft', value: dashboard.content.programs.draft, colorClass: 'bg-cm-warning' }
+        ]"></app-segmented-stat-bar>
+        <p class="text-[10px] text-cm-text-muted text-center italic mt-4">Management screen not yet available</p>
+      </div>
+
+      <!-- Certification Tracks -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h4 class="text-xs font-bold text-cm-text-muted uppercase tracking-wide mb-3">Certification Tracks</h4>
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Total</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.content.certificationTracks.total }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Published</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.content.certificationTracks.published }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Draft</p>
+            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.content.certificationTracks.draft }}</p>
+          </div>
+        </div>
+        <app-segmented-stat-bar [showLegend]="false" [total]="dashboard.content.certificationTracks.total" [segments]="[
+          { label: 'Published', value: dashboard.content.certificationTracks.published, colorClass: 'bg-cm-success' },
+          { label: 'Draft', value: dashboard.content.certificationTracks.draft, colorClass: 'bg-cm-warning' }
+        ]"></app-segmented-stat-bar>
+        <button (click)="goToCertificationTracks()" type="button"
+          class="w-full mt-4 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+          Manage Tracks
+        </button>
+      </div>
+
+      <!-- Subject Tracks -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h4 class="text-xs font-bold text-cm-text-muted uppercase tracking-wide mb-3">Subject Tracks</h4>
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Total</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.content.subjectTracks.total }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Published</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.content.subjectTracks.published }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Draft</p>
+            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.content.subjectTracks.draft }}</p>
+          </div>
+        </div>
+        <app-segmented-stat-bar [showLegend]="false" [total]="dashboard.content.subjectTracks.total" [segments]="[
+          { label: 'Published', value: dashboard.content.subjectTracks.published, colorClass: 'bg-cm-success' },
+          { label: 'Draft', value: dashboard.content.subjectTracks.draft, colorClass: 'bg-cm-warning' }
+        ]"></app-segmented-stat-bar>
+        <button (click)="goToSubjectTracks()" type="button"
+          class="w-full mt-4 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+          Manage Tracks
+        </button>
+      </div>
+
+      <!-- Subjects -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h4 class="text-xs font-bold text-cm-text-muted uppercase tracking-wide mb-3">Subjects</h4>
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Total</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.content.subjects.total }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Published</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.content.subjects.published }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Draft</p>
+            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.content.subjects.draft }}</p>
+          </div>
+        </div>
+        <app-segmented-stat-bar [showLegend]="false" [total]="dashboard.content.subjects.total" [segments]="[
+          { label: 'Published', value: dashboard.content.subjects.published, colorClass: 'bg-cm-success' },
+          { label: 'Draft', value: dashboard.content.subjects.draft, colorClass: 'bg-cm-warning' }
+        ]"></app-segmented-stat-bar>
+        <p class="text-[10px] text-cm-text-muted text-center italic mt-4">Management screen not yet available</p>
+      </div>
+
+      <!-- Topics -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h4 class="text-xs font-bold text-cm-text-muted uppercase tracking-wide mb-3">Topics</h4>
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Total</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.content.topics.total }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Published</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.content.topics.published }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Draft</p>
+            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.content.topics.draft }}</p>
+          </div>
+        </div>
+        <app-segmented-stat-bar [showLegend]="false" [total]="dashboard.content.topics.total" [segments]="[
+          { label: 'Published', value: dashboard.content.topics.published, colorClass: 'bg-cm-success' },
+          { label: 'Draft', value: dashboard.content.topics.draft, colorClass: 'bg-cm-warning' }
+        ]"></app-segmented-stat-bar>
+        <button (click)="goToTopicManager()" type="button"
+          class="w-full mt-4 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+          Manage Topics
+        </button>
+      </div>
+
+      <!-- Questions -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h4 class="text-xs font-bold text-cm-text-muted uppercase tracking-wide mb-3">Questions</h4>
+        <p class="text-2xl font-black text-cm-text-primary text-center mb-3">{{ dashboard.content.questions.total | number }}</p>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div class="rounded-lg bg-cm-surface-raised p-2 text-center">
+            <p class="text-[10px] text-cm-text-muted mb-0.5">Trivia</p>
+            <p class="text-sm font-bold text-cm-text-primary">{{ dashboard.content.questions.byType.trivia.total }}</p>
+            <p class="text-[10px] text-cm-text-muted">{{ dashboard.content.questions.byType.trivia.active }} active · {{ dashboard.content.questions.byType.trivia.pending }} pending</p>
+          </div>
+          <div class="rounded-lg bg-cm-surface-raised p-2 text-center">
+            <p class="text-[10px] text-cm-text-muted mb-0.5">General</p>
+            <p class="text-sm font-bold text-cm-text-primary">{{ dashboard.content.questions.byType.general.total }}</p>
+            <p class="text-[10px] text-cm-text-muted">{{ dashboard.content.questions.byType.general.active }} active · {{ dashboard.content.questions.byType.general.pending }} pending</p>
+          </div>
+        </div>
+        <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-1">Difficulty mix</p>
+        <app-segmented-stat-bar [segments]="[
+          { label: 'Easy', value: dashboard.content.questions.byLevel.easy, colorClass: 'bg-cm-success' },
+          { label: 'Intermediate', value: dashboard.content.questions.byLevel.intermediate, colorClass: 'bg-cm-warning' },
+          { label: 'Advanced', value: dashboard.content.questions.byLevel.advanced, colorClass: 'bg-cm-danger' }
+        ]"></app-segmented-stat-bar>
+        <div class="flex gap-2 mt-4">
+          <button (click)="goToQuestionViewer()" type="button"
+            class="flex-1 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                   hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+            Viewer
+          </button>
+          <button (click)="goToQuestions()" type="button"
+            class="flex-1 py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                   hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+            Manage
+          </button>
+        </div>
+      </div>
+
+      <!-- Lessons -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 flex flex-col justify-between">
+        <div>
+          <h4 class="text-xs font-bold text-cm-text-muted uppercase tracking-wide mb-3">Lessons</h4>
+          <p class="text-4xl font-black text-cm-text-primary text-center mb-1">{{ dashboard.content.lessons.total }}</p>
+          <p class="text-xs text-cm-text-muted text-center mb-4">Total published lessons</p>
+        </div>
+        <button (click)="goToLessons()" type="button"
+          class="w-full py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+          View Lessons
+        </button>
+      </div>
+
+      <!-- Moderation Queue -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5 sm:col-span-2 lg:col-span-3">
+        <h4 class="text-sm font-bold text-cm-text-primary mb-4">Needs Attention</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+
+          <div class="rounded-xl border border-cm-border p-3 flex flex-col gap-2">
+            <span class="text-xs text-cm-text-secondary">Pending Questions</span>
+            <span class="inline-flex w-fit items-center px-2 py-0.5 rounded-full text-sm font-bold"
+                  [class]="dashboard.content.moderationQueue.pendingQuestions > 0 ? 'bg-cm-warning-dim text-cm-warning-text' : 'bg-cm-success-dim text-cm-success-text'">
+              {{ dashboard.content.moderationQueue.pendingQuestions }}
+            </span>
+            <button (click)="goToQuestions()" type="button" class="text-xs font-medium text-cm-brand-text hover:underline text-left">Review →</button>
+          </div>
+
+          <div class="rounded-xl border border-cm-border p-3 flex flex-col gap-2">
+            <span class="text-xs text-cm-text-secondary">Unpublished Subjects</span>
+            <span class="inline-flex w-fit items-center px-2 py-0.5 rounded-full text-sm font-bold"
+                  [class]="dashboard.content.moderationQueue.unpublishedSubjects > 0 ? 'bg-cm-warning-dim text-cm-warning-text' : 'bg-cm-success-dim text-cm-success-text'">
+              {{ dashboard.content.moderationQueue.unpublishedSubjects }}
+            </span>
+            <span class="text-xs text-cm-text-muted italic">No management screen yet</span>
+          </div>
+
+          <div class="rounded-xl border border-cm-border p-3 flex flex-col gap-2">
+            <span class="text-xs text-cm-text-secondary">Unpublished Topics</span>
+            <span class="inline-flex w-fit items-center px-2 py-0.5 rounded-full text-sm font-bold"
+                  [class]="dashboard.content.moderationQueue.unpublishedTopics > 0 ? 'bg-cm-warning-dim text-cm-warning-text' : 'bg-cm-success-dim text-cm-success-text'">
+              {{ dashboard.content.moderationQueue.unpublishedTopics }}
+            </span>
+            <button (click)="goToTopicManager()" type="button" class="text-xs font-medium text-cm-brand-text hover:underline text-left">Review →</button>
+          </div>
+
+          <div class="rounded-xl border border-cm-border p-3 flex flex-col gap-2">
+            <span class="text-xs text-cm-text-secondary">Unpublished Subject Tracks</span>
+            <span class="inline-flex w-fit items-center px-2 py-0.5 rounded-full text-sm font-bold"
+                  [class]="dashboard.content.moderationQueue.unpublishedSubjectTracks > 0 ? 'bg-cm-warning-dim text-cm-warning-text' : 'bg-cm-success-dim text-cm-success-text'">
+              {{ dashboard.content.moderationQueue.unpublishedSubjectTracks }}
+            </span>
+            <button (click)="goToSubjectTracks()" type="button" class="text-xs font-medium text-cm-brand-text hover:underline text-left">Review →</button>
+          </div>
+
+          <div class="rounded-xl border border-cm-border p-3 flex flex-col gap-2">
+            <span class="text-xs text-cm-text-secondary">Unpublished Cert. Tracks</span>
+            <span class="inline-flex w-fit items-center px-2 py-0.5 rounded-full text-sm font-bold"
+                  [class]="dashboard.content.moderationQueue.unpublishedCertificationTracks > 0 ? 'bg-cm-warning-dim text-cm-warning-text' : 'bg-cm-success-dim text-cm-success-text'">
+              {{ dashboard.content.moderationQueue.unpublishedCertificationTracks }}
+            </span>
+            <button (click)="goToCertificationTracks()" type="button" class="text-xs font-medium text-cm-brand-text hover:underline text-left">Review →</button>
+          </div>
+
         </div>
       </div>
 
     </div>
+    }
+
+    <!-- ═══════════════════════ ENGAGEMENT ═══════════════════════ -->
+    @case ('engagement') {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+      <!-- Quizzes -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Quizzes</h3>
+        <app-segmented-stat-bar [showLegend]="false" [total]="dashboard.engagement.quizzes.total" [segments]="[
+          { label: 'Published', value: dashboard.engagement.quizzes.published, colorClass: 'bg-cm-success' },
+          { label: 'Draft', value: dashboard.engagement.quizzes.draft, colorClass: 'bg-cm-warning' }
+        ]"></app-segmented-stat-bar>
+        <div class="grid grid-cols-3 gap-2 my-3">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Played</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.engagement.quizzes.playedQuizzes }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Plays</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.engagement.quizzes.totalPlays }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Plays/Quiz</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.engagement.quizzes.avgPlaysPerQuiz | number:'1.0-1' }}</p>
+          </div>
+        </div>
+        <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mb-1">
+          <div class="h-full bg-cm-brand rounded-full transition-all"
+               [style.width.%]="dashboard.engagement.quizzes.avgScore"></div>
+        </div>
+        <p class="text-xs text-cm-text-muted text-center mb-4">{{ dashboard.engagement.quizzes.avgScore | number:'1.0-0' }}% avg. score</p>
+
+        <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-2">Top Quizzes</p>
+        @if (dashboard.engagement.quizzes.topQuizzes.length === 0) {
+        <p class="text-xs text-cm-text-muted text-center py-4">No quiz plays recorded yet.</p>
+        } @else {
+        <div class="space-y-1 mb-4">
+          @for (quiz of dashboard.engagement.quizzes.topQuizzes; let i = $index; track quiz.id) {
+          <div class="flex items-center gap-2 text-xs">
+            <span class="w-4 text-cm-text-muted font-bold shrink-0">{{ i + 1 }}</span>
+            <span class="flex-1 text-cm-text-primary truncate">{{ quiz.title }}</span>
+            <span class="font-bold text-cm-text-secondary shrink-0">{{ quiz.plays }}</span>
+          </div>
+          }
+        </div>
+        }
+        <button (click)="goToQuizzes()" type="button"
+          class="w-full py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+          View Quizzes
+        </button>
+      </div>
+
+      <!-- Question Attempts -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Question Attempts</h3>
+        <p class="text-4xl font-black text-cm-text-primary text-center mb-1">{{ dashboard.engagement.questionAttempts.total | number }}</p>
+        <p class="text-xs text-cm-text-muted text-center mb-4">total attempts</p>
+        <app-segmented-stat-bar [segments]="[
+          { label: 'Correct', value: dashboard.engagement.questionAttempts.correct, colorClass: 'bg-cm-success' },
+          { label: 'Wrong', value: dashboard.engagement.questionAttempts.wrong, colorClass: 'bg-cm-danger' },
+          { label: 'Skipped', value: dashboard.engagement.questionAttempts.skipped, colorClass: 'bg-cm-warning' }
+        ]"></app-segmented-stat-bar>
+        <hr class="border-cm-border my-4">
+        <div class="grid grid-cols-2 gap-2 mb-4">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Participants</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.engagement.questionAttempts.distinctUsers }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Accuracy</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.engagement.questionAttempts.accuracyPercent | number:'1.0-0' }}%</p>
+          </div>
+        </div>
+        <button (click)="viewAttempts()" type="button"
+          class="w-full py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+          View Report
+        </button>
+      </div>
+
+      <!-- Lesson engagement -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Lesson Engagement</h3>
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Views</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.engagement.lessons.totalViews }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Pending</p>
+            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.engagement.lessons.totalPending }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Completed</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.engagement.lessons.totalCompleted }}</p>
+          </div>
+        </div>
+        <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mb-1">
+          <div class="h-full bg-cm-success rounded-full transition-all"
+               [style.width.%]="dashboard.engagement.lessons.completionRate"></div>
+        </div>
+        <p class="text-xs text-cm-text-muted text-center mb-4">{{ dashboard.engagement.lessons.completionRate | number:'1.0-0' }}% completion rate</p>
+        <button (click)="goToLessons()" type="button"
+          class="w-full py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+          View Lessons
+        </button>
+      </div>
+
+    </div>
+    }
+
+    <!-- ═══════════════════════ ACHIEVEMENTS ═══════════════════════ -->
+    @case ('achievements') {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+      <!-- Certificates -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Certificates</h3>
+        <app-ring-stat
+          [value]="dashboard.achievements.certificates.uniqueHolders"
+          [total]="dashboard.overview.totalUsers"
+          label="of users hold a certificate"
+          ringColorClass="text-cm-info"></app-ring-stat>
+
+        <div class="grid grid-cols-3 gap-2 my-4">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Issued</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.achievements.certificates.totalIssued }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Revoked</p>
+            <p class="text-base font-bold text-cm-danger-text">{{ dashboard.achievements.certificates.totalRevoked }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Expired</p>
+            <p class="text-base font-bold text-cm-warning-text">{{ dashboard.achievements.certificates.totalExpired }}</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-4">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">This Week</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.achievements.certificates.issuedThisWeek }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">This Month</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.achievements.certificates.issuedThisMonth }}</p>
+          </div>
+        </div>
+
+        <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-2">Top Certification Tracks</p>
+        @if (dashboard.achievements.certificates.topCertificationTracks.length === 0) {
+        <p class="text-xs text-cm-text-muted text-center py-4">No certificates issued yet.</p>
+        } @else {
+        <div class="space-y-1">
+          @for (track of dashboard.achievements.certificates.topCertificationTracks; let i = $index; track track.id) {
+          <div class="flex items-center gap-2 text-xs">
+            <span class="w-4 text-cm-text-muted font-bold shrink-0">{{ i + 1 }}</span>
+            <span class="flex-1 text-cm-text-primary truncate">{{ track.title }}</span>
+            <span class="font-bold text-cm-text-secondary shrink-0">{{ track.issuedCount }}</span>
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+      <!-- Badges -->
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Badges</h3>
+        <app-ring-stat
+          [value]="dashboard.achievements.badges.uniqueEarners"
+          [total]="dashboard.overview.totalUsers"
+          label="of users earned a badge"
+          ringColorClass="text-cm-brand"></app-ring-stat>
+
+        <div class="grid grid-cols-2 gap-2 my-4">
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Available</p>
+            <p class="text-base font-bold text-cm-text-primary">{{ dashboard.achievements.badges.totalAvailable }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-cm-text-muted mb-0.5">Awarded</p>
+            <p class="text-base font-bold text-cm-success-text">{{ dashboard.achievements.badges.totalAwarded }}</p>
+          </div>
+        </div>
+
+        <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-1">By scope</p>
+        <app-segmented-stat-bar [segments]="[
+          { label: 'Global', value: dashboard.achievements.badges.byScope.global, colorClass: 'bg-cm-brand' },
+          { label: 'Subject', value: dashboard.achievements.badges.byScope.subject, colorClass: 'bg-cm-info' },
+          { label: 'Job Role', value: dashboard.achievements.badges.byScope.jobRole, colorClass: 'bg-cm-warning' },
+          { label: 'Topic', value: dashboard.achievements.badges.byScope.topic, colorClass: 'bg-cm-success' }
+        ]"></app-segmented-stat-bar>
+
+        <div class="grid grid-cols-2 gap-3 mt-4 mb-4">
+          <div>
+            <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-2">Top Badges</p>
+            @if (dashboard.achievements.badges.topBadges.length === 0) {
+            <p class="text-xs text-cm-text-muted py-2">No badges earned yet.</p>
+            } @else {
+            <div class="space-y-1">
+              @for (badge of dashboard.achievements.badges.topBadges; track badge.code) {
+              <div class="flex items-center justify-between gap-1 text-xs">
+                <span class="text-cm-text-primary truncate">{{ badge.name }}</span>
+                <span class="font-bold text-cm-text-secondary shrink-0">{{ badge.earnCount }}</span>
+              </div>
+              }
+            </div>
+            }
+          </div>
+          <div>
+            <p class="text-[10px] text-cm-text-muted uppercase tracking-wide mb-2">Rare Badges</p>
+            @if (dashboard.achievements.badges.rareBadges.length === 0) {
+            <p class="text-xs text-cm-text-muted py-2">No badge data available yet.</p>
+            } @else {
+            <div class="space-y-1">
+              @for (badge of dashboard.achievements.badges.rareBadges; track badge.code) {
+              <div class="flex items-center justify-between gap-1 text-xs opacity-70">
+                <span class="text-cm-text-secondary truncate">{{ badge.name }}</span>
+                <span class="font-bold text-cm-text-muted shrink-0">{{ badge.earnCount }}</span>
+              </div>
+              }
+            </div>
+            }
+          </div>
+        </div>
+
+        <button (click)="goToBadgeManagement()" type="button"
+          class="w-full py-2 rounded-xl border border-cm-border text-xs font-medium text-cm-text-secondary
+                 hover:border-cm-brand/40 hover:text-cm-brand active:scale-95 transition-all">
+          Manage Badges
+        </button>
+      </div>
+
+    </div>
+    }
+
+    <!-- ═══════════════════════ TRENDS & ACTIVITY ═══════════════════════ -->
+    @case ('trends') {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-4 lg:col-span-2">
+        <div class="flex items-center gap-2 flex-wrap mb-4">
+          @for (key of trendKeys; track key) {
+          <button type="button" (click)="onTrendChange(key)"
+            [class]="selectedTrend === key
+              ? 'px-4 py-1.5 rounded-full text-xs font-semibold bg-cm-brand text-white shadow-sm'
+              : 'px-4 py-1.5 rounded-full text-xs font-medium border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand transition-colors'">
+            {{ key }}
+          </button>
+          }
+        </div>
+        @if (activeTimeframe) {
+        <app-timeseries-chart [timeframe]="activeTimeframe"></app-timeseries-chart>
+        }
+      </div>
+
+      <div class="rounded-2xl border border-cm-border bg-cm-surface p-5">
+        <h3 class="text-sm font-bold text-cm-text-primary mb-4">Recent Activity</h3>
+        @if (dashboard.recentActivity.length === 0) {
+        <p class="text-xs text-cm-text-muted text-center py-8">No recent activity.</p>
+        } @else {
+        <div class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+          @for (item of dashboard.recentActivity; track item.id) {
+          <div class="flex flex-col gap-0.5 pb-3 border-b border-cm-border last:border-0 last:pb-0">
+            <p class="text-xs font-semibold text-cm-text-primary">{{ item.title }}</p>
+            <p class="text-xs text-cm-text-secondary">{{ item.message }}</p>
+            <p class="text-[10px] text-cm-text-muted">
+              {{ item.userName ?? 'System' }} · {{ item.createdAt | date:'MMM d, y, h:mm a' }}
+            </p>
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+    </div>
+    }
+
     }
 
   </div>
