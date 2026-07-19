@@ -1,18 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
+import { SocialAuthService } from '@core/service/social-auth.service';
 import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
-import { environment } from 'src/environments/environment';
-
-declare global {
-  interface Window {
-    google?: any;
-  }
-}
 
 @Component({
   selector: 'app-register',
@@ -21,7 +15,7 @@ declare global {
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
-export class RegisterComponent implements OnInit, OnDestroy {
+export class RegisterComponent implements OnInit {
 
   currentStep = 1;
   readonly totalSteps = 3;
@@ -52,8 +46,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   };
 
   availableTracks: any[] = [];
-  private linkedInPopup: Window | null = null;
-  private readonly socialMessageHandler = (event: MessageEvent) => this.handleSocialMessage(event);
 
   constructor(
     private fb: FormBuilder,
@@ -61,6 +53,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private masterService: MasterService,
     private snackbar: SnackbarService,
+    private socialAuth: SocialAuthService,
   ) {}
 
   ngOnInit() {
@@ -75,11 +68,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       lastName:        ['', Validators.maxLength(20)],
       email:           ['', [Validators.required, Validators.email]],
     });
-    window.addEventListener('message', this.socialMessageHandler);
-  }
-
-  ngOnDestroy() {
-    window.removeEventListener('message', this.socialMessageHandler);
   }
 
   // ─── Computed helpers ──────────────────────────────────────────
@@ -180,49 +168,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   private openGoogleLogin() {
-    const clientId = environment.socialAuth?.googleClientId;
-    if (!clientId) {
-      this.failSocialLogin('Google login is not configured yet.');
-      return;
-    }
-
     this.loading = true;
-    this.loadGoogleSdk()
-      .then(() => {
-        window.google.accounts.id.initialize({
-          client_id: clientId,
-          callback: (response: any) => this.handleGoogleCredential(response?.credential),
-        });
-        window.google.accounts.id.prompt((notification: any) => {
-          if (notification?.isNotDisplayed?.() || notification?.isSkippedMoment?.()) {
-            this.loading = false;
-          }
-        });
-      })
+    this.socialAuth
+      .promptGoogleLogin(
+        (idToken) => this.handleGoogleCredential(idToken),
+        () => { this.loading = false; },
+      )
       .catch(() => this.failSocialLogin('Unable to load Google login. Please try again.'));
-  }
-
-  private loadGoogleSdk(): Promise<void> {
-    if (window.google?.accounts?.id) {
-      return Promise.resolve();
-    }
-
-    return new Promise((resolve, reject) => {
-      const existing = document.querySelector<HTMLScriptElement>('script[src="https://accounts.google.com/gsi/client"]');
-      if (existing) {
-        existing.addEventListener('load', () => resolve(), { once: true });
-        existing.addEventListener('error', () => reject(), { once: true });
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => resolve();
-      script.onerror = () => reject();
-      document.head.appendChild(script);
-    });
   }
 
   private handleGoogleCredential(idToken: string) {
@@ -238,53 +190,28 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   private openLinkedinPopup() {
-    const clientId = environment.socialAuth?.linkedinClientId;
-    if (!clientId) {
-      this.failSocialLogin('LinkedIn login is not configured yet.');
-      return;
-    }
-
-    const redirectUri = this.socialRedirectUri;
-    const state = this.createSocialState();
-    const scope = encodeURIComponent(environment.socialAuth?.linkedinScope || 'openid profile email');
-    const params = [
-      `response_type=code`,
-      `client_id=${encodeURIComponent(clientId)}`,
-      `redirect_uri=${encodeURIComponent(redirectUri)}`,
-      `state=${encodeURIComponent(state)}`,
-      `scope=${scope}`,
-    ].join('&');
-    const url = `https://www.linkedin.com/oauth/v2/authorization?${params}`;
-    const width = 560;
-    const height = 680;
-    const left = Math.max(0, window.screenX + (window.outerWidth - width) / 2);
-    const top = Math.max(0, window.screenY + (window.outerHeight - height) / 2);
-
     this.loading = true;
-    this.linkedInPopup = window.open(
-      url,
-      'linkedin-login',
-      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    const result = this.socialAuth.startLinkedinLogin(
+      (code) => this.handleLinkedinCode(code),
+      (message) => {
+        this.loading = false;
+        if (message) {
+          this.snackbar.display('snackbar-danger', message, 'bottom', 'center');
+        }
+      },
     );
 
-    if (!this.linkedInPopup) {
+    if (result === 'not-configured') {
+      this.failSocialLogin('LinkedIn login is not configured yet.');
+    } else if (result === 'popup-blocked') {
       this.failSocialLogin('Please allow popups to continue with LinkedIn.');
     }
   }
 
-  private handleSocialMessage(event: MessageEvent) {
-    if (event.origin !== window.location.origin || event.data?.type !== 'SOCIAL_AUTH_CALLBACK') {
-      return;
-    }
-
-    if (event.data.status !== 'success' || !event.data.code) {
-      this.failSocialLogin('LinkedIn sign-in was cancelled or failed.');
-      return;
-    }
-
+  private handleLinkedinCode(code: string) {
     this.authService.completeLinkedinSocialLogin({
-      code: event.data.code,
-      redirectUri: this.socialRedirectUri,
+      code,
+      redirectUri: this.socialAuth.linkedinRedirectUri,
     }).subscribe({
       next: (res) => this.finishSocialLogin(res, 'linkedin'),
       error: () => this.failSocialLogin('Unable to complete LinkedIn login. Please try again.'),
@@ -356,16 +283,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       achievement: v.achievement,
       flow: 'Registration',
     };
-  }
-
-  private get socialRedirectUri(): string {
-    return `${window.location.origin}/authentication/social-callback`;
-  }
-
-  private createSocialState(): string {
-    const values = new Uint32Array(4);
-    window.crypto.getRandomValues(values);
-    return Array.from(values).map((value) => value.toString(16)).join('');
   }
 
   private failSocialLogin(message: string) {

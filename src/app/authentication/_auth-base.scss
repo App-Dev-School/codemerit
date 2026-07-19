@@ -148,6 +148,44 @@
   animation: auth-spin 0.8s linear infinite;
 }
 
+// ── Social connect buttons (Google / LinkedIn) ─────────────────
+@mixin connect-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+  }
+}
+
+@mixin connect-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+  svg { flex-shrink: 0; }
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
 // ── Shared back / secondary link ──────────────────────────────
 @mixin back-link {
   display: inline-flex;

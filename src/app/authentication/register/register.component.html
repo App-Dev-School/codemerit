@@ -138,52 +138,62 @@
             </svg>
             Create Your Account
           </h2>
-          <div class="connect-account">
-            <p class="connect-copy">
-              Connect an account below to finish setting up your dashboard — we'll grab your name and email
-              automatically, no password needed.
-            </p>
-            <div class="connect-options">
-              <button type="button" class="connect-btn connect-btn--google" (click)="connectWith('Google')">
-                <svg viewBox="0 0 24 24" width="20" height="20">
-                  <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.28 1.48-1.13 2.73-2.4 3.58v2.98h3.88c2.27-2.09 3.54-5.17 3.54-8.8z"/>
-                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-2.98c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.93H1.3v3.09C3.26 21.3 7.31 24 12 24z"/>
-                  <path fill="#FBBC05" d="M5.31 14.33A7.2 7.2 0 014.91 12c0-.81.14-1.6.4-2.33V6.58H1.3A11.98 11.98 0 000 12c0 1.93.46 3.76 1.3 5.42l4.01-3.09z"/>
-                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.94 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.3 6.58l4.01 3.09C6.25 6.85 8.89 4.75 12 4.75z"/>
-                </svg>
-                Continue with Google
-              </button>
-              <button type="button" class="connect-btn connect-btn--linkedin" (click)="connectWith('LinkedIn')">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="#0A66C2">
-                  <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 110-4.13 2.07 2.07 0 010 4.13zM7.12 20.45H3.56V9h3.56v11.45z"/>
-                </svg>
-                Continue with LinkedIn
-              </button>
-            </div>
-            <p class="connect-hint">Pick one to continue, or enter your details manually below.</p>
+          <div class="account-split">
 
-            <div class="connect-divider"><span>or continue with email</span></div>
+            <!-- Left pane – social connect -->
+            <div class="connect-pane">
+              <h3 class="pane-heading">Quick Connect</h3>
+              <p class="connect-copy">
+                We'll grab your name and email automatically — no password needed.
+              </p>
+              <div class="connect-stack">
+                <button type="button" class="connect-btn connect-btn--google" [disabled]="loading" (click)="connectWith('Google')">
+                  <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.28 1.48-1.13 2.73-2.4 3.58v2.98h3.88c2.27-2.09 3.54-5.17 3.54-8.8z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-2.98c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.93H1.3v3.09C3.26 21.3 7.31 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.31 14.33A7.2 7.2 0 014.91 12c0-.81.14-1.6.4-2.33V6.58H1.3A11.98 11.98 0 000 12c0 1.93.46 3.76 1.3 5.42l4.01-3.09z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.94 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.3 6.58l4.01 3.09C6.25 6.85 8.89 4.75 12 4.75z"/>
+                  </svg>
+                  Continue with Google
+                </button>
+                <button type="button" class="connect-btn connect-btn--linkedin" [disabled]="loading" (click)="connectWith('LinkedIn')">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="#0A66C2">
+                    <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 110-4.13 2.07 2.07 0 010 4.13zM7.12 20.45H3.56V9h3.56v11.45z"/>
+                  </svg>
+                  Continue with LinkedIn
+                </button>
+              </div>
+              <p class="connect-hint">Recommended as it takes just a few seconds.</p>
+            </div>
 
-            <div class="form-grid">
-              <div class="form-field">
-                <label class="form-label">First Name</label>
-                <input type="text" formControlName="firstName" placeholder="John" class="glass-input"/>
-                @if (form.get('firstName')!.touched && form.get('firstName')!.hasError('required')) {
-                  <p class="field-error">First name is required.</p>
-                }
-              </div>
-              <div class="form-field">
-                <label class="form-label">Last Name</label>
-                <input type="text" formControlName="lastName" placeholder="Doe" class="glass-input"/>
-              </div>
-              <div class="form-field form-field--full">
-                <label class="form-label">Email Address</label>
-                <input type="email" formControlName="email" placeholder="john@domain.com" class="glass-input"/>
-                @if (form.get('email')!.touched && form.get('email')!.hasError('email')) {
-                  <p class="field-error">Please enter a valid email.</p>
-                }
+            <!-- Divider -->
+            <div class="account-divider"><span>or</span></div>
+
+            <!-- Right pane – manual form -->
+            <div class="manual-pane">
+              <h3 class="pane-heading">Enter Details Manually</h3>
+              <div class="manual-form-grid">
+                <div class="form-field">
+                  <label class="form-label">First Name</label>
+                  <input type="text" formControlName="firstName" placeholder="John" class="glass-input"/>
+                  @if (form.get('firstName')!.touched && form.get('firstName')!.hasError('required')) {
+                    <p class="field-error">First name is required.</p>
+                  }
+                </div>
+                <div class="form-field">
+                  <label class="form-label">Last Name</label>
+                  <input type="text" formControlName="lastName" placeholder="Doe" class="glass-input"/>
+                </div>
+                <div class="form-field form-field--full">
+                  <label class="form-label">Email Address</label>
+                  <input type="email" formControlName="email" placeholder="john@domain.com" class="glass-input"/>
+                  @if (form.get('email')!.touched && form.get('email')!.hasError('email')) {
+                    <p class="field-error">Please enter a valid email.</p>
+                  }
+                </div>
               </div>
             </div>
+
           </div>
         </div>
 

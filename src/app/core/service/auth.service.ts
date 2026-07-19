@@ -246,6 +246,19 @@ export class AuthService {
     return this.httpService.postData(url, postData);
   }
 
+  // Every prior self/interview rating session for this user, each carrying its own
+  // skillRatings[] (skillId/skillType Subject|Topic — never a jobRoleId; sessions
+  // aren't linked to a specific job role on the backend). The API 400s with a
+  // "user not found" style message when there are zero sessions, which just means
+  // "hasn't rated anything yet" here, not a real error — swallowed to [].
+  fetchSkillRatingSessions(userId: number): Observable<any[]> {
+    const url = 'apis/skill-ratings/user/' + userId;
+    return this.httpService.get(url, this.currentUserValue?.token).pipe(
+      map((res: { error: boolean; message: string; data: any[] }) => !res.error ? (res.data ?? []) : []),
+      catchError(() => of([])),
+    );
+  }
+
   changeUserPassword(api_key: any, postData: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
