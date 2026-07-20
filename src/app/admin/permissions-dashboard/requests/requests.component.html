@@ -2,27 +2,26 @@
   <div class="content-block">
 
     <div class="block-header">
-      <app-breadcrumb [title]="'All Permissions'" [items]="['Permissions']" [active_item]="'All Permissions'"></app-breadcrumb>
+      <app-breadcrumb [title]="'Permission Requests'" [items]="['Permissions']" [active_item]="'Requests'"></app-breadcrumb>
     </div>
 
     <div class="rounded-2xl border border-cm-border bg-cm-surface shadow-sm p-4 sm:p-5 mt-2">
 
       <!-- ── Header ── -->
-      <div class="flex items-center justify-between gap-4 mb-4">
+      <div class="flex items-center justify-between gap-4 mb-4 flex-wrap">
         <div>
-          <h2 class="text-base font-bold text-cm-text-primary">User Permissions</h2>
-          <p class="text-xs text-cm-text-muted mt-0.5">{{ allPermissions.length }} total</p>
+          <h2 class="text-base font-bold text-cm-text-primary">Permission Request Approvals</h2>
+          <p class="text-xs text-cm-text-muted mt-0.5">Review permissions users have requested for themselves</p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-          <a routerLink="/admin/permissions/requests"
+          <a routerLink="/admin/permissions/list"
             class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-cm-border
                    text-xs font-semibold text-cm-text-secondary bg-cm-surface-raised
                    hover:bg-cm-surface-hover active:scale-95 transition-all whitespace-nowrap">
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
-            Requests
+            All Permissions
           </a>
           <button (click)="refresh()" title="Refresh"
             class="shrink-0 p-2 rounded-xl border border-cm-border bg-cm-surface-raised text-cm-text-muted
@@ -32,15 +31,20 @@
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
           </button>
-          <button (click)="addNew()"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
-                   bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all whitespace-nowrap">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-            </svg>
-            Add Permission
-          </button>
         </div>
+      </div>
+
+      <!-- ── Status tabs ── -->
+      <div class="flex items-center gap-1 p-1 rounded-xl bg-cm-surface-raised border border-cm-border mb-4 w-fit">
+        @for (tab of statusTabs; track tab.id) {
+        <button type="button" (click)="setStatusFilter(tab.id)"
+          class="px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all"
+          [class.bg-cm-brand]="statusFilter === tab.id"
+          [class.text-white]="statusFilter === tab.id"
+          [class.text-cm-text-secondary]="statusFilter !== tab.id">
+          {{ tab.label }}
+        </button>
+        }
       </div>
 
       <!-- ── Search ── -->
@@ -49,7 +53,7 @@
         <svg class="w-4 h-4 text-cm-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
         </svg>
-        <input type="text" placeholder="Search permissions, users…"
+        <input type="text" placeholder="Search requester, permission, comment…"
                [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
                class="flex-1 bg-transparent text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none border-0">
         @if (searchQuery) {
@@ -66,7 +70,7 @@
       @if (isLoading) {
       <div class="flex flex-col items-center justify-center py-16 gap-3">
         <img src="assets/images/icons/loading.gif" class="w-10 h-10" alt="">
-        <p class="text-sm text-cm-text-muted">Loading permissions…</p>
+        <p class="text-sm text-cm-text-muted">Loading requests…</p>
       </div>
       }
 
@@ -74,20 +78,23 @@
 
       <!-- ── Table ── -->
       <div class="overflow-x-auto rounded-xl border border-cm-border">
-        <table class="w-full text-sm min-w-[480px]">
+        <table class="w-full text-sm min-w-[640px]">
           <thead>
             <tr class="border-b border-cm-border bg-cm-surface-muted">
-              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">User</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Requester</th>
               <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Permission</th>
-              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden md:table-cell">Grant Date</th>
-              <th class="text-right px-4 py-3 font-semibold text-cm-text-secondary">Actions</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Comment</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden md:table-cell">Requested</th>
+              <th class="text-right px-4 py-3 font-semibold text-cm-text-secondary">
+                {{ statusFilter === 'PENDING' ? 'Actions' : 'Review' }}
+              </th>
             </tr>
           </thead>
           <tbody>
-            @for (row of paginatedPermissions; track row.id) {
-            <tr class="border-b border-cm-border last:border-0 hover:bg-cm-surface-hover transition-colors">
+            @for (row of paginatedRequests; track row.id) {
+            <tr class="border-b border-cm-border last:border-0 hover:bg-cm-surface-hover transition-colors align-top">
 
-              <!-- User -->
+              <!-- Requester -->
               <td class="px-4 py-3">
                 <p class="font-medium text-cm-text-primary">
                   {{ row.user?.firstName }} {{ row.user?.lastName }}
@@ -99,39 +106,61 @@
 
               <!-- Permission -->
               <td class="px-4 py-3">
-                <p class="font-medium text-cm-text-primary mb-1">{{ row.permissionName }}</p>
-                @if (row.resourceName || row.resourceType) {
+                <p class="font-medium text-cm-text-primary mb-1">{{ row.permission?.permission }}</p>
+                @if (row.resourceType || row.resourceId) {
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium
                              bg-cm-brand-dim text-cm-brand-text">
-                  {{ row.resourceName || row.resourceType }}
-                </span>
-                } @else {
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium
-                             bg-cm-surface-raised border border-cm-border text-cm-text-muted">
-                  Full Access
+                  {{ row.resourceType }} #{{ row.resourceId }}
                 </span>
                 }
               </td>
 
-              <!-- Grant Date -->
+              <!-- Comment -->
+              <td class="px-4 py-3 max-w-[260px]">
+                <p class="text-xs text-cm-text-secondary italic line-clamp-2">"{{ row.comment }}"</p>
+              </td>
+
+              <!-- Requested -->
               <td class="px-4 py-3 hidden md:table-cell">
                 <span class="text-cm-text-secondary text-xs">
-                  {{ row.user?.createdAt ? (row.user.createdAt | date:'dd/MM/yyyy') : '—' }}
+                  {{ row.createdAt ? (row.createdAt | date:'dd/MM/yyyy') : '—' }}
                 </span>
               </td>
 
-              <!-- Actions -->
+              <!-- Actions / Review -->
               <td class="px-4 py-3 text-right">
-                <button (click)="revokeItem(row)"
-                        title="Revoke permission"
-                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg
-                               text-cm-text-muted hover:text-cm-danger-text hover:bg-cm-danger-dim
-                               active:scale-95 transition-all">
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                  </svg>
-                </button>
+                @if (statusFilter === 'PENDING') {
+                <div class="inline-flex items-center gap-1.5">
+                  <button (click)="review(row, 'reject')" title="Reject"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg
+                           text-cm-danger-text bg-cm-danger-dim hover:opacity-80
+                           active:scale-95 transition-all text-xs font-semibold">
+                    Reject
+                  </button>
+                  <button (click)="review(row, 'approve')" title="Approve"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg
+                           bg-cm-brand text-white hover:opacity-90
+                           active:scale-95 transition-all text-xs font-semibold">
+                    Approve
+                  </button>
+                </div>
+                } @else {
+                <div class="text-left inline-block">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold mb-1"
+                    [class.bg-cm-brand-dim]="row.status === 'APPROVED'"
+                    [class.text-cm-brand-text]="row.status === 'APPROVED'"
+                    [class.bg-cm-danger-dim]="row.status === 'REJECTED'"
+                    [class.text-cm-danger-text]="row.status === 'REJECTED'">
+                    {{ row.status }}
+                  </span>
+                  @if (row.reviewer) {
+                  <p class="text-[11px] text-cm-text-muted">by {{ row.reviewer.firstName }} {{ row.reviewer.lastName }}</p>
+                  }
+                  @if (row.reviewComment) {
+                  <p class="text-[11px] text-cm-text-secondary italic max-w-[180px]">"{{ row.reviewComment }}"</p>
+                  }
+                </div>
+                }
               </td>
 
             </tr>
@@ -141,22 +170,22 @@
       </div>
 
       <!-- ── Empty state ── -->
-      @if (filteredPermissions.length === 0) {
+      @if (filteredRequests.length === 0) {
       <div class="flex flex-col items-center justify-center py-16 gap-2">
         <svg class="w-10 h-10 text-cm-text-muted opacity-40" fill="none" viewBox="0 0 24 24"
              stroke="currentColor" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round"
-            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
-        <p class="text-sm text-cm-text-muted">No permissions found.</p>
+        <p class="text-sm text-cm-text-muted">No {{ statusFilter.toLowerCase() }} requests.</p>
       </div>
       }
 
       <!-- ── Pagination ── -->
-      @if (filteredPermissions.length > pageSize) {
+      @if (filteredRequests.length > pageSize) {
       <div class="flex items-center justify-between mt-4 pt-4 border-t border-cm-border flex-wrap gap-3">
         <p class="text-xs text-cm-text-muted">
-          Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredPermissions.length }}
+          Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredRequests.length }}
         </p>
         <div class="flex items-center gap-1">
           <button (click)="prevPage()" [disabled]="currentPage === 0"

@@ -203,7 +203,7 @@
                 {{ tab.label }}
               </button>
             }
-            @if (visiblePermissions.length > 0) {
+            @if (visiblePermissions.length > 0 || selfView) {
               <button type="button" (click)="setActiveTab('permissions')"
                 class="px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all"
                 [class.bg-cm-brand]="activeTab === 'permissions'"
@@ -644,24 +644,117 @@
           <!-- ══════════════════════════════════════════════════════════════
             PERMISSIONS TAB
           ══════════════════════════════════════════════════════════════ -->
-          @if (activeTab === 'permissions' && visiblePermissions.length > 0) {
-            <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
-              <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
-                <div class="text-sm font-bold text-cm-text-primary">Permissions</div>
-              </div>
-              <div class="divide-y divide-cm-border">
-                @for (perm of visiblePermissions; track perm.id) {
-                  <div class="flex items-center justify-between gap-3 px-5 py-3">
-                    <div class="min-w-0">
-                      <p class="text-xs font-bold text-cm-text-primary">{{ perm.permissionName }}</p>
-                      @if (perm.resourceType || perm.resourceName) {
-                        <p class="text-[10px] text-cm-text-muted mt-0.5">{{ perm.resourceType }} · {{ perm.resourceName }}</p>
-                      }
+          @if (activeTab === 'permissions') {
+            <div class="space-y-5">
+
+              @if (visiblePermissions.length > 0) {
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="text-sm font-bold text-cm-text-primary">My Permissions</div>
+                </div>
+                <div class="divide-y divide-cm-border">
+                  @for (perm of visiblePermissions; track perm.id) {
+                    <div class="flex items-center justify-between gap-3 px-5 py-3">
+                      <div class="min-w-0">
+                        <p class="text-xs font-bold text-cm-text-primary">{{ perm.permissionName }}</p>
+                        @if (perm.resourceType || perm.resourceName) {
+                          <p class="text-[10px] text-cm-text-muted mt-0.5">{{ perm.resourceType }} · {{ perm.resourceName }}</p>
+                        }
+                      </div>
+                      <span class="text-[10px] text-cm-text-muted shrink-0">{{ perm.grantedAt | date:'MMM d, y' }}</span>
                     </div>
-                    <span class="text-[10px] text-cm-text-muted shrink-0">{{ perm.grantedAt | date:'MMM d, y' }}</span>
-                  </div>
+                  }
+                </div>
+              </div>
+              }
+
+              @if (selfView) {
+
+              <!-- ── Request a Permission ── -->
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="text-sm font-bold text-cm-text-primary">Request a Permission</div>
+                  <p class="text-[11px] text-cm-text-muted mt-0.5">Ask an admin to grant you additional access.</p>
+                </div>
+
+                @if (permissionRequestsLoading) {
+                <div class="flex items-center justify-center py-8">
+                  <img src="assets/images/icons/loading.gif" class="w-8 h-8" alt="">
+                </div>
+                } @else if (requestablePermissions.length === 0) {
+                <p class="text-xs text-cm-text-muted px-5 py-6 text-center">No permissions are available to request right now.</p>
+                } @else {
+                <div class="divide-y divide-cm-border">
+                  @for (group of requestablePermissions; track group.group) {
+                    <div class="px-5 py-3">
+                      <p class="text-[10px] font-bold uppercase tracking-wide text-cm-text-muted mb-2">{{ group.group }}</p>
+                      <div class="space-y-2">
+                        @for (perm of group.permissions; track perm.id) {
+                          <div class="flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                              <p class="text-xs font-bold text-cm-text-primary">{{ perm.permission }}</p>
+                              @if (perm.description) {
+                                <p class="text-[10px] text-cm-text-muted mt-0.5">{{ perm.description }}</p>
+                              }
+                            </div>
+                            @if (perm.alreadyGranted) {
+                            <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-semibold
+                                         bg-cm-brand-dim text-cm-brand-text">You have this</span>
+                            } @else if (perm.requestPending) {
+                            <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-semibold
+                                         bg-cm-surface-raised border border-cm-border text-cm-text-muted">Pending</span>
+                            } @else {
+                            <button type="button" (click)="requestPermission(perm)"
+                              class="shrink-0 inline-flex items-center px-3 py-1.5 rounded-lg text-[10px] font-semibold
+                                     bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
+                              Request
+                            </button>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
                 }
               </div>
+
+              <!-- ── My Requests ── -->
+              @if (myPermissionRequests.length > 0) {
+              <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-cm-border bg-cm-surface-muted">
+                  <div class="text-sm font-bold text-cm-text-primary">My Requests</div>
+                </div>
+                <div class="divide-y divide-cm-border">
+                  @for (req of myPermissionRequests; track req.id) {
+                    <div class="px-5 py-3">
+                      <div class="flex items-center justify-between gap-3">
+                        <p class="text-xs font-bold text-cm-text-primary">{{ req.permission?.permission }}</p>
+                        <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold"
+                          [class.bg-cm-surface-raised]="req.status === 'PENDING'"
+                          [class.border]="req.status === 'PENDING'"
+                          [class.border-cm-border]="req.status === 'PENDING'"
+                          [class.text-cm-text-muted]="req.status === 'PENDING'"
+                          [class.bg-cm-brand-dim]="req.status === 'APPROVED'"
+                          [class.text-cm-brand-text]="req.status === 'APPROVED'"
+                          [class.bg-cm-danger-dim]="req.status === 'REJECTED'"
+                          [class.text-cm-danger-text]="req.status === 'REJECTED'">
+                          {{ req.status }}
+                        </span>
+                      </div>
+                      <p class="text-[10px] text-cm-text-muted mt-1">{{ req.createdAt | date:'MMM d, y' }}</p>
+                      @if (req.reviewComment) {
+                        <p class="text-[11px] text-cm-text-secondary italic mt-1">"{{ req.reviewComment }}"</p>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+              }
+
+              }
+              <!-- /selfView -->
+
             </div>
           }
 

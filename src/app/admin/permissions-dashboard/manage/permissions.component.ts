@@ -3,6 +3,7 @@ import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { RouterLink } from '@angular/router';
 import { UserPermission } from '@core/models/permission.model';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
@@ -21,6 +22,7 @@ import { permissionsService } from './permissions.service';
     NgClass,
     FormsModule,
     DatePipe,
+    RouterLink,
   ],
 })
 export class permissionsComponent implements OnInit, OnDestroy {

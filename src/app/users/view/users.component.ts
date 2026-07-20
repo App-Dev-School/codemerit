@@ -13,7 +13,10 @@ import { MasterService } from '@core/service/master.service';
 import { ThemeMode, ThemeService } from '@core/service/theme.service';
 import { SpeechProfile, SpeechService } from '@core/service/speech.service';
 import { MyBadgesResponse } from '@core/models/gamification.model';
+import { PermissionRequest, RequestablePermission, RequestablePermissionGroup } from '@core/models/permission.model';
 import { ProfileCourseStat, UserProfileResponse } from '@core/models/user-profile.model';
+import { permissionsService } from '../../admin/permissions-dashboard/manage/permissions.service';
+import { RequestPermissionDialogComponent } from './dialogs/request-permission-dialog/request-permission-dialog.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
 import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-streak-widget.component';
 import { BadgeGridComponent } from '@shared/components/badge-grid/badge-grid.component';
@@ -87,6 +90,12 @@ export default class UserComponent implements OnInit {
   badgesLoading = false;
   private badgesFetched = false;
 
+  // ── Permissions tab: request-a-permission (selfView only) ────────────────
+  requestablePermissions: RequestablePermissionGroup[] = [];
+  myPermissionRequests: PermissionRequest[] = [];
+  permissionRequestsLoading = false;
+  private permissionRequestsFetched = false;
+
   // ── Settings tab ────────────────────────────────────────────────────────
   passwordForm: FormGroup;
   passwordHideCurrent = true;
@@ -119,6 +128,7 @@ export default class UserComponent implements OnInit {
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
     public dialog: MatDialog,
+    private permissionsService: permissionsService,
   ) {
     this.passwordForm = this.fb.group({
       currentPassword: ['', [Validators.required]],
@@ -182,6 +192,9 @@ export default class UserComponent implements OnInit {
     if (tab === 'badges' && !this.badgesFetched) {
       this.loadBadges();
     }
+    if (tab === 'permissions' && this.selfView && !this.permissionRequestsFetched) {
+      this.loadPermissionRequestData();
+    }
   }
 
   private loadBadges(): void {
@@ -190,6 +203,47 @@ export default class UserComponent implements OnInit {
     this.master.fetchMyBadges().subscribe((res) => {
       this.badges = res;
       this.badgesLoading = false;
+    });
+  }
+
+  // ── Permissions tab: request-a-permission (selfView only) ────────────────
+
+  private loadPermissionRequestData(): void {
+    this.permissionRequestsFetched = true;
+    this.permissionRequestsLoading = true;
+    this.permissionsService.getRequestablePermissions().subscribe({
+      next: (groups) => {
+        this.requestablePermissions = groups ?? [];
+        this.permissionRequestsLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.permissionRequestsLoading = false;
+      },
+    });
+    this.permissionsService.getMyRequests().subscribe({
+      next: (requests) => { this.myPermissionRequests = requests ?? []; },
+      error: (err) => console.error(err),
+    });
+  }
+
+  requestPermission(perm: RequestablePermission): void {
+    const dialogRef = this.dialog.open(RequestPermissionDialogComponent, {
+      width: '400px',
+      minWidth: '320px',
+      autoFocus: false,
+      disableClose: true,
+      data: { permission: perm },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        perm.requestPending = true;
+        if (result.data) {
+          this.myPermissionRequests = [result.data, ...this.myPermissionRequests];
+        }
+        this.showNotification('snackbar-success', 'Request submitted for review.', 'bottom', 'center');
+      }
     });
   }
 

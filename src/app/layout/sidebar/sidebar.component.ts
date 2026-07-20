@@ -15,7 +15,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { RouteInfo } from './sidebar.metadata';
-import { AuthService } from '@core';
+import { AuthService, Role } from '@core';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { SidebarService } from './sidebar.service';
@@ -37,6 +37,7 @@ export class SidebarComponent
   userFullName?: string;
   userImg?: string = 'assets/images/users/user.jpg';
   userDesignation?: string;
+  userRoleLabel?: string;
   headerHeight = 60;
 
   constructor(
@@ -56,10 +57,12 @@ export class SidebarComponent
           this.userFullName = [firstName, lastName].filter(Boolean).join(' ') || 'Guest User';
           this.userImg = user.userImage || 'assets/images/users/user.jpg';
           this.userDesignation = user.designation || 'New Joiner';
+          this.userRoleLabel = this.roleLabel(user.role);
         } else {
           this.userFullName = 'Guest User';
           this.userImg = 'assets/images/users/user.jpg';
           this.userDesignation = 'New Joiner';
+          this.userRoleLabel = undefined;
         }
     });
     this.subs.sink = this.router.events.subscribe((event) => {
@@ -141,5 +144,18 @@ export class SidebarComponent
         this.router.navigate(['/authentication/signin']);
       }
     });
+  }
+
+  private roleLabel(role?: Role): string {
+    switch (role) {
+      case Role.Admin:
+        return 'Administrator';
+      case Role.Manager:
+        return 'Manager';
+      case Role.Subscriber:
+        return 'Learner';
+      default:
+        return 'Member';
+    }
   }
 }

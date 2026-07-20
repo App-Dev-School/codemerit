@@ -6,30 +6,38 @@
       <ul class="list px-3 pt-2 pb-6 space-y-1">
 
         <!-- ── User profile panel ──────────────────────────────────── -->
-        <li class="sidebar-user-panel mb-0 mt-0">
-          <div class="flex items-center gap-2.5 px-2 py-1">
+        <li class="sidebar-user-panel mb-1 mt-0">
+          <div class="flex items-center gap-3 mx-1 px-2.5 py-3
+                      rounded-2xl bg-cm-surface-raised border border-cm-border">
 
             <!-- Avatar with online dot -->
             <div class="relative shrink-0">
               <img [src]="userImg" alt="User"
-                   class="w-10 h-10 rounded-xl object-cover user-avatar">
-              <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full
-                           bg-green-500 border-2 border-[var(--cm-surface)]"></span>
+                   class="w-12 h-12 rounded-xl object-cover user-avatar">
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full
+                           bg-green-500 border-2 border-[var(--cm-surface-raised)]"></span>
             </div>
 
-            <!-- Name + role -->
+            <!-- Name + designation + role -->
             <div class="hide-menu min-w-0 flex-1">
-              <p class="text-[12.5px] font-semibold text-cm-text-primary truncate leading-none">
+              <p class="text-[14px] font-semibold text-cm-text-primary truncate leading-tight">
                 {{ userFullName }}
               </p>
-              <p class="text-[10.5px] text-cm-text-muted mt-px truncate leading-none">
+              <p class="text-[11.5px] text-cm-text-secondary mt-0.5 truncate leading-tight">
                 {{ userDesignation }}
               </p>
+              @if (userRoleLabel) {
+                <span class="inline-block mt-1.5 px-2 py-[1px] rounded-full
+                             text-[9.5px] font-semibold tracking-wide uppercase
+                             bg-cm-brand-dim text-cm-brand-text">
+                  {{ userRoleLabel }}
+                </span>
+              }
             </div>
 
           </div>
           <!-- Gradient divider -->
-          <div class="sidebar-section-divider mx-3 mt-1"></div>
+          <div class="sidebar-section-divider mx-3 mt-2"></div>
         </li>
 
         <!-- ── Navigation items ────────────────────────────────────── -->
@@ -88,18 +96,17 @@
 
             <!-- ── Level 1 submenu ──────────────────────────────────── -->
             @if (sidebarItem.submenu.length > 0) {
-              <ul class="ml-menu">
+              <ul class="submenu-l1">
                 @for (sidebarSubItem1 of sidebarItem.submenu; track sidebarSubItem1) {
                   <li [routerLinkActive]="sidebarSubItem1.submenu.length > 0 ? '' : 'active'">
 
                     <a [routerLink]="sidebarSubItem1.submenu.length > 0 ? null : [sidebarSubItem1.path]"
                        (click)="callToggleMenu($event, sidebarSubItem1.submenu.length)"
-                       [ngClass]="[sidebarSubItem1.class]"
                        class="sidebar-sub-item group flex items-center gap-2.5
-                              pl-[44px] pr-3 py-[7px] rounded-lg
+                              pl-4 pr-2.5 py-2 rounded-lg
                               text-[12.5px] text-cm-text-secondary cursor-pointer
                               transition-all duration-200
-                              hover:bg-cm-surface-raised hover:text-cm-text-primary">
+                              hover:bg-cm-surface-hover hover:text-cm-text-primary">
                       <span class="sub-dot w-1.5 h-1.5 rounded-full shrink-0
                                    transition-all duration-200"></span>
                       <span class="hide-menu flex-1 min-w-0 truncate">{{ sidebarSubItem1.title }}</span>
@@ -114,18 +121,17 @@
 
                     <!-- ── Level 2 submenu ────────────────────────────── -->
                     @if (sidebarSubItem1.submenu.length > 0) {
-                      <ul class="ml-menu-2">
+                      <ul class="submenu-l2">
                         @for (sidebarSubItem2 of sidebarSubItem1.submenu; track sidebarSubItem2) {
                           <li [routerLinkActive]="sidebarSubItem2.submenu.length > 0 ? '' : 'active'">
 
                             <a [routerLink]="sidebarSubItem2.submenu.length > 0 ? null : [sidebarSubItem2.path]"
                                (click)="callToggleMenu($event, sidebarSubItem2.submenu.length)"
-                               [ngClass]="[sidebarSubItem2.class]"
                                class="sidebar-sub-item flex items-center gap-2
-                                      pl-[60px] pr-3 py-[7px] rounded-lg
+                                      pl-7 pr-2.5 py-2 rounded-lg
                                       text-[12px] text-cm-text-secondary cursor-pointer
                                       transition-all duration-200
-                                      hover:bg-cm-surface-raised hover:text-cm-text-primary">
+                                      hover:bg-cm-surface-hover hover:text-cm-text-primary">
                               <span class="sub-dot w-1 h-1 rounded-full shrink-0
                                            transition-all duration-200"></span>
                               <span class="hide-menu flex-1 min-w-0 truncate">{{ sidebarSubItem2.title }}</span>
@@ -133,18 +139,18 @@
 
                             <!-- ── Level 3 submenu ──────────────────────── -->
                             @if (sidebarSubItem2.submenu.length > 0) {
-                              <ul class="ml-menu-3">
+                              <ul class="submenu-l3">
                                 @for (sidebarSubItem3 of sidebarSubItem2.submenu; track sidebarSubItem3) {
                                   <li [routerLinkActive]="sidebarSubItem3.submenu.length > 0 ? '' : 'active'">
                                     <a [routerLink]="sidebarSubItem3.submenu.length > 0 ? null : [sidebarSubItem3.path]"
                                        (click)="callToggleMenu($event, sidebarSubItem3.submenu.length)"
-                                       [ngClass]="[sidebarSubItem3.class]"
-                                       class="flex items-center gap-2
-                                              pl-[76px] pr-3 py-[7px] rounded-lg
+                                       class="sidebar-sub-item flex items-center gap-2
+                                              pl-9 pr-2.5 py-2 rounded-lg
                                               text-[12px] text-cm-text-secondary cursor-pointer
                                               transition-all duration-200
-                                              hover:bg-cm-surface-raised hover:text-cm-text-primary">
-                                      <span class="w-1 h-1 rounded-full bg-cm-border shrink-0"></span>
+                                              hover:bg-cm-surface-hover hover:text-cm-text-primary">
+                                      <span class="sub-dot w-1 h-1 rounded-full shrink-0
+                                                   transition-all duration-200"></span>
                                       <span class="hide-menu flex-1 min-w-0 truncate">{{ sidebarSubItem3.title }}</span>
                                     </a>
                                   </li>

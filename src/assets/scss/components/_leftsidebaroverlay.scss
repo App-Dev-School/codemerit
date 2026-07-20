@@ -106,36 +106,54 @@ li.active > a.menu-top .sidebar-chevron {
 
 /* ═══════════════════════════════════════════════════════════════════
    SUBMENUS — SMOOTH EXPAND / COLLAPSE
+   NOTE: classes are prefixed `submenu-l*` (not the more obvious
+   `ml-menu`) on purpose — `RouteInfo.class` values coming back from
+   the API (e.g. "ml-menu") are bound via [ngClass] on menu items
+   elsewhere in this template, and a bare `.ml-menu` selector here
+   previously collided with that, causing random rows to inherit the
+   container's collapse/expand rules. Keep these names unique.
 ═══════════════════════════════════════════════════════════════════ */
-.ml-menu,
-.ml-menu-2,
-.ml-menu-3 {
+.submenu-l1,
+.submenu-l2,
+.submenu-l3 {
   list-style: none;
-  padding-left: 0;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-li.active > .ml-menu   { max-height: 1200px; }
-li.active > .ml-menu-2 { max-height: 600px;  }
-li.active > .ml-menu-3 { max-height: 300px;  }
+li.active > .submenu-l1 { max-height: 1200px; }
+li.active > .submenu-l2 { max-height: 600px;  }
+li.active > .submenu-l3 { max-height: 300px;  }
 
-/* ── Submenu item — base dot ────────────────────────────────────── */
-.sub-dot {
-  background: var(--cm-border);
+/* Space out individual submenu rows within every level */
+.submenu-l1 > li,
+.submenu-l2 > li,
+.submenu-l3 > li {
+  margin: 2px 0;
 }
 
-/* ── Submenu item — active ──────────────────────────────────────── */
+/* ── Submenu row — shared base ──────────────────────────────────── */
+.sidebar-sub-item {
+  position: relative;
+}
+
+/* ── Submenu row — base dot ─────────────────────────────────────── */
+.sub-dot {
+  background: var(--cm-border-strong);
+}
+
+/* ── Submenu row — active ───────────────────────────────────────── */
 li.active > a.sidebar-sub-item {
   color: #6366f1 !important;
   font-weight: 600;
-  background: rgba(99, 102, 241, 0.07);
+  background: rgba(99, 102, 241, 0.1);
 
   .sub-dot {
     background: #6366f1 !important;
     width: 6px !important;
     height: 6px !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
   }
 }
 
@@ -241,9 +259,9 @@ li.active > a.sidebar-sub-item .sidebar-chevron {
 }
 
 .submenu-closed .sidebar {
-  .ml-menu,
-  .ml-menu-2,
-  .ml-menu-3 { max-height: 0 !important; }
+  .submenu-l1,
+  .submenu-l2,
+  .submenu-l3 { max-height: 0 !important; }
 }
 
 /* Hover peek: temporarily restore labels */
