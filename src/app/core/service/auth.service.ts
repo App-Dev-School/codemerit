@@ -98,6 +98,10 @@ export class AuthService {
     return this.currentUserValue?.userJobRoles ?? this.userJobRoles ?? [];
   }
 
+  hasPermission(permissionName: string): boolean {
+    return (this.currentUserValue?.permissions ?? []).some(p => p.permissionName === permissionName);
+  }
+
   register(postData: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({

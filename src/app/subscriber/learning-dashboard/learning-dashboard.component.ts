@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService, User } from '@core';
 import { Course } from '@core/models/subject-role';
+import { SubjectTrack, SubjectTrackTopic } from '@core/models/subject-dashboard.model';
 import { UserJobRole } from '@core/models/userJobRole.model';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
@@ -15,6 +16,7 @@ import { SubjectTrackerCardComponent } from '@shared/components/subject-tracker-
 import { BadgeGridComponent } from '@shared/components/badge-grid/badge-grid.component';
 import { XpStreakWidgetComponent } from '@shared/components/xp-streak-widget/xp-streak-widget.component';
 import { NextBestActionCardComponent } from '@shared/components/next-best-action-card/next-best-action-card.component';
+import { ContinueLearningHeroComponent } from '@shared/components/continue-learning-hero/continue-learning-hero.component';
 import { CachedGamificationStats, GAMIFICATION_STATS_CACHE_KEY, LeaderboardPeriod, LeaderboardResponse, MyBadgesResponse, NextTrackNudge } from '@core/models/gamification.model';
 import { QuizService } from 'src/app/quiz/quiz.service';
 
@@ -29,6 +31,7 @@ import { QuizService } from 'src/app/quiz/quiz.service';
     BadgeGridComponent,
     XpStreakWidgetComponent,
     NextBestActionCardComponent,
+    ContinueLearningHeroComponent,
   ]
 })
 export class LearningDashboardComponent implements OnInit {
@@ -64,6 +67,12 @@ export class LearningDashboardComponent implements OnInit {
   xpStreakStats: CachedGamificationStats | null = null;
   nextCertificationTrack: NextTrackNudge | null = null;
   nextSubjectTrack: NextTrackNudge | null = null;
+
+  // "Continue Learning" hero widget — topic-level resume point for the #1 jumpBackInSubjects entry.
+  continueLearningSubject: any = null;
+  continueLearningTopic: SubjectTrackTopic | null = null;
+  continueLearningMilestone: string | null = null;
+  continueLearningLoading = false;
 
   leaderboardPeriod: LeaderboardPeriod = 'all-time';
   leaderboard: LeaderboardResponse | null = null;
@@ -219,6 +228,7 @@ export class LearningDashboardComponent implements OnInit {
             // certification track for this role is already achieved.
             this.nextCertificationTrack = data?.nextCertificationTrack ?? null;
             this.nextSubjectTrack = data?.nextSubjectTrack ?? null;
+            this.loadContinueLearningWidget();
 
             setTimeout(() => {
               this.loading = false;
@@ -253,6 +263,36 @@ export class LearningDashboardComponent implements OnInit {
       .slice()
       .sort((a, b) => (b.coverage ?? 0) - (a.coverage ?? 0) || (b.attempted ?? 0) - (a.attempted ?? 0))
       .slice(0, this.JUMP_BACK_IN_LIMIT);
+  }
+
+  // #1 is already shown in the Continue Learning hero — avoid showing it twice.
+  get jumpBackInSecondary(): any[] {
+    return this.jumpBackInSubjects.slice(1);
+  }
+
+  // One extra call per role-view, only for the #1 jumpBackInSubjects entry — not
+  // one per in-progress subject. Gives the hero a real "next incomplete topic"
+  // instead of staying subject-level, same coverage<100 pattern GoalPathComponent
+  // already uses at the topic-carousel level.
+  private loadContinueLearningWidget(): void {
+    const top = this.jumpBackInSubjects[0];
+    this.continueLearningSubject = top ?? null;
+    this.continueLearningTopic = null;
+    this.continueLearningMilestone = null;
+    if (!top?.slug) return;
+    this.continueLearningLoading = true;
+    this.master.fetchSubjectDashboard(top.slug).subscribe({
+      next: (res: any) => {
+        const tracks: SubjectTrack[] = res?.data?.subjectTracks ?? [];
+        const track = tracks.find(t => (t.topics ?? []).some(x => x.coverage < 100)) ?? tracks[0];
+        this.continueLearningTopic = track?.topics?.find(x => x.coverage < 100) ?? null;
+        this.continueLearningMilestone = track?.title ?? null;
+        this.continueLearningLoading = false;
+      },
+      error: () => {
+        this.continueLearningLoading = false;
+      },
+    });
   }
 
   get overallAccuracy(): number {

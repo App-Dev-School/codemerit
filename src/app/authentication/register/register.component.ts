@@ -281,7 +281,7 @@ export class RegisterComponent implements OnInit {
       masteryLevel: v.masteryLevel,
       yearsExperience: v.yearsExperience,
       achievement: v.achievement,
-      flow: 'Registration',
+      flow: 'SelfRegistration'
     };
   }
 

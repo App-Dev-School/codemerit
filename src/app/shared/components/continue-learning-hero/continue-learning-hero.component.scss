@@ -1,0 +1,7 @@
+/* All styling via Tailwind + cm-* tokens */
+
+// course-progress always renders a "Score" caption under the ring even with
+// showLabel=false — this hero shows a subject icon overlay instead, so hide it.
+::ng-deep app-course-progress .miniTxt {
+  display: none;
+}

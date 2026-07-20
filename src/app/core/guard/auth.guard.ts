@@ -16,7 +16,15 @@ export class AuthGuard {
       this.authService.currentUserValue?.token
     ) {
       const userRole = this.authService.currentUserValue.role;
-      if (route.data['role'] && route.data['role'].indexOf(userRole) === -1) {
+      const requiredRoles = route.data['role'];
+      const requiredPermission: string | undefined = route.data['permission'];
+      const roleOk = !requiredRoles || requiredRoles.indexOf(userRole) !== -1;
+      // A route can declare `permission` alongside `role` to let a permission
+      // holder in even without the listed role (e.g. Role:TalentPartner
+      // reaching an Admin-only route) — either satisfies access.
+      const permissionOk = !!requiredPermission && this.authService.hasPermission(requiredPermission);
+
+      if (requiredRoles && !roleOk && !permissionOk) {
         console.log("Codemerit AuthGuard :: ", userRole, "Not Allowed", this.router.url);
         this.router.navigate(['/authentication/signin']);
         return false;

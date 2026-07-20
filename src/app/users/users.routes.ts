@@ -7,21 +7,24 @@ export const USERS_ROUTE: Route[] = [
   {
     path: "list",
     data: {
-      role: Role.Admin,
+      role: [Role.Admin],
+      permission: 'Role:TalentPartner',
     },
     component: ListUserComponent,
   },
   {
     path: "create",
     data: {
-      role: Role.Admin,
+      role: [Role.Admin],
+      permission: 'Role:TalentPartner',
     },
     component: CreateUserComponent,
   },
   {
     path: "edit/:userName",
     data: {
-      role: Role.Admin,
+      role: [Role.Admin],
+      permission: 'Role:TalentPartner',
     },
     component: CreateUserComponent,
   },

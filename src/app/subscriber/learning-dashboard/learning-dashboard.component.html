@@ -382,8 +382,20 @@
 
         @if (activeTab === 'overview') {
 
+        <!-- Continue Learning hero -->
+        @if (continueLearningSubject) {
+        <app-continue-learning-hero
+          [subject]="continueLearningSubject"
+          [nextTopic]="continueLearningTopic"
+          [milestoneTitle]="continueLearningMilestone"
+          [loading]="continueLearningLoading"
+          (resume)="launchSubjectExplorer($event)"
+          (takeQuiz)="openQuizLauncher($event)">
+        </app-continue-learning-hero>
+        }
+
         <!-- Jump Back In -->
-        @if (jumpBackInSubjects?.length > 0) {
+        @if (jumpBackInSecondary?.length > 0) {
         <div>
           <div class="flex items-center gap-2.5 mb-4">
             <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20
@@ -397,7 +409,7 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (item of jumpBackInSubjects; track item.id) {
+            @for (item of jumpBackInSecondary; track item.id) {
             <div class="rounded-2xl border border-cm-border-strong bg-cm-surface overflow-hidden
                         shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none
                         p-4 space-y-3">

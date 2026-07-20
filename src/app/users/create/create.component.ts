@@ -1,20 +1,18 @@
-import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatOptionModule } from '@angular/material/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthConstants } from '@config/AuthConstants';
 import { User } from '@core';
 import { Country } from '@core/models/country.data';
-import { InitialRole } from '@core/models/initial-role.data';
+import { Role } from '@core/models/role';
 import { AuthService } from '@core/service/auth.service';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
-import { map, Observable, of, startWith } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/searchable-select/searchable-select.component';
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-create-user',
   templateUrl: './create.component.html',
@@ -22,9 +20,8 @@ import { environment } from 'src/environments/environment';
   imports: [
     BreadcrumbComponent,
     ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatOptionModule,
-    AsyncPipe,
+    RouterLink,
+    SearchableSelectComponent,
   ]
 })
 export class CreateUserComponent implements OnInit, OnDestroy {
@@ -47,52 +44,117 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   html = '';
   submitted = false;
   error = "";
-  options: InitialRole[] = AuthConstants.CURRENT_ROLE_OPTIONS;
-  filteredOptions?: Observable<InitialRole[]>;
   countries?: Country[];
-  filteredCountries?: Observable<Country[]>;
+
+  // ── Job role / certification track (cascading, mirrors register.component.ts) ──
+  availableTracks: any[] = [];
+
+  readonly statusOptions = [
+    { value: 'ACTIVE', label: 'Active' },
+    { value: 'PENDING', label: 'Pending' },
+    { value: 'BLOCKED', label: 'Blocked' },
+  ];
+
+  get jobRoles(): any[] {
+    return this.masterService.jobRoles || [];
+  }
+
+  get countryOptions(): SearchableSelectOption[] {
+    return (this.countries ?? []).map(c => ({ id: c.name, label: c.name }));
+  }
+
+  get jobRoleOptions(): SearchableSelectOption[] {
+    return this.jobRoles.map(role => ({ id: role.id, label: role.title }));
+  }
+
+  get certificationTrackOptions(): SearchableSelectOption[] {
+    return (this.availableTracks ?? []).map(track => ({ id: track.id, label: track.title }));
+  }
+
+  // Only Admin can see/edit the status field and change accountStatus —
+  // Talent-Partner-permission holders manage users but never account status.
+  get isAdminViewer(): boolean {
+    return this.authData?.role === Role.Admin;
+  }
+
+  // Backend is the authority: a Talent Partner (non-Admin) cannot edit an
+  // already-Active user's profile. This is a frontend UX affordance so the
+  // viewer isn't surprised by a 403 — not a security boundary.
+  get editBlockedForViewer(): boolean {
+    return this.editMode && !this.isAdminViewer && this.userDetail?.accountStatus === 'ACTIVE';
+  }
+
+  // Talent-Partner-permission holders see this same screen framed as
+  // "Talent Management" rather than the Admin-facing "User Management" wording.
+  get breadcrumbTitle(): string {
+    return this.isAdminViewer ? 'User Management' : 'Talent Management';
+  }
+
+  get breadcrumbTrailLabel(): string {
+    return this.isAdminViewer ? 'Users' : 'Talents';
+  }
+
+  get breadcrumbActiveItem(): string {
+    if (this.isAdminViewer) return this.screenTitle;
+    return this.editMode ? 'Edit Talent' : 'Add New';
+  }
+
+  get listCtaLabel(): string {
+    return this.isAdminViewer ? 'List Users' : 'List Talents';
+  }
 
   ngOnInit(): void {
     this.authData = this.authService.currentUserValue;
     this.takeRouteParams();
     this.authForm = this.formBuilder.group({
-      firstName: ['Alex', Validators.required],
-      lastName: ['Doe'],
+      firstName: ['', Validators.required],
+      lastName: [''],
       email: [
-        'user@codemerit.com',
+        '',
         [Validators.required, Validators.email, Validators.minLength(5)],
       ],
-      mobile: [null, [Validators.minLength(9)]],
-      city: ['Bengaluru', Validators.required],
-      country: ['India', Validators.required],
-      designation: ['IT Student', Validators.required],
-      linkedinUrl: ['']
+      mobile: [null, [Validators.pattern(AuthConstants.REGEX_PHONE)]],
+      city: ['', Validators.required],
+      country: ['', Validators.required],
+      linkedinUrl: [''],
+      techRoleId: [null],
+      certificationTrackId: [{ value: null, disabled: true }],
+      yearsExperience: [null, [Validators.min(0), Validators.max(50)]]
     });
 
-    if (!environment.production) {
-      this.authForm.get('firstName')?.setValue('Test');
-      this.authForm.get('email')?.setValue('user1@codemerit.com');
-      this.authForm.get('city')?.setValue('Bengaluru');
-      this.authForm.get('country')?.setValue('India');
-      this.authForm.get('designation')?.setValue('IT Fresher (Graduate)');
+    if (this.isAdminViewer) {
+      this.authForm.addControl('status', this.formBuilder.control(null));
     }
-    // this.editor = new Editor();
-    this.filteredOptions = of(this.options);
 
-    this.filteredOptions = this.authForm.get('designation').valueChanges.pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value?.label || ''),
-      map(name => this._filter(name))
-    );
+    // Drives the certificationTrackId cascade — fires for both user selection
+    // and loadData()'s patchValue, so onTechRoleChange() doesn't need a second
+    // manual call site.
+    this.authForm.get('techRoleId')?.valueChanges.subscribe(() => this.onTechRoleChange());
 
     this.masterService.getCountries().subscribe((countryData: any) => {
       this.countries = countryData;
-      //this.filteredCountries = of(countryData.map((country) => country.name));
-      this.filteredCountries = this.authForm.get('country').valueChanges.pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value?.name || ''),
-        map(name => this._filterCountry(name))
-      );
+    });
+  }
+
+  // Mirrors register.component.ts's onTechAreaChange() — certification tracks
+  // are only available per-selected-job-role via fetchCourseDetail(slug), there
+  // is no flat MasterService.certificationTracks collection.
+  onTechRoleChange(): void {
+    const jobRoleId = Number(this.authForm.get('techRoleId')?.value);
+    const selectedRole = this.jobRoles.find((role: any) => Number(role.id) === jobRoleId);
+    const trackCtrl = this.authForm.get('certificationTrackId');
+    trackCtrl?.setValue(null);
+    trackCtrl?.disable();
+    this.availableTracks = [];
+
+    if (!selectedRole?.slug) return;
+
+    this.masterService.fetchCourseDetail(selectedRole.slug).subscribe((data: any) => {
+      this.availableTracks = (data?.certificationTracks || [])
+        .slice()
+        .sort((a: any, b: any) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0));
+
+      this.availableTracks.length ? trackCtrl?.enable() : trackCtrl?.disable();
     });
   }
 
@@ -134,9 +196,24 @@ export class CreateUserComponent implements OnInit, OnDestroy {
                 mobile: this.userDetail.mobile,
                 city: this.userDetail.city,
                 country: this.userDetail.country,
-                designation: this.userDetail.designation,
-                linkedinUrl: this.userDetail.profile?.linkedinUrl
+                linkedinUrl: this.userDetail.profile?.linkedinUrl,
+                techRoleId: this.userDetail.techRoleId,
+                yearsExperience: this.userDetail.yearsExperience,
               });
+              if (this.userDetail.techRoleId) {
+                // patchValue above already fired the techRoleId valueChanges
+                // subscription (→ onTechRoleChange(), populating availableTracks
+                // and resetting certificationTrackId to null) — restore the
+                // saved track now; the async fetch only enables the control,
+                // it doesn't touch the value once resolved.
+                this.authForm.get('certificationTrackId')?.setValue(this.userDetail.certificationTrackId);
+              }
+              if (this.isAdminViewer) {
+                this.authForm.get('status')?.setValue(this.userDetail.accountStatus);
+              }
+              if (this.editBlockedForViewer) {
+                this.authForm.disable();
+              }
               console.log("NgEditUser userDetail", this.userDetail);
             } else {
               //this.noDataView = true;
@@ -156,10 +233,15 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+    if (this.editBlockedForViewer) {
+      this.snackbar.display("snackbar-danger", "You do not have permission to edit an active user's profile.", "bottom", "center");
+      return;
+    }
     this.submitted = true;
     this.loadingTxt = 'Please wait';
     if (this.authForm.invalid) {
       this.snackbar.display("snackbar-danger", "Please re-check your submission.", "bottom", "center");
+      this.submitted = false;
       return;
     } else {
       let postData = {
@@ -169,8 +251,12 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         mobile: this.authForm.get('mobile')?.value,
         city: this.authForm.get('city')?.value,
         country: this.authForm.get('country')?.value,
-        designation: this.authForm.get('designation')?.value,
-        ...(this.authForm.get('linkedinUrl')?.value && { linkedinUrl: this.authForm.get('linkedinUrl')?.value })
+        techRoleId: this.authForm.get('techRoleId')?.value,
+        certificationTrackId: this.authForm.get('certificationTrackId')?.value,
+        yearsExperience: this.authForm.get('yearsExperience')?.value,
+        flow: 'UserRegistration',
+        ...(this.authForm.get('linkedinUrl')?.value && { linkedinUrl: this.authForm.get('linkedinUrl')?.value }),
+        ...(this.isAdminViewer && { status: this.authForm.get('status')?.value }),
       };
       let createUpdateCall: Observable<any>;
       if (this.editMode) {
@@ -209,28 +295,5 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-  }
-
-  /* Auto-complete functions */
-  displayRole(role: string): string {
-    return role;
-  }
-
-  private _filter(name: string): InitialRole[] {
-    const filterValue = name.toLowerCase();
-    return this.options.filter(
-      (option) => option.label.toLowerCase().indexOf(filterValue) === 0
-    );
-  }
-
-  displayCountry(country: string): string {
-    return country;
-  }
-
-  private _filterCountry(name: string): Country[] {
-    const filterValue = name.toLowerCase();
-    return this.countries.filter(country =>
-      country.name.toLowerCase().includes(filterValue)
-    );
   }
 }

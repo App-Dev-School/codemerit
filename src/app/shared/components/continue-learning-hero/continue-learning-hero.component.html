@@ -1,0 +1,67 @@
+<div class="relative overflow-hidden rounded-2xl border border-cm-border-strong bg-cm-surface
+            shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+
+  <!-- Ambient brand glow, matches the profile hero card's gradient treatment -->
+  <div class="absolute -top-10 -right-10 w-40 h-40 bg-cm-brand/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="relative px-5 py-4 border-b border-cm-border flex items-center gap-2">
+    <div class="w-8 h-8 rounded-xl bg-cm-brand-dim border border-cm-brand/20 flex items-center justify-center shrink-0">
+      <i class="fa-solid fa-play text-cm-brand text-xs"></i>
+    </div>
+    <div>
+      <p class="text-[10px] font-bold uppercase tracking-wider text-cm-brand-text leading-none">Continue Learning</p>
+      <p class="text-[11px] text-cm-text-muted mt-1">Pick up exactly where you left off</p>
+    </div>
+  </div>
+
+  @if (loading) {
+  <div class="relative p-5 flex items-center gap-4 animate-pulse">
+    <div class="w-16 h-16 rounded-2xl bg-cm-surface-raised shrink-0"></div>
+    <div class="flex-1 space-y-2">
+      <div class="h-4 w-1/2 rounded bg-cm-surface-raised"></div>
+      <div class="h-3 w-2/3 rounded bg-cm-surface-raised"></div>
+    </div>
+  </div>
+  } @else if (subject) {
+  <div class="relative p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+
+    <div class="flex items-center gap-4 flex-1 min-w-0">
+      <div class="relative shrink-0">
+        <app-course-progress [score]="subject.coverage || 0" [size]="64" [thickness]="5" [showLabel]="false"></app-course-progress>
+        <img [src]="subject.image || 'assets/images/tech/placeholder.png'"
+             class="absolute inset-0 m-auto w-9 h-9 rounded-lg object-cover" [alt]="subject.title">
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <p class="text-base font-black text-cm-text-primary truncate">{{ subject.title }}</p>
+        @if (nextTopic) {
+        <p class="text-xs text-cm-text-secondary mt-1">
+          Up next: <span class="font-semibold text-cm-text-primary">{{ nextTopic.title }}</span>
+        </p>
+        @if (milestoneTitle) {
+        <p class="text-[10px] text-cm-text-muted mt-0.5 truncate">in {{ milestoneTitle }}</p>
+        }
+        } @else {
+        <p class="text-xs text-cm-text-muted mt-1">{{ subject.coverage || 0 }}% covered so far</p>
+        }
+      </div>
+    </div>
+
+    <div class="flex gap-2 shrink-0">
+      <button type="button" (click)="takeQuiz.emit(subject)"
+        class="px-4 py-2.5 rounded-xl border border-cm-border text-xs font-semibold
+               text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+               active:scale-95 transition-all whitespace-nowrap">
+        Next Quiz
+      </button>
+      <button type="button" (click)="resume.emit(subject)"
+        class="px-5 py-2.5 rounded-xl bg-cm-brand text-white text-xs font-bold
+               hover:opacity-90 active:scale-95 transition-all whitespace-nowrap">
+        Resume
+      </button>
+    </div>
+
+  </div>
+  }
+
+</div>
