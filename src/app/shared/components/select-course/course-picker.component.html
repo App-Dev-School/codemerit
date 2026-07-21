@@ -53,16 +53,12 @@
                   <span class="cp-enrolled-badge">Current</span>
                 }
 
-                <!-- Icon -->
-                <div class="cp-card__icon-wrap" [style.background]="getRoleColor(job) + '18'">
-                  @if (job.image) {
+                <!-- Icon — only rendered when the role has a real image, no text-initials fallback -->
+                @if (job.image) {
+                  <div class="cp-card__icon-wrap" [style.background]="getRoleColor(job) + '18'">
                     <img [src]="job.image" [alt]="job.title" class="cp-card__icon-img">
-                  } @else {
-                    <span class="cp-card__icon-initials" [style.color]="getRoleColor(job)">
-                      {{ getInitials(job.title) }}
-                    </span>
-                  }
-                </div>
+                  </div>
+                }
 
                 <!-- Info -->
                 <div class="cp-card__info">
@@ -86,10 +82,13 @@
 
                 <!-- Action -->
                 @if (minimal) {
-                  <div class="cp-card__action" [style.color]="getRoleColor(job)">
+                  <button type="button" class="cp-card__action"
+                          [style.background]="getRoleColor(job) + '14'"
+                          [style.border-color]="getRoleColor(job) + '40'"
+                          [style.color]="getRoleColor(job)">
                     {{ isEnrolled(job) ? 'Continue' : getActionLabel() }}
                     <svg class="cp-card__action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                  </div>
+                  </button>
                 }
 
               </div>

@@ -4,44 +4,50 @@ import { FormsModule } from '@angular/forms';
 import { MasterService } from '@core/service/master.service';
 
 @Component({
-  selector: 'app-course-picker',
+  selector: 'app-subject-picker',
   imports: [CommonModule, FormsModule],
-  templateUrl: './course-picker.component.html',
-  styleUrls: ['./course-picker.component.scss'],
+  templateUrl: './subject-picker.component.html',
+  styleUrls: ['./subject-picker.component.scss'],
 })
-export class CoursePickerComponent implements OnInit, OnChanges {
+export class SubjectPickerComponent implements OnInit, OnChanges {
   /** Fully self-contained fullscreen modal — the caller just toggles this. */
   @Input() open = false;
-  @Input() minimal = true;
-  @Input() currentCourses: number[] = [];
-  @Input() actionMode: 'view' | 'enroll' | 'skill-rating' = 'view';
-  @Input() title = 'Choose your Job Role';
-  @Input() subtitle = 'Select a role to personalise your learning path and unlock relevant assessments.';
+  @Input() title = 'Select a Subject';
+  @Input() subtitle = 'Pick the skill you want to practice or assess today.';
 
-  /** Emits the full selected job-role object — the caller owns any navigation. */
+  /** Emits the full selected subject object — the caller owns any navigation. */
   @Output() subjectSelected = new EventEmitter<any>();
   @Output() closed = new EventEmitter<void>();
 
-  /** In the DOM at all — see ngOnChanges. Not using Angular's [@trigger] animations:
-      those never fired reliably for this element (nested inside a child component,
-      confirmed via getAnimations() returning empty even on a genuine false→true
-      flip) — plain CSS transitions driven by these two flags sidestep that entirely. */
+  /** In the DOM at all — see ngOnChanges. Mirrors CoursePickerComponent
+      (shared/components/select-course/course-picker.component.ts): plain CSS
+      transitions driven by these two flags, not Angular's [@trigger] animations,
+      which don't fire reliably for elements nested inside a child component. */
   rendered = false;
   /** CSS transition target state — toggling this (once `rendered` has already
       painted the closed state) is what actually animates the slide/fade. */
   shown = false;
   private closeTimer?: ReturnType<typeof setTimeout>;
 
-  /** Must stay ≥ the slowest exit transition duration in course-picker.component.scss
-      (.cp-panel's un-shown state) — this is what gives the exit animation time to
-      actually finish before the DOM node is removed / the caller navigates away. */
+  /** Must stay ≥ the slowest exit transition duration in subject-picker.component.scss
+      (.sp-panel's un-shown state) — gives the exit animation time to actually
+      finish before the DOM node is removed / the caller navigates away. */
   private readonly EXIT_MS = 340;
 
   searchQuery = '';
-  courses: any[] = [];
+  subjects: any[] = [];
   isLoading = true;
 
-  private readonly fallbackAccents = ['#6366f1', '#7c3aed', '#059669', '#0284c7', '#e11d48', '#d97706', '#0d9488'];
+  private readonly techColorMap: Record<string, string> = {
+    html: '#f97316', css: '#3b82f6', javascript: '#eab308', js: '#eab308',
+    typescript: '#60a5fa', angular: '#ef4444', react: '#06b6d4', vue: '#22c55e',
+    nestjs: '#dc2626', express: '#10b981', node: '#22c55e', mongodb: '#22c55e',
+    mysql: '#3b82f6', java: '#f97316', python: '#eab308', docker: '#0ea5e9',
+    kubernetes: '#3b82f6', git: '#ef4444', aws: '#f59e0b', cloud: '#6366f1',
+    devops: '#8b5cf6', android: '#22c55e', flutter: '#06b6d4', swift: '#f97316',
+    dsa: '#8b5cf6', ai: '#6366f1', analytics: '#10b981',
+  };
+  private readonly fallbackColors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6'];
 
   constructor(private master: MasterService) {}
 
@@ -65,63 +71,55 @@ export class CoursePickerComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    if (this.master.jobRoles?.length) {
-      this.applyCourses();
+    if (this.master.subjects?.length) {
+      this.applySubjects();
       return;
     }
     // Component can mount before the app's master-data fetch resolves —
     // fall back to fetching directly rather than rendering a permanent
-    // empty state (same fallback select-subject.component.ts uses).
+    // empty state.
     this.master.fetchMasterDataFromAPI().subscribe({
-      next: () => this.applyCourses(),
+      next: () => this.applySubjects(),
       error: () => { this.isLoading = false; },
     });
   }
 
-  private applyCourses(): void {
-    const allJobRoles = this.master.jobRoles;
-    this.courses = allJobRoles?.length ? allJobRoles.filter(j => j.isPublished) : [];
+  private applySubjects(): void {
+    this.subjects = this.master.subjects ?? [];
     this.isLoading = false;
   }
 
-  get filteredCourses(): any[] {
-    if (!this.searchQuery) return this.courses;
+  get filteredSubjects(): any[] {
+    if (!this.searchQuery) return this.subjects;
     const q = this.searchQuery.toLowerCase().trim();
-    return this.courses.filter(job => {
-      const jobTitle = (job.title || '').toString().toLowerCase();
-      const desc = (job.description || '').toString().toLowerCase();
-      return jobTitle.includes(q) || desc.includes(q);
+    return this.subjects.filter(s => {
+      const t = (s.title || '').toString().toLowerCase();
+      const d = (s.description || '').toString().toLowerCase();
+      return t.includes(q) || d.includes(q);
     });
   }
 
-  // job.isSubscribed comes straight through from the shared, non-personalized
-  // apis/master/data catalog (master.service.ts never touches it) and was
-  // observed true for every job role there — not a reliable per-user signal.
-  // currentCourses is the actual authoritative source: it's built directly
-  // from the authenticated user's own userJobRoles (see SelectCourseComponent).
-  isEnrolled(job: any): boolean {
-    return this.currentCourses.includes(+job.id);
+  getSubjectColor(subject: any): string {
+    const key = (subject?.title ?? '').toLowerCase();
+    for (const [k, v] of Object.entries(this.techColorMap)) {
+      if (key.includes(k)) return v;
+    }
+    return this.fallbackColors[(subject?.id ?? 0) % this.fallbackColors.length];
   }
 
-  getRoleColor(job: any): string {
-    return job?.color || this.fallbackAccents[(job?.id ?? 0) % this.fallbackAccents.length];
+  getInitials(title: string): string {
+    return (title ?? '?').slice(0, 2).toUpperCase();
   }
 
-  getActionLabel(): string {
-    return this.actionMode === 'skill-rating' ? 'Start Evaluation'
-         : this.actionMode === 'enroll'       ? 'Enroll Now'
-         : 'Explore';
-  }
-
-  switchJobRole(job: any): void {
+  switchSubject(subject: any): void {
     // Same reasoning as close() — let the panel finish sliding out before
-    // the caller navigates to the selected role.
+    // the caller navigates to the selected subject.
     if (!this.shown) return;
     this.shown = false;
     clearTimeout(this.closeTimer);
     this.closeTimer = setTimeout(() => {
       this.rendered = false;
-      this.subjectSelected.emit(job);
+      this.subjectSelected.emit(subject);
     }, this.EXIT_MS);
   }
 

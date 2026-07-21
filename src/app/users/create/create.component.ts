@@ -114,16 +114,16 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.email, Validators.minLength(5)],
       ],
       mobile: [null, [Validators.pattern(AuthConstants.REGEX_PHONE)]],
-      city: ['', Validators.required],
-      country: ['', Validators.required],
+      country: ['India', Validators.required],
+      city: [''],
       linkedinUrl: [''],
       techRoleId: [null],
       certificationTrackId: [{ value: null, disabled: true }],
-      yearsExperience: [null, [Validators.min(0), Validators.max(50)]]
+      yearsExperience: [0, [Validators.min(0), Validators.max(50)]]
     });
 
     if (this.isAdminViewer) {
-      this.authForm.addControl('status', this.formBuilder.control(null));
+      this.authForm.addControl('status', this.formBuilder.control('PENDING'));
     }
 
     // Drives the certificationTrackId cascade — fires for both user selection
@@ -270,7 +270,9 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         this.submitted = false;
         if (res) {
           if (!res.error && res.data) {
-            this.router.navigate(['/users/list']).then(() => {
+            // justCreated flags a one-off celebration on the list page — read via
+            // router.getCurrentNavigation() there, so it never re-fires on refresh.
+            this.router.navigate(['/users/list'], { state: this.editMode ? undefined : { justCreated: true } }).then(() => {
               this.snackbar.display("snackbar-success", "User account " + (this.editMode ? "updated" : "created") + " successfully.", "bottom", "center");
             });
           } else {

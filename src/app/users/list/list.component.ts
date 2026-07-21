@@ -1,10 +1,23 @@
 import { CommonModule, DatePipe, formatDate, NgClass } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '@core';
+import { Role } from '@core/models/role';
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
+import { CelebrationOverlayComponent } from '@shared/components/celebration-overlay/celebration-overlay.component';
 import { Subject } from 'rxjs';
+
+// apis/users now returns these analytics fields alongside the base User shape —
+// scoped to this list page rather than added to the shared User model, since
+// nothing else in the app reads them yet.
+export interface UserListRow extends User {
+  points?: number | null;
+  numJobRoles?: number;
+  numQuizTaken?: number;
+  numAssessments?: number;
+  jobRoleTitles?: string[];
+}
 
 @Component({
   selector: 'app-list-users',
@@ -17,16 +30,23 @@ import { Subject } from 'rxjs';
     FormsModule,
     RouterLink,
     DatePipe,
+    CelebrationOverlayComponent,
   ],
 })
-export class ListUserComponent implements OnInit, OnDestroy {
+export class ListUserComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  allUsers: User[] = [];
+  allUsers: UserListRow[] = [];
   isLoading = true;
 
   searchQuery = '';
   currentPage = 0;
   readonly pageSize = 20;
+
+  @ViewChild('celebs') celebrationOverlay?: CelebrationOverlayComponent;
+  // Set from router state (create.component.ts's post-create navigate) — only
+  // true for the navigation that immediately follows creating a new user, never
+  // on a plain refresh/back, since getCurrentNavigation() is navigation-scoped.
+  private justCreated = false;
 
   private destroy$ = new Subject<void>();
 
@@ -34,22 +54,65 @@ export class ListUserComponent implements OnInit, OnDestroy {
     public router: Router,
     public authService: AuthService,
     private route: ActivatedRoute,
-  ) {}
+  ) {
+    const state = this.router.getCurrentNavigation()?.extras?.state as { justCreated?: boolean } | undefined;
+    this.justCreated = !!state?.justCreated;
+  }
+
+  ngAfterViewInit(): void {
+    if (this.justCreated) {
+      // Small delay so the overlay's own ngAfterViewInit has sized its canvas
+      // before we ask it to burst — otherwise the default center point is 0,0.
+      setTimeout(() => this.celebrationOverlay?.triggerBurst(), 50);
+    }
+  }
 
   // ── Computed ──────────────────────────────────────────────
 
-  get filteredUsers(): User[] {
+  // Talent-Partner-permission holders manage the same list framed as "Talent
+  // Management" — mirrors create.component.ts's isAdminViewer/breadcrumb getters.
+  get isAdminViewer(): boolean {
+    return this.authService.currentUserValue?.role === Role.Admin;
+  }
+
+  get breadcrumbTitle(): string {
+    return this.isAdminViewer ? 'User Management' : 'Talent Management';
+  }
+
+  get breadcrumbTrailLabel(): string {
+    return this.isAdminViewer ? 'Users' : 'Talents';
+  }
+
+  get breadcrumbActiveItem(): string {
+    return this.isAdminViewer ? 'List Users' : 'List Talents';
+  }
+
+  // Aggregate counts for the Talent Partner stats widget — computed client-side
+  // from the already-loaded list, same as filteredUsers/paginatedUsers below.
+  // "Certified" has no dedicated flag in the API sample given — approximated as
+  // having at least one completed assessment alongside quiz activity.
+  get talentStats() {
+    return {
+      added: this.allUsers.length,
+      activated: this.allUsers.filter(u => u.accountStatus === 'ACTIVE').length,
+      learning: this.allUsers.filter(u => (u.numQuizTaken ?? 0) > 0 || (u.numAssessments ?? 0) > 0).length,
+      certified: this.allUsers.filter(u => (u.numAssessments ?? 0) > 0 && (u.numQuizTaken ?? 0) > 0).length,
+    };
+  }
+
+  get filteredUsers(): UserListRow[] {
     const q = this.searchQuery.trim().toLowerCase();
     if (!q) return this.allUsers;
     return this.allUsers.filter(u =>
       ((u.firstName || '') + ' ' + (u.lastName || '')).toLowerCase().includes(q) ||
       (u.email || '').toLowerCase().includes(q) ||
       (u.country || '').toLowerCase().includes(q) ||
-      (u.designation || '').toLowerCase().includes(q)
+      (u.designation || '').toLowerCase().includes(q) ||
+      (u.jobRoleTitles || []).join(' ').toLowerCase().includes(q)
     );
   }
 
-  get paginatedUsers(): User[] {
+  get paginatedUsers(): UserListRow[] {
     const start = this.currentPage * this.pageSize;
     return this.filteredUsers.slice(start, start + this.pageSize);
   }
@@ -110,13 +173,21 @@ export class ListUserComponent implements OnInit, OnDestroy {
 
   onSearchChange() { this.currentPage = 0; }
 
+  // Prefers the user's most recently added job role title over the static
+  // designation field, falling back to designation when no job role exists yet.
+  designationFor(user: UserListRow): string {
+    return user.jobRoleTitles?.length
+      ? user.jobRoleTitles[user.jobRoleTitles.length - 1]
+      : (user.designation || '');
+  }
+
   // ── Navigation ────────────────────────────────────────────
 
   addNew() { this.router.navigate(['/users/create']); }
 
-  viewUser(row: User) { this.router.navigate(['/users/view', row.username]); }
+  viewUser(row: UserListRow) { this.router.navigate(['/users/view', row.username]); }
 
-  editUser(row: User) { this.router.navigate(['/users/edit', row.username]); }
+  editUser(row: UserListRow) { this.router.navigate(['/users/edit', row.username]); }
 
   // ── Export ────────────────────────────────────────────────
 

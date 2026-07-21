@@ -1,16 +1,67 @@
 <section class="content">
+
+  <!-- One-off confetti burst on arriving here right after creating a user —
+       maxParticles=0 means no idle rain, only the programmatic burst fires. -->
+  <div class="fixed inset-0 pointer-events-none z-[70]">
+    <app-celebration-overlay #celebs [enabled]="true" theme="classic_confetti"
+                              [maxParticles]="0" [controlsEnabled]="false" [autoDisableMs]="0">
+    </app-celebration-overlay>
+  </div>
+
   <div class="content-block">
 
     <div class="block-header">
-      <app-breadcrumb [title]="'List Users'" [items]="['Users']" [active_item]="'List Users'"></app-breadcrumb>
+      <app-breadcrumb [title]="breadcrumbTitle" [items]="[breadcrumbTrailLabel]" [active_item]="breadcrumbActiveItem"></app-breadcrumb>
     </div>
+
+    <!-- ── Talent Partner stats widget ── -->
+    @if (!isAdminViewer && !isLoading) {
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2 mb-4">
+      <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl bg-cm-surface border border-cm-border shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-user-plus text-indigo-600 dark:text-indigo-400 text-sm"></i>
+        </div>
+        <div>
+          <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ talentStats.added }}</div>
+          <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Talents Added</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl bg-cm-surface border border-cm-border shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400 text-sm"></i>
+        </div>
+        <div>
+          <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ talentStats.activated }}</div>
+          <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Activated</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl bg-cm-surface border border-cm-border shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-book-open text-amber-600 dark:text-amber-400 text-sm"></i>
+        </div>
+        <div>
+          <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ talentStats.learning }}</div>
+          <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Learning</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl bg-cm-surface border border-cm-border shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-award text-violet-600 dark:text-violet-400 text-sm"></i>
+        </div>
+        <div>
+          <div class="text-2xl font-black text-cm-text-primary tabular-nums leading-none">{{ talentStats.certified }}</div>
+          <div class="text-[11px] font-medium text-cm-text-secondary mt-0.5">Certified</div>
+        </div>
+      </div>
+    </div>
+    }
 
     <div class="rounded-2xl border border-cm-border bg-cm-surface shadow-sm p-4 sm:p-5 mt-2 mb-4">
 
       <!-- ── Header ── -->
       <div class="flex items-center justify-between gap-4 mb-4">
         <div>
-          <h2 class="text-base font-bold text-cm-text-primary">Users</h2>
+          <h2 class="text-base font-bold text-cm-text-primary">{{ breadcrumbTrailLabel }}</h2>
           <p class="text-xs text-cm-text-muted mt-0.5">{{ allUsers.length }} total</p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
@@ -38,7 +89,7 @@
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
-            Add User
+            {{ isAdminViewer ? 'Add User' : 'Add Talent' }}
           </button>
         </div>
       </div>
@@ -74,13 +125,14 @@
 
       <!-- ── Table ── -->
       <div class="overflow-x-auto rounded-xl border border-cm-border">
-        <table class="w-full text-sm min-w-[560px]">
+        <table class="w-full text-sm min-w-[860px]">
           <thead>
             <tr class="border-b border-cm-border bg-cm-surface-muted">
               <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary">Name</th>
-              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden md:table-cell">Email</th>
-              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden lg:table-cell">Country</th>
-              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden md:table-cell">Joined</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden md:table-cell">Contact</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden lg:table-cell">Activity</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden lg:table-cell">Job Roles</th>
+              <th class="text-left px-4 py-3 font-semibold text-cm-text-secondary hidden xl:table-cell">Joined</th>
               <th class="text-center px-4 py-3 font-semibold text-cm-text-secondary">Status</th>
               <th class="text-right px-4 py-3 font-semibold text-cm-text-secondary">Actions</th>
             </tr>
@@ -95,9 +147,9 @@
                 <div class="flex items-center gap-3">
                   @if (user.userImage) {
                   <img [src]="user.userImage" [alt]="user.firstName"
-                       class="w-8 h-8 rounded-full object-cover shrink-0 border border-cm-border">
+                       class="w-8 h-8 rounded-lg object-cover shrink-0 border border-cm-border">
                   } @else {
-                  <div class="w-8 h-8 rounded-full bg-cm-brand-dim text-cm-brand-text font-bold text-xs
+                  <div class="w-8 h-8 rounded-lg bg-cm-brand-dim text-cm-brand-text font-bold text-xs
                               flex items-center justify-center shrink-0 uppercase select-none">
                     {{ (user.firstName?.[0] || '') + (user.lastName?.[0] || '') }}
                   </div>
@@ -107,24 +159,56 @@
                       {{ user.firstName }} {{ user.lastName }}
                     </p>
                     <p class="text-xs text-cm-text-muted truncate">
-                      &#64;{{ user.username }}@if (user.designation) { &middot; {{ user.designation }}}
+                      &#64;{{ user.username }}@if (designationFor(user)) { &middot; {{ designationFor(user) }}}
                     </p>
                   </div>
                 </div>
               </td>
 
-              <!-- Email -->
+              <!-- Contact -->
               <td class="px-4 py-3 hidden md:table-cell">
-                <span class="text-cm-text-secondary text-xs">{{ user.email }}</span>
+                <p class="text-cm-text-secondary text-xs truncate max-w-[220px]">{{ user.email }}</p>
+                @if (user.country) {
+                <p class="text-cm-text-muted text-[11px] mt-0.5">{{ user.country }}</p>
+                }
               </td>
 
-              <!-- Country -->
+              <!-- Activity -->
               <td class="px-4 py-3 hidden lg:table-cell">
-                <span class="text-cm-text-secondary text-xs">{{ user.country || '—' }}</span>
+                <div class="flex items-center gap-2.5 text-xs text-cm-text-secondary whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1" title="Points">
+                    <i class="fa-solid fa-star text-amber-500 text-[10px]"></i>{{ user.points ?? 0 }}
+                  </span>
+                  <span class="inline-flex items-center gap-1" title="Quizzes taken">
+                    <i class="fa-solid fa-clipboard-check text-cm-brand text-[10px]"></i>{{ user.numQuizTaken ?? 0 }}
+                  </span>
+                  <span class="inline-flex items-center gap-1" title="Assessments taken">
+                    <i class="fa-solid fa-chart-line text-violet-500 text-[10px]"></i>{{ user.numAssessments ?? 0 }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Job Roles -->
+              <td class="px-4 py-3 hidden lg:table-cell">
+                @if (user.jobRoleTitles?.length) {
+                <div class="flex items-center gap-1.5 flex-wrap max-w-[180px]">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium
+                               bg-cm-brand-dim text-cm-brand-text truncate max-w-[130px]">
+                    {{ user.jobRoleTitles[user.jobRoleTitles.length - 1] }}
+                  </span>
+                  @if ((user.numJobRoles ?? user.jobRoleTitles.length) > 1) {
+                  <span class="text-[10px] text-cm-text-muted whitespace-nowrap">
+                    +{{ (user.numJobRoles ?? user.jobRoleTitles.length) - 1 }} more
+                  </span>
+                  }
+                </div>
+                } @else {
+                <span class="text-cm-text-muted text-xs">—</span>
+                }
               </td>
 
               <!-- Joined -->
-              <td class="px-4 py-3 hidden md:table-cell">
+              <td class="px-4 py-3 hidden xl:table-cell">
                 <span class="text-cm-text-secondary text-xs">
                   {{ user.createdAt | date:'MM/dd/yyyy' }}
                 </span>

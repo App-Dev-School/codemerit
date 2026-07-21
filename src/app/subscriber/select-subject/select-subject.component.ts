@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   ActivatedRoute,
   NavigationCancel,
@@ -7,83 +6,50 @@ import {
   NavigationStart,
   Router,
 } from '@angular/router';
-import { MasterService } from '@core/service/master.service';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { MySubjectsComponent } from '@shared/components/my-subjects/my-subjects.component';
-import { Observable, of } from 'rxjs';
+import { SubjectPickerComponent } from '@shared/components/select-subject/subject-picker.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-select-subject',
   templateUrl: './select-subject.component.html',
   styleUrls: ['./select-subject.component.scss'],
-  animations: [
-    trigger('overlayFade', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('200ms ease', style({ opacity: 1 })),
-      ]),
-      transition(':leave', [
-        animate('180ms ease', style({ opacity: 0 })),
-      ]),
-    ]),
-    trigger('panelSlide', [
-      transition(':enter', [
-        style({ transform: 'translateX(100%)' }),
-        animate('300ms cubic-bezier(0.22,1,0.36,1)', style({ transform: 'translateX(0)' })),
-      ]),
-      transition(':leave', [
-        animate('250ms cubic-bezier(0.4,0,1,1)', style({ transform: 'translateX(100%)' })),
-      ]),
-    ]),
-  ],
   imports: [
-    FormsModule,
-    MySubjectsComponent,
+    SubjectPickerComponent,
   ],
 })
-export class SelectSubjectComponent implements OnInit {
-  showContent = true;
-  subject = '';
-  subjects: Observable<any>;
-  isLoading = true;
-  searchQuery = '';
+export class SelectSubjectComponent implements OnInit, OnDestroy {
+  /** Drives the picker's own slide-in/out — false just before we navigate away
+      so its :leave animation plays instead of the route swap cutting it off. */
+  open = true;
+
+  private subscriptions = new Subscription();
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private master: MasterService,
   ) {}
 
   ngOnInit(): void {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        const stayingHere = event.url.startsWith('/select-subject');
-        if (!stayingHere) this.showContent = false;
-      } else if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
-        if (event.url.startsWith('/select-subject')) this.showContent = true;
-      }
-    });
-
-    if (!this.master.subjects?.length) {
-      this.isLoading = true;
-      this.master.fetchMasterDataFromAPI().subscribe({
-        next: (masterData: any) => {
-          if (!masterData?.error && masterData?.data?.subjects) {
-            this.subjects = of(masterData.data.subjects);
-          }
-          this.isLoading = false;
-        },
-        error: () => { this.isLoading = false; },
-      });
-    } else {
-      this.subjects = of(this.master.subjects);
-      this.isLoading = false;
-    }
+    this.subscriptions.add(
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationStart) {
+          const stayingHere = event.url.startsWith('/select-subject');
+          if (!stayingHere) this.open = false;
+        } else if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
+          if (event.url.startsWith('/select-subject')) this.open = true;
+        }
+      }),
+    );
   }
 
-  onSubjectChange(subject: string) {
-    this.subject = subject ?? '';
-    this.router.navigate(['/dashboard/learn', this.subject]);
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  onSubjectChange(subject: any) {
+    const slug = subject?.slug ?? '';
+    if (!slug) return;
+    this.router.navigate(['/dashboard/learn', slug]);
   }
 
   onCancel() {

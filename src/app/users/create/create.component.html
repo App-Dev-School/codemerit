@@ -37,31 +37,8 @@
 
       <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
 
-        <!-- Name row -->
+        <!-- Row 1: Email, First Name -->
         <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-4">
-          <div>
-            <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">
-              First Name <span class="text-cm-danger-text">*</span>
-            </label>
-            <input formControlName="firstName" type="text" placeholder="First name"
-              class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
-                     text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
-                     focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
-            @if (authForm.get('firstName')?.touched && authForm.get('firstName')?.hasError('required')) {
-            <p class="text-xs text-cm-danger-text mt-1">First name is required</p>
-            }
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Last Name</label>
-            <input formControlName="lastName" type="text" placeholder="Last name"
-              class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
-                     text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
-                     focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
-          </div>
-        </div>
-
-        <!-- Contact row -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
             <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">
               Email <span class="text-cm-danger-text">*</span>
@@ -82,6 +59,29 @@
             }
           </div>
           <div>
+            <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">
+              First Name <span class="text-cm-danger-text">*</span>
+            </label>
+            <input formControlName="firstName" type="text" placeholder="First name"
+              class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                     text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                     focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+            @if (authForm.get('firstName')?.touched && authForm.get('firstName')?.hasError('required')) {
+            <p class="text-xs text-cm-danger-text mt-1">First name is required</p>
+            }
+          </div>
+        </div>
+
+        <!-- Row 2: Last Name, Mobile -->
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Last Name</label>
+            <input formControlName="lastName" type="text" placeholder="Last name"
+              class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                     text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                     focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
+          </div>
+          <div>
             <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">Mobile</label>
             <div class="relative">
               <input formControlName="mobile" type="tel" placeholder="+91 XXXXX XXXXX"
@@ -100,17 +100,8 @@
           </div>
         </div>
 
-        <!-- Location row -->
+        <!-- Row 3: Country, City -->
         <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-4">
-          <div>
-            <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">
-              City <span class="text-cm-danger-text">*</span>
-            </label>
-            <input formControlName="city" type="text" placeholder="Location / City"
-              class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
-                     text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
-                     focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
-          </div>
           <div>
             <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">
               Country <span class="text-cm-danger-text">*</span>
@@ -118,6 +109,13 @@
             <app-searchable-select formControlName="country" [options]="countryOptions"
               placeholder="Select a country" searchPlaceholder="Search countries…">
             </app-searchable-select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-cm-text-secondary mb-1.5">City</label>
+            <input formControlName="city" type="text" placeholder="Location / City"
+              class="w-full px-3 py-2.5 rounded-xl border border-cm-border bg-cm-surface-muted
+                     text-sm text-cm-text-primary placeholder:text-cm-text-muted outline-none
+                     focus:border-cm-brand focus:ring-1 focus:ring-cm-brand/30 transition-colors">
           </div>
         </div>
 

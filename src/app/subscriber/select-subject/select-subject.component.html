@@ -1,62 +1,7 @@
-@if (showContent) {
-
-  <!-- ── Fullscreen overlay ─────────────────────────────────────────── -->
-  <div class="ss-overlay" [@overlayFade] (click)="onCancel()">
-
-    <!-- Loading state -->
-    @if (isLoading) {
-      <div class="ss-loading" (click)="$event.stopPropagation()">
-        <img src="assets/images/icons/loading.gif" class="w-12 mx-auto">
-        <p class="mt-3 text-sm font-medium text-slate-300">Loading subjects…</p>
-      </div>
-    }
-
-    <!-- Content panel -->
-    @if (!isLoading) {
-      <div class="ss-panel" [@panelSlide] (click)="$event.stopPropagation()">
-
-        <!-- Panel header -->
-        <div class="ss-panel__header">
-
-          <!-- Close — pinned top-right, never reflows with title/search -->
-          <button class="ss-close" (click)="onCancel()" aria-label="Close">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-
-          <div class="ss-panel__titlewrap">
-            <h2 class="ss-panel__title">Select a Subject</h2>
-            <p class="ss-panel__subtitle">
-              Pick the skill you want to practice or assess today.
-            </p>
-          </div>
-
-          <!-- Search -->
-          <div class="ss-search">
-            <svg class="ss-search__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input class="ss-search__input"
-                   type="text"
-                   placeholder="Search subjects…"
-                   [(ngModel)]="searchQuery"
-                   (click)="$event.stopPropagation()">
-            @if (searchQuery) {
-              <button class="ss-search__clear" (click)="searchQuery = ''; $event.stopPropagation()">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-              </button>
-            }
-          </div>
-        </div>
-
-        <!-- Subject grid -->
-        <div class="ss-panel__body">
-          <app-my-subjects
-            [subjects]="subjects"
-            [searchQuery]="searchQuery"
-            (subjectSelected)="onSubjectChange($event)">
-          </app-my-subjects>
-        </div>
-
-      </div>
-    }
-  </div>
-
-}
+<app-subject-picker
+  [open]="open"
+  title="Select a Subject"
+  subtitle="Pick the skill you want to practice or assess today."
+  (subjectSelected)="onSubjectChange($event)"
+  (closed)="onCancel()">
+</app-subject-picker>

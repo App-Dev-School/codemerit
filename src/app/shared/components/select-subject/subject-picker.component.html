@@ -1,0 +1,107 @@
+@if (rendered) {
+
+  <!-- ── Fullscreen overlay ─────────────────────────────────────────── -->
+  <div class="sp-overlay" [class.sp-overlay--shown]="shown" (click)="close()">
+    <div class="sp-panel" [class.sp-panel--shown]="shown" (click)="$event.stopPropagation()">
+
+      <!-- Panel header -->
+      <div class="sp-panel__header">
+
+        <!-- Close — pinned top-right, never reflows with title/search -->
+        <button class="sp-panel__close" (click)="close()" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="sp-panel__titlewrap">
+          <h2 class="sp-panel__title">{{ title }}</h2>
+          <p class="sp-panel__subtitle">{{ subtitle }}</p>
+        </div>
+
+        <!-- Search -->
+        <div class="sp-panel__search">
+          <svg class="sp-panel__search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input class="sp-panel__search-input"
+                 type="text"
+                 placeholder="Search subjects…"
+                 [(ngModel)]="searchQuery"
+                 (click)="$event.stopPropagation()">
+          @if (searchQuery) {
+            <button class="sp-panel__search-clear" (click)="clearSearch($event)">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Panel body -->
+      <div class="sp-panel__body">
+
+        @if (isLoading) {
+          <div class="sp-loading">
+            <div class="sp-spinner"></div>
+            <p class="sp-loading__text">Loading subjects…</p>
+          </div>
+        }
+
+        @if (!isLoading) {
+          <div class="sp-grid">
+            @for (subject of filteredSubjects; track subject.id) {
+
+              <div class="sp-card" [class.sp-card--enrolled]="subject?.isSubscribed" (click)="switchSubject(subject)">
+
+                @if (subject?.isSubscribed) {
+                  <span class="sp-enrolled-badge">Enrolled</span>
+                }
+
+                <!-- Icon -->
+                <div class="sp-card__icon-wrap" [style.background]="getSubjectColor(subject) + '18'">
+                  @if (subject.image) {
+                    <img [src]="subject.image" [alt]="subject.title" class="sp-card__icon-img">
+                  } @else {
+                    <span class="sp-card__icon-initials" [style.color]="getSubjectColor(subject)">
+                      {{ getInitials(subject.title) }}
+                    </span>
+                  }
+                </div>
+
+                <!-- Info -->
+                <div class="sp-card__info">
+                  <h3 class="sp-subject-title">{{ subject.title }}</h3>
+                  @if (subject.description) {
+                    <p class="sp-description">{{ subject.description }}</p>
+                  }
+                </div>
+
+                <!-- Coverage (subscribed only) -->
+                @if (subject?.isSubscribed && subject?.practice_percentage > 0) {
+                  <div class="sp-stat-row">
+                    <span class="sp-stat"><b>{{ subject.practice_percentage }}%</b> Coverage</span>
+                  </div>
+                }
+
+                <!-- Action -->
+                <div class="sp-card__action" [style.color]="getSubjectColor(subject)">
+                  {{ subject?.isSubscribed ? 'Continue' : 'Explore' }}
+                  <svg class="sp-card__action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </div>
+
+              </div>
+            }
+
+            <!-- Empty state -->
+            @if (!filteredSubjects.length) {
+              <div class="sp-empty">
+                <svg class="sp-empty__icon w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <p class="sp-empty__text">
+                  {{ subjects.length ? 'No subjects match your search.' : 'No subjects available at the moment.' }}
+                </p>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
+
+}
