@@ -264,17 +264,11 @@ export class AuthService {
   }
 
   changeUserPassword(api_key: any, postData: any): Observable<any> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': api_key
-      })
-    };
-    const url = environment.apiUrl + 'users/creds/update';
+    const url = 'apis/users/change-password';
     if (AuthConstants.DEV_MODE) {
       console.log("Hiting " + url + " with => " + JSON.stringify(postData) + " via Token " + api_key);
     }
-    return this.httpService.post(url, postData, httpOptions);
+    return this.httpService.put(url, postData, api_key);
   }
 
   getAdminDashData(postData: any): Observable<any> {
