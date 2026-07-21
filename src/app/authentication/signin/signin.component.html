@@ -3,8 +3,42 @@
 
   <div class="signin-card">
 
+    <!-- Already-logged-in transition -->
+    @if (alreadyLoggedIn) {
+      <div class="welcome-back-state">
+        <div class="avatar-wrap">
+          <img [src]="userImg" [alt]="userFullName" class="avatar-img" onerror="this.src='assets/images/users/user.jpg'"/>
+          <div class="avatar-badge">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card-header">
+          <h1 class="card-title">{{ greeting }}, <span class="text-gradient">{{ userFullName }}</span></h1>
+          <p class="card-subtitle">Welcome back! Taking you to your dashboard…</p>
+        </div>
+
+        <div class="redirect-spinner">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" style="opacity:.25"/>
+            <path fill="currentColor" style="opacity:.75"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+          </svg>
+        </div>
+
+        <button type="button" class="login-btn" (click)="continueNow()">Continue Now</button>
+
+        <p class="register-note">
+          Not you?
+          <a class="register-link" (click)="useAnotherAccount()">Sign out</a>
+        </p>
+      </div>
+    }
+
     <!-- ── Loading state ─────────────────────────────── -->
-    @if (submitted && loading) {
+    @if (!alreadyLoggedIn && submitted && loading) {
       <div class="loading-state">
         <img src="assets/images/icons/cube.gif" class="loading-gif" alt="Authenticating"/>
         <p class="loading-title">Authenticating</p>
@@ -13,7 +47,7 @@
     }
 
     <!-- ── Form ──────────────────────────────────────── -->
-    @if (!submitted || !loading) {
+    @if (!alreadyLoggedIn && (!submitted || !loading)) {
       <!-- Logo -->
       <div class="logo-wrap" routerLink="/app/welcome">
         <img src="assets/images/logo-dark.png" alt="CodeMerit" class="logo"/>

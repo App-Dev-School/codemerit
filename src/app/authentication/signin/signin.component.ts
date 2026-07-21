@@ -2,14 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { timer } from 'rxjs';
 import { AuthConstants } from '@config/AuthConstants';
 import { AuthService, Role } from '@core';
+import { User } from '@core/models/user';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { SocialAuthService } from '@core/service/social-auth.service';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { ParticleCanvasComponent } from '@shared/components/particle-canvas/particle-canvas.component';
 import { environment } from 'src/environments/environment';
+const AUTO_CONTINUE_DELAY_MS = 3200;
 
 @Component({
   selector: 'app-signin',
@@ -25,6 +28,11 @@ export class SigninComponent extends UnsubscribeOnDestroyAdapter implements OnIn
   loading   = false;
   error     = '';
   hide      = true;
+  //Already-logged-in transition
+  alreadyLoggedIn = false;
+  greeting        = '';
+  userFullName    = '';
+  userImg         = 'assets/images/users/user.jpg';
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -45,9 +53,41 @@ export class SigninComponent extends UnsubscribeOnDestroyAdapter implements OnIn
       this.authForm.get('username')?.setValue('carolinjoannasheryl@gmail.com');
       this.authForm.get('password')?.setValue('180099');
     }
+
+    const user = this.authService.currentUserValue;
+    if (user?.id && user?.token) {
+      this.enterAlreadyLoggedIn(user);
+    }
   }
 
   get f() { return this.authForm.controls; }
+
+  private enterAlreadyLoggedIn(user: User) {
+    this.alreadyLoggedIn = true;
+    this.greeting        = this.getGreeting();
+    this.userFullName    = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || user.email || 'there';
+    if (user.userImage) this.userImg = user.userImage;
+
+    this.subs.sink = timer(AUTO_CONTINUE_DELAY_MS).subscribe(() => this.routeAfterLogin());
+  }
+
+  private getGreeting(): string {
+    const hour = new Date().getHours();
+    if (hour < 5)  return 'Good night';
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    if (hour < 21) return 'Good evening';
+    return 'Good night';
+  }
+
+  continueNow() {
+    this.routeAfterLogin();
+  }
+
+  useAnotherAccount() {
+    this.authService.logout();
+    this.alreadyLoggedIn = false;
+  }
 
   onSubmit() {
     this.error = '';

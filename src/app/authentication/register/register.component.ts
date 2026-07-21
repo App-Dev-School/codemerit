@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '@core/service/auth.service';
+import { AuthService, Role } from '@core';
 import { MasterService } from '@core/service/master.service';
 import { SnackbarService } from '@core/service/snackbar.service';
 import { SocialAuthService } from '@core/service/social-auth.service';
@@ -22,6 +22,7 @@ export class RegisterComponent implements OnInit {
   highestStepReached = 1;
   loading = false;
   success = false;
+  redirecting = false;
 
   form!: FormGroup;
 
@@ -68,6 +69,23 @@ export class RegisterComponent implements OnInit {
       lastName:        ['', Validators.maxLength(20)],
       email:           ['', [Validators.required, Validators.email]],
     });
+
+    this.redirectIfAlreadyLoggedIn();
+  }
+
+  private redirectIfAlreadyLoggedIn() {
+    const user = this.authService.currentUserValue;
+    if (!user?.id || !user?.token) return;
+    this.redirecting = true;
+    setTimeout(() => {
+      if (user.role === Role.All || user.role === Role.Admin) {
+        this.router.navigate(['/admin/dashboard/main']);
+      } else {
+        this.authService.getUserJobRoles()?.length > 0
+          ? this.router.navigate(['/dashboard'])
+          : this.router.navigate(['/select-job-role']);
+      }
+    }, 2000);
   }
 
   // ─── Computed helpers ──────────────────────────────────────────

@@ -7,8 +7,9 @@
 // ── Glass card ────────────────────────────────────────────────
 .glass-card {
   @include auth.glass-card;
-  &.main-card    { width: 100%; max-width: 56rem; padding: 2rem; }
-  &.success-card { width: 100%; max-width: 32rem; }
+  &.main-card     { width: 100%; max-width: 56rem; padding: 2rem; }
+  &.success-card  { width: 100%; max-width: 32rem; }
+  &.redirect-card { width: 100%; max-width: 22rem; padding: 1rem; }
 }
 
 // ── Success state ─────────────────────────────────────────────
@@ -43,6 +44,25 @@
   margin: 1.5rem auto 0;
   animation: auth-spin 0.8s linear infinite;
 }
+
+.redirect-body { text-align: center; padding: 1.5rem 1rem; }
+
+.redirect-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.5);
+
+  svg { width: 1.6rem; height: 1.6rem; color: white; }
+}
+
+.redirect-title    { font-size: 1.1rem; font-weight: 700; color: white; margin-bottom: 0.4rem; }
+.redirect-subtitle { font-size: 0.85rem; color: #9ca3af; }
 
 // ── Card header ───────────────────────────────────────────────
 .card-header {
