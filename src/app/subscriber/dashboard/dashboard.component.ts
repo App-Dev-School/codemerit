@@ -18,7 +18,7 @@ import { MeritListWidgetComponent } from '@shared/components/merit-list-widget/m
 import { QuizCreateComponent } from '@shared/components/quiz-create/quiz-create.component';
 import { BadgeEarnedCardComponent } from '@shared/components/badge-earned-card/badge-earned-card.component';
 import { SubjectPerformanceCardComponent } from '@shared/components/subject-performance/subject-performance-card.component';
-import { SubjectTracksBoardComponent } from '@shared/components/subject-tracks-board/subject-tracks-board.component';
+import { SubjectCurriculumComponent } from '@shared/components/subject-curriculum/subject-curriculum.component';
 import { Observable, of } from 'rxjs';
 import { TopicItem } from 'src/app/lms/topics/manage/topic-item.model';
 import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widget/skill-rating-widget.component';
@@ -36,7 +36,7 @@ import { SkillRatingWidgetComponent } from '@shared/components/skill-rating-widg
     SubjectPerformanceCardComponent,
     SkillRatingWidgetComponent,
     GoalPathComponent,
-    SubjectTracksBoardComponent,
+    SubjectCurriculumComponent,
     CertificationTracksComponent,
     CertificateRibbonComponent,
   ]

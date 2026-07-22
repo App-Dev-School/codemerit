@@ -18,6 +18,10 @@ export class GoalPathComponent implements AfterViewInit {
   @Input() title: string = '';
   @Input() topics: any[] = [];
   @Input() color: string = '#000000';
+  // Gates the Score/Accuracy/Coverage bars and the quiz CTA — a visitor/
+  // non-enrolled learner can't take a quiz here, and repeated empty (0%)
+  // bars across every slide reads as noise, not a real empty state.
+  @Input() isSubscribed = true;
   @Output() nextGoal = new EventEmitter<TopicItem>();
 
   private subscription!: Subscription;

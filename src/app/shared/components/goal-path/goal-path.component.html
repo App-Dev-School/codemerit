@@ -26,6 +26,13 @@
         }
       </div>
 
+      <!-- Description — always shown so this card is a real curriculum reference
+           (what this topic covers), not just a personal progress tracker. -->
+      @if(topic.description){
+      <p class="text-[11.5px] text-cm-text-secondary leading-relaxed px-4 pb-3">{{topic.description}}</p>
+      }
+
+      @if(isSubscribed){
       <!-- Stats -->
       <div class="px-4 pb-3 space-y-2.5 flex-1">
         <div>
@@ -72,6 +79,11 @@
           🎯 Take Challenge
         </button>
       </div>
+      }@else{
+      <!-- Not enrolled — no meaningful stats/quiz yet, keep the card as pure
+           curriculum content instead of empty progress bars + a dead-end CTA. -->
+      <div class="flex-1"></div>
+      }
 
     </div>
   </swiper-slide>

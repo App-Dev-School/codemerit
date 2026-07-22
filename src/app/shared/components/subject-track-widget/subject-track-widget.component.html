@@ -89,71 +89,125 @@
   </div>
 
   <!-- Footer actions -->
+  @if(track.numTrivia > 0){
   <div class="flex items-center gap-2 px-4 pb-4 pt-2 flex-wrap">
-    @if(track.numTrivia > 0){
     <button type="button" (click)="onTrackQuiz()"
       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
              bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
       💡 Quick Quiz
     </button>
-    }
-    <button type="button" (click)="toggleExpanded()"
-      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
-             border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
-             active:scale-95 transition-all ml-auto">
-      {{track.topics?.length || 0}} topics
-      <svg class="w-3.5 h-3.5 transition-transform duration-200" [class.rotate-180]="isExpanded"
-           fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-      </svg>
-    </button>
   </div>
+  }
 
-  <!-- Expanded topic list -->
-  @if(isExpanded && track.topics?.length > 0){
+  <!-- Topic list — always visible, no expand gate -->
+  @if(track.topics?.length > 0){
   <div class="border-t border-cm-border bg-cm-surface-muted divide-y divide-cm-border">
     @for(topic of track.topics; track topic.id; let ti = $index){
-    <div class="flex items-center gap-3 px-4 py-3">
+    <div class="px-4 py-3">
 
-      <div class="w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black shrink-0"
-           [class.bg-green-500]="topic.isCompleted" [class.border-green-500]="topic.isCompleted"
-           [class.text-white]="topic.isCompleted"
-           [class.bg-cm-surface]="!topic.isCompleted" [class.border-cm-border]="!topic.isCompleted"
-           [class.text-cm-text-muted]="!topic.isCompleted">
-        @if(topic.isCompleted){
-        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        }@else{ {{ti + 1}} }
-      </div>
+      <div class="flex items-start gap-3">
 
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-1.5">
-          <p class="text-[12px] font-semibold text-cm-text-primary truncate">{{topic.title}}</p>
-          @if(topic.label){
-          <span class="shrink-0 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wide border"
-                [class]="levelChipClasses(topic.label)">{{topic.label}}</span>
+        <!-- 3-state status circle: Completed / In Progress / Not Started -->
+        <div class="w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5"
+             [class.bg-green-500]="topic.isCompleted" [class.border-green-500]="topic.isCompleted"
+             [class.bg-cm-brand]="topic.isStarted && !topic.isCompleted" [class.border-cm-brand]="topic.isStarted && !topic.isCompleted"
+             [class.text-white]="topic.isStarted"
+             [class.bg-cm-surface]="!topic.isStarted" [class.border-cm-border]="!topic.isStarted" [class.text-cm-text-muted]="!topic.isStarted">
+          @if(topic.isCompleted){
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          }@else{ {{ti + 1}} }
+        </div>
+
+        <div class="flex-1 min-w-0">
+
+          <!-- Title + level + status + user-level badges -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <p class="text-[12.5px] font-semibold text-cm-text-primary">{{topic.title}}</p>
+            @if(topic.label){
+            <span class="shrink-0 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wide border"
+                  [class]="levelChipClasses(topic.label)">{{topic.label}}</span>
+            }
+            <span class="shrink-0 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wide border"
+                  [class]="topicStatus(topic).classes">{{topicStatus(topic).label}}</span>
+            @if(topic.userLevel){
+            <span class="shrink-0 px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wide"
+                  [style.backgroundColor]="levelMeta(topic.userLevel).bg" [style.color]="levelMeta(topic.userLevel).color">
+              {{topic.userLevel}}
+            </span>
+            }
+          </div>
+
+          <!-- Journey Score / Journey Accuracy / Coverage — always shown per topic -->
+          <div class="grid grid-cols-3 gap-1.5 mt-2 max-w-xs">
+            <div class="rounded-lg px-2 py-1 bg-cm-surface border border-cm-border">
+              <span class="block text-[7.5px] font-bold uppercase tracking-wide text-cm-text-muted">Journey Score</span>
+              <span class="block text-[12px] font-black tabular-nums text-cm-brand">{{topic.journeyScore || 0}}%</span>
+            </div>
+            <div class="rounded-lg px-2 py-1 bg-cm-surface border border-cm-border">
+              <span class="block text-[7.5px] font-bold uppercase tracking-wide text-cm-text-muted">Journey Accuracy</span>
+              <span class="block text-[12px] font-black tabular-nums text-green-600 dark:text-green-400">{{topic.journeyAccuracy || 0}}%</span>
+            </div>
+            <div class="rounded-lg px-2 py-1 bg-cm-surface border border-cm-border">
+              <span class="block text-[7.5px] font-bold uppercase tracking-wide text-cm-text-muted">Coverage</span>
+              <span class="block text-[12px] font-black tabular-nums text-blue-600 dark:text-blue-400">{{topic.coverage || 0}}%</span>
+            </div>
+          </div>
+          <div class="h-[3px] rounded-full bg-cm-surface-raised mt-1.5 max-w-xs overflow-hidden">
+            <div class="h-full rounded-full bg-blue-500 transition-all duration-500" [style.width]="(topic.coverage || 0) + '%'"></div>
+          </div>
+
+          @if(!topic.isStarted){
+          <p class="text-[10px] text-cm-text-muted mt-1.5">
+            Not started yet
+            @if(topic.numTrivia > 0){ · {{topic.numTrivia}} questions available }
+          </p>
           }
         </div>
-        @if(topic.isStarted){
-        <div class="flex items-center gap-3 mt-1 flex-wrap text-[10px] text-cm-text-muted">
-          <span><span class="font-bold tabular-nums text-cm-brand">{{topic.score || 0}}%</span> score</span>
-          <span><span class="font-bold tabular-nums text-green-600 dark:text-green-400">{{topic.accuracy || 0}}%</span> accuracy</span>
-          <span><span class="font-bold tabular-nums text-cm-text-secondary">{{topic.correct || 0}}/{{topic.numTrivia || 0}}</span> correct</span>
+
+        <!-- Actions -->
+        <div class="flex flex-col items-end gap-1.5 shrink-0">
+          @if(topic.numTrivia > 0){
+          <button type="button" (click)="onTopicQuiz(topic)"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold
+                   border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
+                   active:scale-95 transition-all whitespace-nowrap">
+            Quiz
+          </button>
+          }
+          <button type="button" (click)="toggleTopicDetails(topic)"
+            class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-cm-text-muted hover:text-cm-brand transition-colors">
+            Details
+            <svg class="w-3 h-3 transition-transform duration-200" [class.rotate-180]="isTopicExpanded(topic)"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
         </div>
-        }@else{
-        <p class="text-[10px] text-cm-text-muted mt-1">
-          Not started
-          @if(topic.numTrivia > 0){ · {{topic.numTrivia}} questions available }
-        </p>
-        }
       </div>
 
-      @if(topic.numTrivia > 0){
-      <button type="button" (click)="onTopicQuiz(topic)"
-        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold shrink-0
-               border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
-               active:scale-95 transition-all">
-        Quiz
-      </button>
+      <!-- Interactive detail panel: goal + difficulty breakdown -->
+      @if(isTopicExpanded(topic)){
+      <div class="mt-3 ml-9 p-3 rounded-xl bg-cm-surface border border-cm-border space-y-2.5">
+        @if(topic.goal){
+        <p class="text-[11px] text-cm-text-secondary leading-relaxed">
+          <span class="font-bold text-cm-text-primary">🎯 Goal:</span> {{topic.goal}}
+        </p>
+        }
+        <div class="grid grid-cols-3 gap-2">
+          <div class="text-center rounded-lg bg-cm-surface-muted py-1.5">
+            <p class="text-[8px] font-bold uppercase tracking-wide text-cm-text-muted">Easy</p>
+            <p class="text-[11px] font-bold tabular-nums text-cm-text-primary">{{topic.correctEasy || 0}}/{{topic.attemptedEasy || 0}}</p>
+          </div>
+          <div class="text-center rounded-lg bg-cm-surface-muted py-1.5">
+            <p class="text-[8px] font-bold uppercase tracking-wide text-cm-text-muted">Medium</p>
+            <p class="text-[11px] font-bold tabular-nums text-cm-text-primary">{{topic.correctMedium || 0}}/{{topic.attemptedMedium || 0}}</p>
+          </div>
+          <div class="text-center rounded-lg bg-cm-surface-muted py-1.5">
+            <p class="text-[8px] font-bold uppercase tracking-wide text-cm-text-muted">Hard</p>
+            <p class="text-[11px] font-bold tabular-nums text-cm-text-primary">{{topic.correctHard || 0}}/{{topic.attemptedHard || 0}}</p>
+          </div>
+        </div>
+      </div>
       }
 
     </div>

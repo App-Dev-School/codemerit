@@ -250,6 +250,7 @@
             [title]="currentSubject.title"
             [color]="currentSubject.color"
             [topics]="subjectData.syllabus"
+            [isSubscribed]="!!subjectData?.isSubscribed"
             (nextGoal)="onTopicQuiz($event)">
           </app-goal-path>
         </div>
@@ -403,16 +404,18 @@
         </div>
 
         @if(hasSubjectTracks){
-        <app-subject-tracks-board
+        <app-subject-curriculum
           [tracks]="subjectData.subjectTracks"
           [color]="currentSubject.color"
+          [isSubscribed]="!!subjectData?.isSubscribed"
           (topicQuiz)="onTopicQuiz($event)"
           (topicExplore)="onTopicExplore($event)"
           (trackQuiz)="onTrackQuiz($event)">
-        </app-subject-tracks-board>
+        </app-subject-curriculum>
         }@else if(subjectData?.syllabus?.length > 0){
         <app-topics-list
           [subjectTopics]="subjectData.syllabus"
+          [isSubscribed]="!!subjectData?.isSubscribed"
           (topicExplore)="onTopicExplore($event)"
           (topicQuiz)="onTopicQuiz($event)">
         </app-topics-list>

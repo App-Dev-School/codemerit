@@ -19,10 +19,19 @@ export class SubjectTrackWidgetComponent {
   @Output() topicExplore = new EventEmitter<any>();
   @Output() trackQuiz = new EventEmitter<any>();
 
-  isExpanded = false;
+  // Topics are always visible now — previously the whole list hid behind a
+  // single track-level expand toggle, which read as "topics are missing".
+  // This only tracks which ONE topic (if any) has its extra detail panel
+  // (goal + difficulty breakdown) opened — an opt-in per-row interaction,
+  // not a way to hide the topic list itself.
+  expandedTopicId: number | null = null;
 
-  toggleExpanded(): void {
-    this.isExpanded = !this.isExpanded;
+  toggleTopicDetails(topic: SubjectTrackTopic): void {
+    this.expandedTopicId = this.expandedTopicId === topic.id ? null : topic.id;
+  }
+
+  isTopicExpanded(topic: SubjectTrackTopic): boolean {
+    return this.expandedTopicId === topic.id;
   }
 
   get questionsToGo(): number {
@@ -61,6 +70,18 @@ export class SubjectTrackWidgetComponent {
       return 'bg-cm-surface-raised text-cm-text-secondary border-cm-border-strong';
     }
     return 'bg-cm-surface-raised text-cm-text-muted border-cm-border';
+  }
+
+  // 3-state status (Not Started / In Progress / Completed) — previously only
+  // isCompleted was reflected visually, isStarted had no distinct treatment.
+  topicStatus(topic: SubjectTrackTopic): { label: string; classes: string } {
+    if (topic.isCompleted) {
+      return { label: '✓ Done', classes: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20' };
+    }
+    if (topic.isStarted) {
+      return { label: 'In Progress', classes: 'bg-cm-brand/10 text-cm-brand border-cm-brand/20' };
+    }
+    return { label: 'Not Started', classes: 'bg-cm-surface-raised text-cm-text-muted border-cm-border' };
   }
 
   onTrackQuiz(): void {

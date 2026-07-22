@@ -15,6 +15,10 @@ export class TopicsListComponent {
   userData: User;
   userRole: Role;
   @Input() subjectTopics: any[];
+  // Gates the "Take Quiz" button — a visitor/non-enrolled learner can't take a
+  // quiz here, so it shouldn't be offered (see subject-curriculum.component.ts
+  // for the same rule applied to the subjectTracks-based renderer).
+  @Input() isSubscribed = true;
   @Output() topicExplore = new EventEmitter<any>();
   @Output() topicQuiz = new EventEmitter<any>();
 

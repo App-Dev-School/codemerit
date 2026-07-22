@@ -5,15 +5,44 @@ export interface SubjectTrackTopic {
   title: string;
   slug: string;
   label: string;
+  description?: string;
+  goal?: string;
+  subjectId?: number;
+  subjectName?: string;
   numTrivia: number;
+  numBasicTrivia?: number;
+  numIntTrivia?: number;
+  numAdvTrivia?: number;
+  numLessons?: number;
+  totalAttempts?: number;
+  journeyAttempts?: number;
   attempted: number;
   correct: number;
   wrong: number;
+  journeyCorrect?: number;
+  journeyWrong?: number;
+  // "journey" fields are the structured learning-path score/accuracy — distinct
+  // from score/accuracy below, which reflect ad hoc quiz attempts.
+  journeyAccuracy?: number;
+  journeyScore?: number;
+  attemptedEasy?: number;
+  attemptedMedium?: number;
+  attemptedHard?: number;
+  correctEasy?: number;
+  correctMedium?: number;
+  correctHard?: number;
+  wrongEasy?: number;
+  wrongMedium?: number;
+  wrongHard?: number;
+  userLevel?: string | null;
+  currentAccuracy?: number;
   accuracy: number;
   coverage: number;
+  correctCoverage?: number;
   score: number;
   isStarted: boolean;
   isCompleted: boolean;
+  meritList?: any[] | null;
 }
 
 export interface SubjectTrack {
