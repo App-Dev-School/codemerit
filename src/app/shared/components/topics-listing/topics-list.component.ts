@@ -1,5 +1,6 @@
 import { CommonModule, NgClass } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService, User, Role } from '@core';
 
 @Component({
@@ -7,6 +8,7 @@ import { AuthService, User, Role } from '@core';
   imports: [
     CommonModule,
     NgClass,
+    MatIconModule,
   ],
   templateUrl: './topics-list.component.html',
   styleUrl: './topics-list.component.scss'

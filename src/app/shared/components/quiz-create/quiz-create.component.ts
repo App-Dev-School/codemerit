@@ -111,7 +111,7 @@ export class QuizCreateComponent implements OnInit {
       if(!this.editMode) {
       this.requestConfirmed = true;
       this.startMessageCycle();
-      this.generateQuiz(this.data.subject, this.data.topic);
+      this.generateQuiz(this.data.subject, this.data.topic, this.data.subjectTrack);
       }else{
         this.dialogRef.close(quizConfig);
       }
@@ -160,20 +160,18 @@ export class QuizCreateComponent implements OnInit {
   }
 
   /**** QUIZ GATEWAY ****/
-  async generateQuiz(subject: number, topic: number) {
-    console.log('QuizManager Invoked in SubjectDashboard:', subject, topic);
+  async generateQuiz(subject: number, topic: number, subjectTrack?: number) {
+    console.log('QuizManager Invoked in SubjectDashboard:', subject, topic, subjectTrack);
     const payload = new QuizCreateModel();
     payload.userId = this.authService.currentUserValue.id;
     payload.subjectIds = subject > 0 ? '' + subject : null;
     payload.topicIds = topic > 0 ? '' + topic : null;
-    let quizTitle = '';
-    if (subject > 0 || topic > 0) {
+    payload.subjectTrackIds = subjectTrack > 0 ? '' + subjectTrack : null;
+    if (subject > 0 || topic > 0 || subjectTrack > 0) {
     } else {
       this.error = 'Invalid Quiz Request. Please try again.';
       return;
     }
-    payload.title = quizTitle;
-    console.log('QuizCreateGateway Payload:', payload);
     this.loading = true;
     this.quizService
       .addQuiz(payload)

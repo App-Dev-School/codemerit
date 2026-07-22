@@ -317,7 +317,7 @@ export class DashboardComponent implements OnInit {
     this.launchQuiz(subject.title+' Quiz', subject.id, null);
   }
 
-   async launchQuiz(title: string, subject: number, topic: number) {
+   async launchQuiz(title: string, subject: number, topic: number, subjectTrack?: number) {
     let varDirection: Direction;
     if (localStorage.getItem('isRtl') === 'true') {
       varDirection = 'rtl';
@@ -332,6 +332,7 @@ export class DashboardComponent implements OnInit {
         title: title,
         subject: subject,
         topic: topic,
+        subjectTrack: subjectTrack,
         source: 'Subject'
        },
       backdropClass: 'quiz-blur-backdrop',
@@ -366,7 +367,10 @@ export class DashboardComponent implements OnInit {
   }
 
   onTrackQuiz(track: SubjectTrack) {
-    this.launchQuiz(track.title + ' Quiz', this.currentSubject.id, null);
+    // SubjectTrack is now its own scope (apis/quiz/create's new subjectTrackIds) —
+    // previously this collapsed into the whole subject, so a "track quiz" was
+    // indistinguishable from a subject-wide one.
+    this.launchQuiz(track.title + ' Quiz', null, null, track.id);
   }
 
   onCertStartLearning(cert: CertificationTrack) {

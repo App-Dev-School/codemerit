@@ -94,12 +94,16 @@
       }
     </div>
 
-    <!-- ═══ RIGHT — selected track's detail + topics ═══ -->
-    <div class="min-w-0 h-full">
+    <!-- ═══ RIGHT — the selected track's own card, then its topics as
+         independent cards below it (siblings, not nested inside one
+         shared panel boundary) ═══ -->
+    <div class="min-w-0 flex flex-col gap-4">
       @let track = orderedTracks[selectedIdx];
       @if(track){
       @for(t of [track]; track selectedIdx){
-      <div class="h-full flex flex-col bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
+
+      <!-- ─── Subject Track card — self-contained ─── -->
+      <div class="bg-cm-surface border border-cm-border-strong rounded-2xl overflow-hidden
                   shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)]
                   dark:shadow-none panel-enter">
 
@@ -138,7 +142,10 @@
             }@else if(isSubscribed){
             <button type="button" (click)="onTrackQuiz(t)"
               class="shrink-0 text-right max-w-[120px] group appearance-none bg-transparent border-0 p-0 m-0 outline-none">
-              <p class="text-[11px] font-black text-cm-brand leading-snug group-hover:underline">Not started yet</p>
+              <p class="flex items-center justify-end gap-1 text-[11px] font-black text-cm-brand leading-snug group-hover:underline">
+                <mat-icon style="font-size:12px;width:12px;height:12px;line-height:12px">arrow_forward</mat-icon>
+                Not started yet
+              </p>
               <p class="text-[8px] text-cm-text-muted mt-0.5 leading-snug">Practice to see your score here</p>
             </button>
             }@else{
@@ -235,149 +242,9 @@
         </div>
         }
 
-        <!-- Topics header -->
-        <div class="flex items-center gap-2 px-5 pt-4 pb-1 border-b border-cm-border shrink-0">
-          <mat-icon class="text-cm-brand" style="font-size:15px;width:15px;height:15px;line-height:15px">route</mat-icon>
-          <span class="text-[11.5px] font-bold text-cm-text-primary">Topics</span>
-          <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised text-cm-text-muted">
-            {{t.topics?.length || 0}}
-          </span>
-        </div>
-
-        <!-- Topics — full detail cards, always visible (no expand gate) -->
-        @if(t.topics?.length > 0){
-        <div class="flex-1 px-5 py-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            @for(topic of t.topics; track topic.id){
-            @let tScoreVal = topicScore(topic);
-            @let tAccVal = topicAccuracy(topic);
-            @let tScoreMeta = performanceMeta(tScoreVal);
-            @let tAccMeta2 = performanceMeta(tAccVal);
-            @let tCovMeta = performanceMeta(topic.coverage || 0);
-            <div class="rounded-xl border border-cm-border bg-cm-surface
-                        shadow-[0_1px_2px_rgba(0,0,0,0.05),0_3px_8px_rgba(0,0,0,0.07)] dark:shadow-none">
-
-              <!-- Header: status icon + title + level -->
-              <div class="flex items-center gap-2.5 px-3 pt-3 pb-2">
-                <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 border"
-                     [class.bg-green-500]="topic.isCompleted" [class.border-green-500]="topic.isCompleted" [class.text-white]="topic.isCompleted"
-                     [class.bg-cm-brand]="topic.isStarted && !topic.isCompleted" [class.border-cm-brand]="topic.isStarted && !topic.isCompleted"
-                     [class.text-white]="topic.isStarted"
-                     [class.bg-cm-surface-raised]="!topic.isStarted" [class.border-cm-border]="!topic.isStarted" [class.text-cm-text-muted]="!topic.isStarted">
-                  @if(topic.isCompleted){
-                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">check</mat-icon>
-                  }@else if(topic.isStarted){
-                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">play_arrow</mat-icon>
-                  }@else{
-                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">radio_button_unchecked</mat-icon>
-                  }
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-center gap-1.5">
-                    <p class="text-[12px] font-medium text-cm-text-primary truncate" [title]="topic.title">{{topic.title}}</p>
-                    @if(topic.userLevel){
-                    @let topicLvl = userLevelMeta(topic.userLevel);
-                    <span class="text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full shrink-0"
-                          [style.backgroundColor]="topicLvl.bg" [style.color]="topicLvl.color">
-                      {{topic.userLevel}}
-                    </span>
-                    }
-                  </div>
-                  @if(isSubscribed && topic.numTrivia){
-                  <p class="text-[9px] font-normal text-cm-text-muted mt-0.5">{{topic.attempted || 0}}/{{topic.numTrivia}} attempted</p>
-                  }
-                </div>
-              </div>
-
-              <!-- Description — always shown so this reads as a real curriculum
-                   reference (what this topic covers) rather than only a personal
-                   progress tracker; visitors and non-enrolled learners rely on
-                   this since the stats/coverage below are enrolled-only. -->
-              @if(topic.description){
-              <p class="text-[11px] text-cm-text-secondary leading-relaxed px-3 pb-2.5">{{topic.description}}</p>
-              }
-
-              @if(isSubscribed){
-
-              <!-- Score / Accuracy / Correct-Wrong -->
-              <div class="grid grid-cols-3 gap-1.5 px-3 pt-2.5 pb-2.5 border-t border-cm-border">
-                <div class="text-center rounded-lg bg-cm-surface-raised py-2">
-                  <p class="text-[13px] font-black tabular-nums leading-none" [style.color]="tScoreMeta.color">{{tScoreVal}}%</p>
-                  <p class="text-[8px] text-cm-text-muted mt-1">Score</p>
-                </div>
-                <div class="text-center rounded-lg bg-cm-surface-raised py-2">
-                  <p class="text-[13px] font-black tabular-nums leading-none" [style.color]="tAccMeta2.color">{{tAccVal}}%</p>
-                  <p class="text-[8px] text-cm-text-muted mt-1">Accuracy</p>
-                </div>
-                <div class="text-center rounded-lg bg-cm-surface-raised py-2">
-                  <p class="text-[13px] font-black tabular-nums leading-none">
-                    <span class="text-green-500">{{topic.correct || 0}}</span><span class="text-cm-text-muted">/</span><span class="text-red-500">{{topic.wrong || 0}}</span>
-                  </p>
-                  <p class="text-[8px] text-cm-text-muted mt-1">Correct/Wrong</p>
-                </div>
-              </div>
-
-              @if(hasDifficultyData(topic)){
-              <div class="flex items-center gap-1.5 flex-wrap px-3 pb-2.5">
-                @for(tier of difficultyStats(topic); track tier.key){
-                @if(tier.attempted){
-                @let dm = performanceMeta(tier.accuracy);
-                <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-md" [style.backgroundColor]="dm.bg" [style.color]="dm.color">
-                  {{tier.key}} {{tier.correct}}/{{tier.attempted}}
-                </span>
-                }
-                }
-              </div>
-              }
-
-              <!-- Coverage footer — enrolled only, so a visitor never sees a
-                   repeated empty/0% bar on every single topic card. -->
-              <div class="px-3 py-2.5 border-t border-cm-border bg-cm-surface-muted"
-                   [class.rounded-b-xl]="!(topic.numTrivia > 0)">
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-[8px] font-semibold text-cm-text-muted">Coverage</span>
-                  <span class="text-[10px] font-black tabular-nums" [style.color]="tCovMeta.color">{{topic.coverage || 0}}%</span>
-                </div>
-                <div class="h-1.5 rounded-full bg-cm-surface-raised overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-500"
-                       [style.backgroundColor]="tCovMeta.color" [style.width.%]="topic.coverage || 0"></div>
-                </div>
-              </div>
-
-              @if(topic.numTrivia > 0){
-              <div class="px-3 pb-3 pt-2 flex justify-end rounded-b-xl bg-cm-surface-muted">
-                <button type="button" (click)="onTopicQuiz(topic)"
-                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold
-                         border border-cm-border text-cm-text-secondary hover:border-cm-brand/40 hover:text-cm-brand
-                         active:scale-95 transition-all">
-                  Quiz
-                </button>
-              </div>
-              }
-
-              }@else if(topic.numTrivia){
-              <!-- Not enrolled — question count is still useful curriculum info,
-                   no performance stats or quiz trigger since neither applies yet. -->
-              <p class="text-[9px] font-semibold text-cm-text-muted px-3 pb-3 border-t border-cm-border pt-2.5">
-                {{topic.numTrivia}} question{{topic.numTrivia === 1 ? '' : 's'}} available after enrolling
-              </p>
-              }
-
-            </div>
-            }
-          </div>
-        </div>
-        }@else{
-        <div class="flex-1 px-5 py-14 flex flex-col items-center justify-center gap-2 text-center">
-          <mat-icon class="text-cm-text-muted" style="font-size:32px;width:32px;height:32px;line-height:32px">layers</mat-icon>
-          <p class="text-[12px] text-cm-text-muted">No topics available yet.</p>
-        </div>
-        }
-
-        <!-- Footer -->
+        <!-- Track footer: summary + track-level quiz action -->
         @if(t.numTrivia > 0){
-        <div class="flex items-center justify-between gap-3 px-5 py-4 border-t border-cm-border bg-cm-surface-muted">
+        <div class="flex items-center justify-between gap-3 px-5 py-4 bg-cm-surface-muted">
           <p class="text-[11px] text-cm-text-muted">
             <span class="font-semibold text-cm-text-secondary">{{t.topics?.length || 0}}</span> topics
             &nbsp;·&nbsp;<span class="font-semibold text-cm-text-secondary">{{t.numTrivia}}</span> questions
@@ -386,14 +253,171 @@
           <button type="button" (click)="onTrackQuiz(t)"
             class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-bold
                    bg-cm-brand text-white hover:bg-indigo-700 active:scale-[0.97] transition-all shadow-sm">
-            💡 Quick Quiz
+            <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">quiz</mat-icon>
+            Quick Quiz
             <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">chevron_right</mat-icon>
           </button>
           }
         </div>
         }
-
       </div>
+
+      <!-- ─── Topics section label ─── -->
+      <div class="flex items-center gap-2 px-1">
+        <mat-icon class="text-cm-brand" style="font-size:15px;width:15px;height:15px;line-height:15px">route</mat-icon>
+        <span class="text-[11.5px] font-bold text-cm-text-primary">Topics</span>
+        <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cm-surface-raised text-cm-text-muted">
+          {{t.topics?.length || 0}}
+        </span>
+      </div>
+
+      <!-- ─── Topics — independent cards, siblings of the track card above,
+           NOT nested inside a shared wrapping panel. Always visible (no
+           expand gate). ─── -->
+      @if(t.topics?.length > 0){
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        @for(topic of t.topics; track topic.id){
+        @let tScoreVal = topicScore(topic);
+        @let tAccVal = topicAccuracy(topic);
+        @let tScoreMeta = performanceMeta(tScoreVal);
+        @let tAccMeta2 = performanceMeta(tAccVal);
+        @let tCovMeta = performanceMeta(topic.coverage || 0);
+        <div class="rounded-2xl border border-cm-border-strong bg-cm-surface overflow-hidden
+                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-none">
+
+          <!-- Header: status icon + title + level -->
+          <div class="flex items-center gap-2.5 px-4 pt-4 pb-2.5">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 border"
+                 [class.bg-green-500]="topic.isCompleted" [class.border-green-500]="topic.isCompleted" [class.text-white]="topic.isCompleted"
+                 [class.bg-cm-brand]="topic.isStarted && !topic.isCompleted" [class.border-cm-brand]="topic.isStarted && !topic.isCompleted"
+                 [class.text-white]="topic.isStarted"
+                 [class.bg-cm-surface-raised]="!topic.isStarted" [class.border-cm-border]="!topic.isStarted" [class.text-cm-text-muted]="!topic.isStarted">
+              @if(topic.isCompleted){
+              <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">check</mat-icon>
+              }@else if(topic.isStarted){
+              <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">play_arrow</mat-icon>
+              }@else{
+              <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">radio_button_unchecked</mat-icon>
+              }
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5">
+                <p class="text-[12px] font-medium text-cm-text-primary truncate" [title]="topic.title">{{topic.title}}</p>
+                @if(topic.userLevel){
+                @let topicLvl = userLevelMeta(topic.userLevel);
+                <span class="text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full shrink-0"
+                      [style.backgroundColor]="topicLvl.bg" [style.color]="topicLvl.color">
+                  {{topic.userLevel}}
+                </span>
+                }
+              </div>
+              @if(isSubscribed && topic.numTrivia){
+              <p class="text-[9px] font-normal text-cm-text-muted mt-0.5">{{topic.attempted || 0}}/{{topic.numTrivia}} attempted</p>
+              }
+            </div>
+          </div>
+
+          <!-- Description — always shown so this reads as a real curriculum
+               reference (what this topic covers) rather than only a personal
+               progress tracker; visitors and non-enrolled learners rely on
+               this since the stats/coverage below are enrolled-only. -->
+          @if(topic.description){
+          <p class="text-[11px] text-cm-text-secondary leading-relaxed px-4 pb-3">{{topic.description}}</p>
+          }
+
+          @if(isSubscribed){
+
+          <!-- Score / Accuracy / Correct-Wrong -->
+          <div class="grid grid-cols-3 gap-1.5 px-4 pt-3 pb-3 border-t border-cm-border">
+            <div class="text-center rounded-lg bg-cm-surface-raised py-2">
+              <p class="text-[13px] font-black tabular-nums leading-none" [style.color]="tScoreMeta.color">{{tScoreVal}}%</p>
+              <p class="text-[8px] text-cm-text-muted mt-1">Score</p>
+            </div>
+            <div class="text-center rounded-lg bg-cm-surface-raised py-2">
+              <p class="text-[13px] font-black tabular-nums leading-none" [style.color]="tAccMeta2.color">{{tAccVal}}%</p>
+              <p class="text-[8px] text-cm-text-muted mt-1">Accuracy</p>
+            </div>
+            <div class="text-center rounded-lg bg-cm-surface-raised py-2">
+              <p class="text-[13px] font-black tabular-nums leading-none">
+                <span class="text-green-500">{{topic.correct || 0}}</span><span class="text-cm-text-muted">/</span><span class="text-red-500">{{topic.wrong || 0}}</span>
+              </p>
+              <p class="text-[8px] text-cm-text-muted mt-1">Correct/Wrong</p>
+            </div>
+          </div>
+
+          @if(hasDifficultyData(topic)){
+          <div class="flex items-center gap-1.5 flex-wrap px-4 pb-3">
+            @for(tier of difficultyStats(topic); track tier.key){
+            @if(tier.attempted){
+            @let dm = performanceMeta(tier.accuracy);
+            <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-md" [style.backgroundColor]="dm.bg" [style.color]="dm.color">
+              {{tier.key}} {{tier.correct}}/{{tier.attempted}}
+            </span>
+            }
+            }
+          </div>
+          }
+
+          <!-- Coverage + Quiz CTA — one shared footer block, single divider.
+               Coverage only shows once there's real attempted activity (never
+               a repeated empty/0% bar), the CTA whenever the topic has quiz
+               questions at all, independent of that. -->
+          @if((topic.attempted || 0) > 0 || topic.numTrivia > 0){
+          <div class="px-4 py-3 border-t border-cm-border bg-cm-surface-muted space-y-2.5">
+
+            @if((topic.attempted || 0) > 0){
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[8px] font-semibold uppercase tracking-wide text-cm-text-muted">Coverage</span>
+                <span class="text-[10px] font-black tabular-nums" [style.color]="tCovMeta.color">{{topic.coverage || 0}}%</span>
+              </div>
+              <div class="h-1.5 rounded-full bg-cm-surface-raised overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-500"
+                     [style.backgroundColor]="tCovMeta.color" [style.width.%]="topic.coverage || 0"></div>
+              </div>
+            </div>
+            }
+
+            @if(topic.numTrivia > 0){
+            <button type="button" (click)="onTopicQuiz(topic)"
+              class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-bold
+                     bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
+              <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">quiz</mat-icon>
+              Take Assessment
+            </button>
+            }
+          </div>
+          }
+
+          }@else if(topic.numTrivia){
+          <!-- Not enrolled — same footer shell as the enrolled state, but the
+               CTA is a locked/disabled button rather than plain text, so the
+               action is visibly there, just gated, instead of looking missing. -->
+          <div class="px-4 py-3 border-t border-cm-border bg-cm-surface-muted">
+            <button type="button" disabled
+              class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-bold
+                     bg-cm-surface-raised text-cm-text-muted border border-cm-border cursor-not-allowed">
+              <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">lock</mat-icon>
+              Take Assessment
+            </button>
+            <p class="text-[9px] font-semibold text-cm-text-muted text-center mt-1.5">
+              {{topic.numTrivia}} question{{topic.numTrivia === 1 ? '' : 's'}} available after enrolling
+            </p>
+          </div>
+          }
+
+        </div>
+        }
+      </div>
+      }@else{
+      <div class="bg-cm-surface border border-dashed border-cm-border-strong rounded-2xl
+                  px-5 py-14 flex flex-col items-center justify-center gap-2 text-center">
+        <mat-icon class="text-cm-text-muted" style="font-size:32px;width:32px;height:32px;line-height:32px">layers</mat-icon>
+        <p class="text-[12px] text-cm-text-muted">No topics available yet.</p>
+      </div>
+      }
+
       }
       }
     </div>

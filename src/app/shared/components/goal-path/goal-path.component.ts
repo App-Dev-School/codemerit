@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QuestionService } from 'src/app/lms/questions/manage/questions.service';
@@ -9,7 +10,7 @@ import { SwiperOptions } from 'swiper/types';
 @Component({
   selector: 'app-goal-path',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [],
+  imports: [MatIconModule],
   templateUrl: './goal-path.component.html',
   styleUrl: './goal-path.component.scss'
 })

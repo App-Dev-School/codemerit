@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { SubjectTrack, SubjectTrackTopic } from '@core/models/subject-dashboard.model';
+import { ThemeService } from '@core/service/theme.service';
 import { RevealProgressDirective } from '@shared/directives/reveal-progress.directive';
 
 // Same two-panel roadmap pattern as JobCurriculumComponent (job-role → subjects),
@@ -37,6 +38,8 @@ export class SubjectCurriculumComponent {
 
   selectedIdx = 0;
 
+  constructor(private theme: ThemeService) {}
+
   get orderedTracks(): SubjectTrack[] {
     return [...this._tracks].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
   }
@@ -61,26 +64,51 @@ export class SubjectCurriculumComponent {
   }
 
   // Same status scale used for skill grades elsewhere in the app (emerald/amber/red).
+  // Colors are pulled from this app's own cm-success/warning/danger tokens (see
+  // src/assets/css/tokens.css) rather than a hardcoded palette — the previous
+  // fixed hex values happened to match the *dark*-mode tokens exactly, so they
+  // were washed out in light mode, and the neutral/fallback gray was borderline
+  // low-contrast even in dark mode since it wasn't actually theme-aware at all.
   performanceMeta(value: number): { color: string; bg: string } {
-    if (value >= 80) return { color: '#34d399', bg: 'rgba(52,211,153,0.12)' };
-    if (value >= 50) return { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)' };
-    if (value > 0) return { color: '#f87171', bg: 'rgba(248,113,113,0.12)' };
-    return { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' };
+    const dark = this.theme.isDark();
+    if (value >= 80) return dark
+      ? { color: '#34d399', bg: 'rgba(52,211,153,0.16)' }
+      : { color: '#059669', bg: 'rgba(16,185,129,0.12)' };
+    if (value >= 50) return dark
+      ? { color: '#fbbf24', bg: 'rgba(251,191,36,0.16)' }
+      : { color: '#d97706', bg: 'rgba(245,158,11,0.12)' };
+    if (value > 0) return dark
+      ? { color: '#f87171', bg: 'rgba(248,113,113,0.16)' }
+      : { color: '#dc2626', bg: 'rgba(239,68,68,0.12)' };
+    return dark
+      ? { color: '#cbd5e1', bg: 'rgba(203,213,225,0.14)' }
+      : { color: '#64748b', bg: 'rgba(100,116,139,0.10)' };
   }
 
   // userLevel is a *stage*, not a *grade* — deliberately a different color family
   // (blue→violet→emerald) than performanceMeta so "Beginner" never reads as "bad score".
   userLevelMeta(level: string): { color: string; bg: string } {
+    const dark = this.theme.isDark();
     const l = (level || '').toLowerCase();
     if (l.includes('expert') || l.includes('master') || l.includes('complete'))
-      return { color: '#34d399', bg: 'rgba(52,211,153,0.12)' };
+      return dark
+        ? { color: '#34d399', bg: 'rgba(52,211,153,0.16)' }
+        : { color: '#059669', bg: 'rgba(16,185,129,0.12)' };
     if (l.includes('advance'))
-      return { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)' };
+      return dark
+        ? { color: '#c4b5fd', bg: 'rgba(196,181,253,0.16)' }
+        : { color: '#7c3aed', bg: 'rgba(124,58,237,0.12)' };
     if (l.includes('intermediate'))
-      return { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)' };
+      return dark
+        ? { color: '#fbbf24', bg: 'rgba(251,191,36,0.16)' }
+        : { color: '#d97706', bg: 'rgba(245,158,11,0.12)' };
     if (l.includes('beginner'))
-      return { color: '#38bdf8', bg: 'rgba(56,189,248,0.12)' };
-    return { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' };
+      return dark
+        ? { color: '#7dd3fc', bg: 'rgba(125,211,252,0.16)' }
+        : { color: '#0284c7', bg: 'rgba(2,132,199,0.12)' };
+    return dark
+      ? { color: '#cbd5e1', bg: 'rgba(203,213,225,0.14)' }
+      : { color: '#64748b', bg: 'rgba(100,116,139,0.10)' };
   }
 
   // Per-difficulty attempt/accuracy breakdown — only tiers actually attempted

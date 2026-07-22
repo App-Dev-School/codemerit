@@ -6,7 +6,7 @@
 
 <!-- ── ENROLLED STATE ─────────────────────────────────────── -->
 <div class="relative flex flex-col rounded-2xl overflow-hidden border border-cm-border bg-cm-surface h-full"
-     [style.boxShadow]="cardShadow">
+  [style.boxShadow]="cardShadow">
 
 
 
@@ -26,7 +26,7 @@
         </div>
         } -->
         <div>
-          <p class="text-[11px] text-cm-text-muted mt-0 mb-1 font-medium">Assessment Summary</p>
+          <p class="text-[12px] text-cm-text-muted mt-0 mb-1 font-medium">Self Assessment Summary</p>
           <h2 class="text-lg font-black text-cm-text-primary tracking-tight leading-none">
             {{subject.title}}
           </h2>
@@ -34,12 +34,13 @@
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
-        <!-- Rank badge -->
+        <!-- Rank badge — cm-warning token (dim/tinted, same idiom as every other
+             status badge in this app) instead of a raw amber ramp with a jarring
+             solid dark:bg-amber-600 fill that didn't match the rest of the UI. -->
         @if(subject.userRank){
-        <span class="inline-flex items-center gap-1 pl-2 pr-2.5 py-1 rounded-full text-[10px] font-bold
-                     bg-amber-100 text-amber-800 border border-amber-200
-                     dark:bg-amber-600 dark:text-white dark:border-transparent shadow-sm"
-              title="Your rank among learners in this subject">
+        <span class="inline-flex items-center gap-1 pl-2 pr-2.5 py-1 rounded-full text-[12px] 
+                     bg-cm-warning-dim text-cm-warning-text border border-cm-warning/25 shadow-sm"
+          title="Your rank among learners in this subject">
           🏆 Rank #{{subject.userRank}}
         </span>
         }
@@ -58,14 +59,11 @@
 
       <!-- Radial gauge -->
       <div class="shrink-0 text-center">
-        <apx-chart
-          [series]="cardChartOptions.series!"
-          [chart]="cardChartOptions.chart!"
-          [plotOptions]="cardChartOptions.plotOptions!"
-          [colors]="cardChartOptions.colors!"
-          [labels]="cardChartOptions.labels!"/>
+        <apx-chart [series]="cardChartOptions.series!" [chart]="cardChartOptions.chart!"
+          [plotOptions]="cardChartOptions.plotOptions!" [colors]="cardChartOptions.colors!"
+          [labels]="cardChartOptions.labels!" />
         <p class="text-[10px] font-bold text-cm-text-muted -mt-4 tracking-widest uppercase">
-          Overall Score
+          Journey Score
         </p>
       </div>
 
@@ -77,15 +75,14 @@
                     hover:shadow-md hover:-translate-y-0.5 hover:border-cm-border-strong
                     transition-all duration-300 cursor-default">
           <span class="text-[10px] font-bold text-cm-text-muted uppercase tracking-wider block mb-1.5">
-            Score
+            My Score
           </span>
           <span class="text-xl font-black leading-none block" [ngClass]="getScoreClass(subject.score)">
             {{subject.score}}<span class="text-sm font-semibold text-cm-text-muted">%</span>
           </span>
           <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mt-2">
-            <div class="h-full rounded-full bar-anim bar-anim-1"
-                 [style.width]="subject.score + '%'"
-                 [style.backgroundColor]="subject.color || '#6366f1'"></div>
+            <div class="h-full rounded-full bar-anim bar-anim-1" [style.width]="subject.score + '%'"
+              [style.backgroundColor]="subject.color || '#6366f1'"></div>
           </div>
         </div>
 
@@ -96,13 +93,16 @@
                     transition-all duration-300 cursor-default">
           <span class="text-[10px] font-bold text-cm-text-muted uppercase tracking-wider block mb-1.5">
             Accuracy
+            @if(subject.currentAccuracy - subject.journeyAccuracy > 0){
+              <span class="text-amber-500">(Adjusted {{subject.currentAccuracy - subject.journeyAccuracy}}%)</span>
+            }
           </span>
           <span class="text-xl font-black text-green-600 leading-none block">
-            {{subject.accuracy}}<span class="text-sm font-semibold text-green-400">%</span>
+            {{subject.currentAccuracy}}<span class="text-sm font-semibold text-green-400">%</span>
           </span>
           <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mt-2">
-            <div class="h-full bg-green-500 rounded-full bar-anim bar-anim-2"
-                 [style.width]="subject.accuracy + '%'"></div>
+            <div class="h-full bg-green-500 rounded-full bar-anim bar-anim-2" [style.width]="subject.accuracy + '%'">
+            </div>
           </div>
         </div>
         }
@@ -112,14 +112,14 @@
                     hover:shadow-md hover:-translate-y-0.5 hover:border-cm-border-strong
                     transition-all duration-300 cursor-default">
           <span class="text-[10px] font-bold text-cm-text-muted uppercase tracking-wider block mb-1.5">
-            Done
+            Completion
           </span>
           <span class="text-xl font-black text-cm-brand leading-none block">
             {{subject.coverage}}<span class="text-sm font-semibold text-cm-text-muted">%</span>
           </span>
           <div class="w-full h-1.5 bg-cm-surface-raised rounded-full overflow-hidden mt-2">
-            <div class="h-full bg-cm-brand rounded-full bar-anim bar-anim-3"
-                 [style.width]="subject.coverage + '%'"></div>
+            <div class="h-full bg-cm-brand rounded-full bar-anim bar-anim-3" [style.width]="subject.coverage + '%'">
+            </div>
           </div>
         </div>
 
@@ -131,24 +131,24 @@
       <p class="text-[11px] text-cm-text-secondary leading-snug">
         @if(subject.attempted > 0){
         @if(subject.score >= 70 && subject.accuracy >= 70){
-          @if(subject.score > 90 && subject.accuracy > 90){
-            🎉 Topper — exceptional performance across all metrics.
-          }@else{
-            👍 Great progress — keep the momentum going.
-          }
-        }@else if(subject.score < 40){
-          ❌ More practice needed — your {{subject.title}} scores need attention.
-        }@else if(subject.score > 55 && subject.accuracy > 60){
-          😊 Steady improvement — a few more sessions will push you over the top.
+        @if(subject.score > 90 && subject.accuracy > 90){
+        🎉 Topper — exceptional performance across all metrics.
         }@else{
-          💡 Take more quizzes to boost your score and accuracy.
+        👍 Great progress — keep the momentum going.
         }
-      }
+        }@else if(subject.score < 40){
+        ❌ More practice needed — your {{subject.title}} scores need attention.
+        }@else if(subject.score > 55 && subject.accuracy > 60){
+        😊 Steady improvement — a few more sessions will push you over the top.
+        }@else{
+        💡 Take more quizzes to boost your score and accuracy.
+        }
+        }
       </p>
       @if(subject.userLevel && subject.userLevel !== 'Not Started'){
       <div class="shrink-0 text-right">
         <span class="text-xs font-black uppercase tracking-wide block"
-              [ngClass]="levelMeta(subject.userLevel).textClass">
+          [ngClass]="levelMeta(subject.userLevel).textClass">
           {{subject.userLevel}}
         </span>
         <span class="text-[9px] text-cm-text-muted uppercase tracking-widest">Current Level</span>
@@ -164,15 +164,14 @@
 <!-- ── NOT YET ENROLLED ───────────────────────────────────── -->
 @if(!subject?.isSubscribed){
 
-<div class="relative rounded-2xl overflow-hidden border border-cm-border h-full"
-     [style.boxShadow]="cardShadow">
+<div class="relative rounded-2xl overflow-hidden border border-cm-border h-full" [style.boxShadow]="cardShadow">
   <div class="absolute inset-0 bg-cm-surface"></div>
   <div class="absolute inset-0 opacity-[0.04]" [style.backgroundColor]="subject?.color || '#6366f1'"></div>
   <div class="absolute -bottom-10 -left-10 w-56 h-56 rounded-full blur-3xl opacity-[0.08]"
-       [style.backgroundColor]="subject?.color || '#6366f1'"></div>
+    [style.backgroundColor]="subject?.color || '#6366f1'"></div>
 
   <div class="h-1 w-full relative z-10"
-       [style.background]="'linear-gradient(90deg,' + (subject?.color||'#6366f1') + '60, transparent)'">
+    [style.background]="'linear-gradient(90deg,' + (subject?.color||'#6366f1') + '60, transparent)'">
   </div>
 
   <div class="relative z-10 flex flex-col sm:flex-row items-center gap-6 p-5 lg:p-6">
@@ -183,7 +182,7 @@
           <img [src]="subject?.image" [alt]="subject?.title" class="w-full h-full object-cover">
         </div>
         <div class="absolute -inset-1.5 rounded-2xl blur-lg opacity-20 -z-10"
-             [style.backgroundColor]="subject?.color || '#6366f1'"></div>
+          [style.backgroundColor]="subject?.color || '#6366f1'"></div>
       </div>
       <span class="inline-flex items-center gap-1 mt-3 px-2.5 py-1 rounded-full text-[10px] font-bold
                    bg-cm-surface-raised border border-cm-border text-cm-text-muted">
@@ -199,11 +198,10 @@
         {{subject?.description}}
       </p>
       <div class="mt-4 flex flex-wrap gap-3 justify-center sm:justify-start">
-        <button type="button" (click)="onEnrollSubject(subject)"
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+        <button type="button" (click)="onEnrollSubject(subject)" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
                  bg-cm-brand text-white hover:opacity-90 active:scale-95 transition-all">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
           Start Learning
         </button>

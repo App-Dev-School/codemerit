@@ -13,6 +13,10 @@ export interface QuizCreateDto {
   subjectIds?: string | string[] | null;
   jobIds?: string;
   topicIds?: string | string[] | null;
+  // Comma-separated SubjectTrack ids — backend resolves each track to its
+  // member topics itself. Combines (union) with subjectIds/topicIds if any
+  // of those are also sent, same as subjectIds+topicIds combine with each other.
+  subjectTrackIds?: string | string[] | null;
   tag?: string;
   category?: string;
   level?: number;
@@ -28,6 +32,7 @@ export class QuizCreateModel implements QuizCreateDto {
   subjectIds?: string | string[] | null;
   jobIds?: string;
   topicIds?: string | string[] | null;
+  subjectTrackIds?: string | string[] | null;
   tag?: string;
   category?: string;
   level?: number;
@@ -39,13 +44,14 @@ export class QuizCreateModel implements QuizCreateDto {
   settings?: QuizSettings; // Extend with specific settings properties as needed
 
   constructor(quiz: Partial<QuizCreateModel> = {}) {
-    this.id = quiz.id ?? 0;
+    //this.id = quiz.id ?? 0;
     this.quizType = quiz.quizType ?? QuizTypeEnum.UserQuiz;
     this.title = quiz.title ?? '';
     this.shortDesc = quiz.shortDesc ?? '';
     this.description = quiz.description ?? '';
     this.subjectIds = quiz.subjectIds ?? null;
     this.topicIds = quiz.topicIds ?? null;
+    this.subjectTrackIds = quiz.subjectTrackIds ?? null;
     this.tag = quiz.tag ?? '';
     this.category = quiz.category ?? 'Default';
     this.level = quiz.level ?? 1;

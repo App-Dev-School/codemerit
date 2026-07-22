@@ -72,11 +72,12 @@
 
       <!-- CTA Button — plain Tailwind, matches subject colour -->
       <div class="px-4 pb-4 pt-2">
-        <button class="w-full py-2.5 rounded-xl text-sm font-bold text-white cursor-pointer border-0
+        <button class="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-bold text-white cursor-pointer border-0
                        hover:opacity-90 active:scale-[0.98] transition-all duration-200 outline-none"
                 [style.backgroundColor]="color || '#6366f1'"
                 (click)="onTakeNextQuiz(topic)">
-          🎯 Take Challenge
+          <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">quiz</mat-icon>
+          Take Challenge
         </button>
       </div>
       }@else{
